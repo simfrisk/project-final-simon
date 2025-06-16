@@ -20,5 +20,6 @@ export const ReviewPage = () => {
 
 
 const Container = styled.div `
-display: flex;
+display: grid;
+width: 100%;
 `
