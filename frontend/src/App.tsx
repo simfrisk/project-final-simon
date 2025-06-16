@@ -1,4 +1,4 @@
-import { LandingPage } from "./sections/lading-page/LandingPage";
+import { LandingPage } from "./sections/01-lading-page/LandingPage";
 
 export const App = () => {
 
