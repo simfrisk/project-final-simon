@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello Technigo!");
+  res.send("Hello Simon!");
 });
 
 // Start the server
