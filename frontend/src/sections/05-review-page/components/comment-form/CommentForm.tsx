@@ -7,7 +7,7 @@ export const CommentForm = () => {
       <CardFooter>
         <div>
           <p>01:12:24</p>
-          <p>[]</p>
+          <input type="checkbox" />
         </div>
         <select name="Teacher" id="">
           <option value="">Question</option>
@@ -21,12 +21,15 @@ export const CommentForm = () => {
 
 const Container = styled.div `
 position: sticky;
+display: flex;
+flex-direction: column;
+justify-content: center;
 height: 150px;
 width: 95%;
 border-radius: 10px;
-margin: 0;
+margin: 0 auto;
 background-color: #979797;
-bottom: 5%;
+bottom: 2%;
 padding: 10px;
 box-shadow: 3px 4px 5px 0px rgba(0, 0, 0, 0.21);
 `
@@ -48,7 +51,7 @@ select {
 button {
   background-color: lightgray;
   border: none;
-  padding: 5px 15px;
+  padding: 2px 15px;
   border-radius: 5px;
 }
 `
