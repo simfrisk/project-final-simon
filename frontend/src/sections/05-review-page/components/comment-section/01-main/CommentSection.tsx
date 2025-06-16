@@ -11,7 +11,7 @@ export const CommentSection = () => {
 };
 
 const CommentListContainer = styled.div `
-height: 100px;
+height: 600px;
 width: 300px;
-background-color: red;
+background-color: #5682a7;
 `
