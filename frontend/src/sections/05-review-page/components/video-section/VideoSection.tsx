@@ -98,8 +98,9 @@ export const VideoSection = () => {
 
   return (
     <Container>
+      <button onClick={handleVideoClick}>Comment</button>
       {/* The video player (click adds markers) */}
-      <StyledVideo ref={videoRef} onClick={handleVideoClick} controls={false}>
+      <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         <source src="/video1.mp4" type="video/mp4" />
       </StyledVideo>
 
