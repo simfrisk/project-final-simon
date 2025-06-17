@@ -19,7 +19,6 @@ const loadMessagesFromStorage = (): MessageType[] => {
   if (!stored) return [];
   try {
     const parsed = JSON.parse(stored) as { message: string; createdAt: string }[];
-    // convert createdAt strings back to Date objects
     return parsed.map((item) => ({
       message: item.message,
       createdAt: new Date(item.createdAt),
@@ -29,7 +28,7 @@ const loadMessagesFromStorage = (): MessageType[] => {
   }
 };
 
-export const commentStore = create<MessageStore>((set, get) => ({
+export const commentStore = create<MessageStore>((set) => ({
   messages: loadMessagesFromStorage(),
   addMessage: (msg) => {
     set((state) => {
@@ -47,5 +46,3 @@ export const commentStore = create<MessageStore>((set, get) => ({
     set({ messages: [] });
   },
 }));
-
-export type { MessageType };
