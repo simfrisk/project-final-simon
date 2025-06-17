@@ -1,16 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export const VideoSection = () => {
   // This lets us reference the actual <video> DOM element
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef(null);
   // This lets us reference the timeline DOM element
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef(null);
 
   // Array of markers (timestamps where user clicked video)
-  const [markers, setMarkers] = useState<number[]>([]);
+  const [markers, setMarkers] = useState([]);
   // Progress in percent (for progress bar)
-  const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState(0);
   // Is the video currently playing?
   const [isPlaying, setIsPlaying] = useState(false);
   // Volume level (0 to 1)
@@ -50,7 +50,7 @@ export const VideoSection = () => {
   };
 
   // When volume slider changes
-  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeVolume = (e) => {
     const vol = parseFloat(e.target.value);
     setVolume(vol);
     if (videoRef.current) {
@@ -66,7 +66,7 @@ export const VideoSection = () => {
   };
 
   // Seek video when user clicks on the timeline bar
-  const handleTimelineClick = (e: React.MouseEvent) => {
+  const handleTimelineClick = (e) => {
     const video = videoRef.current;
     const timeline = timelineRef.current;
     if (!video || !timeline) return;
@@ -78,7 +78,7 @@ export const VideoSection = () => {
   };
 
   // Jump video to a saved marker time
-  const goToTime = (time: number) => {
+  const goToTime = (time) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
       videoRef.current.play(); // optional: auto play on jump
@@ -86,7 +86,7 @@ export const VideoSection = () => {
   };
 
   // Format seconds into mm:ss
-  const formatTime = (time: number) => {
+  const formatTime = (time) => {
     const m = Math.floor(time / 60);
     const s = Math.floor(time % 60);
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
