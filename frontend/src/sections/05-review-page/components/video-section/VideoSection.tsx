@@ -4,7 +4,7 @@ export const VideoSection = () => {
   return (
     <Container>
       <StyledVideo controls>
-        <source src="path-to-video.mp4" type="video/mp4" />
+        <source src="/video1.mp4" type="video/mp4" />
       </StyledVideo>
     </Container>
   );

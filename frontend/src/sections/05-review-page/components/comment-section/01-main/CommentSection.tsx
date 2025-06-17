@@ -2,134 +2,102 @@ import styled from 'styled-components';
 
 export const CommentSection = () => {
   return (
-    <>
     <CommentListContainer>
+      {[1, 2, 3].map((_, i) => (
+        <Card key={i}>
+          <ImageContainer>
+            <img src="/SImon1.jpg" alt="Profile img" />
+          </ImageContainer>
+          <Content>
+            <CardHeader>
+              <strong>Simon Frisk</strong>
+              <Dot>&middot;</Dot>
+              <span>5 min ago</span>
+            </CardHeader>
 
-      <Card>
-        <ImageContainer>
-         <img src="/SImon1.jpg" alt="Profile img" />
-        </ImageContainer>
-        <div>
+            <CardMain>
+              I don’t really understand why all the components need to be capitalised? Why is this?
+            </CardMain>
 
-          <CardHeader>
-          <p>Simon Frisk</p>
-          <p>&middot;</p>
-          <p>5 min ago</p>
-          </CardHeader>
-
-          <CardMain>
-           <p>I don’t really understand why all the components needs to be capitalised? Why is this?</p>
-          </CardMain>
-
-          <CardFooter>
-            <button>Replay</button>
-            <button>Like</button>
-          </CardFooter>
-
-        </div>
-      </Card>
-
-
-      <Card>
-        <ImageContainer>
-         <img src="/SImon1.jpg" alt="Profile img" />
-        </ImageContainer>
-        <div>
-
-          <CardHeader>
-          <p>Simon Frisk</p>
-          <p>&middot;</p>
-          <p>5 min ago</p>
-          </CardHeader>
-
-          <CardMain>
-           <p>I don’t really understand why all the components needs to be capitalised? Why is this?</p>
-          </CardMain>
-
-          <CardFooter>
-            <button>Replay</button>
-            <button>Like</button>
-          </CardFooter>
-
-        </div>
-      </Card>
-      
-      <Card>
-        <ImageContainer>
-         <img src="/SImon1.jpg" alt="Profile img" />
-        </ImageContainer>
-        <div>
-
-          <CardHeader>
-          <p>Simon Frisk</p>
-          <p>&middot;</p>
-          <p>5 min ago</p>
-          </CardHeader>
-
-          <CardMain>
-           <p>I don’t really understand why all the components needs to be capitalised? Why is this?</p>
-          </CardMain>
-
-          <CardFooter>
-            <button>Replay</button>
-            <button>Like</button>
-          </CardFooter>
-
-        </div>
-      </Card>
-
-
+            <CardFooter>
+              <ActionButton>Reply</ActionButton>
+              <ActionButton>Like</ActionButton>
+            </CardFooter>
+          </Content>
+        </Card>
+      ))}
     </CommentListContainer>
-    </>
-  )
+  );
 };
 
-const CommentListContainer = styled.div `
-display: flex;
-flex-direction: column;
-height: 600px;
-width: 100%;
-background-color: #d2d2d2;
-`
+// Styled components
 
-const Card = styled.div `
-display: flex;
-flex-direction: row;
-height: 180px;
-width: 100%;
-background-color: gray;
-border-bottom: solid black 1px;
-align-items: center;
-cursor: pointer;
+const CommentListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+  width: 100%;
+  background-color: #f5f5f5;
+`;
 
-button {
-  background-color: transparent;
-  border: none;
-}
-`
+const Card = styled.div`
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+  gap: 12px;
+`;
 
-const ImageContainer = styled.div `
-height: 50px;
-width: 50px;
-border-radius: 50px;
-
-img {
-  object-fit: cover;
-  height: 100%;
+const ImageContainer = styled.div`
+  flex-shrink: 0;
+  height: 50px;
+  width: 50px;
   border-radius: 50px;
-}
-`
+  overflow: hidden;
 
-const CardHeader = styled.div `
-display: flex;
-column-gap: 10px;
-`
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 
-const CardMain = styled.div `
-display: flex;
-`
+const Content = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
 
-const CardFooter = styled.div `
-display: flex;
-justify-content: space-between;
-`
+const CardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555555;
+`;
+
+const Dot = styled.span`
+`;
+
+const CardMain = styled.p`
+  margin: 8px 0;
+  color: #333333;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  color: #007bff;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;

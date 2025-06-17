@@ -3,37 +3,54 @@ import styled from "styled-components";
 export const CommentHeader = () => {
   return (
     <Container>
-   <h3>Video Title</h3> 
-   <div>
-   <button>Description</button>
-   <button>Comments</button>
-   </div>
+      <Title>Video Title</Title>
+      <ButtonGroup>
+        <TabButton> Description </TabButton>
+        <TabButton active> Comments </TabButton>
+      </ButtonGroup>
     </Container>
-  )
+  );
 };
 
-const Container = styled.div `
-display: flex;
-flex-direction: column;
-align-items: center;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  border-radius: 12px;
+`;
 
+const Title = styled.h3`
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+`;
 
-  h3, p, button {
-    margin: 6px 5px;
-    padding: 0;
-  }
-  
-  button {
-    background-color: transparent;
-    border: none;
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const TabButton = styled.button<{ active?: boolean }>`
+  background-color: ${({ active }) => (active ? "#007bff" : "transparent")};
+  color: ${({ active }) => (active ? "white" : "#007bff")};
+  border: 2px solid #007bff;
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ active }) => (active ? "#0056b3" : "#e6f0ff")};
+    transform: scale(1.05);
   }
 
-  button:hover {
-    transform: scale(.95);
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(0 123 255 / 0.5);
   }
-
-  div {
-    display: flex;
-    column-gap: 12px;
-  }
-`
+`;

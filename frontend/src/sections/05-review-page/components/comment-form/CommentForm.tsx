@@ -3,68 +3,104 @@ import styled from "styled-components";
 export const CommentForm = () => {
   return (
     <Container>
-      <TextInput type="text" placeholder="Leave you comment here..." />
-      <CardFooter>
-        <div>
+      <TextInput type="text" placeholder="Leave your comment here..." />
+
+      <Footer>
+        <TimeTag>
           <p>01:12:24</p>
           <input type="checkbox" />
-        </div>
-        <select name="Teacher" id="">
-          <option value="">Question</option>
-          <option value="">Comment</option>
-        </select>
-        <button>Send</button>
-      </CardFooter>
+        </TimeTag>
+
+        <Select name="Teacher">
+          <option value="question">Question</option>
+          <option value="comment">Comment</option>
+        </Select>
+
+        <SendButton>Send</SendButton>
+      </Footer>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: sticky;
+  bottom: 16px;
+  width: 95%;
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 12px;
+  background-color: #a8bbd1;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 150px;
-  width: 95%;
-  border-radius: 10px;
-  margin: 0 auto;
-  background-color: #979797;
-  bottom: 2%;
-  padding: 10px;
-  box-shadow: 3px 4px 5px 0px rgba(0, 0, 0, 0.21);
+  gap: 10px;
 `;
 
 const TextInput = styled.input`
-  height: 50px;
-  border-radius: 5px;
-  border: none;
-  background-color: transparent;
+  height: 48px;
   padding: 10px;
   font-size: 16px;
-  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: white;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
 `;
 
-const CardFooter = styled.div`
+const Footer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
 
-  div {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+const TimeTag = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  p {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
   }
 
-  select {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-  }
-
-  button {
-    background-color: lightgray;
-    border: none;
-    padding: 2px 15px;
-    border-radius: 5px;
+  input {
+    width: 16px;
+    height: 16px;
   }
 `;
+
+const Select = styled.select`
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const SendButton = styled.button`
+  padding: 8px 16px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
