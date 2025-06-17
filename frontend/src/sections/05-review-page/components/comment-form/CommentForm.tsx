@@ -1,9 +1,32 @@
 import styled from "styled-components";
+import { useState } from "react";
+import { commentStore } from "../../../../store/commentStore";
 
 export const CommentForm = () => {
+  const [text, setText] = useState("");
+  const addMessage = commentStore((state) => state.addMessage);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!text.trim()) return;
+
+    addMessage({
+      message: text,
+      createdAt: new Date(),
+    });
+
+    setText("");
+  };
+
   return (
-    <Container>
-      <TextInput type="text" placeholder="Leave your comment here..." />
+    <Container as="form" onSubmit={handleSubmit}>
+      <TextInput
+        type="text"
+        placeholder="Leave your comment here..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
 
       <Footer>
         <TimeTag>
@@ -16,7 +39,7 @@ export const CommentForm = () => {
           <option value="comment">Comment</option>
         </Select>
 
-        <SendButton>Send</SendButton>
+        <SendButton type="submit">Send</SendButton>
       </Footer>
     </Container>
   );
@@ -103,4 +126,3 @@ const SendButton = styled.button`
     background-color: #0056b3;
   }
 `;
-

@@ -1,24 +1,26 @@
+import type { MessageType } from '../../../../../store/commentStore';
 import styled from 'styled-components';
-import comments from '../../../../../data/comments.json'
+import moment from 'moment';
+import { commentStore } from '../../../../../store/commentStore';
 
 export const CommentSection = () => {
+  const messages: MessageType[] = commentStore((state) => state.messages);
+
   return (
     <CommentListContainer>
-       {comments.map(({ id, user, dateCreated, message }) => (
-        <Card key={id}>
+      {messages.map(({ message, createdAt }, index) => (
+        <Card key={index}>
           <ImageContainer>
             <img src="/SImon1.jpg" alt="Profile img" />
           </ImageContainer>
           <Content>
             <CardHeader>
-              <strong>{user}</strong>
+              <strong>Anonymous</strong>
               <Dot>&middot;</Dot>
-              <span>{dateCreated}</span>
+             <span>{moment(createdAt).fromNow()}</span>
             </CardHeader>
 
-            <CardMain>
-              {message}
-            </CardMain>
+            <CardMain>{message}</CardMain>
 
             <CardFooter>
               <ActionButton>Reply</ActionButton>
