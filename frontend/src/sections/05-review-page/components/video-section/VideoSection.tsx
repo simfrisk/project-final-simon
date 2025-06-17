@@ -4,9 +4,9 @@ import { PlayPauseButton } from './components/PlayPauseBtn';
 
 export const VideoSection = () => {
   // This lets us reference the actual <video> DOM element
-  const videoRef = useRef(null);
+  const videoRef = useRef();
   // This lets us reference the timeline DOM element
-  const timelineRef = useRef(null);
+  const timelineRef = useRef();
 
   // Array of markers (timestamps where user clicked video)
   const [markers, setMarkers] = useState([]);
