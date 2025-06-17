@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-export const PlayPauseButton = ({ isPlaying, onClick }) => {
+type PlayPauseButtonProps = {
+  isPlaying: boolean;
+  onClick: () => void;
+};
+
+export const PlayPauseButton = ({ isPlaying, onClick }: PlayPauseButtonProps) => {
   return (
     <Button onClick={onClick} className={isPlaying ? 'button--active' : ''}>
       <div className="button__shape button__shape--one" />
