@@ -4,12 +4,12 @@ import { PlayPauseButton } from './components/PlayPauseBtn';
 
 export const VideoSection = () => {
   // This lets us reference the actual <video> DOM element
-  const videoRef = useRef();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   // This lets us reference the timeline DOM element
-  const timelineRef = useRef();
+  const timelineRef = useRef<HTMLDivElement | null>(null);
 
   // Array of markers (timestamps where user clicked video)
-  const [markers, setMarkers] = useState([]);
+  const [markers, setMarkers] = useState<number[]>([]);
   // Progress in percent (for progress bar)
   const [progress, setProgress] = useState(0);
   // Is the video currently playing?
@@ -51,7 +51,7 @@ export const VideoSection = () => {
   };
 
   // When volume slider changes
-  const changeVolume = (e) => {
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const vol = parseFloat(e.target.value);
     setVolume(vol);
     if (videoRef.current) {
@@ -67,7 +67,7 @@ export const VideoSection = () => {
   };
 
   // Seek video when user clicks on the timeline bar
-  const handleTimelineClick = (e) => {
+  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
     const timeline = timelineRef.current;
     if (!video || !timeline) return;
@@ -79,7 +79,7 @@ export const VideoSection = () => {
   };
 
   // Jump video to a saved marker time
-  const goToTime = (time) => {
+  const goToTime = (time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
       videoRef.current.play(); // optional: auto play on jump
@@ -87,7 +87,7 @@ export const VideoSection = () => {
   };
 
   // Format seconds into mm:ss
-  const formatTime = (time) => {
+  const formatTime = (time: number) => {
     const m = Math.floor(time / 60);
     const s = Math.floor(time % 60);
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -130,7 +130,7 @@ export const VideoSection = () => {
         <Progress style={{ width: `${progress}%` }} />
 
         {/* Red markers on the timeline */}
-        {markers.map((time, i) => {
+        {markers.map((time: number, i: number) => {
           const percent = videoRef.current?.duration
             ? (time / videoRef.current.duration) * 100
             : 0;
@@ -139,7 +139,7 @@ export const VideoSection = () => {
             <Marker
               key={i}
               style={{ left: `${percent}%` }}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation(); // stop timeline click event
                 goToTime(time);
               }}
