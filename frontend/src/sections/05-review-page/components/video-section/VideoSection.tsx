@@ -191,14 +191,6 @@ const CommentBtn = styled.button`
     }
 `;
 
-const PlayButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: white;
-`;
-
 const VolumeControl = styled.div`
   display: flex;
   align-items: center;
