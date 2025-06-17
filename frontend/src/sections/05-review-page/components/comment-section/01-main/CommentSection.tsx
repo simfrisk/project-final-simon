@@ -1,22 +1,23 @@
 import styled from 'styled-components';
+import comments from '../../../../../data/comments.json'
 
 export const CommentSection = () => {
   return (
     <CommentListContainer>
-      {[1, 2, 3].map((_, i) => (
-        <Card key={i}>
+       {comments.map(({ id, user, dateCreated, message }) => (
+        <Card key={id}>
           <ImageContainer>
             <img src="/SImon1.jpg" alt="Profile img" />
           </ImageContainer>
           <Content>
             <CardHeader>
-              <strong>Simon Frisk</strong>
+              <strong>{user}</strong>
               <Dot>&middot;</Dot>
-              <span>5 min ago</span>
+              <span>{dateCreated}</span>
             </CardHeader>
 
             <CardMain>
-              I don’t really understand why all the components need to be capitalised? Why is this?
+              {message}
             </CardMain>
 
             <CardFooter>

@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "message": "What is the difference between 'let', 'const', and 'var' in JavaScript, and when should each be used?",
+    "user": "Alice",
+    "dateCreated": "2025-06-17T10:15:00Z"
+  },
+  {
+    "id": 2,
+    "message": "How does JavaScript handle asynchronous operations, and what are the advantages of using promises over callbacks?",
+    "user": "Brian",
+    "dateCreated": "2025-06-17T10:16:00Z"
+  },
+  {
+    "id": 3,
+    "message": "Can you explain how closures work in JavaScript with a real-world example to demonstrate their usefulness?",
+    "user": "Carmen",
+    "dateCreated": "2025-06-17T10:17:00Z"
+  },
+  {
+    "id": 4,
+    "message": "Why is 'this' keyword context-dependent in JavaScript and how can arrow functions help avoid confusion with it?",
+    "user": "Daniel",
+    "dateCreated": "2025-06-17T10:18:00Z"
+  },
+  {
+    "id": 5,
+    "message": "What is event bubbling in JavaScript and how can you stop it from propagating to parent elements?",
+    "user": "Eva",
+    "dateCreated": "2025-06-17T10:19:00Z"
+  },
+  {
+    "id": 6,
+    "message": "How do JavaScript modules work and what is the difference between CommonJS and ES6 module syntax?",
+    "user": "Frank",
+    "dateCreated": "2025-06-17T10:20:00Z"
+  },
+  {
+    "id": 7,
+    "message": "What are JavaScript prototypes and how do they enable inheritance between objects in JavaScript?",
+    "user": "Grace",
+    "dateCreated": "2025-06-17T10:21:00Z"
+  },
+  {
+    "id": 8,
+    "message": "In JavaScript, how does the event loop handle asynchronous operations like setTimeout or API calls?",
+    "user": "Henry",
+    "dateCreated": "2025-06-17T10:22:00Z"
+  },
+  {
+    "id": 9,
+    "message": "What is the purpose of the 'use strict' directive in JavaScript and when should it be applied?",
+    "user": "Isla",
+    "dateCreated": "2025-06-17T10:23:00Z"
+  },
+  {
+    "id": 10,
+    "message": "How does JavaScript handle equality comparisons, and what is the difference between '==' and '===' operators?",
+    "user": "Jake",
+    "dateCreated": "2025-06-17T10:24:00Z"
+  }
+]
