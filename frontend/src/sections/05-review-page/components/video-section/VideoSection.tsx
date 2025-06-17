@@ -168,7 +168,7 @@ const StyledVideo = styled.video`
 
 const Controls = styled.div`
   position: absolute;
-  bottom: 40px;
+  bottom: 20px;
   left: 20px;
   right: 20px;
   display: flex;
