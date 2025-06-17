@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { PlayPauseButton } from './components/PlayPauseBtn';
 
 export const VideoSection = () => {
   // This lets us reference the actual <video> DOM element
@@ -98,7 +99,7 @@ export const VideoSection = () => {
 
   return (
     <Container>
-      <button onClick={handleVideoClick}>Comment</button>
+      <CommentBtn onClick={handleVideoClick}>Comment</CommentBtn>
       {/* The video player (click adds markers) */}
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         <source src="/video1.mp4" type="video/mp4" />
@@ -106,9 +107,7 @@ export const VideoSection = () => {
 
       {/* Custom controls: play, volume, time */}
       <Controls>
-        <PlayButton onClick={togglePlay}>
-          {isPlaying ? '⏸' : '▶️'}
-        </PlayButton>
+     <PlayPauseButton isPlaying={isPlaying} onClick={togglePlay} />
 
         <VolumeControl>
           <label>🔊</label>
@@ -157,7 +156,8 @@ const Container = styled.div`
   width: 100%;
   aspect-ratio: 16 / 9;
   position: relative;
-  background: black;
+  background: white;
+  overflow: hidden; /* clips overflowing content */
 `;
 
 const StyledVideo = styled.video`
@@ -175,6 +175,20 @@ const Controls = styled.div`
   align-items: center;
   gap: 16px;
   z-index: 1;
+`;
+
+
+const CommentBtn = styled.button`
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: ease .3s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
 `;
 
 const PlayButton = styled.button`
