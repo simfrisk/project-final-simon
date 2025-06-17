@@ -102,7 +102,7 @@ export const VideoSection = () => {
       <CommentBtn onClick={handleVideoClick}>Comment</CommentBtn>
       {/* The video player (click adds markers) */}
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
-        <source src="/video1.mp4" type="video/mp4" />
+        <source src="/video2.mp4" type="video/mp4" />
       </StyledVideo>
 
       {/* Custom controls: play, volume, time */}
