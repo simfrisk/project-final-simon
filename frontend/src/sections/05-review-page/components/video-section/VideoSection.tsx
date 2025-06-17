@@ -1,23 +1,19 @@
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
+import { useVideoStore } from '../../../../store/videoStore';
 
 export const VideoSection = () => {
-  // This lets us reference the actual <video> DOM element
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  // This lets us reference the timeline DOM element
   const timelineRef = useRef<HTMLDivElement | null>(null);
 
-  // Array of markers (timestamps where user clicked video)
   const [markers, setMarkers] = useState<number[]>([]);
-  // Progress in percent (for progress bar)
   const [progress, setProgress] = useState(0);
-  // Is the video currently playing?
   const [isPlaying, setIsPlaying] = useState(false);
-  // Volume level (0 to 1)
   const [volume, setVolume] = useState(1);
 
-  // When the video plays or updates time, update UI state
+  const markerTriggerCount = useVideoStore((state) => state.markerTriggerCount);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -31,7 +27,6 @@ export const VideoSection = () => {
       setIsPlaying(!video.paused);
     };
 
-    // Listen to events from the video element
     video.addEventListener('timeupdate', updateProgress);
     video.addEventListener('play', updatePlayState);
     video.addEventListener('pause', updatePlayState);
@@ -43,14 +38,12 @@ export const VideoSection = () => {
     };
   }, []);
 
-  // Play or pause the video when play button is clicked
   const togglePlay = () => {
     const video = videoRef.current;
     if (!video) return;
     video.paused ? video.play() : video.pause();
   };
 
-  // When volume slider changes
   const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const vol = parseFloat(e.target.value);
     setVolume(vol);
@@ -59,56 +52,56 @@ export const VideoSection = () => {
     }
   };
 
-  // When the user clicks the video area: add a time marker
   const handleVideoClick = () => {
     const video = videoRef.current;
     if (!video) return;
     setMarkers((prev) => [...prev, video.currentTime]);
   };
 
-  // Seek video when user clicks on the timeline bar
   const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
     const timeline = timelineRef.current;
     if (!video || !timeline) return;
 
-    const rect = timeline.getBoundingClientRect(); // timeline size and position
-    const clickX = e.clientX - rect.left; // distance from left
+    const rect = timeline.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
     const clickPercent = clickX / rect.width;
     video.currentTime = clickPercent * video.duration;
   };
 
-  // Jump video to a saved marker time
   const goToTime = (time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
-      videoRef.current.play(); // optional: auto play on jump
+      videoRef.current.play();
     }
   };
 
-  // Format seconds into mm:ss
   const formatTime = (time: number) => {
     const m = Math.floor(time / 60);
     const s = Math.floor(time % 60);
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Get current time and total duration
   const currentTime = formatTime(videoRef.current?.currentTime || 0);
   const duration = formatTime(videoRef.current?.duration || 0);
+
+  // 🔥 Detect trigger marker via counter change
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    setMarkers((prev) => [...prev, video.currentTime]);
+  }, [markerTriggerCount]);
 
   return (
     <Container>
       <CommentBtn onClick={handleVideoClick}>Comment</CommentBtn>
-      {/* The video player (click adds markers) */}
+
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         <source src="/video2.mp4" type="video/mp4" />
       </StyledVideo>
 
-      {/* Custom controls: play, volume, time */}
       <Controls>
-     <PlayPauseButton isPlaying={isPlaying} onClick={togglePlay} />
-
+        <PlayPauseButton isPlaying={isPlaying} onClick={togglePlay} />
         <VolumeControl>
           <label>🔊</label>
           <input
@@ -120,16 +113,13 @@ export const VideoSection = () => {
             onChange={changeVolume}
           />
         </VolumeControl>
-
-        <TimeDisplay>{currentTime} / {duration}</TimeDisplay>
+        <TimeDisplay>
+          {currentTime} / {duration}
+        </TimeDisplay>
       </Controls>
 
-      {/* Custom timeline bar with progress and markers */}
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
-        {/* Blue progress bar */}
         <Progress style={{ width: `${progress}%` }} />
-
-        {/* Red markers on the timeline */}
         {markers.map((time: number, i: number) => {
           const percent = videoRef.current?.duration
             ? (time / videoRef.current.duration) * 100
@@ -139,11 +129,11 @@ export const VideoSection = () => {
             <Marker
               key={i}
               style={{ left: `${percent}%` }}
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation(); // stop timeline click event
+              onClick={(e) => {
+                e.stopPropagation();
                 goToTime(time);
               }}
-              title={formatTime(time)} // tooltip
+              title={formatTime(time)}
             />
           );
         })}
@@ -157,7 +147,7 @@ const Container = styled.div`
   aspect-ratio: 16 / 9;
   position: relative;
   background: white;
-  overflow: hidden; /* clips overflowing content */
+  overflow: hidden;
 `;
 
 const StyledVideo = styled.video`
@@ -177,18 +167,17 @@ const Controls = styled.div`
   z-index: 1;
 `;
 
-
 const CommentBtn = styled.button`
   padding: 10px 15px;
   border: none;
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  transition: ease .3s;
+  transition: ease 0.3s;
 
-    &:hover {
-      transform: scale(1.05);
-    }
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const VolumeControl = styled.div`
@@ -196,7 +185,7 @@ const VolumeControl = styled.div`
   align-items: center;
   gap: 4px;
 
-  input[type="range"] {
+  input[type='range'] {
     width: 80px;
   }
 `;

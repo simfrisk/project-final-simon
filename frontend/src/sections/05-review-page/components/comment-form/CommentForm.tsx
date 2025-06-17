@@ -1,14 +1,15 @@
-import styled from "styled-components";
-import { useState } from "react";
-import { commentStore } from "../../../../store/commentStore";
+import styled from 'styled-components';
+import { useState } from 'react';
+import { commentStore } from '../../../../store/commentStore';
+import { useVideoStore } from '../../../../store/videoStore';
 
 export const CommentForm = () => {
-  const [text, setText] = useState("");
+  const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
+  const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!text.trim()) return;
 
     addMessage({
@@ -16,7 +17,8 @@ export const CommentForm = () => {
       createdAt: new Date(),
     });
 
-    setText("");
+    setText('');
+    incrementMarkerTrigger(); // 🔥 trigger the red dot
   };
 
   return (
