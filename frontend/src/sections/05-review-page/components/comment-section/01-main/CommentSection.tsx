@@ -29,10 +29,14 @@ export const CommentSection = () => {
             </CardFooter>
           </Content>
           <Edit>
+              <img src="/icons/edit.svg" alt="Delete Icon" />
+              <img src="/icons/delete.svg" alt="Delete Icon" />
+            <div>
              <CircleCheckboxLabel>
               <HiddenCheckbox />
               <StyledCircle />
             </CircleCheckboxLabel>
+            </div>
           </Edit>
         </Card>
       ))}
@@ -54,11 +58,11 @@ const CommentListContainer = styled.div`
 const Edit = styled.div`
   opacity: 0;
   visibility: hidden;
-  margin-left: auto;
   display: flex;
+  column-gap: 10px;
+  margin: 0 35px;
   align-items: center;
   justify-content: center;
-  height: 100%;
   width: 40px;
   cursor: pointer;
   transform: translatey(30%);
@@ -93,7 +97,7 @@ const Card = styled.div`
     transition: 
       opacity 1s ease,
       visibility 0s linear 0s,
-      transform 0.3s ease;
+      transform 0.4s ease;
    
   }
 `;
