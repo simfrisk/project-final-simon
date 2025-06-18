@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
 import { useVideoStore } from '../../../../store/videoStore';
+import { formatTime } from './utils/formatTime'
 
 export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -76,12 +77,6 @@ export const VideoSection = () => {
     }
   };
 
-  const formatTime = (time: number) => {
-    const m = Math.floor(time / 60);
-    const s = Math.floor(time % 60);
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
   const currentTime = formatTime(videoRef.current?.currentTime || 0);
   const duration = formatTime(videoRef.current?.duration || 0);
 
@@ -94,7 +89,6 @@ export const VideoSection = () => {
 
   return (
     <Container>
-      <CommentBtn onClick={handleVideoClick}>Comment</CommentBtn>
 
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         <source src="/video2.mp4" type="video/mp4" />
@@ -167,18 +161,6 @@ const Controls = styled.div`
   z-index: 1;
 `;
 
-const CommentBtn = styled.button`
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: ease 0.3s;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
 
 const VolumeControl = styled.div`
   display: flex;
