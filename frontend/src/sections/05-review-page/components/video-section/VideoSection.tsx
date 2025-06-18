@@ -1,3 +1,5 @@
+//#region ---- Imports -----
+
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
@@ -7,6 +9,10 @@ import { useTogglePlay } from './utils/togglePlay';
 import { useChangeVolume } from './utils/changeVolume'
 import {getHandleTimelineClick} from './utils/handleTimelineClick'
 import { useGoToTime } from './utils/goToTime'
+
+//#endregion
+
+//#region ---- Functions -----
 
 export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -58,6 +64,10 @@ export const VideoSection = () => {
     setMarkers((prev) => [...prev, video.currentTime]);
   }, [markerTriggerCount]);
 
+  //#endregion
+
+//#region ---- Return -----
+
   return (
     <Container>
 
@@ -106,6 +116,10 @@ export const VideoSection = () => {
     </Container>
   );
 };
+
+//#endregion
+
+//#region ---- Styling -----
 
 const Container = styled.div`
   width: 100%;
@@ -183,3 +197,5 @@ const Marker = styled.div`
     transform: translateX(-50%) scale(1.3);
   }
 `;
+
+//#endregion
