@@ -10,17 +10,25 @@ import { useChangeVolume } from './utils/changeVolume'
 import {getHandleTimelineClick} from './utils/handleTimelineClick'
 import { useGoToTime } from './utils/goToTime'
 import { useVideoProgress } from './utils/useVideoProgress';
+import { commentStore } from '../../../../store/commentStore';
 
 //#endregion
 
 //#region ---- Functions -----
 
 export const VideoSection = () => {
+
+  type Marker = {
+  time: number;
+  message: string;
+  };
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
-  const [markers, setMarkers] = useState<number[]>([]);
+  const [markers, setMarkers] = useState<Marker[]>([]);
   const [volume, setVolume] = useState(1);
-
+  
+  const messages: MessageType[] = commentStore((state) => state.messages);
   const markerTriggerCount = useVideoStore((state) => state.markerTriggerCount);
 
   //Controls the playback
@@ -36,11 +44,21 @@ export const VideoSection = () => {
   const duration = formatTime(videoRef.current?.duration || 0);
 
   // 🔥 Detect trigger marker via counter change
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    setMarkers((prev) => [...prev, video.currentTime]);
-  }, [markerTriggerCount]);
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  const latestMessage = messages[messages.length - 1]; // Get the most recent message
+  const messageText = latestMessage ? latestMessage.message : 'No message';
+
+  setMarkers((prev) => [
+    ...prev,
+    {
+      time: video.currentTime,
+      message: messageText,
+    },
+  ]);
+}, [markerTriggerCount]);
 
   //#endregion
 
@@ -73,7 +91,7 @@ export const VideoSection = () => {
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
-        {markers.map((time: number, i: number) => {
+        {markers.map(({ time, message }, i) => {
           const percent = videoRef.current?.duration
             ? (time / videoRef.current.duration) * 100
             : 0;
@@ -88,7 +106,7 @@ export const VideoSection = () => {
               }}
             >
               <Marker />
-              <MarkerMessage>This is a placerholder text for a comment.</MarkerMessage>
+              <MarkerMessage>{message}</MarkerMessage>
             </MarkerWrapper>
           );
         })}
