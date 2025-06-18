@@ -9,6 +9,7 @@ interface MessageStore {
   messages: MessageType[];
   addMessage: (msg: MessageType) => void;
   clearMessages: () => void;
+  deleteMessage: (createdAt: Date) => void;  // Add deleteMessage here, using createdAt as identifier
 }
 
 const STORAGE_KEY = 'commentStoreMessages';
@@ -44,5 +45,16 @@ export const commentStore = create<MessageStore>((set) => ({
       localStorage.removeItem(STORAGE_KEY);
     }
     set({ messages: [] });
+  },
+  deleteMessage: (createdAt) => {
+    set((state) => {
+      const newMessages = state.messages.filter(
+        (msg) => msg.createdAt.getTime() !== createdAt.getTime()
+      );
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newMessages));
+      }
+      return { messages: newMessages };
+    });
   },
 }));

@@ -6,6 +6,7 @@ import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../.
 
 export const CommentSection = () => {
   const messages: MessageType[] = commentStore((state) => state.messages);
+  const deleteMessage = commentStore((state) => state.deleteMessage);
 
   return (
     <CommentListContainer>
@@ -29,8 +30,8 @@ export const CommentSection = () => {
             </CardFooter>
           </Content>
           <Edit>
-              <img src="/icons/edit.svg" alt="Delete Icon" />
-              <img src="/icons/delete.svg" alt="Delete Icon" />
+              <img src="/icons/edit.svg" alt="Edit Icon" />
+              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
             <div>
              <CircleCheckboxLabel>
               <HiddenCheckbox />
