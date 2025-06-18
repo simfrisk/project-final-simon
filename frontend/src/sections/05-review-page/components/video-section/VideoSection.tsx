@@ -9,6 +9,7 @@ import { useTogglePlay } from './utils/togglePlay';
 import { useChangeVolume } from './utils/changeVolume'
 import {getHandleTimelineClick} from './utils/handleTimelineClick'
 import { useGoToTime } from './utils/goToTime'
+import { useVideoProgress } from './utils/useVideoProgress';
 
 //#endregion
 
@@ -18,35 +19,12 @@ export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [markers, setMarkers] = useState<number[]>([]);
-  const [progress, setProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
 
   const markerTriggerCount = useVideoStore((state) => state.markerTriggerCount);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const updateProgress = () => {
-      const percent = (video.currentTime / video.duration) * 100;
-      setProgress(percent);
-    };
-
-    const updatePlayState = () => {
-      setIsPlaying(!video.paused);
-    };
-
-    video.addEventListener('timeupdate', updateProgress);
-    video.addEventListener('play', updatePlayState);
-    video.addEventListener('pause', updatePlayState);
-
-    return () => {
-      video.removeEventListener('timeupdate', updateProgress);
-      video.removeEventListener('play', updatePlayState);
-      video.removeEventListener('pause', updatePlayState);
-    };
-  }, []);
+  //Controls the playback
+  const { progress, isPlaying } = useVideoProgress(videoRef);
 
   //Controls
   const togglePlay = useTogglePlay(videoRef);
