@@ -79,15 +79,17 @@ export const VideoSection = () => {
             : 0;
 
           return (
-            <Marker
+            <MarkerWrapper
               key={i}
               style={{ left: `${percent}%` }}
               onClick={(e) => {
                 e.stopPropagation();
                 goToTime(time);
               }}
-              title={formatTime(time)}
-            />
+            >
+              <Marker />
+              <MarkerMessage>This is a placerholder text for a comment.</MarkerMessage>
+            </MarkerWrapper>
           );
         })}
       </PlayBar>
@@ -160,19 +162,50 @@ const Progress = styled.div`
   pointer-events: none;
 `;
 
-const Marker = styled.div`
+const MarkerWrapper = styled.div`
   position: absolute;
-  top: -4px;
+  top: -2px;
+  transform: translateX(-50%);
+  z-index: 2;
+  overflow: visible;
+
+  &:hover p {
+    display: block;
+  }
+`;
+
+const Marker = styled.div`
   width: 10px;
   height: 10px;
-  background: red;
+  background: #e3e3e3;
   border-radius: 50%;
-  transform: translateX(-50%);
   cursor: pointer;
   transition: transform 0.2s;
 
-  &:hover {
-    transform: translateX(-50%) scale(1.3);
+`;
+
+const MarkerMessage = styled.p`
+  display: none;
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: solid black 1px;
+  color: #000000;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 3;
+  max-width: 300px; 
+  min-width: 100px; 
+  width: max-content; 
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
+
+  ${MarkerWrapper}:hover & {
+    display: block;
   }
 `;
 
