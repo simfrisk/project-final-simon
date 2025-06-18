@@ -11,6 +11,7 @@ import {getHandleTimelineClick} from './utils/handleTimelineClick'
 import { useGoToTime } from './utils/goToTime'
 import { useVideoProgress } from './utils/useVideoProgress';
 import { commentStore } from '../../../../store/commentStore';
+import type { MessageType } from '../../../../store/commentStore';
 
 //#endregion
 
@@ -43,7 +44,7 @@ export const VideoSection = () => {
   const currentTime = formatTime(videoRef.current?.currentTime || 0);
   const duration = formatTime(videoRef.current?.duration || 0);
 
-  // 🔥 Detect trigger marker via counter change
+  //  Detect trigger marker via counter change
 useEffect(() => {
   const video = videoRef.current;
   if (!video) return;
@@ -103,8 +104,7 @@ useEffect(() => {
               onClick={(e) => {
                 e.stopPropagation();
                 goToTime(time);
-              }}
-            >
+              }}>
               <Marker />
               <MarkerMessage>{message}</MarkerMessage>
             </MarkerWrapper>

@@ -2,6 +2,7 @@ import type { MessageType } from '../../../../../store/commentStore';
 import styled from 'styled-components';
 import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
+import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 
 export const CommentSection = () => {
   const messages: MessageType[] = commentStore((state) => state.messages);
@@ -27,6 +28,12 @@ export const CommentSection = () => {
               <ActionButton>Like</ActionButton>
             </CardFooter>
           </Content>
+          <Edit>
+             <CircleCheckboxLabel>
+              <HiddenCheckbox />
+              <StyledCircle />
+            </CircleCheckboxLabel>
+          </Edit>
         </Card>
       ))}
     </CommentListContainer>
@@ -44,13 +51,51 @@ const CommentListContainer = styled.div`
   background-color: #f5f5f5;
 `;
 
+const Edit = styled.div`
+  opacity: 0;
+  visibility: hidden;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 40px;
+  cursor: pointer;
+  transform: translatey(30%);
+  transition: 
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s,
+    transform 0.3s ease;
+
+
+`;
+
 const Card = styled.div`
   display: flex;
   background-color: #ffffff;
   border-radius: 12px;
-  padding: 12px;
+  padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
   gap: 12px;
+  transition: 0.3s ease;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(0.98);
+       background-color: #fafafa;
+  }
+
+  &:hover ${Edit} {
+    opacity: 1;
+    visibility: visible;
+    transform: translatey(0%);
+    transition: 
+      opacity 1s ease,
+      visibility 0s linear 0s,
+      transform 0.3s ease;
+   
+  }
 `;
 
 const ImageContainer = styled.div`
