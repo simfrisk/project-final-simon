@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
 import { useVideoStore } from '../../../../store/videoStore';
 import { formatTime } from './utils/formatTime'
+import { useTogglePlay } from './utils/togglePlay';
+import { useChangeVolume } from './utils/changeVolume'
+import {getHandleTimelineClick} from './utils/handleTimelineClick'
 
 export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -39,36 +42,10 @@ export const VideoSection = () => {
     };
   }, []);
 
-  const togglePlay = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.paused ? video.play() : video.pause();
-  };
+  const togglePlay = useTogglePlay(videoRef);
+  const changeVolume = useChangeVolume(videoRef, setVolume);
+  const handleTimelineClick = getHandleTimelineClick(videoRef, timelineRef);
 
-  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const vol = parseFloat(e.target.value);
-    setVolume(vol);
-    if (videoRef.current) {
-      videoRef.current.volume = vol;
-    }
-  };
-
-  const handleVideoClick = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    setMarkers((prev) => [...prev, video.currentTime]);
-  };
-
-  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const video = videoRef.current;
-    const timeline = timelineRef.current;
-    if (!video || !timeline) return;
-
-    const rect = timeline.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickPercent = clickX / rect.width;
-    video.currentTime = clickPercent * video.duration;
-  };
 
   const goToTime = (time: number) => {
     if (videoRef.current) {
