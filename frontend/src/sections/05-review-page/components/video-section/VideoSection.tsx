@@ -6,11 +6,11 @@ import { formatTime } from './utils/formatTime'
 import { useTogglePlay } from './utils/togglePlay';
 import { useChangeVolume } from './utils/changeVolume'
 import {getHandleTimelineClick} from './utils/handleTimelineClick'
+import { useGoToTime } from './utils/goToTime'
 
 export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
-
   const [markers, setMarkers] = useState<number[]>([]);
   const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -42,17 +42,11 @@ export const VideoSection = () => {
     };
   }, []);
 
+  //Controls
   const togglePlay = useTogglePlay(videoRef);
   const changeVolume = useChangeVolume(videoRef, setVolume);
   const handleTimelineClick = getHandleTimelineClick(videoRef, timelineRef);
-
-
-  const goToTime = (time: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      videoRef.current.play();
-    }
-  };
+  const goToTime = useGoToTime(videoRef);
 
   const currentTime = formatTime(videoRef.current?.currentTime || 0);
   const duration = formatTime(videoRef.current?.duration || 0);
