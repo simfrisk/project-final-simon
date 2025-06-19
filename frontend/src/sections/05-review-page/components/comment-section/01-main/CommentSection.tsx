@@ -10,7 +10,7 @@ export const CommentSection = () => {
 
   return (
     <CommentListContainer>
-      {messages.map(({ message, createdAt }, index) => (
+      {messages.map(({ message, createdAt, timeStamp }, index) => (
         <Card key={index}>
           <ImageContainer>
             <img src="/SImon1.jpg" alt="Profile img" />
@@ -20,6 +20,7 @@ export const CommentSection = () => {
               <strong>Anonymous</strong>
               <Dot>&middot;</Dot>
              <span>{moment(createdAt).fromNow()}</span>
+             <span>{timeStamp}</span>
             </CardHeader>
 
             <CardMain>{message}</CardMain>

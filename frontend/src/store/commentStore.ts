@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export interface MessageType {
   message: string;
   createdAt: Date;
+  timeStamp: String
 }
 
 interface MessageStore {
@@ -19,10 +20,11 @@ const loadMessagesFromStorage = (): MessageType[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return [];
   try {
-    const parsed = JSON.parse(stored) as { message: string; createdAt: string }[];
+    const parsed = JSON.parse(stored) as { message: string; createdAt: string, timeStamp?: string }[];
     return parsed.map((item) => ({
       message: item.message,
       createdAt: new Date(item.createdAt),
+      timeStamp: item.timeStamp || ''
     }));
   } catch {
     return [];

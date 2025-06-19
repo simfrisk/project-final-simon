@@ -17,6 +17,7 @@ export const CommentForm = () => {
     addMessage({
       message: text,
       createdAt: new Date(),
+      timeStamp: timecode
     });
 
     setText('');
