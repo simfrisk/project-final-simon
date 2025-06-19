@@ -2,11 +2,13 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { commentStore } from '../../../../store/commentStore';
 import { useVideoStore } from '../../../../store/videoStore';
+import { useTimecode } from '../../../../store/timeCodeStore';
 
 export const CommentForm = () => {
   const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
   const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
+  const timecode = useTimecode((state) => state.timecode);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +34,7 @@ export const CommentForm = () => {
 
       <Footer>
         <TimeTag>
-          <p>01:12:24</p>
+          <p>{timecode}</p>
           <input type="checkbox" />
         </TimeTag>
 
