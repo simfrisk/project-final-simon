@@ -12,6 +12,7 @@ import { useGoToTime } from './utils/goToTime'
 import { useVideoProgress } from './utils/useVideoProgress';
 import { commentStore } from '../../../../store/commentStore';
 import type { MessageType } from '../../../../store/commentStore';
+import { useTimecode } from '../../../../store/timeCodeStore';
 
 //#endregion
 
@@ -41,7 +42,8 @@ export const VideoSection = () => {
   const handleTimelineClick = getHandleTimelineClick(videoRef, timelineRef);
   const goToTime = useGoToTime(videoRef);
 
-  const currentTime = formatTime(videoRef.current?.currentTime || 0);
+  const currentTime = useTimecode((state) => state.timecode);
+  const setTimecode = useTimecode((state) => state.setTimecode);
   const duration = formatTime(videoRef.current?.duration || 0);
 
   //  Detect trigger marker via counter change
@@ -60,6 +62,22 @@ useEffect(() => {
     },
   ]);
 }, [markerTriggerCount]);
+
+//This adds the timecode to zustand TimeCodeStore
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  const handleTimeUpdate = () => {
+    setTimecode(formatTime(video.currentTime));
+  };
+
+  video.addEventListener('timeupdate', handleTimeUpdate);
+
+  return () => {
+    video.removeEventListener('timeupdate', handleTimeUpdate);
+  };
+}, [setTimecode]);
 
   //#endregion
 
