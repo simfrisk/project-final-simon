@@ -3,7 +3,7 @@ import { create } from 'zustand';
 export interface MessageType {
   message: string;
   createdAt: Date;
-  timeStamp: String
+  timeStamp: string
 }
 
 interface MessageStore {
