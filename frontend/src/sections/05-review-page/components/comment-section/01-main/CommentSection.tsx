@@ -12,6 +12,8 @@ export const CommentSection = () => {
     <CommentListContainer>
       {messages.map(({ message, createdAt, timeStamp }, index) => (
         <Card key={index}>
+
+          <TopSection>
           <ImageContainer>
             <img src="/SImon1.jpg" alt="Profile img" />
           </ImageContainer>
@@ -25,6 +27,18 @@ export const CommentSection = () => {
 
             <CardMain>{message}</CardMain>
 
+          
+          </Content>
+          <Edit>
+            <div>
+             <CircleCheckboxLabel>
+              <HiddenCheckbox />
+              <StyledCircle />
+            </CircleCheckboxLabel>
+            </div>
+          </Edit>
+          </TopSection>
+
             <CardFooter>
               <React>
               <ActionButton>Reply</ActionButton>
@@ -35,15 +49,6 @@ export const CommentSection = () => {
                 <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
               </Edit>
             </CardFooter>
-          </Content>
-          <Edit>
-            <div>
-             <CircleCheckboxLabel>
-              <HiddenCheckbox />
-              <StyledCircle />
-            </CircleCheckboxLabel>
-            </div>
-          </Edit>
         </Card>
       ))}
     </CommentListContainer>
@@ -60,6 +65,14 @@ const CommentListContainer = styled.div`
   width: 100%;
   background-color: #f5f5f5;
 `;
+
+const TopSection = styled.div `
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+  align-items: center;
+`
 
 const Edit = styled.div`
   opacity: 0;
@@ -87,11 +100,11 @@ column-gap: 10px;
 
 const Card = styled.div`
   display: flex;
+  flex-direction: column;
   background-color: #ffffff;
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
-  gap: 12px;
   transition: 0.3s ease;
   align-items: center;
   cursor: pointer;
@@ -151,6 +164,7 @@ const CardMain = styled.p`
 const CardFooter = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
 `;
 
 const ActionButton = styled.button`
