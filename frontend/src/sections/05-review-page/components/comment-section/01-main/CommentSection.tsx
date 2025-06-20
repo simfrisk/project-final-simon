@@ -26,13 +26,17 @@ export const CommentSection = () => {
             <CardMain>{message}</CardMain>
 
             <CardFooter>
+              <React>
               <ActionButton>Reply</ActionButton>
               <ActionButton>Like</ActionButton>
+              </React>
+              <Edit>
+                <img src="/icons/edit.svg" alt="Edit Icon" />
+                <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
+              </Edit>
             </CardFooter>
           </Content>
           <Edit>
-              <img src="/icons/edit.svg" alt="Edit Icon" />
-              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
             <div>
              <CircleCheckboxLabel>
               <HiddenCheckbox />
@@ -62,7 +66,7 @@ const Edit = styled.div`
   visibility: hidden;
   display: flex;
   column-gap: 10px;
-  margin: 0 35px;
+  margin: 0 15px;
   align-items: center;
   justify-content: center;
   width: 40px;
@@ -75,6 +79,11 @@ const Edit = styled.div`
 
 
 `;
+
+const React = styled.div `
+display: flex;
+column-gap: 10px;
+`
 
 const Card = styled.div`
   display: flex;
@@ -141,7 +150,7 @@ const CardMain = styled.p`
 
 const CardFooter = styled.div`
   display: flex;
-  gap: 16px;
+  justify-content: space-between;
 `;
 
 const ActionButton = styled.button`
