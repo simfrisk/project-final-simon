@@ -19,7 +19,7 @@ export const ReviewPage = () => {
       {description && <StyledCommentSection />}
       {!description && <StyledDescriptionSection />}
       </RightColumn>
-      <StyledCommentForm />
+      {description && <StyledCommentForm />}
     </Container>
   );
 };
