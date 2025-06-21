@@ -3,11 +3,13 @@ import { create } from 'zustand';
 export interface MessageType {
   message: string;
   createdAt: Date;
-  timeStamp: string
+  timeStamp: string;
 }
 
 interface MessageStore {
   messages: MessageType[];
+  selectedTimeStamp: string | null;
+  setSelectedTimeStamp: (stamp: string) => void;
   addMessage: (msg: MessageType) => void;
   clearMessages: () => void;
   deleteMessage: (createdAt: Date) => void;  // Add deleteMessage here, using createdAt as identifier
@@ -33,6 +35,9 @@ const loadMessagesFromStorage = (): MessageType[] => {
 
 export const commentStore = create<MessageStore>((set) => ({
   messages: loadMessagesFromStorage(),
+  selectedTimeStamp: null,
+  setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
+
   addMessage: (msg) => {
     set((state) => {
       const newMessages = [...state.messages, msg];

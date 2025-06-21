@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
 import { useVideoStore } from '../../../../store/videoStore';
 import { formatTime } from './utils/formatTime'
+import { unFormatTime } from './utils/unFormatTime';
 import { useTogglePlay } from './utils/togglePlay';
 import { useChangeVolume } from './utils/changeVolume'
 import {getHandleTimelineClick} from './utils/handleTimelineClick'
@@ -29,6 +30,12 @@ export const VideoSection = () => {
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [volume, setVolume] = useState(1);
+
+  //This is for when clicking on comments to get the time here
+  const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
+  const selectedTimecode = unFormatTime(selectedTimeStamp ?? "00:00");
+
+  // console.log(videoRef.current)
   
   const messages: MessageType[] = commentStore((state) => state.messages);
   const markerTriggerCount = useVideoStore((state) => state.markerTriggerCount);
@@ -46,11 +53,12 @@ export const VideoSection = () => {
   const setTimecode = useTimecode((state) => state.setTimecode);
   const duration = formatTime(videoRef.current?.duration || 0);
 
+
   //  Detect trigger marker via counter change
 useEffect(() => {
   const video = videoRef.current;
   if (!video) return;
-
+  
   const latestMessage = messages[messages.length - 1]; // Get the most recent message
   const messageText = latestMessage ? latestMessage.message : 'No message';
 
@@ -69,6 +77,9 @@ useEffect(() => {
   if (!video) return;
 
   const handleTimeUpdate = () => {
+    //Here is the log for the actual time
+    console.log(video.currentTime)
+    //Here I set the timeCode to a sting as Minutes and Seconds
     setTimecode(formatTime(video.currentTime));
   };
 
@@ -79,13 +90,31 @@ useEffect(() => {
   };
 }, [setTimecode]);
 
+//This goes to the time when click on the comment
+const lastSeekedTime = useRef<number | null>(null);
+//This to
+useEffect(() => {
+  if (
+    selectedTimecode !== null &&
+    selectedTimecode !== lastSeekedTime.current
+  ) {
+    goToTime(selectedTimecode);
+
+    if (videoRef.current) {
+      videoRef.current.pause()
+    }
+
+    lastSeekedTime.current = selectedTimecode; 
+  }
+}, [selectedTimecode, goToTime]);
+
+
   //#endregion
 
 //#region ---- Return -----
 
   return (
     <Container>
-
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         <source src="/video2.mp4" type="video/mp4" />
       </StyledVideo>

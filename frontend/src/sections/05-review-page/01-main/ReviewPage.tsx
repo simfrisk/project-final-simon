@@ -17,6 +17,7 @@ export const ReviewPage = () => {
     </Container>
   );
 };
+
 const Container = styled.div`
   display: grid;
   width: 100%;
@@ -27,11 +28,9 @@ const Container = styled.div`
     grid-template-areas:
       "video right"
       "form right";
-    gap: 8px;
     align-items: start;
   }
 `;
-
 
 const StyledVideoSection = styled(VideoSection)`
   grid-area: video;
@@ -47,7 +46,6 @@ const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
-  gap: 6px;
   height: 100vh;
 }
 `;

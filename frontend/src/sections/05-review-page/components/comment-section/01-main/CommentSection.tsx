@@ -7,11 +7,13 @@ import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../.
 export const CommentSection = () => {
   const messages: MessageType[] = commentStore((state) => state.messages);
   const deleteMessage = commentStore((state) => state.deleteMessage);
+  const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
   return (
     <CommentListContainer>
-      {messages.map(({ message, createdAt }, index) => (
-        <Card key={index}>
+      {messages.map(({ message, createdAt, timeStamp }, index) => (
+       <Card key={index} onClick={() => setSelectedTimeStamp(timeStamp)}>
+        
 
           <TopSection>
             <ImageContainer>
@@ -47,6 +49,7 @@ export const CommentSection = () => {
         </Card>
       ))}
     </CommentListContainer>
+    
   );
 };
 
