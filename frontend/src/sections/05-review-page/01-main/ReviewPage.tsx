@@ -1,17 +1,23 @@
 import styled from "styled-components";
+import { useState } from "react";
 import { CommentForm } from "../components/comment-form/CommentForm";
 import { CommentSection } from "../components/comment-section/01-main/CommentSection";
 import { VideoSection } from "../components/video-section/VideoSection";
 import { CommentHeader } from "../components/comment-header/CommentHeader";
 import { MediaQueries } from "../../../themes/mediaQueries";
+import { DescriptionSection } from "../components/description/DescriptionSection"
 
 export const ReviewPage = () => {
+
+  const [description, setDescription] = useState(true)
+
   return (
     <Container>
       <StyledVideoSection />
       <RightColumn>
-        <StyledCommentHeader />
-        <StyledCommentSection />
+        <StyledCommentHeader setDescription={setDescription} description={description}/>
+      {description && <StyledCommentSection />}
+      {!description && <StyledDescriptionSection />}
       </RightColumn>
       <StyledCommentForm />
     </Container>
@@ -50,10 +56,16 @@ const RightColumn = styled.div`
 }
 `;
 
-const StyledCommentHeader = styled(CommentHeader)`
-  /* No grid-area needed now, it's inside RightColumn */
+const StyledCommentHeader = styled(({ setDescription, ...props }) => (
+  <CommentHeader {...props} setDescription={setDescription} />
+))`
+  /* styles */
 `;
 
 const StyledCommentSection = styled(CommentSection)`
+  /* Same here */
+`;
+
+const StyledDescriptionSection = styled(DescriptionSection)`
   /* Same here */
 `;

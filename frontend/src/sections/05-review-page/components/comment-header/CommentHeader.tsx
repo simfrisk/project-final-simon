@@ -1,12 +1,21 @@
 import styled from "styled-components";
 
-export const CommentHeader = () => {
+interface CommentHeaderProps {
+  setDescription: (value: boolean) => void;
+  description: boolean;
+}
+
+export const CommentHeader = ({ setDescription, description }: CommentHeaderProps) => {
   return (
     <Container>
       <Title>Video Title</Title>
       <ButtonGroup>
-        <TabButton> Description </TabButton>
-        <TabButton active> Comments </TabButton>
+        <TabButton active={!description} onClick={() => setDescription(false)}>
+          Description
+        </TabButton>
+        <TabButton active={description} onClick={() => setDescription(true)}>
+          Comments
+        </TabButton>
       </ButtonGroup>
     </Container>
   );
@@ -34,7 +43,7 @@ const ButtonGroup = styled.div`
   gap: 16px;
 `;
 
-const TabButton = styled.button<{ active?: boolean }>`
+const TabButton = styled.button<{ active? : boolean}>`
   background-color: ${({ active }) => (active ? "#007bff" : "transparent")};
   color: ${({ active }) => (active ? "white" : "#007bff")};
   border: 2px solid #007bff;
