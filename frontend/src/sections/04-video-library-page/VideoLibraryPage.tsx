@@ -9,9 +9,14 @@ export const VideoLibraryPage = () => {
 
   return (
     <Container>
-        {projects.map(({ projectId, projectName, projectDescription}) => (
-          <Project key={projectId} projectName={projectName } projectDescription={projectDescription}/>
-        ))}
+      {projects.map(({ projectId, projectName, projectDescription }) => (
+        <Project 
+          key={projectId} 
+          projectId={projectId}
+          projectName={projectName} 
+          projectDescription={projectDescription} 
+        />
+      ))}
 
     <CreateProject />
     </Container>

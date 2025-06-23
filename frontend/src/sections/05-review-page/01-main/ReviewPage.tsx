@@ -6,8 +6,12 @@ import { VideoSection } from "../components/video-section/VideoSection";
 import { CommentHeader } from "../components/comment-header/CommentHeader";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { DescriptionSection } from "../components/description/DescriptionSection"
+import { useParams } from "react-router-dom";
+import { useProjectStore } from "../../../store/projectStore";
 
 export const ReviewPage = () => {
+
+  const { projectId } = useParams<{ projectId: string }>();
 
   const [description, setDescription] = useState(true)
 

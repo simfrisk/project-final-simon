@@ -2,24 +2,23 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 interface ProjectProps {
+  projectId: number;
   projectName: string;
   projectDescription: string;
 }
 
-export const Project = ({ projectName, projectDescription }: ProjectProps) => {
-
+export const Project = ({ projectId, projectName, projectDescription }: ProjectProps) => {
   return (
-
-    <StyledLink to="/review">
+    <StyledLink to={`/review/${projectId}`}>
       <Card>
         <Thumbnail src="/thumbnail.png" alt="Thumbnail" />
         <TextContainer>
-        <h3>{projectName}</h3>
-        <p>{projectDescription}</p>
+          <h3>{projectName}</h3>
+          <p>{projectDescription}</p>
         </TextContainer>
       </Card>
     </StyledLink>
-  )
+  );
 };
 
 const Card = styled.div `
