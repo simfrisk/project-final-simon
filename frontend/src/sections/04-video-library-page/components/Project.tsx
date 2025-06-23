@@ -1,8 +1,10 @@
+import { Link } from "react-router";
 import styled from "styled-components";
 
 export const Project = () => {
   return (
 
+    <StyledLink to="/review">
       <Card>
         <Thumbnail src="/thumbnail.png" alt="Thumbnail" />
         <TextContainer>
@@ -10,6 +12,7 @@ export const Project = () => {
         <p>Description Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio vel fugit laboriosam unde soluta itaque odio distinctio dignissimos officiis impedit?</p>
         </TextContainer>
       </Card>
+    </StyledLink>
   )
 };
 
@@ -26,6 +29,11 @@ transition: ease .3s;
 &:hover {
   transform: scale(.98);
 }
+`
+
+const StyledLink = styled(Link) `
+text-decoration: none;
+color: black;
 `
 
 const Thumbnail = styled.img `

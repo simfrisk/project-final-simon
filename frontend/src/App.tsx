@@ -7,8 +7,8 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ReviewPage />}/>
-        <Route path="/lib" element={<VideoLibraryPage />}/>
+        <Route path="/" element={<VideoLibraryPage />}/>
+        <Route path="/review" element={<ReviewPage />}/>
       </Routes>
     </BrowserRouter>
   );
