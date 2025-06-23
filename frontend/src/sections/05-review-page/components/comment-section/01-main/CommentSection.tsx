@@ -3,18 +3,20 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
+import { ReplyCard } from '../components/ReplyCard';
 
-// import { replyStore } from '../../../../../store/replyStore';
+import { useReplyStore } from '../../../../../store/replyStore';
 // import { ReplyCard } from '../components/ReplyCard';
 
 export const CommentSection = () => {
 
   const messages: MessageType[] = commentStore((state) => state.messages);
-
-  // const repy: ReplyType[] = replyStore((state) => state.reply)
+  const replies = useReplyStore((state) => state.replies);
 
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
+
+  
 
   // const handleReply = () => {
     
@@ -58,9 +60,11 @@ export const CommentSection = () => {
               </Edit>
             </CardFooter>
             <ReplyCardContainer>
-               {/* {reply.map(({ message, createdAt, id }, index) => (
-              <ReplyCard key={index} onClick={() => setSelectedTimeStamp(timeStamp)}></ReplyCard>
-              ))} */}
+               {replies
+                .filter(reply => reply.commentId === id)
+                .map(reply => (
+                  <ReplyCard key={reply.replyId} reply={reply} />
+                ))}
             </ReplyCardContainer>
         </Card>
 

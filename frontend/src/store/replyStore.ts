@@ -4,7 +4,7 @@ export interface ReplyType {
   replyId: number;
   reply: string;
   createdAt: Date;
-  messageTimeStamp: number;
+  commentId: number;
 }
 
 interface ReplyStore {
