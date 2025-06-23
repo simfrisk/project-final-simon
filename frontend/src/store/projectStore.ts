@@ -1,22 +1,24 @@
-import { create } from "zustand"
+import { create } from "zustand";
 
-interface ProjectType {
-  projectID: number,
-  projectName: string
-  video: string,
+// Your Project type
+export interface ProjectType {
+  projectID: number;
+  projectName: string;
+  video: string;
 }
 
+// Store interface
 interface ProjectsStore {
-  projects: ProjectType[]
+  projects: ProjectType[];
+  addProject: (newProject: ProjectType) => void;
 }
 
+// Zustand store
 export const useProjectStore = create<ProjectsStore>((set) => ({
-  projects: [], // initial state
+  projects: [],
 
-  addProject: (p: ProjectType) => {
-    set((state) => {
-      const newProjects = [...state.projects, p];
-      return { projects: newProjects };
-    });
-  },
+  addProject: (newProject: ProjectType) =>
+    set((state) => ({
+      projects: [...state.projects, newProject],
+    })),
 }));

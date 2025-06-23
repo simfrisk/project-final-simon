@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 export interface MessageType {
   id: number;
+  projectID: number
   message: string;
   createdAt: Date;
   timeStamp: string;
@@ -23,9 +24,16 @@ const loadMessagesFromStorage = (): MessageType[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return [];
   try {
-    const parsed = JSON.parse(stored) as { id: number, message: string; createdAt: string, timeStamp?: string }[];
+    const parsed = JSON.parse(stored) as {
+      id: number;
+      projectID: number;
+      message: string;
+      createdAt: string;
+      timeStamp?: string;
+    }[];
     return parsed.map((item) => ({
       id: item.id,
+      projectID: item.projectID,
       message: item.message,
       createdAt: new Date(item.createdAt),
       timeStamp: item.timeStamp || ''
