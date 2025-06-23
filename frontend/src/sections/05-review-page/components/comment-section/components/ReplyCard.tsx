@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import type { ReplyType } from '../../../../../store/replyStore';
+import moment from 'moment';
 
 type ReplyCardProps = {
   reply: ReplyType;
@@ -17,7 +18,7 @@ export const ReplyCard = ({ reply }: ReplyCardProps) => {
             <CardHeader>
               <strong>Teacher</strong>
               <Dot>&middot;</Dot>
-              <span>{reply.createdAt.toLocaleString()}</span> {/* format date nicely */}
+              <span>{moment(reply.createdAt).fromNow()}</span> {/* format date nicely */}
             </CardHeader>          
           </Content>
           <CheckBtn>
