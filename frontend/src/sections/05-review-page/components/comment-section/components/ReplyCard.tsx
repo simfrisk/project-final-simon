@@ -1,7 +1,12 @@
 import styled from 'styled-components'
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
+import type { ReplyType } from '../../../../../store/replyStore';
 
-export const ReplyCard = () => {
+type ReplyCardProps = {
+  reply: ReplyType;
+};
+
+export const ReplyCard = ({ reply }: ReplyCardProps) => {
   return (
     <Card>
           <TopSection>
@@ -12,7 +17,7 @@ export const ReplyCard = () => {
             <CardHeader>
               <strong>Teacher</strong>
               <Dot>&middot;</Dot>
-             <span>time</span>
+              <span>{reply.createdAt.toLocaleString()}</span> {/* format date nicely */}
             </CardHeader>          
           </Content>
           <CheckBtn>
@@ -23,7 +28,7 @@ export const ReplyCard = () => {
           </CheckBtn>
           </TopSection>
 
-               <CardMain>Here is a teacher replay! Some more text is added here.
+               <CardMain>{reply.reply}
                </CardMain>
 
             <CardFooter>

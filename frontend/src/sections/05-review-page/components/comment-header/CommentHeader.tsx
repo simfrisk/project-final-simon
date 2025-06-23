@@ -10,12 +10,12 @@ export const CommentHeader = ({ setDescription, description }: CommentHeaderProp
     <Container>
       <Title>Video Title</Title>
       <ButtonGroup>
-        <TabButton active={!description} onClick={() => setDescription(false)}>
-          Description
-        </TabButton>
-        <TabButton active={description} onClick={() => setDescription(true)}>
-          Comments
-        </TabButton>
+        <TabButton $active={!description} onClick={() => setDescription(false)}>
+        Description
+      </TabButton>
+      <TabButton $active={description} onClick={() => setDescription(true)}>
+        Comments
+      </TabButton>
       </ButtonGroup>
     </Container>
   );
@@ -43,9 +43,9 @@ const ButtonGroup = styled.div`
   gap: 16px;
 `;
 
-const TabButton = styled.button<{ active? : boolean}>`
-  background-color: ${({ active }) => (active ? "#007bff" : "transparent")};
-  color: ${({ active }) => (active ? "white" : "#007bff")};
+const TabButton = styled.button<{ $active?: boolean }>`
+  background-color: ${({ $active }) => ($active ? "#007bff" : "transparent")};
+  color: ${({ $active }) => ($active ? "white" : "#007bff")};
   border: 2px solid #007bff;
   padding: 8px 20px;
   border-radius: 24px;
@@ -54,7 +54,7 @@ const TabButton = styled.button<{ active? : boolean}>`
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${({ active }) => (active ? "#0056b3" : "#e6f0ff")};
+    background-color: ${({ $active }) => ($active ? "#0056b3" : "#e6f0ff")};
     transform: scale(1.05);
   }
 
