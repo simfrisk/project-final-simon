@@ -15,13 +15,14 @@ export const CommentForm = () => {
     if (!text.trim()) return;
 
     addMessage({
+      id: Date.now(),
       message: text,
       createdAt: new Date(),
       timeStamp: timecode
     });
 
     setText('');
-    incrementMarkerTrigger(); // 🔥 trigger the red dot
+    incrementMarkerTrigger();
   };
 
   return (

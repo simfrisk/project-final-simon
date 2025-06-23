@@ -22,8 +22,8 @@ export const CommentSection = () => {
 
   return (
     <CommentListContainer>
-      {messages.map(({ message, createdAt, timeStamp }, index) => (
-       <Card key={index} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex="0">
+      {messages.map(({id, message, createdAt, timeStamp }) => (
+       <Card key={id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex="0">
         
 
           <TopSection>
@@ -54,11 +54,11 @@ export const CommentSection = () => {
               </React>
               <Edit>
                 <img src="/icons/edit.svg" alt="Edit Icon" />
-                <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
+                <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(id)} />
               </Edit>
             </CardFooter>
             <ReplyCardContainer>
-               {/* {reply.map(({ message, createdAt, timeStamp }, index) => (
+               {/* {reply.map(({ message, createdAt, id }, index) => (
               <ReplyCard key={index} onClick={() => setSelectedTimeStamp(timeStamp)}></ReplyCard>
               ))} */}
             </ReplyCardContainer>

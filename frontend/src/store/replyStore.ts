@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export interface ReplyType {
+  replyId: number;
   reply: string;
   createdAt: Date;
   messageTimeStamp: number;
