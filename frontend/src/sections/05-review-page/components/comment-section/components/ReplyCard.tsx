@@ -1,40 +1,18 @@
-import type { MessageType } from '../../../../../store/commentStore';
-import styled from 'styled-components';
-import moment from 'moment';
-import { commentStore } from '../../../../../store/commentStore';
+import styled from 'styled-components'
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 
-// import { replyStore } from '../../../../../store/replyStore';
-// import { ReplyCard } from '../components/ReplyCard';
-
-export const CommentSection = () => {
-
-  const messages: MessageType[] = commentStore((state) => state.messages);
-
-  // const repy: ReplyType[] = replyStore((state) => state.reply)
-
-  const deleteMessage = commentStore((state) => state.deleteMessage);
-  const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
-
-  // const handleReply = () => {
-    
-  // }
-
+export const ReplyCard = () => {
   return (
-    <CommentListContainer>
-      {messages.map(({ message, createdAt, timeStamp }, index) => (
-       <Card key={index} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex="0">
-        
-
+    <Card>
           <TopSection>
             <ImageContainer>
-              <img src="/SImon1.jpg" alt="Profile img" />
+              <img src="/teacher.jpg" alt="Profile img" />
             </ImageContainer>
           <Content>
             <CardHeader>
-              <strong>Anonymous</strong>
+              <strong>Teacher</strong>
               <Dot>&middot;</Dot>
-             <span>{moment(createdAt).fromNow()}</span>
+             <span>time</span>
             </CardHeader>          
           </Content>
           <CheckBtn>
@@ -45,7 +23,8 @@ export const CommentSection = () => {
           </CheckBtn>
           </TopSection>
 
-               <CardMain>{message}</CardMain>
+               <CardMain>Here is a teacher replay! Some more text is added here.
+               </CardMain>
 
             <CardFooter>
               <React>
@@ -54,33 +33,12 @@ export const CommentSection = () => {
               </React>
               <Edit>
                 <img src="/icons/edit.svg" alt="Edit Icon" />
-                <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(createdAt)} />
+                <img src="/icons/delete.svg" alt="Delete Icon"/>
               </Edit>
             </CardFooter>
-            <ReplyCardContainer>
-               {/* {reply.map(({ message, createdAt, timeStamp }, index) => (
-              <ReplyCard key={index} onClick={() => setSelectedTimeStamp(timeStamp)}></ReplyCard>
-              ))} */}
-            </ReplyCardContainer>
         </Card>
-
-      ))}
-
-    </CommentListContainer>
-    
-  );
+  )
 };
-
-// Styled components
-
-const CommentListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  gap: 16px;
-  width: 100%;
-  background-color: #f5f5f5;
-`;
 
 const TopSection = styled.div `
   display: flex;
@@ -134,12 +92,15 @@ column-gap: 10px;
 `
 
 const Card = styled.div`
+  width: 95%;
+  margin: 12px 10px;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+  border: solid lightgray 1px;
   transition: 0.3s ease;
   align-items: center;
   cursor: pointer;
@@ -148,13 +109,6 @@ const Card = styled.div`
     transform: scale(0.98);
        background-color: #fafafa;
   }
-
-  &:focus {
-  transform: scale(0.98);
-  background-color: #fafafa;
-  border-left: solid #007bff 3px;
-  transition: ease .2s;
-}
 
   &:hover ${Edit} {
     opacity: 1;
@@ -244,7 +198,3 @@ const ActionButtonIcon = styled.button`
     text-decoration: underline;
   }
 `;
-
-const ReplyCardContainer = styled.div `
-width: 100%;
-`
