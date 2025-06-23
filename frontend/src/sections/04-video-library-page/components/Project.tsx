@@ -1,15 +1,21 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-export const Project = () => {
+interface ProjectProps {
+  projectName: string;
+  projectDescription: string;
+}
+
+export const Project = ({ projectName, projectDescription }: ProjectProps) => {
+
   return (
 
     <StyledLink to="/review">
       <Card>
         <Thumbnail src="/thumbnail.png" alt="Thumbnail" />
         <TextContainer>
-        <h3>Project 1</h3>
-        <p>Description Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio vel fugit laboriosam unde soluta itaque odio distinctio dignissimos officiis impedit?</p>
+        <h3>{projectName}</h3>
+        <p>{projectDescription}</p>
         </TextContainer>
       </Card>
     </StyledLink>

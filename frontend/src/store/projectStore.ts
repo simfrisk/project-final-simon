@@ -1,9 +1,10 @@
 import { create } from "zustand";
 
-// Your Project type
+// Project type
 export interface ProjectType {
-  projectID: number;
+  projectId: number;
   projectName: string;
+  projectDescription: string;
   video: string;
 }
 
@@ -13,12 +14,38 @@ interface ProjectsStore {
   addProject: (newProject: ProjectType) => void;
 }
 
-// Zustand store
+const STORAGE_KEY = "projectStore";
+
+// Load from localStorage
+const loadProjectsFromStorage = (): ProjectType[] => {
+  if (typeof window === "undefined") return [];
+
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return [];
+
+  try {
+    const parsed = JSON.parse(stored) as ProjectType[];
+    return parsed.map((item) => ({
+      projectId: item.projectId,
+      projectName: item.projectName,
+      projectDescription: item.projectDescription,
+      video: item.video,
+    }));
+  } catch {
+    return [];
+  }
+};
+
+// Zustand store with persistence
 export const useProjectStore = create<ProjectsStore>((set) => ({
-  projects: [],
+  projects: loadProjectsFromStorage(),
 
   addProject: (newProject: ProjectType) =>
-    set((state) => ({
-      projects: [...state.projects, newProject],
-    })),
+    set((state) => {
+      const updatedProjects = [...state.projects, newProject];
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProjects));
+      }
+      return { projects: updatedProjects };
+    }),
 }));
