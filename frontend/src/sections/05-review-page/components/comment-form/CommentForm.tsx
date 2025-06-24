@@ -16,6 +16,7 @@ export const CommentForm = () => {
 
     addMessage({
       id: Date.now(),
+      projectID: projectId,
       message: text,
       createdAt: new Date(),
       timeStamp: timecode
