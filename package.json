@@ -3,5 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "npm install --prefix backend"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.27.1",
+    "@types/express": "^5.0.3",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
   }
 }
