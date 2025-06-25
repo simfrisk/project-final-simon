@@ -20,11 +20,11 @@ const CommentSchema = new mongoose_1.default.Schema({
     replies: [ReplySchema]
 });
 const ProjectSchema = new mongoose_1.default.Schema({
-    projectId: {
-        type: Number,
-        required: true,
-        unique: true
-    },
+    // projectId: {
+    //   type: Number,
+    //   unique: true, // This is the part MongoDB is enforcing
+    //   required: true
+    // },
     projectName: {
         type: String,
         required: true

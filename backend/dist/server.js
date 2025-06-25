@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const getHome_1 = require("./endpoints/getHome");
 const getProjects_1 = require("./endpoints/getProjects");
+const postProject_1 = require("./endpoints/postProject");
 const resetDatabase_1 = require("./setup/resetDatabase");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -18,7 +19,8 @@ app.use(express_1.default.json());
 (0, resetDatabase_1.resetDatabase)();
 // API Home Route
 app.get("/", (0, getHome_1.getHome)(app));
-app.get("/", getProjects_1.getProjects);
+app.get("/projects", getProjects_1.getProjects);
+app.post("/projects", postProject_1.postProject);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

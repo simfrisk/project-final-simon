@@ -12,7 +12,6 @@ export const CreateProject = () => {
     if (!projectName.trim()) return;
 
     addProject({
-      projectId: Date.now(), // simple unique ID
       projectName,
       projectDescription,
       video: "", // or default path
@@ -63,7 +62,7 @@ const AddProjectBtn = styled.button`
   border-radius: 10px;
   border: none;
   transition: ease 0.3s;
-  color: white
+  color: white;
 
   &:hover {
     transform: scale(0.96);

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 interface ProjectProps {
-  projectId: number;
+  projectId: string;
   projectName: string;
   projectDescription: string;
 }

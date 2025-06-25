@@ -19,10 +19,10 @@ export const VideoLibraryPage = () => {
 
   return (
     <Container>
-      {projects.map(({ projectId, projectName, projectDescription }) => (
+      {projects.map(({ _id, projectName, projectDescription }) => (
         <Project 
-          key={projectId} 
-          projectId={projectId}
+          key={_id} 
+          projectId={_id}
           projectName={projectName} 
           projectDescription={projectDescription} 
         />

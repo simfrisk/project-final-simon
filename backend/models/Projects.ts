@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
 
 interface Reply {
-  replyId: number,
+  // replyId: number,
   reply: string,
   createdAt: Date,
   commentId: number
 }
 
 interface Comment {
-  id: number,
-  projectId: number,
+  // projectId: number,
   message: string,
   createdAt: Date,
   timeStamp: string,
@@ -17,7 +16,7 @@ interface Comment {
 }
 
 interface Project {
-  projectId: number;
+  // projectId: Number,
   projectName: string;
   projectDescription?: string;
   video?: string;
@@ -25,14 +24,14 @@ interface Project {
 }
 
 const ReplySchema = new mongoose.Schema({
-  replyId: Number,
+  // replyId: Number,
   reply: String,
   createdAt: { type: Date, default: Date.now },
   commentId: Number
 });
 
 const CommentSchema = new mongoose.Schema({
-  id: Number,
+  // id: Number,
   projectId: Number,
   message: String,
   createdAt: { type: Date, default: Date.now },
@@ -42,11 +41,11 @@ const CommentSchema = new mongoose.Schema({
 })
 
 const ProjectSchema = new mongoose.Schema({
-  projectId: {
-    type: Number,
-    required: true,
-    unique: true
-  },
+  // projectId: {
+  //   type: Number,
+  //   unique: true, // This is the part MongoDB is enforcing
+  //   required: true
+  // },
   projectName: {
     type: String,
     required: true
