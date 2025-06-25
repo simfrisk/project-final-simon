@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-// Project type
 export interface ProjectType {
   projectId: number;
   projectName: string;
@@ -8,44 +7,57 @@ export interface ProjectType {
   video: string;
 }
 
-// Store interface
 interface ProjectsStore {
   projects: ProjectType[];
+  loading: boolean;
+  error: string | null;
+  message: string | null;
+  fetchProjects: () => Promise<void>;
   addProject: (newProject: ProjectType) => void;
 }
 
-const STORAGE_KEY = "projectStore";
-
-// Load from localStorage
-const loadProjectsFromStorage = (): ProjectType[] => {
-  if (typeof window === "undefined") return [];
-
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return [];
-
-  try {
-    const parsed = JSON.parse(stored) as ProjectType[];
-    return parsed.map((item) => ({
-      projectId: item.projectId,
-      projectName: item.projectName,
-      projectDescription: item.projectDescription,
-      video: item.video,
-    }));
-  } catch {
-    return [];
-  }
-};
-
-// Zustand store with persistence
 export const useProjectStore = create<ProjectsStore>((set) => ({
-  projects: loadProjectsFromStorage(),
+  projects: [],
+  loading: false,
+  error: null,
+  message: null,
+
+  fetchProjects: async () => {
+    set({ loading: true, error: null, message: null });
+
+    try {
+      const response = await fetch("http://localhost:8080/projects");
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+
+      if (json.success) {
+        set({
+          projects: json.response,
+          loading: false,
+          error: null,
+          message: json.message || "Projects fetched successfully",
+        });
+      } else {
+        // API returned success: false
+        set({
+          loading: false,
+          error: json.message || "Failed to fetch projects",
+          message: null,
+        });
+      }
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Unknown error",
+        message: null,
+      });
+    }
+  },
 
   addProject: (newProject: ProjectType) =>
     set((state) => {
       const updatedProjects = [...state.projects, newProject];
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProjects));
-      }
       return { projects: updatedProjects };
     }),
 }));

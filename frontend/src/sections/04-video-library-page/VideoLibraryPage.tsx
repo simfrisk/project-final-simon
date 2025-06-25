@@ -2,10 +2,20 @@ import { Project } from "./components/Project";
 import { CreateProject } from "./components/CreateProject";
 import styled from "styled-components";
 import { useProjectStore } from "../../store/projectStore";
+import { useEffect } from "react";
 
 export const VideoLibraryPage = () => {
-
   const projects = useProjectStore((state) => state.projects);
+  const fetchProjects = useProjectStore((state) => state.fetchProjects);
+  const loading = useProjectStore((state) => state.loading);
+  const error = useProjectStore((state) => state.error);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  if (loading) return <p>Loading projects...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <Container>
