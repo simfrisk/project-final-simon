@@ -1,7 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import { getHome } from "./endpoints/getHome";
+import { getHome } from "./endpoints/getHome.ts";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
