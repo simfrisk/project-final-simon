@@ -6,6 +6,7 @@ import { getProjects } from "./endpoints/getProjects";
 import { postProject } from "./endpoints/postProject";
 import { resetDatabase } from "./setup/resetDatabase";
 import { getProjectById } from "./endpoints/getProjectById";
+import { postCommentById } from "./endpoints/postCommentById";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -21,8 +22,10 @@ resetDatabase()
 // API Home Route
 app.get("/", getHome(app));
 app.get("/projects", getProjects);
-app.get("/projects/:id", getProjectById)
+app.get("/projects/:projectId", getProjectById)
 app.post("/projects", postProject)
+app.post("/projects/:projectId/comments/", postCommentById)
+// app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);
 
 // Start the server
 app.listen(port, (): void => {

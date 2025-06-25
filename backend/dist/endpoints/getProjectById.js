@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProjectById = void 0;
 const Projects_1 = require("../models/Projects");
 const getProjectById = async (req, res) => {
-    const { id } = req.params;
+    const { projectId } = req.params;
     try {
-        const project = await Projects_1.Project.findById(id);
+        const project = await Projects_1.Project.findById(projectId);
         if (!project) {
             return res.status(404).json({
                 success: false,

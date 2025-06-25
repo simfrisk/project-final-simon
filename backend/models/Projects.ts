@@ -1,22 +1,18 @@
 import mongoose from "mongoose";
 
 interface Reply {
-  // replyId: number,
-  reply: string,
-  createdAt: Date,
-  commentId: number
+  reply: string;
+  createdAt: Date;
 }
 
 interface Comment {
-  // projectId: number,
-  message: string,
-  createdAt: Date,
-  timeStamp: string,
-  replies: Reply[]
+  message: string;
+  createdAt: Date;
+  timeStamp: string;
+  replies: Reply[];
 }
 
 interface Project {
-  // projectId: Number,
   projectName: string;
   projectDescription?: string;
   video?: string;
@@ -24,38 +20,22 @@ interface Project {
 }
 
 const ReplySchema = new mongoose.Schema({
-  // replyId: Number,
-  reply: String,
+  reply: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  commentId: Number
 });
 
 const CommentSchema = new mongoose.Schema({
-  // id: Number,
-  projectId: Number,
-  message: String,
+  message: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  timeStamp: String,
-  replies: [ReplySchema]
-
-})
-
-const ProjectSchema = new mongoose.Schema({
-  // projectId: {
-  //   type: Number,
-  //   unique: true, // This is the part MongoDB is enforcing
-  //   required: true
-  // },
-  projectName: {
-    type: String,
-    required: true
-  },
-  projectDescription: String,
-  video: String,
-  comments: {
-    type: [CommentSchema],
-    default: []
-  }
+  timeStamp: { type: String },
+  replies: [ReplySchema],
 });
 
-export const Project = mongoose.model("Project", ProjectSchema);
+const ProjectSchema = new mongoose.Schema({
+  projectName: { type: String, required: true },
+  projectDescription: String,
+  video: String,
+  comments: { type: [CommentSchema], default: [] },
+});
+
+export const Project = mongoose.model<Project & mongoose.Document>("Project", ProjectSchema);

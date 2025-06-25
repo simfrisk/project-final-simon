@@ -5,23 +5,20 @@
     "video": "https://example.com/video1.mp4",
     "comments": [
       {
-        "projectId": 1,
         "message": "This is the first comment on the project.",
         "createdAt": "2025-06-25T12:00:00Z",
-        "timeStamp": "12:00 PM",
+        "timeStamp": "00:12",
         "replies": [
           {
             "reply": "This is a reply to the first comment.",
-            "createdAt": "2025-06-25T12:30:00Z",
-            "commentId": 101
+            "createdAt": "2025-06-25T12:30:00Z"
           }
         ]
       },
       {
-        "projectId": 1,
         "message": "Second comment on the project here!",
         "createdAt": "2025-06-25T13:00:00Z",
-        "timeStamp": "1:00 PM",
+        "timeStamp": "00:30",
         "replies": []
       }
     ]
@@ -32,15 +29,13 @@
     "video": "https://example.com/video2.mp4",
     "comments": [
       {
-        "projectId": 2,
         "message": "Loving this app already!",
         "createdAt": "2025-06-20T10:00:00Z",
-        "timeStamp": "10:00 AM",
+        "timeStamp": "00:45",
         "replies": [
           {
             "reply": "Glad you like it!",
-            "createdAt": "2025-06-20T10:15:00Z",
-            "commentId": 201
+            "createdAt": "2025-06-20T10:15:00Z"
           }
         ]
       }

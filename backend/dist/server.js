@@ -11,6 +11,7 @@ const getProjects_1 = require("./endpoints/getProjects");
 const postProject_1 = require("./endpoints/postProject");
 const resetDatabase_1 = require("./setup/resetDatabase");
 const getProjectById_1 = require("./endpoints/getProjectById");
+const postCommentById_1 = require("./endpoints/postCommentById");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -21,8 +22,10 @@ app.use(express_1.default.json());
 // API Home Route
 app.get("/", (0, getHome_1.getHome)(app));
 app.get("/projects", getProjects_1.getProjects);
-app.get("/projects/:id", getProjectById_1.getProjectById);
+app.get("/projects/:projectId", getProjectById_1.getProjectById);
 app.post("/projects", postProject_1.postProject);
+app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
+// app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
