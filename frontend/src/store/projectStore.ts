@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface ProjectType {
-  projectId: number;
+  _id?: string;
   projectName: string;
   projectDescription: string;
   video: string;
