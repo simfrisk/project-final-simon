@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import { getHome } from "./endpoints/getHome";
+import { getProjects } from "./endpoints/getProjects";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // API Home Route
 app.get("/", getHome(app));
+app.get("/", getProjects);
 
 // Start the server
 app.listen(port, (): void => {
