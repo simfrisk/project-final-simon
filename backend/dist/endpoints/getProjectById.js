@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getProjectById = void 0;
+const Projects_1 = require("../models/Projects");
+const getProjectById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const project = await Projects_1.Project.findById(id);
+        if (!project) {
+            return res.status(404).json({
+                success: false,
+                response: null,
+                message: "Project was not found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            response: project,
+            message: "The project was found"
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            response: error,
+            message: "Project could not be found"
+        });
+    }
+};
+exports.getProjectById = getProjectById;

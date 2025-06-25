@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const ReplySchema = new mongoose_1.default.Schema({
-    replyId: Number,
+    // replyId: Number,
     reply: String,
     createdAt: { type: Date, default: Date.now },
     commentId: Number
 });
 const CommentSchema = new mongoose_1.default.Schema({
-    id: Number,
+    // id: Number,
     projectId: Number,
     message: String,
     createdAt: { type: Date, default: Date.now },
