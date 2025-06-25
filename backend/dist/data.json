@@ -1,0 +1,63 @@
+[
+    {
+        "projectId": 1,
+        "projectName": "Awesome Project",
+        "projectDescription": "This is a description of the awesome project.",
+        "video": "https://example.com/video1.mp4",
+        "comments": [
+            {
+                "id": 101,
+                "projectId": 1,
+                "message": "This is the first comment on the project.",
+                "createdAt": "2025-06-25T12:00:00Z",
+                "timeStamp": "12:00 PM",
+                "replies": [
+                    {
+                        "replyId": 1001,
+                        "reply": "This is a reply to the first comment.",
+                        "createdAt": "2025-06-25T12:30:00Z",
+                        "commentId": 101
+                    }
+                ]
+            },
+            {
+                "id": 102,
+                "projectId": 1,
+                "message": "Second comment on the project here!",
+                "createdAt": "2025-06-25T13:00:00Z",
+                "timeStamp": "1:00 PM",
+                "replies": []
+            }
+        ]
+    },
+    {
+        "projectId": 2,
+        "projectName": "Next Level App",
+        "projectDescription": "An app that takes things to the next level.",
+        "video": "https://example.com/video2.mp4",
+        "comments": [
+            {
+                "id": 201,
+                "projectId": 2,
+                "message": "Loving this app already!",
+                "createdAt": "2025-06-20T10:00:00Z",
+                "timeStamp": "10:00 AM",
+                "replies": [
+                    {
+                        "replyId": 2001,
+                        "reply": "Glad you like it!",
+                        "createdAt": "2025-06-20T10:15:00Z",
+                        "commentId": 201
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "projectId": 3,
+        "projectName": "Creative Portfolio",
+        "projectDescription": "Showcasing creative works in style.",
+        "video": "https://example.com/video3.mp4",
+        "comments": []
+    }
+]

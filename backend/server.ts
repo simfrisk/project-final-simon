@@ -3,16 +3,18 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { getHome } from "./endpoints/getHome";
 import { getProjects } from "./endpoints/getProjects";
+import { resetDatabase } from "./setup/resetDatabase";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
-mongoose.Promise = Promise;
 
-const port: number = parseInt(process.env.PORT || "8080", 10);
+const port: number = parseInt(process.env.PORT || "8080");
 const app: Application = express();
 
 app.use(cors());
 app.use(express.json());
+
+resetDatabase()
 
 // API Home Route
 app.get("/", getHome(app));
