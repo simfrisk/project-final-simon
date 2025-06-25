@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Project } from "../models/Projects";
 
-export const postThought = async (req: Request, res: Response): Promise<void> => {
+export const postProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const { projectName, projectDescription } = req.body;
 
