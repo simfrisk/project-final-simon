@@ -18,7 +18,8 @@ resetDatabase()
 
 // API Home Route
 app.get("/", getHome(app));
-app.get("/", getProjects);
+app.get("/projects", getProjects);
+app.post("/projects", postProject)
 
 // Start the server
 app.listen(port, (): void => {

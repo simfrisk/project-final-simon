@@ -51,8 +51,7 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  projectDescription:
-    String,
+  projectDescription: String,
   video: String,
   comments: {
     type: [CommentSchema],
