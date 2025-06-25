@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CommentForm } from "../components/comment-form/CommentForm";
 import { CommentSection } from "../components/comment-section/01-main/CommentSection";
 import { VideoSection } from "../components/video-section/VideoSection";
@@ -7,7 +7,7 @@ import { CommentHeader } from "../components/comment-header/CommentHeader";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { DescriptionSection } from "../components/description/DescriptionSection"
 import { useParams } from "react-router-dom";
-// import { useProjectStore } from "../../../store/projectStore";
+import { useProjectStore } from "../../../store/projectStore";
 
 export const ReviewPage = () => {
 
@@ -15,6 +15,15 @@ export const ReviewPage = () => {
 
   const { projectId } = useParams<{ projectId: string }>();
   const [description, setDescription] = useState(true);
+  
+  const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
+
+
+useEffect(() => {
+  if (projectId) {
+    fetchProjectById(projectId);
+  }
+}, [projectId]);
 
   return (
     <Container>

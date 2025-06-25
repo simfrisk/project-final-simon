@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useProjectStore } from "../../../../store/projectStore";
 
 interface CommentHeaderProps {
   setDescription: (value: boolean) => void;
@@ -6,9 +7,14 @@ interface CommentHeaderProps {
 }
 
 export const CommentHeader = ({ setDescription, description }: CommentHeaderProps) => {
+
+  const project = useProjectStore((state) => state.project);
+
+  if (!project) return null; // or show a loading indicator
+
   return (
     <Container>
-      <Title>Video Title</Title>
+      <Title>{project.projectName}</Title>
       <ButtonGroup>
         <TabButton $active={!description} onClick={() => setDescription(false)}>
         Description
