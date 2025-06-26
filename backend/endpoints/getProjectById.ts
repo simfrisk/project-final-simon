@@ -6,7 +6,7 @@ export const getProjectById = async (req: Request, res: Response): Promise<Respo
   const { projectId } = req.params
 
   try {
-    const project = await Project.findById(projectId)
+    const project = await Project.findById(projectId).select("projectName projectDescription");
     if (!project) {
       return res.status(404).json({
         success: false,
@@ -14,11 +14,13 @@ export const getProjectById = async (req: Request, res: Response): Promise<Respo
         message: "Project was not found",
       })
     }
+    const { _id, projectName, projectDescription } = project;
+
     return res.status(200).json({
       success: true,
-      response: project,
-      message: "The project was found"
-    })
+      response: { _id, projectName, projectDescription },
+      message: "Project found",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,

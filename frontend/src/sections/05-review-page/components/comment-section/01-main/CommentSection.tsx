@@ -6,7 +6,7 @@ import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
 import { useReplyStore } from '../../../../../store/replyStore';
-import { useProjectStore } from '../../../../../store/projectStore';
+
 
 export const CommentSection = () => {
   // local state for reply input and which comment is being replied to
