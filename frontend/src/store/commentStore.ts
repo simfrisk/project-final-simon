@@ -6,14 +6,13 @@ export interface MessageType {
   message: string;
   createdAt: Date;
   timeStamp: string;
-  replies?: ReplyType[];
 }
 
 interface MessageStore {
   messages: MessageType[];
   selectedTimeStamp: string | null;
   setSelectedTimeStamp: (stamp: string) => void;
-  addMessage: (msg: MessageType) => void;
+  addMessage: (msg: MessageType) => Promise<void>;
   clearMessages: () => void;
   deleteMessage: (_id: string) => void;
   fetchComments: (projectId: string) => Promise<void>;
@@ -25,10 +24,31 @@ export const commentStore = create<MessageStore>((set) => ({
 
   setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
 
-  addMessage: (msg) =>
-    set((state) => ({
-      messages: [...state.messages, msg],
-    })),
+  addMessage: async (msg) => {
+    try {
+      const response = await fetch(`http://localhost:8080/projects/${msg.projectID}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(msg),
+      });
+
+      if (!response.ok) throw new Error("Failed to post comment");
+
+      const data = await response.json();
+
+      if (data.success && data.comment) {
+        set((state) => ({
+          messages: [...state.messages, data.comment], // assuming server returns full comment with _id
+        }));
+      } else {
+        console.error("Post failed:", data.message || "No comment in response");
+      }
+    } catch (err: any) {
+      console.error("Error posting comment:", err.message || "Unknown error");
+    }
+  },
 
   clearMessages: () => set({ messages: [] }),
 
