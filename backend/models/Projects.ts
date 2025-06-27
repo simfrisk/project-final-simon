@@ -19,9 +19,19 @@ const ProjectSchema = new Schema({
   comments: { type: [CommentSchema], default: [] },
 });
 
-// Type inference from schema
-type Reply = Types.Subdocument<typeof ReplySchema>;
-type Comment = Types.Subdocument<typeof CommentSchema>;
+// Define interfaces
+
+interface Reply extends Document {
+  reply: string;
+  createdAt: Date;
+}
+
+interface Comment extends Document {
+  message: string;
+  createdAt: Date;
+  timeStamp?: string;
+  replies: Types.DocumentArray<Reply>;
+}
 
 export interface Project extends Document {
   projectName: string;

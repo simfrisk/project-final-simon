@@ -22,7 +22,7 @@ export const VideoLibraryPage = () => {
       {projects.map(({ _id, projectName, projectDescription }) => (
         <Project 
           key={_id} 
-          projectId={_id}
+          projectId={_id ?? ""}
           projectName={projectName} 
           projectDescription={projectDescription} 
         />

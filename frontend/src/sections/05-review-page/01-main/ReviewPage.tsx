@@ -11,7 +11,6 @@ import { useProjectStore } from "../../../store/projectStore";
 import { commentStore } from "../../../store/commentStore";
 
 export const ReviewPage = () => {
-
   // const project = useProjectStore((state) => state.projects);
 
   const { projectId } = useParams<{ projectId: string }>();
