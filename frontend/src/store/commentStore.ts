@@ -5,6 +5,7 @@ export interface MessageType {
   message: string;
   createdAt: Date;
   timeStamp: string;
+  replies?: ReplyType[]; // 👈 add this
 }
 
 interface MessageStore {

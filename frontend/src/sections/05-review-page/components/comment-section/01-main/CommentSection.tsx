@@ -16,7 +16,6 @@ export const CommentSection = () => {
 
   // Zustand stores and actions
   const messages: MessageType[] = commentStore((state) => state.messages);
-  const replies = useReplyStore((state) => state.replies);
   const addReply = useReplyStore((state) => state.addReply);
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
@@ -41,7 +40,7 @@ export const CommentSection = () => {
 
   return (
     <CommentListContainer>
-      {messages.map(({ _id, message, createdAt, timeStamp }) => (
+      {messages.map(({ _id, message, createdAt, timeStamp, replies }) => (
         <Card key={_id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex={0}>
           <TopSection>
             <ImageContainer>
@@ -77,30 +76,28 @@ export const CommentSection = () => {
             </Edit>
           </CardFooter>
 
-          {replyToCommentId === _id && (
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                value={reply}
-                onChange={(e) => setReply(e.target.value)}
-                placeholder="Write a reply..."
-              />
-              <button type="submit">Submit</button>
-            </form>
-          )}
+            {replyToCommentId === _id && (
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={reply}
+          onChange={(e) => setReply(e.target.value)}
+          placeholder="Write a reply..."
+        />
+        <button type="submit">Submit</button>
+      </form>
+    )}
 
-          <ReplyCardContainer>
-            {replies
-              .filter((reply) => reply.commentId === _id)
-              .map((reply) => (
-                <ReplyCard key={reply.replyId} reply={reply} />
-              ))}
-          </ReplyCardContainer>
-        </Card>
-      ))}
-    </CommentListContainer>
-  );
-};
+   <ReplyCardContainer>
+    {(replies || []).map((reply, idx) => (
+      <ReplyCard key={idx} reply={reply} />
+    ))}
+  </ReplyCardContainer>
+    </Card>
+  ))}
+      </CommentListContainer>
+    );
+  };
 
 // Styled components
 
