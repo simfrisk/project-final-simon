@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { commentStore } from '../../../../store/commentStore';
 import { useVideoStore } from '../../../../store/videoStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
+import { useProjectStore } from '../../../../store/projectStore';
 
 export const CommentForm = () => {
   const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
@@ -10,21 +11,25 @@ export const CommentForm = () => {
   const addMessage = commentStore((state) => state.addMessage);
   const timecode = useTimecode((state) => state.timecode);
 
+  const project = useProjectStore((state) => state.project);
+  const projectId = project?._id; 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
 
     addMessage({
-      id: Date.now(),
-      projectID: projectId,
       message: text,
       createdAt: new Date(),
-      timeStamp: timecode
+      timeStamp: timecode,
+      projectID: projectId,
     });
 
     setText('');
     incrementMarkerTrigger();
   };
+
+
 
   return (
     <Container as="form" onSubmit={handleSubmit}>

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 export interface MessageType {
   _id?: string;
+  projectID?: string;
   message: string;
   createdAt: Date;
   timeStamp: string;
