@@ -8,10 +8,11 @@ import { ReplyCard } from '../components/ReplyCard';
 import { useReplyStore } from '../../../../../store/replyStore';
 
 
+
 export const CommentSection = () => {
   // local state for reply input and which comment is being replied to
   const [reply, setReply] = useState('');
-  const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
+  const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 
   // Zustand stores and actions
   const messages: MessageType[] = commentStore((state) => state.messages);
@@ -36,11 +37,12 @@ export const CommentSection = () => {
     setReplyToCommentId(null); // reset reply target
   };
 
+  const message = commentStore((state) => state.message);
 
   return (
     <CommentListContainer>
-      {messages.map(({ id, message, createdAt, timeStamp }) => (
-        <Card key={id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex={0}>
+      {messages.map(({ _id, message, createdAt, timeStamp }) => (
+        <Card key={_id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex={0}>
           <TopSection>
             <ImageContainer>
               <img src="/SImon1.jpg" alt="Profile img" />
@@ -64,18 +66,18 @@ export const CommentSection = () => {
 
           <CardFooter>
             <ReactionGroup>
-              <ActionButton onClick={() => setReplyToCommentId(id)}>Reply</ActionButton>
+              <ActionButton onClick={() => setReplyToCommentId(_id)}>Reply</ActionButton>
               <ActionButtonIcon>
                 <img src="/icons/like.svg" alt="Like button" />
               </ActionButtonIcon>
             </ReactionGroup>
             <Edit>
               <img src="/icons/edit.svg" alt="Edit Icon" />
-              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(id)} />
+              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(_id)} />
             </Edit>
           </CardFooter>
 
-          {replyToCommentId === id && (
+          {replyToCommentId === _id && (
             <form onSubmit={handleSubmit}>
               <input
                 type="text"
@@ -89,7 +91,7 @@ export const CommentSection = () => {
 
           <ReplyCardContainer>
             {replies
-              .filter((reply) => reply.commentId === id)
+              .filter((reply) => reply.commentId === _id)
               .map((reply) => (
                 <ReplyCard key={reply.replyId} reply={reply} />
               ))}

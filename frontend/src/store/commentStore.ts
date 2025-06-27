@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 
 export interface MessageType {
-  id: number;
-  projectID: number
+  _id?: string;
   message: string;
   createdAt: Date;
   timeStamp: string;
@@ -14,62 +13,47 @@ interface MessageStore {
   setSelectedTimeStamp: (stamp: string) => void;
   addMessage: (msg: MessageType) => void;
   clearMessages: () => void;
-  deleteMessage: (id: number) => void;  // Add deleteMessage here, using createdAt as identifier
+  deleteMessage: (_id: string) => void;
+  fetchComments: (projectId: string) => Promise<void>;
 }
 
-const STORAGE_KEY = 'commentStoreMessages';
-
-const loadMessagesFromStorage = (): MessageType[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return [];
-  try {
-    const parsed = JSON.parse(stored) as {
-      id: number;
-      projectID: number;
-      message: string;
-      createdAt: string;
-      timeStamp?: string;
-    }[];
-    return parsed.map((item) => ({
-      id: item.id,
-      projectID: item.projectID,
-      message: item.message,
-      createdAt: new Date(item.createdAt),
-      timeStamp: item.timeStamp || ''
-    }));
-  } catch {
-    return [];
-  }
-};
-
 export const commentStore = create<MessageStore>((set) => ({
-  messages: loadMessagesFromStorage(),
+  messages: [],
   selectedTimeStamp: null,
+
   setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
 
-  addMessage: (msg) => {
-    set((state) => {
-      const newMessages = [...state.messages, msg];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newMessages));
+  addMessage: (msg) =>
+    set((state) => ({
+      messages: [...state.messages, msg],
+    })),
+
+  clearMessages: () => set({ messages: [] }),
+
+  deleteMessage: (_id) =>
+    set((state) => ({
+      messages: state.messages.filter((msg) => msg._id !== _id),
+    })),
+
+  fetchComments: async (projectId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/projects/${projectId}/comments`);
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+      console.log("messages fetch:", json);
+
+      if (json.success && Array.isArray(json.response)) {
+        // Find the correct project by ID
+        const project = json.response.find((proj) => proj._id === projectId);
+        const comments = project?.comments || [];
+
+        set({ messages: comments });
+      } else {
+        console.error("Failed to fetch messages:", json.message);
       }
-      return { messages: newMessages };
-    });
-  },
-  clearMessages: () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+    } catch (err: any) {
+      console.error("Fetch error:", err.message || "Unknown error");
     }
-    set({ messages: [] });
-  },
-  deleteMessage: (id: number) => {
-    set((state) => {
-      const newMessages = state.messages.filter(msg => msg.id !== id);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newMessages));
-      }
-      return { messages: newMessages };
-    });
   }
 }));

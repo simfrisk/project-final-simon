@@ -8,6 +8,7 @@ import { MediaQueries } from "../../../themes/mediaQueries";
 import { DescriptionSection } from "../components/description/DescriptionSection"
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../../../store/projectStore";
+import { commentStore } from "../../../store/commentStore";
 
 export const ReviewPage = () => {
 
@@ -17,11 +18,13 @@ export const ReviewPage = () => {
   const [description, setDescription] = useState(true);
   
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
+  const fetchComments = commentStore((state) => state.fetchComments);
 
 
 useEffect(() => {
   if (projectId) {
     fetchProjectById(projectId);
+    fetchComments(projectId);
   }
 }, [projectId]);
 
