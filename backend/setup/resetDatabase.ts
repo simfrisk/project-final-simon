@@ -1,16 +1,38 @@
+import mongoose from "mongoose";
 import { Project } from "../models/Projects";
-import projectData from "../data.json"
+import { Comment } from "../models/comment";
+import { Reply } from "../models/Reply";
+import data from "../data.json";
 
 export const resetDatabase = () => {
   if (process.env.RESET_DB) {
     const seedDatabase = async () => {
       console.log("🌱 Resetting and seeding database...");
+
+      await Reply.deleteMany({});
+      await Comment.deleteMany({});
       await Project.deleteMany({});
-      projectData.forEach(project => {
-        new Project(project).save();
-      });
+
+      // Step 1: Insert Projects
+      for (const project of data.projects) {
+        await new Project(project).save();
+      }
+
+      // Step 2: Insert Comments
+      for (const comment of data.comments) {
+        await new Comment(comment).save();
+      }
+
+      // Step 3: Insert Replies
+      for (const reply of data.replies) {
+        await new Reply(reply).save();
+      }
+
       console.log("✅ Seeding complete.");
     };
-    seedDatabase();
+
+    seedDatabase().catch((err) => {
+      console.error("❌ Seeding error:", err);
+    });
   }
-}
+};

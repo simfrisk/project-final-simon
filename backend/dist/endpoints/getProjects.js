@@ -5,7 +5,6 @@ const Projects_1 = require("../models/Projects");
 const getProjects = async (req, res) => {
     try {
         const result = await Projects_1.Project.find().select("projectName projectDescription");
-        ;
         return res.status(200).json({
             success: true,
             response: result,

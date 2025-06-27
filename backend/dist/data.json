@@ -1,50 +1,67 @@
-[
-    {
-        "projectName": "Awesome Project",
-        "projectDescription": "This is a description of the awesome project.",
-        "video": "https://example.com/video1.mp4",
-        "comments": [
-            {
-                "message": "This is the first comment on the project.",
-                "createdAt": "2025-06-25T12:00:00Z",
-                "timeStamp": "00:12",
-                "replies": [
-                    {
-                        "reply": "This is a reply to the first comment.",
-                        "createdAt": "2025-06-25T12:30:00Z"
-                    }
-                ]
-            },
-            {
-                "message": "Second comment on the project here!",
-                "createdAt": "2025-06-25T13:00:00Z",
-                "timeStamp": "00:30",
-                "replies": []
-            }
-        ]
-    },
-    {
-        "projectName": "Next Level App",
-        "projectDescription": "An app that takes things to the next level.",
-        "video": "https://example.com/video2.mp4",
-        "comments": [
-            {
-                "message": "Loving this app already!",
-                "createdAt": "2025-06-20T10:00:00Z",
-                "timeStamp": "00:45",
-                "replies": [
-                    {
-                        "reply": "Glad you like it!",
-                        "createdAt": "2025-06-20T10:15:00Z"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "projectName": "Creative Portfolio",
-        "projectDescription": "Showcasing creative works in style.",
-        "video": "https://example.com/video3.mp4",
-        "comments": []
-    }
-]
+{
+    "projects": [
+        {
+            "projectName": "Project One",
+            "projectDescription": "Description for project one.",
+            "video": "https://example.com/video1.mp4"
+        },
+        {
+            "projectName": "Project Two",
+            "projectDescription": "Description for project two.",
+            "video": "https://example.com/video2.mp4"
+        },
+        {
+            "projectName": "Project Three",
+            "projectDescription": "Description for project three.",
+            "video": "https://example.com/video3.mp4"
+        },
+        {
+            "projectName": "Project Four",
+            "projectDescription": "Description for project four.",
+            "video": "https://example.com/video4.mp4"
+        }
+    ],
+    "comments": [
+        {
+            "content": "Comment one on Project One",
+            "createdAt": "2025-06-25T10:00:00Z",
+            "timeStamp": "00:10",
+            "projectIndex": 0
+        },
+        {
+            "content": "Comment two on Project One",
+            "createdAt": "2025-06-25T11:00:00Z",
+            "timeStamp": "00:20",
+            "projectIndex": 0
+        },
+        {
+            "content": "Comment on Project Two",
+            "createdAt": "2025-06-25T12:00:00Z",
+            "timeStamp": "00:30",
+            "projectIndex": 1
+        },
+        {
+            "content": "Comment on Project Three",
+            "createdAt": "2025-06-25T13:00:00Z",
+            "timeStamp": "00:40",
+            "projectIndex": 2
+        }
+    ],
+    "replies": [
+        {
+            "content": "Reply to comment one on Project One",
+            "createdAt": "2025-06-25T10:15:00Z",
+            "commentIndex": 0
+        },
+        {
+            "content": "Reply to comment two on Project One",
+            "createdAt": "2025-06-25T11:15:00Z",
+            "commentIndex": 1
+        },
+        {
+            "content": "Reply to comment on Project Two",
+            "createdAt": "2025-06-25T12:15:00Z",
+            "commentIndex": 2
+        }
+    ]
+}

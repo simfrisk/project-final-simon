@@ -8,6 +8,7 @@ import { resetDatabase } from "./setup/resetDatabase";
 import { getProjectById } from "./endpoints/getProjectById";
 import { postCommentById } from "./endpoints/postCommentById";
 import { getComments } from "./endpoints/getComments";
+import { getReplyById } from "./endpoints/getReplyById";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -25,6 +26,7 @@ app.get("/", getHome(app));
 app.get("/projects", getProjects);
 app.get("/projects/:projectId", getProjectById)
 app.get("/projects/:projectId/comments", getComments)
+app.get("/projects/:projectId/comments/:commentId/replies", getReplyById)
 app.post("/projects", postProject)
 app.post("/projects/:projectId/comments/", postCommentById)
 // app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);

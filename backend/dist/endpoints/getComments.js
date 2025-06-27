@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getComments = void 0;
-const Projects_1 = require("../models/Projects");
+const comment_1 = require("../models/comment");
 const getComments = async (req, res) => {
+    const { projectId } = req.params; // get projectId from URL
     try {
-        const result = await Projects_1.Project.find().select("comments");
-        ;
+        const comments = await comment_1.Comment.find({ projectId }); // find comments for that project
         return res.status(200).json({
             success: true,
-            response: result,
-            message: "Projects fetched successfully"
+            response: comments,
+            message: "Comments fetched successfully",
         });
     }
     catch (error) {
         return res.status(500).json({
             success: false,
             response: null,
-            message: "Failed to fetch projects."
+            message: "Failed to fetch comments",
         });
     }
 };

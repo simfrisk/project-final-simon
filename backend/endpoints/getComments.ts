@@ -1,20 +1,22 @@
 import { Request, Response } from "express";
-import { Project } from "../models/Projects";
+import { Comment } from "../models/comment";
 
 export const getComments = async (req: Request, res: Response): Promise<Response> => {
+  const { projectId } = req.params;  // get projectId from URL
+
   try {
-    const result = await Project.find().select("comments");;
+    const comments = await Comment.find({ projectId })  // find comments for that project
 
     return res.status(200).json({
       success: true,
-      response: result,
-      message: "Projects fetched successfully"
+      response: comments,
+      message: "Comments fetched successfully",
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
-      message: "Failed to fetch projects."
+      message: "Failed to fetch comments",
     });
   }
 };

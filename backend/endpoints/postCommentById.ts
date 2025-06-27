@@ -1,4 +1,5 @@
 import { Project } from "../models/Projects";
+import { Comment } from "../models/comment";
 import { Request, Response } from "express";
 
 interface Reply {
