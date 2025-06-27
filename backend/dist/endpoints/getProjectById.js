@@ -5,7 +5,7 @@ const Projects_1 = require("../models/Projects");
 const getProjectById = async (req, res) => {
     const { projectId } = req.params;
     try {
-        const project = await Projects_1.Project.findById(projectId);
+        const project = await Projects_1.Project.findById(projectId).select("projectName projectDescription");
         if (!project) {
             return res.status(404).json({
                 success: false,
@@ -13,10 +13,11 @@ const getProjectById = async (req, res) => {
                 message: "Project was not found",
             });
         }
+        const { _id, projectName, projectDescription } = project;
         return res.status(200).json({
             success: true,
-            response: project,
-            message: "The project was found"
+            response: { _id, projectName, projectDescription },
+            message: "Project found",
         });
     }
     catch (error) {

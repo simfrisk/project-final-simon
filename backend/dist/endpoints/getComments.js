@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProjects = void 0;
+exports.getComments = void 0;
 const Projects_1 = require("../models/Projects");
-const getProjects = async (req, res) => {
+const getComments = async (req, res) => {
     try {
-        const result = await Projects_1.Project.find().select("projectName projectDescription");
+        const result = await Projects_1.Project.find().select("comments");
         ;
         return res.status(200).json({
             success: true,
@@ -20,4 +20,4 @@ const getProjects = async (req, res) => {
         });
     }
 };
-exports.getProjects = getProjects;
+exports.getComments = getComments;

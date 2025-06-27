@@ -1,22 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 
 interface Reply {
   reply: string;
   createdAt: Date;
 }
 
-interface Comment {
+interface Comment extends Document {
   message: string;
   createdAt: Date;
   timeStamp: string;
   replies: Reply[];
 }
 
-interface Project {
+interface Project extends Document {
   projectName: string;
   projectDescription?: string;
   video?: string;
-  comments: Comment[];
+  comments: Types.DocumentArray<Comment>;
 }
 
 const ReplySchema = new mongoose.Schema({
@@ -38,4 +38,4 @@ const ProjectSchema = new mongoose.Schema({
   comments: { type: [CommentSchema], default: [] },
 });
 
-export const Project = mongoose.model<Project & mongoose.Document>("Project", ProjectSchema);
+export const Project = mongoose.model<Project>("Project", ProjectSchema);
