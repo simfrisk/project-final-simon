@@ -15,17 +15,67 @@ const resetDatabase = () => {
             await Reply_1.Reply.deleteMany({});
             await Comment_1.CommentModel.deleteMany({});
             await Projects_1.Project.deleteMany({});
-            // Step 1: Insert Projects
+            // Step 1: Insert Projects and keep their saved documents
+            const savedProjects = [];
             for (const project of data_json_1.default.projects) {
-                await new Projects_1.Project(project).save();
+                const savedProject = await new Projects_1.Project(project).save();
+                savedProjects.push(savedProject);
             }
-            // Step 2: Insert Comments
+            console.log(`Saved ${savedProjects.length} projects.`);
+            // Step 2: Insert Comments with correct projectId and keep saved comments
+            const savedComments = [];
             for (const comment of data_json_1.default.comments) {
-                await new Comment_1.CommentModel(comment).save(); // ✅
+                if (comment.projectIndex === undefined ||
+                    comment.projectIndex < 0 ||
+                    comment.projectIndex >= savedProjects.length) {
+                    console.error(`Invalid projectIndex ${comment.projectIndex} for comment:`, comment);
+                    continue; // skip saving this comment
+                }
+                const projectId = savedProjects[comment.projectIndex]._id;
+                if (!projectId) {
+                    console.error(`Missing projectId for comment at projectIndex ${comment.projectIndex}:`, comment);
+                    continue; // skip saving
+                }
+                const commentToSave = {
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    timeStamp: comment.timeStamp,
+                    projectId,
+                    replies: [],
+                };
+                try {
+                    const savedComment = await new Comment_1.CommentModel(commentToSave).save();
+                    savedComments.push(savedComment);
+                }
+                catch (error) {
+                    console.error("Failed to save comment:", commentToSave, error);
+                }
             }
-            // Step 3: Insert Replies
+            console.log(`Saved ${savedComments.length} comments.`);
+            // Step 3: Insert Replies with correct commentId
             for (const reply of data_json_1.default.replies) {
-                await new Reply_1.Reply(reply).save();
+                if (reply.commentIndex === undefined ||
+                    reply.commentIndex < 0 ||
+                    reply.commentIndex >= savedComments.length) {
+                    console.error(`Invalid commentIndex ${reply.commentIndex} for reply:`, reply);
+                    continue; // skip saving this reply
+                }
+                const commentId = savedComments[reply.commentIndex]._id;
+                if (!commentId) {
+                    console.error(`Missing commentId for reply at commentIndex ${reply.commentIndex}:`, reply);
+                    continue;
+                }
+                const replyToSave = {
+                    content: reply.content,
+                    createdAt: reply.createdAt,
+                    commentId,
+                };
+                try {
+                    await new Reply_1.Reply(replyToSave).save();
+                }
+                catch (error) {
+                    console.error("Failed to save reply:", replyToSave, error);
+                }
             }
             console.log("✅ Seeding complete.");
         };
