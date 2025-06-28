@@ -38,7 +38,7 @@ transition: ease .3s;
 
 @media ${MediaQueries.biggerSizes} {
   height: 200px;
-width: 800px;
+  width: 800px;
 }
 `
 

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useProjectStore } from "../../../store/projectStore";
+import { MediaQueries } from "../../../themes/mediaQueries";
 
 export const CreateProject = () => {
   const addProject = useProjectStore((state) => state.addProject);
@@ -44,9 +45,14 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
   background-color: #e1e1e1;
   border-radius: 10px;
   padding: 10px;
+
+    @media ${MediaQueries.biggerSizes} {
+    width: 800px;
+  } 
 `;
 
 const Input = styled.input`

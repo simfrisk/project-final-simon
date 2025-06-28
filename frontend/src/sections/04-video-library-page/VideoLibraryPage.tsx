@@ -20,6 +20,7 @@ export const VideoLibraryPage = () => {
 
   return (
     <Container>
+      <ProjectWrapper>
       {projects.map(({ _id, projectName, projectDescription }) => (
         <Project 
           key={_id} 
@@ -28,8 +29,8 @@ export const VideoLibraryPage = () => {
           projectDescription={projectDescription} 
         />
       ))}
-
-    <CreateProject />
+      </ProjectWrapper>
+      <CreateProject />
     </Container>
   )
   
@@ -42,8 +43,18 @@ justify-content: center;
 flex-wrap: wrap;
 gap: 20px;
 margin: 20px;
-max-width: 100%;
+max-width: 90%;
 
 @media ${MediaQueries.biggerSizes} {
 }
+`
+
+const ProjectWrapper = styled.div `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px;
+  max-width: 100%;
 `
