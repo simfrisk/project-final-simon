@@ -3,9 +3,10 @@ import { create } from 'zustand';
 export interface MessageType {
   _id?: string;
   projectID?: string;
-  message: string;
+  message: string; // NOT content
   createdAt: Date;
   timeStamp: string;
+  replies?: any[]; // probably included
 }
 
 interface MessageStore {
@@ -28,9 +29,7 @@ export const commentStore = create<MessageStore>((set) => ({
     try {
       const response = await fetch(`http://localhost:8080/projects/${msg.projectID}/comments`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(msg),
       });
 
@@ -38,9 +37,9 @@ export const commentStore = create<MessageStore>((set) => ({
 
       const data = await response.json();
 
-      if (data.success && data.comment) {
+      if (data.success && data.response) {
         set((state) => ({
-          messages: [...state.messages, data.comment], // assuming server returns full comment with _id
+          messages: [...state.messages, data.response],
         }));
       } else {
         console.error("Post failed:", data.message || "No comment in response");
@@ -66,11 +65,16 @@ export const commentStore = create<MessageStore>((set) => ({
       console.log("messages fetch:", json);
 
       if (json.success && Array.isArray(json.response)) {
-        // Find the correct project by ID
-        const project = json.response.find((proj) => proj._id === projectId);
-        const comments = project?.comments || [];
+        const mappedMessages = json.response.map((item: any) => ({
+          _id: item._id,
+          projectID: item.projectId, // renamed to match MessageType
+          message: item.content, // renamed from `content`
+          createdAt: new Date(item.createdAt),
+          timeStamp: item.timeStamp,
+          replies: item.replies || [],
+        }));
 
-        set({ messages: comments });
+        set({ messages: mappedMessages });
       } else {
         console.error("Failed to fetch messages:", json.message);
       }

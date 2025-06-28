@@ -29,8 +29,6 @@ export const CommentForm = () => {
     incrementMarkerTrigger();
   };
 
-
-
   return (
     <Container as="form" onSubmit={handleSubmit}>
       <TextInput
