@@ -3,6 +3,7 @@ import { CreateProject } from "./components/CreateProject";
 import styled from "styled-components";
 import { useProjectStore } from "../../store/projectStore";
 import { useEffect } from "react";
+import { MediaQueries } from "../../themes/mediaQueries";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
@@ -41,4 +42,8 @@ justify-content: center;
 flex-wrap: wrap;
 gap: 20px;
 margin: 20px;
+max-width: 100%;
+
+@media ${MediaQueries.biggerSizes} {
+}
 `

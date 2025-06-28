@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { MediaQueries } from "../../../themes/mediaQueries";
 
 interface ProjectProps {
   projectId: string;
@@ -25,7 +26,7 @@ const Card = styled.div `
 display: flex;
 align-items: center;
 height: 200px;
-width: 800px;
+width: 100%;
 background-color: #a7a7a7;
 border-radius: 10px;
 padding: 20px;
@@ -33,6 +34,11 @@ transition: ease .3s;
 
 &:hover {
   transform: scale(.98);
+}
+
+@media ${MediaQueries.biggerSizes} {
+  height: 200px;
+width: 800px;
 }
 `
 
@@ -44,8 +50,12 @@ color: black;
 const Thumbnail = styled.img `
 height: 100%;
 object-fit: cover;
-aspect-ratio: 4 / 3;
+aspect-ratio: 1 / 1;
 border-radius: 10px;
+
+@media ${MediaQueries.biggerSizes} {
+  aspect-ratio: 4 / 3;
+}
 `
 
 const TextContainer = styled.div `
