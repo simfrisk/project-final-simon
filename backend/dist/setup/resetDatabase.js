@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetDatabase = void 0;
 const Projects_1 = require("../models/Projects");
-const comment_1 = require("../models/comment");
+const Comment_1 = require("../models/Comment");
 const Reply_1 = require("../models/Reply");
 const data_json_1 = __importDefault(require("../data.json"));
 const resetDatabase = () => {
@@ -13,7 +13,7 @@ const resetDatabase = () => {
         const seedDatabase = async () => {
             console.log("🌱 Resetting and seeding database...");
             await Reply_1.Reply.deleteMany({});
-            await comment_1.Comment.deleteMany({});
+            await Comment_1.CommentModel.deleteMany({});
             await Projects_1.Project.deleteMany({});
             // Step 1: Insert Projects
             for (const project of data_json_1.default.projects) {
@@ -21,7 +21,7 @@ const resetDatabase = () => {
             }
             // Step 2: Insert Comments
             for (const comment of data_json_1.default.comments) {
-                await new comment_1.Comment(comment).save();
+                await new Comment_1.CommentModel(comment).save(); // ✅
             }
             // Step 3: Insert Replies
             for (const reply of data_json_1.default.replies) {

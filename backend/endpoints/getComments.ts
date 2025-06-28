@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { Comment } from "../models/comment";
+import { CommentModel } from "../models/Comment";
 
 export const getComments = async (req: Request, res: Response): Promise<Response> => {
   const { projectId } = req.params;  // get projectId from URL
 
   try {
-    const comments = await Comment.find({ projectId })  // find comments for that project
+    const comments = await CommentModel.find({ projectId })  // find comments for that project
 
     return res.status(200).json({
       success: true,

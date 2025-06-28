@@ -2,21 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postCommentById = void 0;
 const Projects_1 = require("../models/Projects");
+const Comment_1 = require("../models/Comment");
 const postCommentById = async (req, res) => {
     const { projectId } = req.params;
-    const { message, timeStamp } = req.body; // Accept timeStamp from client
-    if (!message) {
+    const { message, timeStamp } = req.body;
+    if (!message || !timeStamp) {
         return res.status(400).json({
             success: false,
             response: null,
-            message: "Comment text is required",
-        });
-    }
-    if (!timeStamp) {
-        return res.status(400).json({
-            success: false,
-            response: null,
-            message: "Timestamp is required",
+            message: "Comment text and timestamp are required",
         });
     }
     try {
@@ -28,13 +22,15 @@ const postCommentById = async (req, res) => {
                 message: "Project not found",
             });
         }
-        const newComment = {
-            message,
+        const newComment = new Comment_1.CommentModel({
+            content: message,
+            projectId: project._id,
             createdAt: new Date(),
             timeStamp,
-            replies: [], // initialize replies array
-        };
-        project.comments.push(newComment);
+            replies: [],
+        });
+        await newComment.save();
+        project.comments.push(newComment._id);
         await project.save();
         return res.status(201).json({
             success: true,

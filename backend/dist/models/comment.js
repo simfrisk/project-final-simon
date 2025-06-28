@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Comment = void 0;
+exports.CommentModel = void 0;
 const mongoose_1 = require("mongoose");
 const CommentSchema = new mongoose_1.Schema({
     content: { type: String, required: true },
@@ -9,4 +9,4 @@ const CommentSchema = new mongoose_1.Schema({
     timeStamp: String,
     replies: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Reply" }],
 });
-exports.Comment = (0, mongoose_1.model)("Comment", CommentSchema);
+exports.CommentModel = (0, mongoose_1.model)("Comment", CommentSchema);

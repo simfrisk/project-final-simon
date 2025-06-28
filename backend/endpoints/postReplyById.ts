@@ -1,10 +1,9 @@
 import { Project } from "../models/Projects";
+import { CommentModel } from "../models/Comment";
+import { Reply } from "../models/Reply";
+import type { ReplyType } from "../models/Reply";
 import { Request, Response } from "express";
-
-interface Reply {
-  reply: string;
-  createdAt: Date;
-}
+import { Types } from "mongoose";
 
 export const postReplyById = async (req: Request, res: Response): Promise<Response> => {
   const { projectId, commentId } = req.params;
@@ -28,8 +27,7 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
       });
     }
 
-    // Convert commentId to a number if your schema uses numeric IDs, or to ObjectId if you're using MongoDB ObjectId
-    const comment = project.comments.id(commentId); // works if comments are subdocs with ObjectId
+    const comment = await CommentModel.findById(commentId);
     if (!comment) {
       return res.status(404).json({
         success: false,
@@ -38,13 +36,17 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
       });
     }
 
-    const newReply: Reply = {
-      reply,
+    // Create and save the reply
+    const newReply = new Reply({
+      content: reply,
+      commentId: comment._id,
       createdAt: new Date(),
-    };
+    }) as ReplyType;
+    await newReply.save();
 
-    comment.replies.push(newReply);
-    await project.save();
+    // Push reply _id to comment
+    comment.replies.push(newReply._id as Types.ObjectId);
+    await comment.save(); // ✅ You forgot this line
 
     return res.status(201).json({
       success: true,

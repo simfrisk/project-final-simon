@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document, Types, model } from "mongoose";
+import { Schema, Document, Types, model } from "mongoose";
 
-export interface Comment extends Document {
+export interface CommentType extends Document {
   content: string;
   projectId: Types.ObjectId;
   createdAt: Date;
@@ -8,7 +8,7 @@ export interface Comment extends Document {
   replies: Types.ObjectId[];
 }
 
-const CommentSchema = new Schema<Comment>({
+const CommentSchema = new Schema<CommentType>({
   content: { type: String, required: true },
   projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
   createdAt: { type: Date, default: Date.now },
@@ -16,4 +16,4 @@ const CommentSchema = new Schema<Comment>({
   replies: [{ type: Schema.Types.ObjectId, ref: "Reply" }],
 });
 
-export const Comment = model<Comment>("Comment", CommentSchema);
+export const CommentModel = model<CommentType>("Comment", CommentSchema);

@@ -1,36 +1,17 @@
 import { Project } from "../models/Projects";
-import { Comment } from "../models/comment";
+import { CommentModel } from "../models/Comment";
 import { Request, Response } from "express";
-
-interface Reply {
-  reply: string;
-  createdAt: Date;
-}
-
-interface Comment {
-  message: string;
-  createdAt: Date;
-  timeStamp: string;
-  replies: Reply[];
-}
+import { Types } from "mongoose";
 
 export const postCommentById = async (req: Request, res: Response): Promise<Response> => {
   const { projectId } = req.params;
-  const { message, timeStamp } = req.body;  // Accept timeStamp from client
+  const { message, timeStamp } = req.body;
 
-  if (!message) {
+  if (!message || !timeStamp) {
     return res.status(400).json({
       success: false,
       response: null,
-      message: "Comment text is required",
-    });
-  }
-
-  if (!timeStamp) {
-    return res.status(400).json({
-      success: false,
-      response: null,
-      message: "Timestamp is required",
+      message: "Comment text and timestamp are required",
     });
   }
 
@@ -44,14 +25,17 @@ export const postCommentById = async (req: Request, res: Response): Promise<Resp
       });
     }
 
-    const newComment: Comment = {
-      message,
+    const newComment = new CommentModel({
+      content: message,
+      projectId: project._id,
       createdAt: new Date(),
       timeStamp,
-      replies: [],  // initialize replies array
-    };
+      replies: [],
+    });
 
-    project.comments.push(newComment);
+    await newComment.save();
+
+    project.comments.push(newComment._id as Types.ObjectId);
     await project.save();
 
     return res.status(201).json({

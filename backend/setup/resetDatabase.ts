@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Project } from "../models/Projects";
-import { Comment } from "../models/comment";
+import { CommentModel } from "../models/Comment";
 import { Reply } from "../models/Reply";
 import data from "../data.json";
 
@@ -10,7 +10,7 @@ export const resetDatabase = () => {
       console.log("🌱 Resetting and seeding database...");
 
       await Reply.deleteMany({});
-      await Comment.deleteMany({});
+      await CommentModel.deleteMany({});
       await Project.deleteMany({});
 
       // Step 1: Insert Projects
@@ -20,7 +20,7 @@ export const resetDatabase = () => {
 
       // Step 2: Insert Comments
       for (const comment of data.comments) {
-        await new Comment(comment).save();
+        await new CommentModel(comment).save(); // ✅
       }
 
       // Step 3: Insert Replies
