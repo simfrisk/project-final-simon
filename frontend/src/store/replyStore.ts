@@ -12,31 +12,77 @@ interface ReplyStore {
   addReply: (aReply: ReplyType) => void;
 }
 
-const STORAGE_KEY = "replyStore";
+// export interface MessageType {
+//   _id?: string;
+//   projectID?: string;
+//   message: string; // NOT content
+//   createdAt: Date;
+//   timeStamp: string;
+//   replies?: any[]; // probably included
+// }
 
-export const useReplyStore = create<ReplyStore>((set) => ({
-  replies: (() => {
+// interface MessageStore {
+//   messages: MessageType[];
+//   selectedTimeStamp: string | null;
+//   setSelectedTimeStamp: (stamp: string) => void;
+//   addMessage: (msg: MessageType) => Promise<void>;
+//   clearMessages: () => void;
+//   deleteMessage: (_id: string) => void;
+//   fetchComments: (projectId: string) => Promise<void>;
+// }
+
+export const replyStore = create<MessageStore>((set) => ({
+  messages: [],
+  selectedTimeStamp: null,
+
+  // addMessage: async (msg) => {
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/projects/${msg.projectID}/comments`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(msg),
+  //     });
+
+  //     if (!response.ok) throw new Error("Failed to post comment");
+
+  //     const data = await response.json();
+
+  //     if (data.success && data.response) {
+  //       set((state) => ({
+  //         messages: [...state.messages, data.response],
+  //       }));
+  //     } else {
+  //       console.error("Post failed:", data.message || "No comment in response");
+  //     }
+  //   } catch (err: any) {
+  //     console.error("Error posting comment:", err.message || "Unknown error");
+  //   }
+  // },
+
+  fetchComments: async (commentId) => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) return [];
-      const parsed: ReplyType[] = JSON.parse(stored);
-      return parsed.map(reply => ({
-        ...reply,
-        createdAt: new Date(reply.createdAt),
-      }));
-    } catch {
-      return [];
-    }
-  })(),
-  addReply: (aReply) => {
-    set((state) => {
-      const updatedReplies = [...state.replies, aReply];
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedReplies));
-      } catch (error) {
-        console.error('Failed to save replies to localStorage', error);
+      const response = await fetch(`http://localhost:8080/projects/${projectId}/comments/${commentId}/replies`);
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+      console.log("messages fetch:", json);
+
+      if (json.success && Array.isArray(json.response)) {
+        const mappedMessages = json.response.map((item: any) => ({
+          _id: item._id,
+          projectID: item.projectId, // renamed to match MessageType
+          message: item.content, // renamed from `content`
+          createdAt: new Date(item.createdAt),
+          timeStamp: item.timeStamp,
+          replies: item.replies || [],
+        }));
+
+        set({ messages: mappedMessages });
+      } else {
+        console.error("Failed to fetch messages:", json.message);
       }
-      return { replies: updatedReplies };
-    });
-  },
+    } catch (err: any) {
+      console.error("Fetch error:", err.message || "Unknown error");
+    }
+  }
 }));

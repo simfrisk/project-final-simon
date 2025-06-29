@@ -8,7 +8,8 @@ import { resetDatabase } from "./setup/resetDatabase";
 import { getProjectById } from "./endpoints/getProjectById";
 import { postCommentById } from "./endpoints/postCommentById";
 import { getComments } from "./endpoints/getComments";
-import { getReplyById } from "./endpoints/getReplyById";
+import { getReplies } from "./endpoints/getReplies";
+import { getCommentById } from "./endpoints/getCommentById";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -22,13 +23,21 @@ app.use(express.json());
 resetDatabase()
 
 // API Home Route
+// Home + Projects
 app.get("/", getHome(app));
 app.get("/projects", getProjects);
-app.get("/projects/:projectId", getProjectById)
-app.get("/projects/:projectId/comments", getComments)
-app.get("/projects/:projectId/comments/:commentId/replies", getReplyById)
-app.post("/projects", postProject)
-app.post("/projects/:projectId/comments/", postCommentById)
+app.get("/projects/:projectId", getProjectById);
+
+// Comments
+app.get("/projects/:projectId/comments", getComments); // All comments for a project
+app.get("/comments/:commentId", getCommentById);       // Single comment by ID
+
+// Replies
+app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
+
+// Posting
+app.post("/projects", postProject);
+app.post("/projects/:projectId/comments/", postCommentById);
 // app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);
 
 // Start the server
