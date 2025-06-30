@@ -3,9 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getComments = void 0;
 const Comment_1 = require("../models/Comment");
 const getComments = async (req, res) => {
-    const { projectId } = req.params; // get projectId from URL
+    const { projectId } = req.params;
     try {
-        const comments = await Comment_1.CommentModel.find({ projectId }); // find comments for that project
+        const comments = await Comment_1.CommentModel.find({ projectId })
+            .populate("replies");
         return res.status(200).json({
             success: true,
             response: comments,

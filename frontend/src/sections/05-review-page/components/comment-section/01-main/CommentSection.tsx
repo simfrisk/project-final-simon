@@ -5,7 +5,6 @@ import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
-import { useReplyStore } from '../../../../../store/replyStore';
 
 
 
@@ -16,7 +15,7 @@ export const CommentSection = () => {
 
   // Zustand stores and actions
   const messages: MessageType[] = commentStore((state) => state.messages);
-  const addReply = useReplyStore((state) => state.addReply);
+
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
@@ -31,7 +30,6 @@ export const CommentSection = () => {
       commentId: replyToCommentId,
     };
 
-    addReply(newReply);
     setReply(''); // clear input
     setReplyToCommentId(null); // reset reply target
   };

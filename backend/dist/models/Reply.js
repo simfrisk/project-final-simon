@@ -1,22 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getReplies = void 0;
-const getReplies = async (req, res) => {
-    const { commentId } = req.params;
-    try {
-        const replies = await Reply.find({ commentId }); // Find replies linked to this comment
-        return res.status(200).json({
-            success: true,
-            response: replies,
-            message: "Replies fetched successfully",
-        });
-    }
-    catch (error) {
-        return res.status(500).json({
-            success: false,
-            response: null,
-            message: "Failed to fetch replies",
-        });
-    }
-};
-exports.getReplies = getReplies;
+exports.Reply = void 0;
+const mongoose_1 = require("mongoose");
+const ReplySchema = new mongoose_1.Schema({
+    content: { type: String, required: true },
+    commentId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Comment", required: true },
+    createdAt: { type: Date, default: Date.now },
+});
+exports.Reply = (0, mongoose_1.model)("Reply", ReplySchema);
