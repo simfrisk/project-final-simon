@@ -29,8 +29,7 @@ export const ReplyCard = ({ reply }: ReplyCardProps) => {
           </CheckBtn>
           </TopSection>
 
-               <CardMain>{reply.reply}
-               </CardMain>
+          <CardMain>{reply.content}</CardMain>
 
             <CardFooter>
               <React>

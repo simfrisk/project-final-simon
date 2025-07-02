@@ -1,12 +1,19 @@
 import { create } from 'zustand';
 
+export interface ReplyType {
+  _id: string;
+  content: string;
+  commentId: string;
+  createdAt: Date;
+}
+
 export interface MessageType {
-  _id?: string;
-  projectID?: string;
-  message: string; // NOT content
+  _id: string;
+  content: string;
+  projectId?: string;
   createdAt: Date;
   timeStamp: string;
-  replies?: any[]; // probably included
+  replies?: ReplyType[];
 }
 
 interface MessageStore {
@@ -27,7 +34,7 @@ export const commentStore = create<MessageStore>((set) => ({
 
   addMessage: async (msg) => {
     try {
-      const response = await fetch(`http://localhost:8080/projects/${msg.projectID}/comments`, {
+      const response = await fetch(`http://localhost:8080/projects/${msg.projectId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(msg),
@@ -38,8 +45,22 @@ export const commentStore = create<MessageStore>((set) => ({
       const data = await response.json();
 
       if (data.success && data.response) {
+        const newMessage: MessageType = {
+          _id: data.response._id,
+          content: data.response.content,
+          projectId: data.response.projectId,
+          createdAt: new Date(data.response.createdAt),
+          timeStamp: data.response.timeStamp,
+          replies: (data.response.replies || []).map((reply: any) => ({
+            _id: reply._id,
+            content: reply.content,
+            commentId: reply.commentId,
+            createdAt: new Date(reply.createdAt),
+          })),
+        };
+
         set((state) => ({
-          messages: [...state.messages, data.response],
+          messages: [...state.messages, newMessage],
         }));
       } else {
         console.error("Post failed:", data.message || "No comment in response");
@@ -65,13 +86,18 @@ export const commentStore = create<MessageStore>((set) => ({
       console.log("messages fetch:", json);
 
       if (json.success && Array.isArray(json.response)) {
-        const mappedMessages = json.response.map((item: any) => ({
+        const mappedMessages: MessageType[] = json.response.map((item: any) => ({
           _id: item._id,
-          projectID: item.projectId, // renamed to match MessageType
-          message: item.content, // renamed from `content`
+          content: item.content,
+          projectId: item.projectId,
           createdAt: new Date(item.createdAt),
           timeStamp: item.timeStamp,
-          replies: item.replies || [],
+          replies: (item.replies || []).map((reply: any) => ({
+            _id: reply._id,
+            content: reply.content,
+            commentId: reply.commentId,
+            createdAt: new Date(reply.createdAt),
+          })),
         }));
 
         set({ messages: mappedMessages });

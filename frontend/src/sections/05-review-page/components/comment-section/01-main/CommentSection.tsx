@@ -6,39 +6,32 @@ import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
 
-
-
 export const CommentSection = () => {
-  // local state for reply input and which comment is being replied to
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 
-  // Zustand stores and actions
   const messages: MessageType[] = commentStore((state) => state.messages);
-
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reply.trim() || replyToCommentId === null) return; // input validation and check target
+    if (!reply.trim() || replyToCommentId === null) return;
 
     const newReply = {
-      replyId: Date.now(), // simple unique id
+      replyId: Date.now(),
       reply: reply.trim(),
       createdAt: new Date(),
       commentId: replyToCommentId,
     };
 
-    setReply(''); // clear input
-    setReplyToCommentId(null); // reset reply target
+    setReply('');
+    setReplyToCommentId(null);
   };
-
-  const message = commentStore((state) => state.message);
 
   return (
     <CommentListContainer>
-      {messages.map(({ _id, message, createdAt, timeStamp, replies }) => (
+      {messages.map(({ _id, content, createdAt, timeStamp, replies }) => (
         <Card key={_id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex={0}>
           <TopSection>
             <ImageContainer>
@@ -59,7 +52,7 @@ export const CommentSection = () => {
             </CheckBtn>
           </TopSection>
 
-          <CardMain>{message}</CardMain>
+          <CardMain>{content}</CardMain>
 
           <CardFooter>
             <ReactionGroup>
@@ -74,28 +67,28 @@ export const CommentSection = () => {
             </Edit>
           </CardFooter>
 
-            {replyToCommentId === _id && (
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={reply}
-          onChange={(e) => setReply(e.target.value)}
-          placeholder="Write a reply..."
-        />
-        <button type="submit">Submit</button>
-      </form>
-    )}
+          {replyToCommentId === _id && (
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                placeholder="Write a reply..."
+              />
+              <button type="submit">Submit</button>
+            </form>
+          )}
 
-   <ReplyCardContainer>
-    {(replies || []).map((reply, idx) => (
-      <ReplyCard key={idx} reply={reply} />
-    ))}
-  </ReplyCardContainer>
-    </Card>
-  ))}
-      </CommentListContainer>
-    );
-  };
+          <ReplyCardContainer>
+            {(replies || []).map((reply) => (
+              <ReplyCard key={reply._id} reply={reply} />
+            ))}
+          </ReplyCardContainer>
+        </Card>
+      ))}
+    </CommentListContainer>
+  );
+};
 
 // Styled components
 
