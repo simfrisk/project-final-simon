@@ -19,10 +19,9 @@ export const CommentForm = () => {
     if (!text.trim()) return;
 
     addMessage({
-      message: text,
-      createdAt: new Date(),
+      content: text,
       timeStamp: timecode,
-      projectID: projectId,
+      projectId: projectId,
     });
 
     setText('');

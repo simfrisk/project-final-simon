@@ -11,7 +11,7 @@ export interface MessageType {
   _id: string;
   content: string;
   projectId?: string;
-  createdAt: Date;
+  createdAt?: Date;
   timeStamp: string;
   replies?: ReplyType[];
 }
@@ -49,14 +49,7 @@ export const commentStore = create<MessageStore>((set) => ({
           _id: data.response._id,
           content: data.response.content,
           projectId: data.response.projectId,
-          createdAt: new Date(data.response.createdAt),
           timeStamp: data.response.timeStamp,
-          replies: (data.response.replies || []).map((reply: any) => ({
-            _id: reply._id,
-            content: reply.content,
-            commentId: reply.commentId,
-            createdAt: new Date(reply.createdAt),
-          })),
         };
 
         set((state) => ({

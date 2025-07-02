@@ -5,9 +5,9 @@ import { Types } from "mongoose";
 
 export const postCommentById = async (req: Request, res: Response): Promise<Response> => {
   const { projectId } = req.params;
-  const { message, timeStamp } = req.body;
+  const { content, timeStamp } = req.body;
 
-  if (!message || !timeStamp) {
+  if (!content || !timeStamp) {
     return res.status(400).json({
       success: false,
       response: null,
@@ -26,7 +26,7 @@ export const postCommentById = async (req: Request, res: Response): Promise<Resp
     }
 
     const newComment = new CommentModel({
-      content: message,
+      content,
       projectId: project._id,
       createdAt: new Date(),
       timeStamp,
