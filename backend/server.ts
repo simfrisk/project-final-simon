@@ -11,6 +11,9 @@ import { getComments } from "./endpoints/getComments";
 import { getReplies } from "./endpoints/getReplies";
 import { getCommentById } from "./endpoints/getCommentById";
 import { postReplyById } from "./endpoints/postReplyById";
+import dotenv from "dotenv"
+
+dotenv.config();
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
