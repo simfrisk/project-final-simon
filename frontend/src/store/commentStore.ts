@@ -41,7 +41,7 @@ export const commentStore = create<MessageStore>((set) => ({
 
   addMessage: async (msg) => {
     try {
-      const response = await fetch(`https://fproject-final-simon.onrender.com/projects/${msg.projectId}/comments`, {
+      const response = await fetch(`https://project-final-simon.onrender.com/projects/${msg.projectId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(msg),
