@@ -1,4 +1,4 @@
-import { CommentModel } from "../models/Comment"; // import your actual Comment model
+import { CommentModel } from "../models/Comment";
 import { Request, Response } from "express";
 
 export const getCommentById = async (req: Request, res: Response): Promise<Response> => {
