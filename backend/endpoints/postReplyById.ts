@@ -1,31 +1,20 @@
-import { Project } from "../models/Projects";
 import { CommentModel } from "../models/Comment";
 import { Reply } from "../models/Reply";
-import type { ReplyType } from "../models/Reply";
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 
 export const postReplyById = async (req: Request, res: Response): Promise<Response> => {
-  const { projectId, commentId } = req.params;
-  const { reply } = req.body;
+  const { commentId } = req.params;
+  const { content } = req.body;
 
-  if (!reply) {
+  if (!content) {
     return res.status(400).json({
       success: false,
       response: null,
-      message: "Reply text is required",
+      message: "Reply content is required",
     });
   }
 
   try {
-    const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        response: null,
-        message: "Project not found",
-      });
-    }
 
     const comment = await CommentModel.findById(commentId);
     if (!comment) {
@@ -36,17 +25,15 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
       });
     }
 
-    // Create and save the reply
     const newReply = new Reply({
-      content: reply,
+      content,
       commentId: comment._id,
-      createdAt: new Date(),
-    }) as ReplyType;
+    });
+
     await newReply.save();
 
-    // Push reply _id to comment
-    comment.replies.push(newReply._id as Types.ObjectId);
-    await comment.save(); // ✅ You forgot this line
+    comment.replies.push(newReply._id);
+    await comment.save();
 
     return res.status(201).json({
       success: true,
@@ -56,7 +43,7 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
   } catch (error) {
     return res.status(500).json({
       success: false,
-      response: error,
+      response: null,
       message: "Could not add reply",
     });
   }

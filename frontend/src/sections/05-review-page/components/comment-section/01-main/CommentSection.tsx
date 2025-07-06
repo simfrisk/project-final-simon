@@ -5,28 +5,38 @@ import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
+import { replyStore } from '../../../../../store/replyStore';
 
 export const CommentSection = () => {
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
+  const addReply = replyStore((state) => state.addReply);
 
   const messages: MessageType[] = commentStore((state) => state.messages);
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reply.trim() || replyToCommentId === null) return;
+    if (!reply.trim() || !replyToCommentId) return;
 
-    const newReply = {
-      replyId: Date.now(),
-      reply: reply.trim(),
-      createdAt: new Date(),
-      commentId: replyToCommentId,
-    };
+    const targetComment = messages.find(msg => msg._id === replyToCommentId);
+    if (!targetComment || !targetComment.projectId) {
+      console.error("Missing projectId or commentId");
+      return;
+    }
 
-    setReply('');
-    setReplyToCommentId(null);
+    try {
+      await addReply({
+        content: reply.trim(),
+        commentId: targetComment._id,
+        projectId: targetComment.projectId,
+      });
+      setReply('');
+      setReplyToCommentId(null);
+    } catch (err) {
+      console.error("Failed to add reply:", err);
+    }
   };
 
   return (

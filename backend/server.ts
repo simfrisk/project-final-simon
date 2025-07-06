@@ -10,6 +10,7 @@ import { postCommentById } from "./endpoints/postCommentById";
 import { getComments } from "./endpoints/getComments";
 import { getReplies } from "./endpoints/getReplies";
 import { getCommentById } from "./endpoints/getCommentById";
+import { postReplyById } from "./endpoints/postReplyById";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -38,7 +39,7 @@ app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 // Posting
 app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
-// app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);
+app.post("/comments/:commentId/replies/", postReplyById);
 
 // Start the server
 app.listen(port, (): void => {
