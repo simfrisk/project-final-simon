@@ -41,7 +41,7 @@ export const commentStore = create<MessageStore>((set) => ({
 
   addMessage: async (msg) => {
     try {
-      const response = await fetch(`https://final-project.onrender.com/projects/${msg.projectId}/comments`, {
+      const response = await fetch(`https://fproject-final-simon.onrender.com/projects/${msg.projectId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(msg),
@@ -75,7 +75,7 @@ export const commentStore = create<MessageStore>((set) => ({
   addReply: async (reply) => {
     try {
       const response = await fetch(
-        `https://final-project.onrender.com/comments/${reply.commentId}/replies`,
+        `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
         {
           method: "POST",
           headers: {
@@ -124,7 +124,7 @@ export const commentStore = create<MessageStore>((set) => ({
 
   fetchComments: async (projectId) => {
     try {
-      const response = await fetch(`https://final-project.onrender.com/${projectId}/comments`);
+      const response = await fetch(`https://project-final-simon.onrender.com/${projectId}/comments`);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();

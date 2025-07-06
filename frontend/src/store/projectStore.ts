@@ -30,7 +30,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   fetchProjects: async () => {
     set({ loading: true, error: null, message: null });
     try {
-      const response = await fetch("https://final-project.onrender.com/projects");
+      const response = await fetch("https://project-final-simon.onrender.com/projects");
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
@@ -63,7 +63,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     set({ loading: true, error: null, message: null });
 
     try {
-      const response = await fetch(`https://final-project.onrender.com/projects/${projectId}`);
+      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
@@ -95,7 +95,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   addProject: async (newProject) => {
     set({ loading: true, error: null, message: null });
     try {
-      const res = await fetch("https://final-project.onrender.com/projects", {
+      const res = await fetch("https://project-final-simon.onrender.com/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProject),
