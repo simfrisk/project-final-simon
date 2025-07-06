@@ -16,6 +16,8 @@ const getComments_1 = require("./endpoints/getComments");
 const getReplies_1 = require("./endpoints/getReplies");
 const getCommentById_1 = require("./endpoints/getCommentById");
 const postReplyById_1 = require("./endpoints/postReplyById");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
