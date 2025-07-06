@@ -1,3 +1,4 @@
+import { Types } from "mongoose"
 import { CommentModel } from "../models/Comment";
 import { Reply } from "../models/Reply";
 import { Request, Response } from "express";
@@ -32,7 +33,7 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
 
     await newReply.save();
 
-    comment.replies.push(newReply._id);
+    comment.replies.push(newReply._id as Types.ObjectId);
     await comment.save();
 
     return res.status(201).json({

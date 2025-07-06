@@ -5,8 +5,8 @@ const Projects_1 = require("../models/Projects");
 const Comment_1 = require("../models/Comment");
 const postCommentById = async (req, res) => {
     const { projectId } = req.params;
-    const { message, timeStamp } = req.body;
-    if (!message || !timeStamp) {
+    const { content, timeStamp } = req.body;
+    if (!content || !timeStamp) {
         return res.status(400).json({
             success: false,
             response: null,
@@ -23,7 +23,7 @@ const postCommentById = async (req, res) => {
             });
         }
         const newComment = new Comment_1.CommentModel({
-            content: message,
+            content,
             projectId: project._id,
             createdAt: new Date(),
             timeStamp,

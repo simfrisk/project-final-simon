@@ -15,6 +15,7 @@ const postCommentById_1 = require("./endpoints/postCommentById");
 const getComments_1 = require("./endpoints/getComments");
 const getReplies_1 = require("./endpoints/getReplies");
 const getCommentById_1 = require("./endpoints/getCommentById");
+const postReplyById_1 = require("./endpoints/postReplyById");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -35,7 +36,7 @@ app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for
 // Posting
 app.post("/projects", postProject_1.postProject);
 app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
-// app.post("/projects/:projectId/comments/:commentId/replies/:replyId", postReplyById);
+app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
