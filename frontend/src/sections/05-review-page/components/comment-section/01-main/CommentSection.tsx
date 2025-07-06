@@ -5,13 +5,12 @@ import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
-import { replyStore } from '../../../../../store/replyStore';
 
 export const CommentSection = () => {
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
-  const addReply = replyStore((state) => state.addReply);
 
+  const addReply = commentStore((state) => state.addReply);
   const messages: MessageType[] = commentStore((state) => state.messages);
   const deleteMessage = commentStore((state) => state.deleteMessage);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
@@ -32,6 +31,7 @@ export const CommentSection = () => {
         commentId: targetComment._id,
         projectId: targetComment.projectId,
       });
+
       setReply('');
       setReplyToCommentId(null);
     } catch (err) {
@@ -91,7 +91,11 @@ export const CommentSection = () => {
 
           <ReplyCardContainer>
             {(replies || []).map((reply) => (
-              <ReplyCard key={reply._id} reply={reply} />
+              <ReplyCard
+                key={reply._id}
+                reply={reply}
+                setReplyToCommentId={setReplyToCommentId} 
+              />
             ))}
           </ReplyCardContainer>
         </Card>

@@ -1,48 +1,52 @@
 import styled from 'styled-components'
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
-import type { ReplyType } from '../../../../../store/replyStore';
+import type { ReplyType } from '../../../../../store/commentStore'; // Make sure this is your unified type
 import moment from 'moment';
 
 type ReplyCardProps = {
   reply: ReplyType;
+  setReplyToCommentId: (id: string | null) => void;  // new prop to open reply input on main comment
 };
 
-export const ReplyCard = ({ reply }: ReplyCardProps) => {
+export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
   return (
     <Card>
-          <TopSection>
-            <ImageContainer>
-              <img src="/teacher.jpg" alt="Profile img" />
-            </ImageContainer>
-          <Content>
-            <CardHeader>
-              <strong>Teacher</strong>
-              <Dot>&middot;</Dot>
-              <span>{moment(reply.createdAt).fromNow()}</span> {/* format date nicely */}
-            </CardHeader>          
-          </Content>
-          <CheckBtn>
-             <CircleCheckboxLabel>
-              <HiddenCheckbox />
-              <StyledCircle />
-            </CircleCheckboxLabel>
-          </CheckBtn>
-          </TopSection>
+      <TopSection>
+        <ImageContainer>
+          <img src="/teacher.jpg" alt="Profile img" />
+        </ImageContainer>
+        <Content>
+          <CardHeader>
+            <strong>Teacher</strong>
+            <Dot>&middot;</Dot>
+            <span>{moment(reply.createdAt).fromNow()}</span>
+          </CardHeader>
+        </Content>
+        <CheckBtn>
+          <CircleCheckboxLabel>
+            <HiddenCheckbox />
+            <StyledCircle />
+          </CircleCheckboxLabel>
+        </CheckBtn>
+      </TopSection>
 
-          <CardMain>{reply.content}</CardMain>
+      <CardMain>{reply.content}</CardMain>
 
-            <CardFooter>
-              <React>
-              <ActionButton>Reply</ActionButton>
-              <ActionButtonIcon><img src="/icons/like.svg" alt="Like button" /></ActionButtonIcon>
-              </React>
-              <Edit>
-                <img src="/icons/edit.svg" alt="Edit Icon" />
-                <img src="/icons/delete.svg" alt="Delete Icon"/>
-              </Edit>
-            </CardFooter>
-        </Card>
-  )
+      <CardFooter>
+        <React>
+          {/* When clicked, this sets the reply input to open at the main comment id */}
+          <ActionButton onClick={() => setReplyToCommentId(reply.commentId)}>Reply</ActionButton>
+          <ActionButtonIcon>
+            <img src="/icons/like.svg" alt="Like button" />
+          </ActionButtonIcon>
+        </React>
+        <Edit>
+          <img src="/icons/edit.svg" alt="Edit Icon" />
+          <img src="/icons/delete.svg" alt="Delete Icon" />
+        </Edit>
+      </CardFooter>
+    </Card>
+  );
 };
 
 const TopSection = styled.div `

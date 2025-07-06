@@ -21,12 +21,13 @@ interface MessageStore {
   selectedTimeStamp: string | null;
   setSelectedTimeStamp: (stamp: string) => void;
   addMessage: (msg: MessageType) => Promise<void>;
+  addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
   deleteMessage: (_id: string) => void;
   fetchComments: (projectId: string) => Promise<void>;
 }
 
-export const commentStore = create<MessageStore>((set) => ({
+export const commentStore = create<MessageStore>((set, get) => ({
   messages: [],
   selectedTimeStamp: null,
 
@@ -49,7 +50,9 @@ export const commentStore = create<MessageStore>((set) => ({
           _id: data.response._id,
           content: data.response.content,
           projectId: data.response.projectId,
+          createdAt: new Date(data.response.createdAt),
           timeStamp: data.response.timeStamp,
+          replies: [],
         };
 
         set((state) => ({
@@ -60,6 +63,49 @@ export const commentStore = create<MessageStore>((set) => ({
       }
     } catch (err: any) {
       console.error("Error posting comment:", err.message || "Unknown error");
+    }
+  },
+
+  addReply: async (reply) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/comments/${reply.commentId}/replies`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ content: reply.content }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to post reply");
+
+      const data = await response.json();
+
+      if (data.success && data.response) {
+        const newReply: ReplyType = {
+          _id: data.response._id,
+          content: data.response.content,
+          commentId: data.response.commentId,
+          createdAt: new Date(data.response.createdAt),
+        };
+
+        set((state) => ({
+          messages: state.messages.map((msg) =>
+            msg._id === newReply.commentId
+              ? {
+                ...msg,
+                replies: [...(msg.replies || []), newReply],
+              }
+              : msg
+          ),
+        }));
+      } else {
+        console.error("Post reply failed:", data.message || "No reply in response");
+      }
+    } catch (err: any) {
+      console.error("Error posting reply:", err.message || "Unknown error");
     }
   },
 
@@ -76,7 +122,6 @@ export const commentStore = create<MessageStore>((set) => ({
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
-      console.log("messages fetch:", json);
 
       if (json.success && Array.isArray(json.response)) {
         const mappedMessages: MessageType[] = json.response.map((item: any) => ({
@@ -100,5 +145,5 @@ export const commentStore = create<MessageStore>((set) => ({
     } catch (err: any) {
       console.error("Fetch error:", err.message || "Unknown error");
     }
-  }
+  },
 }));
