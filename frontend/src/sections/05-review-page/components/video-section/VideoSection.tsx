@@ -60,7 +60,7 @@ useEffect(() => {
   if (!video) return;
   
   const latestMessage = messages[messages.length - 1]; // Get the most recent message
-  const messageText = latestMessage ? latestMessage.message : 'No message';
+  const messageText = latestMessage ? latestMessage.content : 'No message';
 
   setMarkers((prev) => [
     ...prev,

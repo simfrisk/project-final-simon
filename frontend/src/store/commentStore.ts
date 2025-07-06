@@ -16,18 +16,24 @@ export interface MessageType {
   replies?: ReplyType[];
 }
 
+export interface NewMessageType {
+  content: string;
+  projectId?: string;
+  timeStamp: string;
+}
+
 interface MessageStore {
   messages: MessageType[];
   selectedTimeStamp: string | null;
   setSelectedTimeStamp: (stamp: string) => void;
-  addMessage: (msg: MessageType) => Promise<void>;
+  addMessage: (msg: NewMessageType) => Promise<void>;
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
   deleteMessage: (_id: string) => void;
   fetchComments: (projectId: string) => Promise<void>;
 }
 
-export const commentStore = create<MessageStore>((set, get) => ({
+export const commentStore = create<MessageStore>((set) => ({
   messages: [],
   selectedTimeStamp: null,
 
