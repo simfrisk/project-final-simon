@@ -18,7 +18,7 @@ export const replyStore = create<ReplyStore>((set) => ({
   addReply: async (reply) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/comments/${reply.commentId}/replies`,
+        `https://final-project.onrender.com/comments/${reply.commentId}/replies`,
         {
           method: "POST",
           headers: {
