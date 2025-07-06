@@ -22,7 +22,7 @@ interface ProjectsStore {
 
 export const useProjectStore = create<ProjectsStore>((set) => ({
   projects: [],
-  project: null, // 👈 initialize single project
+  project: null, // 👈 initialize single project here
   loading: false,
   error: null,
   message: null,
