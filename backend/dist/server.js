@@ -41,7 +41,7 @@ app.post("/projects", postProject_1.postProject);
 app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 // Delete
-app.delete("replies/:replyId", deleteReply_1.deleteReply);
+app.delete("/replies/:replyId", deleteReply_1.deleteReply);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
