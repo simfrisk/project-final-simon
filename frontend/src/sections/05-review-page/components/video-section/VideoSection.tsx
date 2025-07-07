@@ -69,7 +69,7 @@ useEffect(() => {
       message: messageText,
     },
   ]);
-}, [markerTriggerCount]);
+}, [markerTriggerCount, messages]);
 
 //This adds the timecode to zustand TimeCodeStore
 useEffect(() => {
