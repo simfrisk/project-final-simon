@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types, model } from "mongoose";
+import { Schema, Document, Types, model } from "mongoose";
 
 export interface ReplyType extends Document {
   content: string;

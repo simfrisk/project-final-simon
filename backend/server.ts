@@ -12,6 +12,7 @@ import { getReplies } from "./endpoints/getReplies";
 import { getCommentById } from "./endpoints/getCommentById";
 import { postReplyById } from "./endpoints/postReplyById";
 import dotenv from "dotenv"
+import { deleteReply } from "./endpoints/deleteReply";
 
 dotenv.config();
 
@@ -43,6 +44,9 @@ app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
+
+// Delete
+app.delete("replies/:replyId", deleteReply);
 
 // Start the server
 app.listen(port, (): void => {
