@@ -21,11 +21,6 @@ import { useTimecode } from '../../../../store/timeCodeStore';
 
 export const VideoSection = () => {
 
-  type Marker = {
-  time: number;
-  message: string;
-  };
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = useState(1);
