@@ -46,7 +46,7 @@ app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 
 // Delete
-app.delete("replies/:replyId", deleteReply);
+app.delete("/replies/:replyId", deleteReply);
 
 // Start the server
 app.listen(port, (): void => {
