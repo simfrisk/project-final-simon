@@ -124,7 +124,7 @@ export const commentStore = create<MessageStore>((set) => ({
 
   fetchComments: async (projectId) => {
     try {
-      const response = await fetch(`https://project-final-simon.onrender.com/${projectId}/comments`);
+      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}/comments`);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
