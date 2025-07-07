@@ -30,6 +30,7 @@ interface MessageStore {
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
   deleteMessage: (_id: string) => void;
+  deleteReply: (replyId: string, commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
 }
 
@@ -116,6 +117,35 @@ export const commentStore = create<MessageStore>((set) => ({
   },
 
   clearMessages: () => set({ messages: [] }),
+
+  deleteReply: async (replyId, commentId) => {
+    try {
+      const response = await fetch(`https://project-final-simon.onrender.com/replies/${replyId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete reply");
+
+      const data = await response.json();
+
+      if (data.success) {
+        set((state) => ({
+          messages: state.messages.map((msg) =>
+            msg._id === commentId
+              ? {
+                ...msg,
+                replies: (msg.replies || []).filter((reply) => reply._id !== replyId),
+              }
+              : msg
+          ),
+        }));
+      } else {
+        console.error("Delete reply failed:", data.message);
+      }
+    } catch (err: any) {
+      console.error("Error deleting reply:", err.message || "Unknown error");
+    }
+  },
 
   deleteMessage: (_id) =>
     set((state) => ({

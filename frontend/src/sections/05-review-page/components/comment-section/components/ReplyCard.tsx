@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
-import type { ReplyType } from '../../../../../store/commentStore'; // Make sure this is your unified type
+import type { ReplyType } from '../../../../../store/commentStore';
 import moment from 'moment';
+import { commentStore } from '../../../../../store/commentStore';
 
 type ReplyCardProps = {
   reply: ReplyType;
@@ -9,6 +10,9 @@ type ReplyCardProps = {
 };
 
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
+
+const { deleteReply } = commentStore();
+
   return (
     <Card>
       <TopSection>
@@ -42,7 +46,7 @@ export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
         </React>
         <Edit>
           <img src="/icons/edit.svg" alt="Edit Icon" />
-          <img src="/icons/delete.svg" alt="Delete Icon" />
+          <img onClick={() => deleteReply(reply._id, reply.commentId)} src="/icons/delete.svg" alt="Delete Icon" />
         </Edit>
       </CardFooter>
     </Card>
