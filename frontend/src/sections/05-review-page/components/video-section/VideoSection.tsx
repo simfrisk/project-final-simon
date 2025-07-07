@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
-import { useVideoStore } from '../../../../store/videoStore';
 import { formatTime } from './utils/formatTime'
 import { unFormatTime } from './utils/unFormatTime';
 import { useTogglePlay } from './utils/togglePlay';

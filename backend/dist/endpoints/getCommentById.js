@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCommentById = void 0;
-const Comment_1 = require("../models/Comment"); // import your actual Comment model
+const Comment_1 = require("../models/Comment");
 const getCommentById = async (req, res) => {
     const { commentId } = req.params;
     try {
