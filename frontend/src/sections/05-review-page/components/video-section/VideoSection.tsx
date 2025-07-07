@@ -23,6 +23,7 @@ export const VideoSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = useState(1);
+  const [videoLoaded, setVideoLoaded] = useState(false)
 
   //This is for when clicking on comments to get the time here
   const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
@@ -83,6 +84,21 @@ useEffect(() => {
   }
 }, [selectedTimecode, goToTime]);
 
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  const handleLoadedMetadata = () => {
+    setVideoLoaded(true);
+  };
+
+  video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+  return () => {
+    video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+  };
+}, []);
+
 
   //#endregion
 
@@ -114,7 +130,7 @@ useEffect(() => {
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
-       {messages.map(({ _id, timeStamp, content }) => {
+       {videoLoaded && messages.map(({ _id, timeStamp, content }) => {
           const timeInSeconds = unFormatTime(timeStamp);
           const percent = videoRef.current?.duration
             ? (timeInSeconds / videoRef.current.duration) * 100
