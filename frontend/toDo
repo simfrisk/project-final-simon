@@ -1,0 +1,9 @@
+[ ] Edit reply
+[ ] Delete reply
+[ ] Save timestamps with messages
+  - Add the videoRef time to a zustand store and add it to the messages. 
+  - Map the messages instead of the markes. 
+  - Remove all old stuff
+
+
+TIP: Do not use any AI please!!! And don't copy all of it.

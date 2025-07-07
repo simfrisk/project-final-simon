@@ -28,7 +28,6 @@ export const VideoSection = () => {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
-  const [markers, setMarkers] = useState<Marker[]>([]);
   const [volume, setVolume] = useState(1);
 
   //This is for when clicking on comments to get the time here
@@ -38,7 +37,6 @@ export const VideoSection = () => {
   // console.log(videoRef.current)
   
   const messages: MessageType[] = commentStore((state) => state.messages);
-  const markerTriggerCount = useVideoStore((state) => state.markerTriggerCount);
 
   //Controls the playback
   const { progress, isPlaying } = useVideoProgress(videoRef);
@@ -53,23 +51,6 @@ export const VideoSection = () => {
   const setTimecode = useTimecode((state) => state.setTimecode);
   const duration = formatTime(videoRef.current?.duration || 0);
 
-
-  //  Detect trigger marker via counter change
-useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
-  
-  const latestMessage = messages[messages.length - 1]; // Get the most recent message
-  const messageText = latestMessage ? latestMessage.content : 'No message';
-
-  setMarkers((prev) => [
-    ...prev,
-    {
-      time: video.currentTime,
-      message: messageText,
-    },
-  ]);
-}, [markerTriggerCount, messages]);
 
 //This adds the timecode to zustand TimeCodeStore
 useEffect(() => {
@@ -139,21 +120,23 @@ useEffect(() => {
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
-        {markers.map(({ time, message }, i) => {
+       {messages.map(({ _id, timeStamp, content }) => {
+          const timeInSeconds = unFormatTime(timeStamp);
           const percent = videoRef.current?.duration
-            ? (time / videoRef.current.duration) * 100
+            ? (timeInSeconds / videoRef.current.duration) * 100
             : 0;
 
           return (
             <MarkerWrapper
-              key={i}
+              key={_id}
               style={{ left: `${percent}%` }}
               onClick={(e) => {
                 e.stopPropagation();
-                goToTime(time);
-              }}>
+                goToTime(timeInSeconds);
+              }}
+            >
               <Marker />
-              <MarkerMessage>{message}</MarkerMessage>
+              <MarkerMessage>{content}</MarkerMessage>
             </MarkerWrapper>
           );
         })}
