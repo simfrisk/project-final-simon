@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useProjectStore } from "../../store/projectStore";
 import { useEffect } from "react";
 import { MediaQueries } from "../../themes/mediaQueries";
+import { Loader } from "../../global-components/loader";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
@@ -11,11 +12,22 @@ export const VideoLibraryPage = () => {
   const loading = useProjectStore((state) => state.loading);
   const error = useProjectStore((state) => state.error);
 
+  
+
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
-  if (loading) return <p>Loading projects...</p>;
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <h3>Loading projects</h3>
+        <Loader />
+      </LoadingContainer>
+    );
+  }
+
+  
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -57,4 +69,12 @@ const ProjectWrapper = styled.div `
   gap: 20px;
   margin: 20px;
   max-width: 100%;
+`
+
+const LoadingContainer = styled.div `
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100dvh;
 `
