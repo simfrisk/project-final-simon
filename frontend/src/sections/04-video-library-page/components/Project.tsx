@@ -17,6 +17,11 @@ export const Project = ({ projectId, projectName, projectDescription }: ProjectP
           <h3>{projectName}</h3>
           <p>{projectDescription}</p>
         </TextContainer>
+        <CardFooter>              
+          <img src="/icons/edit.svg" alt="Edit Icon" />
+          <img src="/icons/delete.svg" alt="Delete Icon"/>
+        </CardFooter>
+
       </Card>
     </StyledLink>
   );
@@ -63,5 +68,10 @@ display: flex;
 flex-direction: column;
 margin: 20px;
 max-width: 400px;
+`
+
+const CardFooter = styled.div `
+display: flex;
+column-gap: 10px;
 `
 
