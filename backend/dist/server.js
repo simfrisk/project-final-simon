@@ -20,6 +20,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const deleteReply_1 = require("./endpoints/deleteReply");
 const patchReply_1 = require("./endpoints/patchReply");
 const deleteComment_1 = require("./endpoints/deleteComment");
+const deleteProject_1 = require("./endpoints/deleteProject");
 dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -45,6 +46,7 @@ app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 // Patch
 app.patch("/replies/:replyId", patchReply_1.patchReply);
 // Delete
+app.delete("/projects/:projectId", deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", deleteReply_1.deleteReply);
 // Start the server

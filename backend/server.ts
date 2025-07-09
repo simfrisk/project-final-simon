@@ -15,6 +15,7 @@ import dotenv from "dotenv"
 import { deleteReply } from "./endpoints/deleteReply";
 import { patchReply } from "./endpoints/patchReply";
 import { deleteComment } from "./endpoints/deleteComment";
+import { deleteProject } from "./endpoints/deleteProject";
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.post("/comments/:commentId/replies/", postReplyById);
 app.patch("/replies/:replyId", patchReply);
 
 // Delete
+app.delete("/projects/:projectId", deleteProject)
 app.delete("/comments/:commentId", deleteComment)
 app.delete("/replies/:replyId", deleteReply);
 
