@@ -29,8 +29,8 @@ interface MessageStore {
   addMessage: (msg: NewMessageType) => Promise<void>;
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
-  deleteMessage: (_id: string) => void;
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
+  deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
 }
 
@@ -118,6 +118,29 @@ export const commentStore = create<MessageStore>((set) => ({
 
   clearMessages: () => set({ messages: [] }),
 
+  deleteComment: async (commentId) => {
+    try {
+      const response = await fetch(`https://project-final-simon.onrender.com/comments/${commentId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete comment");
+
+      const data = await response.json();
+
+      if (data.success) {
+        set((state) => ({
+          messages: state.messages.filter((msg) => msg._id !== commentId),
+        }));
+
+      } else {
+        console.error("Delete comment failed:", data.message);
+      }
+    } catch (err: any) {
+      console.error("Error deleting comment:", err.message || "Unknown error");
+    }
+  },
+
   deleteReply: async (replyId, commentId) => {
     try {
       const response = await fetch(`https://project-final-simon.onrender.com/replies/${replyId}`, {
@@ -146,11 +169,6 @@ export const commentStore = create<MessageStore>((set) => ({
       console.error("Error deleting reply:", err.message || "Unknown error");
     }
   },
-
-  deleteMessage: (_id) =>
-    set((state) => ({
-      messages: state.messages.filter((msg) => msg._id !== _id),
-    })),
 
   fetchComments: async (projectId) => {
     try {

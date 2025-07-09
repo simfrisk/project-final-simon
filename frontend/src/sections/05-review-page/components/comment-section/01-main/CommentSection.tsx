@@ -12,7 +12,7 @@ export const CommentSection = () => {
 
   const addReply = commentStore((state) => state.addReply);
   const messages: MessageType[] = commentStore((state) => state.messages);
-  const deleteMessage = commentStore((state) => state.deleteMessage);
+  const deleteComment = commentStore((state) => state.deleteComment);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,7 +73,7 @@ export const CommentSection = () => {
             </ReactionGroup>
             <Edit>
               <img src="/icons/edit.svg" alt="Edit Icon" />
-              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteMessage(_id)} />
+              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteComment(_id)} />
             </Edit>
           </CardFooter>
 
