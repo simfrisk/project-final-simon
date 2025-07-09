@@ -18,6 +18,7 @@ interface ProjectsStore {
   fetchProjects: () => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
   addProject: (newProject: ProjectType) => void;
+  deleteProject: (projectId: string) => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectsStore>((set) => ({
@@ -115,6 +116,40 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       }
     } catch (err: any) {
       set({ loading: false, error: err.message, message: null });
+    }
+  },
+
+  deleteProject: async (projectId: string) => {
+    set({ loading: true, error: null, message: null });
+    try {
+      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete project");
+
+      const data = await response.json();
+
+      if (data.success) {
+        set((state) => ({
+          projects: state.projects.filter((project) => project._id !== projectId),
+          loading: false,
+          message: data.message,
+          error: null,
+        }));
+      } else {
+        set({
+          loading: false,
+          error: data.message || "Failed to delete project",
+          message: null,
+        });
+      }
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Unknown error",
+        message: null,
+      });
     }
   },
 }));

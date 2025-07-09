@@ -12,8 +12,6 @@ export const VideoLibraryPage = () => {
   const loading = useProjectStore((state) => state.loading);
   const error = useProjectStore((state) => state.error);
 
-  
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
@@ -27,7 +25,6 @@ export const VideoLibraryPage = () => {
     );
   }
 
-  
   if (error) return <p>Error: {error}</p>;
 
   return (
