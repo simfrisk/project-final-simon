@@ -33,9 +33,8 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 16px 12px;
-  background-color: #f5f5f5;
+  background-color: ${({ theme }) => theme.colors.offBackground};
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-  border-radius: 12px;
 
    @media ${MediaQueries.biggerSizes} {
     padding: 0;
@@ -47,7 +46,6 @@ const Title = styled.h3`
   margin: 0 0 12px;
   font-size: 24px;
   font-weight: 700;
-  color: #222;
 
     @media ${MediaQueries.biggerSizes} {
     margin: 25px 0;

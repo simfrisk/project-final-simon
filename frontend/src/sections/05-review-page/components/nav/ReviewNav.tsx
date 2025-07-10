@@ -19,8 +19,6 @@ column-gap: 5px;
 height: 45px;
 width: 100%;
 border-bottom: solid gray 1px;
-
-
 `
 
 const BackContainer = styled.div `

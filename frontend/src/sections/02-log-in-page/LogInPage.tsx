@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
 
 export const LogInPage = () => {
+
   return (
     <Container>
       <SideContainer />
@@ -74,7 +75,7 @@ input {
 const StyledButtonLink = styled(Link)`
   display: inline-block;
   padding: 10px 20px;
-  background-color: #2d7eff;
+  background-color: ${({ theme }) => theme.colors.primary};
   color: white;
   text-decoration: none;
   border: none;
@@ -88,13 +89,23 @@ const StyledButtonLink = styled(Link)`
   transition: ease .3s;
 
   &:hover {
-    background-color: #3f87fb;
+    background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(.99);
   }
 `;
 
 const StyledLink = styled(Link)`
-color: black;
+color: ${({ theme }) => theme.colors.text};
 text-decoration: none;
 text-align: center;
-`
+transition: ease .3s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.textHover};
+    transform: scale(.98);
+  }
+
+  &:active {
+    color: ${({ theme }) => theme.colors.textActive};
+  }
+`;

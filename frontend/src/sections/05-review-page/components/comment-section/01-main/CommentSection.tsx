@@ -112,7 +112,7 @@ const CommentListContainer = styled.div`
   padding: 16px;
   gap: 16px;
   width: 100%;
-  background-color: #f5f5f5;
+ background-color: ${({ theme }) => theme.colors.offBackground};
 `;
 
 const TopSection = styled.div`
