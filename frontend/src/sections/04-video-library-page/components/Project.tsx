@@ -46,6 +46,7 @@ background-color: #a7a7a7;
 border-radius: 10px;
 padding: 20px;
 transition: ease .3s;
+overflow: hidden;
 
 &:hover {
   transform: scale(.98);
