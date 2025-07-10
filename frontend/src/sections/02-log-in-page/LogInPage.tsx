@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { MediaQueries } from "../../themes/mediaQueries";
 
 export const LogInPage = () => {
   return (
     <Container>
+      <SideContainer />
       <Card>
         <h3>Login</h3>
         <p>Login to get started</p>
@@ -23,11 +25,26 @@ export const LogInPage = () => {
   );
 };
 
+const SideContainer = styled.section`
+  display: none;
+  width: 100%;
+  height: 100vh;
+  background-image: url("/login-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: block;
+  }
+`;
+
 const Container = styled.div `
 display: flex;
 justify-content: center;
 height: 100vh;
 width: 100%;
+
 `
 
 const Card = styled.section `
@@ -36,6 +53,11 @@ flex-direction: column;
 padding: 20px;
 width: 100%;
 max-width: 700px;
+
+ @media ${MediaQueries.biggerSizes} {
+    justify-content: center;
+    margin: 0 20px;
+  }
 
 
 input {

@@ -9,6 +9,7 @@ import { DescriptionSection } from "../components/description/DescriptionSection
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../../../store/projectStore";
 import { commentStore } from "../../../store/commentStore";
+import { ReviewNav } from "../components/nav/ReviewNav";
 
 export const ReviewPage = () => {
   // const project = useProjectStore((state) => state.projects);
@@ -28,6 +29,8 @@ useEffect(() => {
 }, [projectId]);
 
   return (
+    <>
+    <ReviewNav />
     <Container>
       <StyledVideoSection />
       <RightColumn>
@@ -37,8 +40,11 @@ useEffect(() => {
       </RightColumn>
       {description && <StyledCommentForm />}
     </Container>
+    </>
   );
 };
+
+
 
 const Container = styled.div`
   display: grid;

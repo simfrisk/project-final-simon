@@ -222,8 +222,8 @@ const Progress = styled.div`
 
 const MarkerWrapper = styled.div`
   position: absolute;
-  top: -2px;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
   overflow: visible;
 
@@ -245,7 +245,7 @@ const Marker = styled.div`
 const MarkerMessage = styled.p`
   display: none;
   position: absolute;
-  bottom: 120%;
+  bottom: 50%;
   left: 50%;
   transform: translateX(-50%);
   background: #ffffff;

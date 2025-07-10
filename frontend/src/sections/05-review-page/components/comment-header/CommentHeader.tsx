@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useProjectStore } from "../../../../store/projectStore";
+import { MediaQueries } from "../../../../themes/mediaQueries";
 
 interface CommentHeaderProps {
   setDescription: (value: boolean) => void;
@@ -32,9 +33,14 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 16px 12px;
-  background-color: #fff;
+  background-color: #f5f5f5;
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
   border-radius: 12px;
+
+   @media ${MediaQueries.biggerSizes} {
+    padding: 0;
+  }
+
 `;
 
 const Title = styled.h3`
@@ -42,6 +48,10 @@ const Title = styled.h3`
   font-size: 24px;
   font-weight: 700;
   color: #222;
+
+    @media ${MediaQueries.biggerSizes} {
+    margin: 25px 0;
+  }
 `;
 
 const ButtonGroup = styled.div`
