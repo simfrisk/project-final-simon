@@ -25,6 +25,7 @@ export const LogInPage = () => {
 
 const Container = styled.div `
 display: flex;
+justify-content: center;
 height: 100vh;
 width: 100%;
 `
@@ -34,6 +35,8 @@ display: flex;
 flex-direction: column;
 padding: 20px;
 width: 100%;
+max-width: 700px;
+
 
 input {
   height: 40px;
