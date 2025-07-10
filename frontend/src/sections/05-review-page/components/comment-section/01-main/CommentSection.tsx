@@ -5,6 +5,7 @@ import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
+import { MediaQueries } from '../../../../../themes/mediaQueries';
 
 export const CommentSection = () => {
   const [reply, setReply] = useState('');
@@ -113,6 +114,10 @@ const CommentListContainer = styled.div`
   gap: 16px;
   width: 100%;
  background-color: ${({ theme }) => theme.colors.offBackground};
+
+ @media ${MediaQueries.biggerSizes} {
+   overflow: scroll;
+ }
 `;
 
 const TopSection = styled.div`
