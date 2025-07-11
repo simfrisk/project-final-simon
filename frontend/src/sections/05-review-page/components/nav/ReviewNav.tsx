@@ -12,7 +12,7 @@ export const ReviewNav = () => {
   )
 };
 
-const Container = styled(Link) `
+const Container = styled.nav `
 display: flex;
 align-content: center;
 column-gap: 5px;
@@ -21,12 +21,17 @@ width: 100%;
 border-bottom: solid gray 1px;
 `
 
-const BackContainer = styled.div `
+const BackContainer = styled(Link) `
 display: flex;
 align-content: center;
 align-items: center;
 column-gap: 5px;
 margin: 0 10px;
+transition: ease .3s;
+
+&:hover{
+  transform: scale(.95);
+}
 
 
 img {

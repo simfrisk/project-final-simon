@@ -7,28 +7,30 @@ export const LogInPage = () => {
   return (
     <Container>
       <SideContainer />
-      <Card>
-        <h3>Login</h3>
-        <p>Login to get started</p>
-        <label>
-          <span>Email Adress</span>
-          <input type="text" placeholder="Enter Email"/>
-        </label>
-        <label>
-          <span>Password</span>
-          <input type="text" placeholder="Enter Password"/>
-        </label>
+      <CardContainer>
+        <Card>
+          <h3>Login</h3>
+          <p>Login to get started</p>
+          <label>
+            <span>Email Adress</span>
+            <input type="text" placeholder="Enter Email"/>
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" placeholder="Enter Password"/>
+          </label>
 
-        <StyledButtonLink to="/library/">Enter</StyledButtonLink>
-        <StyledLink to="/library">Create Account</StyledLink>
-      </Card>
+          <StyledButtonLink to="/library/">Enter</StyledButtonLink>
+          <StyledLink to="/library">Create Account</StyledLink>
+        </Card>
+      </CardContainer>
     </Container>
   );
 };
 
 const SideContainer = styled.section`
   display: none;
-  width: 100%;
+  width: 60%;
   height: 100vh;
   background-image: url("/login-bg.png");
   background-size: cover;
@@ -44,8 +46,17 @@ const Container = styled.div `
 display: flex;
 justify-content: center;
 height: 100vh;
+
+`
+
+const CardContainer = styled.div `
+display: flex;
+justify-content: center;
 width: 100%;
 
+@media ${MediaQueries.biggerSizes} {
+max-width: 2000px;
+  }
 `
 
 const Card = styled.section `
@@ -53,11 +64,10 @@ display: flex;
 flex-direction: column;
 padding: 20px;
 width: 100%;
-max-width: 700px;
+max-width: 600px;
 
  @media ${MediaQueries.biggerSizes} {
     justify-content: center;
-    margin: 0 20px;
   }
 
 
@@ -90,7 +100,7 @@ const StyledButtonLink = styled(Link)`
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
-    transform: scale(.99);
+    transform: scale(.98);
   }
 `;
 
@@ -102,7 +112,7 @@ transition: ease .3s;
 
   &:hover {
     color: ${({ theme }) => theme.colors.textHover};
-    transform: scale(.98);
+    transform: scale(.95);
   }
 
   &:active {

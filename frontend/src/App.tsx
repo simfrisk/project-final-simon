@@ -44,11 +44,16 @@ const ToggleThemeButton = styled.button`
   margin: 20px;
   padding: 10px 16px;
   background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.background};
+  color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  transition: ease .3s;
+
+  &:hover {
+transform: scale(.97);
+  }
 
 @media ${MediaQueries.biggerSizes} {
     display: block;

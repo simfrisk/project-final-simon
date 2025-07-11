@@ -113,7 +113,7 @@ const CommentListContainer = styled.div`
   padding: 16px;
   gap: 16px;
   width: 100%;
- background-color: ${({ theme }) => theme.colors.offBackground};
+  background-color: ${({ theme }) => theme.colors.offBackground};
 
  @media ${MediaQueries.biggerSizes} {
    overflow: scroll;

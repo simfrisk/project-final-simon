@@ -51,7 +51,7 @@ export const lightTheme = {
     primaryHover: "rgb(43, 115, 232)",
     primaryActive: '#1c6bff',
 
-    secondary: '#f5f5f5',
+    secondary: "rgb(167, 187, 209);",
     secondaryHover: '#e6e6e6',
     secondaryActive: '#d4d4d4',
 
@@ -76,8 +76,8 @@ export const darkTheme = {
     textHover: '#e5e5e5',
     textActive: '#cccccc',
 
-    primary: "rgb(19, 39, 80)",
-    primaryHover: '#cf9aff',
+    primary: "rgb(28, 62, 129)",
+    primaryHover: "rgb(20, 43, 90)",
     primaryActive: '#9a63d3',
 
     secondary: '#1e1e1e',

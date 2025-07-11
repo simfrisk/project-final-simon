@@ -73,8 +73,8 @@ const RightColumn = styled.div`
   grid-area: right;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
-  height: 100vh;
+  background-color: ${({ theme }) => theme.colors.offBackground};
+  height: 100vh;  
 }
 `;
 
