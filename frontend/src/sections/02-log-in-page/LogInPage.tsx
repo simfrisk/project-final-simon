@@ -30,7 +30,7 @@ export const LogInPage = () => {
 
 const SideContainer = styled.section`
   display: none;
-  width: 60%;
+  width: 80%;
   height: 100vh;
   background-image: url("/login-bg.png");
   background-size: cover;

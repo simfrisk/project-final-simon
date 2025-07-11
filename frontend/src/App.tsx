@@ -7,6 +7,7 @@ import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryP
 import { ReviewPage } from './sections/05-review-page/01-main/ReviewPage';
 import styled from 'styled-components';
 import { MediaQueries } from './themes/mediaQueries';
+import { LandingPage } from './sections/01-lading-page/components/LandingPage';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
@@ -17,7 +18,8 @@ export const App = () => {
       <AppContainer>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LogInPage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LogInPage />} />
             <Route path="/library" element={<VideoLibraryPage />} />
             <Route path="/review/:projectId" element={<ReviewPage />} />
           </Routes>
