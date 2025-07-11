@@ -3,8 +3,8 @@ import { Link } from "react-router";
 
 export const ReviewNav = () => {
   return (
-  <Container to="/library">
-    <BackContainer>
+  <Container>
+    <BackContainer to="/library">
     <img src="/icons/back.svg" alt="" />
     <p>Go back</p>
     </BackContainer>
@@ -22,15 +22,18 @@ border-bottom: solid gray 1px;
 `
 
 const BackContainer = styled(Link) `
+color:  ${({ theme }) => theme.colors.text};
 display: flex;
 align-content: center;
 align-items: center;
 column-gap: 5px;
 margin: 0 10px;
 transition: ease .3s;
+text-decoration: none;
 
 &:hover{
   transform: scale(.95);
+  color:  ${({ theme }) => theme.colors.textHover};
 }
 
 
