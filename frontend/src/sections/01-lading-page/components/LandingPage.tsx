@@ -6,9 +6,6 @@ export const LandingPage = () => {
     <>
       <Navigation />
       <Hero />
-      
-        {/* Nav */}
-        {/* Hero */}
     </>
 
   )

@@ -22,5 +22,11 @@ width: 100px;
 border-radius: 10px;
 font-size: 1rem;
 border: none;
+transition: ease .3s;
+
+&:hover {
+  scale: .95;
+  background-color: ${({ theme }) => theme.colors.primaryHover};
+}
 
 `

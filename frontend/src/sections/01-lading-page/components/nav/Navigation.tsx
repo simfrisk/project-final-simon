@@ -14,7 +14,7 @@ export const Navigation = () => {
 };
 
 const Container = styled.nav `
-background-color: #3e75d3;
+background-color: ${({ theme }) => theme.colors.primary};
 height: 60px;
 width: 100%;
 display: flex;
