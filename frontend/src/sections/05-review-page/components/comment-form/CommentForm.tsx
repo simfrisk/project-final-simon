@@ -61,7 +61,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 12px;
   border-radius: 12px;
-  background-color:  ${({ theme }) => theme.colors.secondary};
+  background-color:  rgb(167, 187, 209);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;

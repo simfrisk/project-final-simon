@@ -15,12 +15,12 @@ export const MainButton: React.FC<MainButtonProps> = ({ text, url }) => {
 };
 
 const Button = styled.button `
-background-color: ${({ theme }) => theme.colors.primary};
+background-color: #1d138b;
 color: ${({ theme }) => theme.colors.background};
 height: 50px;
 width: 100px;
 border-radius: 10px;
-font-size: 1rem;
+font-size: 1.3rem;
 border: none;
 transition: ease .3s;
 

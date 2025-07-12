@@ -51,7 +51,7 @@ export const lightTheme = {
     primaryHover: "rgb(43, 115, 232)",
     primaryActive: '#1c6bff',
 
-    secondary: "rgb(167, 187, 209);",
+    secondary: "rgb(253, 240, 205)",
     secondaryHover: '#e6e6e6',
     secondaryActive: '#d4d4d4',
 
