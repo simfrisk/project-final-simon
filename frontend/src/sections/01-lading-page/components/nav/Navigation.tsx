@@ -13,7 +13,7 @@ export const Navigation = () => {
 };
 
 const Container = styled.nav `
-/* background-color: ${({ theme }) => theme.colors.primary}; */
+background-color: ${({theme}) => theme.colors.primary};
 color: ${({ theme }) => theme.colors.background};
 height: 60px;
 width: 100%;

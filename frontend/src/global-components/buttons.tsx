@@ -20,7 +20,7 @@ color: ${({ theme }) => theme.colors.background};
 height: 50px;
 width: 100px;
 border-radius: 10px;
-font-size: 1.3rem;
+font-size: 1.2rem;
 border: none;
 transition: ease .3s;
 
