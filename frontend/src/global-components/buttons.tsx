@@ -15,7 +15,7 @@ export const MainButton: React.FC<MainButtonProps> = ({ text, url }) => {
 };
 
 const Button = styled.button `
-background-color: #1d138b;
+background-color: ${({ theme }) => theme.colors.secondary};
 color: ${({ theme }) => theme.colors.background};
 height: 50px;
 width: 100px;
@@ -26,7 +26,7 @@ transition: ease .3s;
 
 &:hover {
   scale: .95;
-  background-color: ${({ theme }) => theme.colors.primaryHover};
+  background-color: ${({ theme }) => theme.colors.secondaryHover};
 }
 
 `
