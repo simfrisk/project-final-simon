@@ -5,6 +5,7 @@ import { useProjectStore } from "../../store/projectStore";
 import { useEffect } from "react";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Loader } from "../../global-components/loader";
+import { SideMenu } from "./components/side-menu/SideMenu";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
@@ -28,22 +29,29 @@ export const VideoLibraryPage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Container>
-      <ProjectWrapper>
-      {projects.map(({ _id, projectName, projectDescription }) => (
-        <Project 
-          key={_id} 
-          projectId={_id ?? ""}
-          projectName={projectName} 
-          projectDescription={projectDescription} 
-        />
-      ))}
-      </ProjectWrapper>
-      <CreateProject />
-    </Container>
+    <SectionContainer>
+      <SideMenu />
+      <Container>
+        <ProjectWrapper>
+        {projects.map(({ _id, projectName, projectDescription }) => (
+          <Project 
+            key={_id} 
+            projectId={_id ?? ""}
+            projectName={projectName} 
+            projectDescription={projectDescription} 
+          />
+        ))}
+        </ProjectWrapper>
+        <CreateProject />
+      </Container>
+    </SectionContainer>
   )
   
 };
+
+const SectionContainer = styled.div `
+display: flex;
+`
 
 const Container = styled.div `
 display: flex;
@@ -64,7 +72,6 @@ const ProjectWrapper = styled.div `
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
-  margin: 20px;
   max-width: 100%;
 `
 

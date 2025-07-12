@@ -21,7 +21,8 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
           <h3>{projectName}</h3>
           <p>{projectDescription}</p>
         </TextContainer>
-        <CardFooter>              
+        <CardFooter>     
+          <p>Teachers Name</p>         
           <img src="/icons/edit.svg" alt="Edit Icon" />
           <img src="/icons/delete.svg" alt="Delete Icon"
             onClick={(e) => {
@@ -30,6 +31,7 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
               deleteProject(projectId);
             }}
           />
+          <p>Video Length</p>
         </CardFooter>
 
       </Card>
@@ -39,22 +41,19 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
 
 const Card = styled.div `
 display: flex;
-align-items: center;
-height: 200px;
+flex-direction: column;
 width: 100%;
-background-color: #a7a7a7;
 border-radius: 10px;
-padding: 20px;
 transition: ease .3s;
 overflow: hidden;
+box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
 
 &:hover {
   transform: scale(.98);
 }
 
 @media ${MediaQueries.biggerSizes} {
-  height: 200px;
-  width: 800px;
+  width: 200px;
 }
 `
 
@@ -64,9 +63,9 @@ color: black;
 `
 
 const Thumbnail = styled.img `
-height: 100%;
+width: 100%;
 object-fit: cover;
-aspect-ratio: 1 / 1;
+aspect-ratio: 16 / 9;
 border-radius: 10px;
 
 @media ${MediaQueries.biggerSizes} {
@@ -78,11 +77,11 @@ const TextContainer = styled.div `
 display: flex;
 flex-direction: column;
 margin: 20px;
-max-width: 400px;
 `
 
 const CardFooter = styled.div `
 display: flex;
 column-gap: 10px;
+margin: 0 0 20px 20px;
 `
 
