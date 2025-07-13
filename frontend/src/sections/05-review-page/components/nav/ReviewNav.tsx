@@ -13,6 +13,7 @@ export const ReviewNav = () => {
 };
 
 const Container = styled.nav `
+/* background-color: ${({theme}) => theme.colors.primary}; */
 display: flex;
 align-content: center;
 column-gap: 5px;

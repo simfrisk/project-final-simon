@@ -63,12 +63,14 @@ display: flex;
 
 const Container = styled.div `
 display: flex;
+flex-direction: column;
 align-items: center;
 justify-content: center;
 flex-wrap: wrap;
 gap: 24px;
 margin: 20px;
-max-width: 90%;
+width: 100%;
+
 
 @media ${MediaQueries.biggerSizes} {
 }

@@ -53,7 +53,7 @@ box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
 }
 
 @media ${MediaQueries.biggerSizes} {
-  width: 200px;
+  width: 400px;
 }
 `
 
@@ -69,7 +69,6 @@ aspect-ratio: 16 / 9;
 border-radius: 10px;
 
 @media ${MediaQueries.biggerSizes} {
-  aspect-ratio: 4 / 3;
 }
 `
 

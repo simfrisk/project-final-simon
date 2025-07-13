@@ -20,7 +20,7 @@ const Container = styled.section `
 display: flex;
 flex-direction: column;
 align-items: center;
-width: 800px;
+min-width: 12%;
 background-color: ${({ theme }) => theme.colors.background};
 display: none;
 
