@@ -23,6 +23,11 @@ const Hamburger = styled.div`
   position: relative;
   cursor: pointer;
   z-index: 1000;
+  transition: ease .3s;
+
+    &:hover {
+    transform: scale(.92);
+  }
 `;
 
 const Bar = styled.span<BarProps>`
