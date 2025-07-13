@@ -30,7 +30,7 @@ const Bar = styled.span<BarProps>`
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: white;
   border-radius: 2px;
   transition: 0.3s ease;
   

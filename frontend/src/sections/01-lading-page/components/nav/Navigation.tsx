@@ -14,7 +14,7 @@ export const Navigation = () => {
 
 const Container = styled.nav `
 background-color: ${({theme}) => theme.colors.primary};
-color: ${({ theme }) => theme.colors.background};
+color: white;
 height: 60px;
 width: 100%;
 display: flex;
