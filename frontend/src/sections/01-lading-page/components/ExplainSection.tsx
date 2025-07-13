@@ -9,8 +9,8 @@ export const ExplainSection = () => {
       <Container>
         <Content>
           <Title>How it works</Title>
-          <ExplainerVideo controls poster="/Explainer2.png">
-            <source src="/video2.mp4" type="video/mp4" />
+          <ExplainerVideo autoPlay muted loop>
+            <source src="/Explainer3.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </ExplainerVideo>
         </Content>
@@ -34,11 +34,12 @@ const Title = styled.h2`
 const ExplainerVideo = styled.video`
   width: 100%;
   max-width: 600px;
-  border-radius: 10px;
+  border-radius: 30px;
   height: auto;
   margin: 0 auto;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.189);
 
    @media ${MediaQueries.biggerSizes} {
-    max-width: 800px;
+    max-width: 1200px;
   }
 `;
