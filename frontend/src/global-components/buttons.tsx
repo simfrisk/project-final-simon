@@ -17,9 +17,8 @@ export const MainButton: React.FC<MainButtonProps> = ({ text, url }) => {
 const Button = styled.button `
 background-color: ${({ theme }) => theme.colors.secondary};
 color: ${({ theme }) => theme.colors.background};
-height: 50px;
-width: 100px;
-border-radius: 10px;
+padding: 22px 35px;
+border-radius: 35px;
 font-size: 1.2rem;
 border: none;
 transition: ease .3s;

@@ -1,45 +1,52 @@
 import styled from "styled-components";
 import { MainButton } from "../../../global-components/buttons";
+import { Section, Container } from "../../../global-components/Section";
 
 export const Hero = () => {
   return (
-    <Container>
-      <img src="/Hero.png" alt="Image of some scrible" />
-      <MainTitle>Collaborative Video Review, Reimagined for Learning</MainTitle>
-      <SubTitle>Time-stamped feedback tools built for classrooms, courses, and content creators.</SubTitle>
-      <MainButtonWrapper>
-        <MainButton text="Login" url="/login" />
-      </MainButtonWrapper>
-    </Container>
-  )
+    <Section secondarySection>
+      <Container>
+        <Content>
+          <img src="/Hero.png" alt="Image of some scribble" />
+          <MainTitle>
+            Collaborative Video Review, Reimagined for Learning
+          </MainTitle>
+          <SubTitle>
+            Time-stamped feedback tools built for classrooms, courses, and content creators.
+          </SubTitle>
+          <MainButtonWrapper>
+            <MainButton text="Get Started" url="/login" />
+            <MainButton text="Login" url="/login" />
+          </MainButtonWrapper>
+        </Content>
+      </Container>
+    </Section>
+  );
 };
 
-const Container = styled.div `
-background-color: ${({theme}) => theme.colors.primary};
- display: flex;
- flex-direction: column;
- align-items: center;
- justify-content: center;
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px; // Adjust based on desired spacing (e.g. 24px, 40px)
 
- img {
-  margin: 100px 0 20px 0 ;
-  height: 200px;
- }
-`
+  img {
+    height: 200px;
+  }
+`;
 
-const MainTitle = styled.h1 `
-margin: 20px;
-color: ${({theme}) => theme.colors.background};
-text-align: center;
-`
+const MainTitle = styled.h1`
+  color: ${({ theme }) => theme.colors.background};
+  text-align: center;
+`;
 
-const SubTitle = styled.p `
-color: ${({theme}) => theme.colors.background};
-margin: 20px 60px;
-text-align: center;
-`
+const SubTitle = styled.p`
+  color: ${({ theme }) => theme.colors.background};
+  text-align: center;
+`;
 
 const MainButtonWrapper = styled.div`
-  margin-top: 10px;
-  margin-bottom: 100px;
+  display: flex;
+  gap: 20px;
 `;
