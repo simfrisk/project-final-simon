@@ -29,7 +29,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px; // Adjust based on desired spacing (e.g. 24px, 40px)
+  gap: 32px;
 
   img {
     height: 200px;
@@ -37,12 +37,10 @@ const Content = styled.div`
 `;
 
 const MainTitle = styled.h1`
-  color: ${({ theme }) => theme.colors.background};
   text-align: center;
 `;
 
 const SubTitle = styled.p`
-  color: ${({ theme }) => theme.colors.background};
   text-align: center;
 `;
 

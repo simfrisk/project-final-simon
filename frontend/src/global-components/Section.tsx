@@ -12,7 +12,10 @@ export const Section = styled.section<SectionProps>`
     props.secondarySection
       ? props.theme.colors.primary
       : props.theme.colors.background};
-  color: ${(props) => (props.secondarySection ? "white" : "black")};
+  color: ${(props) =>
+    props.secondarySection
+      ? "white"
+      : props.theme.colors.text};
   width: 100%;
   padding: 64px 0;
 
