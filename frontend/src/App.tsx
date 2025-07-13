@@ -7,7 +7,7 @@ import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryP
 import { ReviewPage } from './sections/05-review-page/01-main/ReviewPage';
 import styled from 'styled-components';
 import { MediaQueries } from './themes/mediaQueries';
-import { LandingPage } from './sections/01-lading-page/components/LandingPage';
+import { LandingPage } from './sections/01-lading-page/01-main/LandingPage';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);

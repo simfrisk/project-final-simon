@@ -1,7 +1,8 @@
 import { Navigation } from "../../../global-components/Navigation";
-import { Hero } from "./Hero";
+import { Hero } from "../components/Hero";
 import styled from "styled-components";
-import { ExplainSection } from "./ExplainSection";
+import { ExplainSection } from "../components/ExplainSection";
+import { Footer } from "../components/Footer";
 
 export const LandingPage = () => {
   return (
@@ -9,6 +10,7 @@ export const LandingPage = () => {
       <Navigation />
       <Hero />
       <ExplainSection />
+      <Footer />
     </Container>
 
   )
