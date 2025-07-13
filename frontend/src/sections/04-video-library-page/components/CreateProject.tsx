@@ -64,7 +64,7 @@ const Input = styled.input`
 
 const AddProjectBtn = styled.button`
   height: 40px;
-  background-color: #046cff;
+  background-color: ${({theme}) => theme.colors.primary};
   border-radius: 10px;
   border: none;
   transition: ease 0.3s;
@@ -72,6 +72,6 @@ const AddProjectBtn = styled.button`
 
   &:hover {
     transform: scale(0.96);
-    background-color: #1b78fa;
+      background-color: ${({theme}) => theme.colors.primaryHover};
   }
 `;

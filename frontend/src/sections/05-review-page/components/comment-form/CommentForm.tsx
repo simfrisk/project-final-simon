@@ -123,7 +123,7 @@ const Select = styled.select`
 
 const SendButton = styled.button`
   padding: 8px 16px;
-  background-color: #007bff;
+  background-color: ${({theme}) => theme.colors.primary};
   border: none;
   border-radius: 6px;
   color: white;
@@ -132,6 +132,6 @@ const SendButton = styled.button`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #0056b3;
+      background-color: ${({theme}) => theme.colors.primaryHover};
   }
 `;
