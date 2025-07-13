@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
+import { Navigation } from "../../global-components/Navigation";
 
 export const LogInPage = () => {
 
   return (
+    <>
+    <Navigation />
     <Container>
       <SideContainer />
       <CardContainer>
@@ -25,6 +28,7 @@ export const LogInPage = () => {
         </Card>
       </CardContainer>
     </Container>
+    </>
   );
 };
 

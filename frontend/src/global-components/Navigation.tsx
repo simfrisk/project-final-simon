@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { HamburgerMenu } from "./components/Burger";
+import { HamburgerMenu } from "../sections/01-lading-page/components/nav/components/Burger";
 
 export const Navigation = () => {
   return (

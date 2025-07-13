@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Loader } from "../../global-components/loader";
 import { SideMenu } from "./components/side-menu/SideMenu";
+import { Navigation } from "../../global-components/Navigation";
+import { Section } from "../../global-components/Section";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
@@ -29,27 +31,33 @@ export const VideoLibraryPage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <SectionContainer>
-      <SideMenu />
-      <Container>
-        <ProjectWrapper>
-        {projects.map(({ _id, projectName, projectDescription }) => (
-          <Project 
-            key={_id} 
-            projectId={_id ?? ""}
-            projectName={projectName} 
-            projectDescription={projectDescription} 
-          />
-        ))}
-        </ProjectWrapper>
-        <CreateProject />
-      </Container>
-    </SectionContainer>
+    <>
+    <Navigation />
+    <Section>
+      <Content>
+        <SideMenu />
+        <Container>
+          <h2>Class Title</h2>
+          <ProjectWrapper>
+          {projects.map(({ _id, projectName, projectDescription }) => (
+            <Project 
+              key={_id} 
+              projectId={_id ?? ""}
+              projectName={projectName} 
+              projectDescription={projectDescription} 
+            />
+          ))}
+          </ProjectWrapper>
+          <CreateProject />
+        </Container>
+      </Content>
+    </Section>
+    </>
   )
   
 };
 
-const SectionContainer = styled.div `
+const Content = styled.div `
 display: flex;
 `
 
@@ -58,7 +66,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex-wrap: wrap;
-gap: 20px;
+gap: 24px;
 margin: 20px;
 max-width: 90%;
 

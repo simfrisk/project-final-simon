@@ -1,4 +1,4 @@
-import { Navigation } from "./nav/Navigation";
+import { Navigation } from "../../../global-components/Navigation";
 import { Hero } from "./Hero";
 import styled from "styled-components";
 import { ExplainSection } from "./ExplainSection";
