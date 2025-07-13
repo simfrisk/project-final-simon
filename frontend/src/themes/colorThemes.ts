@@ -47,9 +47,9 @@ export const lightTheme = {
     textHover: "rgb(31, 31, 31)",
     textActive: '#333333',
 
-    // primary: "rgb(45, 126, 255)",
+    primary: "rgb(45, 126, 255)",
     // primary: "rgb(63, 143, 212)",
-    primary: "rgb(52, 144, 220)",
+    // primary: "rgb(52, 144, 220)",
 
     primaryHover: "rgb(43, 115, 232)",
     primaryActive: '#1c6bff',

@@ -12,8 +12,13 @@ export const LogInPage = () => {
       <SideContainer />
       <CardContainer>
         <Card>
-          <h3>Login</h3>
-          <p>Login to get started</p>
+          <LogoContainer>
+          <Logo src="/logo2.png" alt="Classync logo" />
+          </LogoContainer>
+          <WelcomeMessage>
+          <h3>Welcome</h3>
+          <p>Nice to have you back.</p>
+          </WelcomeMessage>
           <label>
             <span>Email Adress</span>
             <input type="text" placeholder="Enter Email"/>
@@ -25,6 +30,7 @@ export const LogInPage = () => {
 
           <StyledButtonLink to="/library/">Enter</StyledButtonLink>
           <StyledLink to="/library">Create Account</StyledLink>
+        
         </Card>
       </CardContainer>
     </Container>
@@ -35,7 +41,6 @@ export const LogInPage = () => {
 const SideContainer = styled.section`
   display: none;
   width: 80%;
-  height: 100vh;
   background-image: url("/login-bg.png");
   background-size: cover;
   background-position: center;
@@ -49,7 +54,7 @@ const SideContainer = styled.section`
 const Container = styled.div `
 display: flex;
 justify-content: center;
-height: 100vh;
+height: 94dvh;
 
 `
 
@@ -69,9 +74,12 @@ flex-direction: column;
 padding: 20px;
 width: 100%;
 max-width: 600px;
+margin: 64px auto; 
+
 
  @media ${MediaQueries.biggerSizes} {
     justify-content: center;
+    width: 95%;
   }
 
 
@@ -84,6 +92,18 @@ input {
   width: 100%;
   padding: 10px 10px;
 }
+`
+
+const LogoContainer = styled.div `
+display: flex;
+justify-content: center;
+`
+
+const Logo = styled.img `
+height: 150px;
+width: 150px;
+border-radius: 20px;
+margin-left: 15px;
 `
 
 const StyledButtonLink = styled(Link)`
@@ -123,3 +143,8 @@ transition: ease .3s;
     color: ${({ theme }) => theme.colors.textActive};
   }
 `;
+
+const WelcomeMessage = styled.div `
+text-align: center;
+margin: 10px 0 30px 0;
+`
