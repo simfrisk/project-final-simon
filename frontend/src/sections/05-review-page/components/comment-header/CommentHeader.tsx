@@ -37,7 +37,7 @@ const Container = styled.div`
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
 
    @media ${MediaQueries.biggerSizes} {
-    padding: 0;
+    padding: 0 0 10px 0;
   }
 
 `;
