@@ -105,8 +105,8 @@ column-gap: 10px;
 `
 
 const Card = styled.div`
-  width: 95%;
-  margin: 12px 10px;
+  width: 100%;
+  margin: 12px auto;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;

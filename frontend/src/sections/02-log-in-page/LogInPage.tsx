@@ -82,7 +82,6 @@ margin: 64px auto;
     width: 95%;
   }
 
-
 input {
   height: 40px;
   background-color: #F6F6F6;

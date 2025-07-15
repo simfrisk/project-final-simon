@@ -155,8 +155,9 @@ const Edit = styled.div`
   transform: translatey(30%);
   transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
 
-  img {
-    transform: scale(0.8);
+  img:hover {
+    transition: ease .3s;
+    transform: scale(0.9);
   }
 `;
 
@@ -250,21 +251,24 @@ const ActionButton = styled.button`
   border: none;
   padding: 0;
   cursor: pointer;
+  transition: ease .3s;
 
   &:hover {
     text-decoration: underline;
+    transform: scale(0.95);
   }
 `;
 
 const ActionButtonIcon = styled.button`
+  transition: ease .3s;
   background: none;
   border: none;
   padding: 0;
   transform: scale(0.7);
   cursor: pointer;
 
-  &:hover {
-    text-decoration: underline;
+  img:hover {
+    transform: scale(0.9);
   }
 `;
 

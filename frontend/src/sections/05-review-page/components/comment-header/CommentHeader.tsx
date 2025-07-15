@@ -69,7 +69,7 @@ const TabButton = styled.button<{ $active?: boolean }>`
 
   &:hover {
     background-color: ${({ $active }) => ($active ? "#0056b3" : "#e6f0ff")};
-    transform: scale(1.05);
+    transform: scale(.96);
   }
 
   &:focus {
