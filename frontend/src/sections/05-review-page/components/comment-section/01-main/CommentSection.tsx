@@ -6,13 +6,20 @@ import { commentStore } from '../../../../../store/commentStore';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import { ReplyCard } from '../components/ReplyCard';
 import { MediaQueries } from '../../../../../themes/mediaQueries';
+import { unFormatTime } from '../../video-section/utils/unFormatTime';
 
 export const CommentSection = () => {
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 
   const addReply = commentStore((state) => state.addReply);
-  const messages: MessageType[] = commentStore((state) => state.messages);
+  
+  //These are the messages and then turned into a number and then sorted
+  const rawMessages: MessageType[] = commentStore((state) => state.messages);
+  const messages = [...rawMessages].sort((a, b) => {
+  return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
+}); 
+
   const deleteComment = commentStore((state) => state.deleteComment);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
