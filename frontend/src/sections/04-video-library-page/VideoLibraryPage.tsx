@@ -102,11 +102,11 @@ const ProjectWrapper = styled.div`
   grid-template-columns: 1fr;
 
   @media ${MediaQueries.biggerSizes} {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 
   @media ${MediaQueries.widescreen} {
-    grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   }
 `;
 
