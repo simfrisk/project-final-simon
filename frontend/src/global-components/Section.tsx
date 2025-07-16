@@ -20,7 +20,7 @@ export const Section = styled.section<SectionProps>`
   padding: 64px 0;
 
   @media ${MediaQueries.biggerSizes} {
-    padding: 128px 0;
+    padding: 84px 0;
   }
 `;
 

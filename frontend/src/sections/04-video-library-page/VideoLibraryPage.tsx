@@ -3,11 +3,11 @@ import { CreateProject } from "./components/CreateProject";
 import styled from "styled-components";
 import { useProjectStore } from "../../store/projectStore";
 import { useEffect } from "react";
-import { MediaQueries } from "../../themes/mediaQueries";
 import { Loader } from "../../global-components/loader";
 import { SideMenu } from "./components/side-menu/SideMenu";
 import { Navigation } from "../../global-components/Navigation";
 import { Section } from "../../global-components/Section";
+import { MediaQueries } from "../../themes/mediaQueries";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
@@ -32,63 +32,100 @@ export const VideoLibraryPage = () => {
 
   return (
     <>
-    <Navigation />
-    <Section>
-      <Content>
-        <SideMenu />
-        <Container>
-          <h2>Class Title</h2>
-          <ProjectWrapper>
-          {projects.map(({ _id, projectName, projectDescription }) => (
-            <Project 
-              key={_id} 
-              projectId={_id ?? ""}
-              projectName={projectName} 
-              projectDescription={projectDescription} 
-            />
-          ))}
-          </ProjectWrapper>
-          <CreateProject />
-        </Container>
-      </Content>
-    </Section>
+      <Navigation />
+      <Section>
+        <Content>
+          <SideMenuContainer>
+            <SideMenu />
+          </SideMenuContainer>
+          <Container>
+              <HeaderWrapper>
+                <h2>Class Title</h2>
+              </HeaderWrapper>
+            <ProjectWrapper>
+              {projects.map(({ _id, projectName, projectDescription }) => (
+                <Project 
+                  key={_id} 
+                  projectId={_id ?? ""}
+                  projectName={projectName} 
+                  projectDescription={projectDescription} 
+                />
+              ))}
+            </ProjectWrapper>
+            <CreateWrapper>
+              <CreateProject />
+            </CreateWrapper>
+          </Container>
+        </Content>
+      </Section>
     </>
-  )
-  
+  );
 };
 
-const Content = styled.div `
-display: flex;
-`
+// STYLED COMPONENTS
 
-const Container = styled.div `
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-flex-wrap: wrap;
-gap: 24px;
-margin: 20px;
-width: 100%;
-
-
-@media ${MediaQueries.biggerSizes} {
-}
-`
-
-const ProjectWrapper = styled.div `
+const Content = styled.div`
   display: flex;
-  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+`;
+
+const SideMenuContainer = styled.div`
+  width: 250px;
+  flex-shrink: 0;
+  display: none;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: block;
+  }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
-  max-width: 100%;
-`
+  gap: 24px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+`;
 
-const LoadingContainer = styled.div `
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-height: 100dvh;
-`
+const ProjectWrapper = styled.div`
+  display: grid;
+  width: 100%;
+  gap: 25px;
+  justify-content: center;
+  box-sizing: border-box;
+  grid-template-columns: 1fr;
+
+  @media ${MediaQueries.biggerSizes} {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  @media ${MediaQueries.widescreen} {
+    grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+`;
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
+
+const CreateWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;

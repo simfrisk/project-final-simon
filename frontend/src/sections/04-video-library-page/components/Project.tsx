@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { MediaQueries } from "../../../themes/mediaQueries";
 import { useProjectStore } from "../../../store/projectStore";
 
 interface ProjectProps {
@@ -51,10 +50,6 @@ box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
 &:hover {
   transform: scale(.98);
 }
-
-@media ${MediaQueries.biggerSizes} {
-  width: 400px;
-}
 `
 
 const StyledLink = styled(Link) `
@@ -67,9 +62,6 @@ width: 100%;
 object-fit: cover;
 aspect-ratio: 16 / 9;
 border-radius: 10px;
-
-@media ${MediaQueries.biggerSizes} {
-}
 `
 
 const TextContainer = styled.div `

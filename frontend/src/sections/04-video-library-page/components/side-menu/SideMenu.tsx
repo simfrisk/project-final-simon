@@ -20,7 +20,6 @@ const Container = styled.section `
 display: flex;
 flex-direction: column;
 text-align: left;
-min-width: 12%;
 background-color: ${({ theme }) => theme.colors.background};
 display: none;
 
@@ -38,6 +37,6 @@ p:hover {
 
 @media ${MediaQueries.biggerSizes} {
 display: flex;
-margin-left: 50px;
+margin-left: 40px;
 }
 `

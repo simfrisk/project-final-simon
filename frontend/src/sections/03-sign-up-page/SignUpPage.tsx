@@ -96,10 +96,11 @@ export const SignUpPage: React.FC = () => {
 const SideContainer = styled.section`
   display: none;
   width: 80%;
-  background-image: url("/login-bg.png");
+  background-image: url("/sideImage2.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: ${({theme}) => theme.colors.secondary};
 
   @media ${MediaQueries.biggerSizes} {
     display: block;
