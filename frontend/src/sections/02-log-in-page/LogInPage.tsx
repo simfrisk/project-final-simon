@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Navigation } from "../../global-components/Navigation";
-import React from "react";
 
 // Define form element structure
 type LoginFormElements = HTMLFormElement & {
@@ -60,6 +59,7 @@ export const LogInPage: React.FC = () => {
                 <input
                   type="password"
                   name="password"
+                  minLength={3}
                   placeholder="Enter Password"
                   required
                 />

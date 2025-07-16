@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Navigation } from "../../global-components/Navigation";
-import React from "react";
 
 // Define the expected form fields
 type SignUpFormElements = HTMLFormElement & {
