@@ -59,7 +59,7 @@ box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
 
 const StyledLink = styled(Link) `
 text-decoration: none;
-color: black;
+color: ${({theme}) => theme.colors.text};
 `
 
 const Thumbnail = styled.img `

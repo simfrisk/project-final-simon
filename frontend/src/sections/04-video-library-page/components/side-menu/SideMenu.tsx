@@ -6,11 +6,11 @@ export const SideMenu = () => {
     <>
     <Container>
       <h3>Classes</h3>
-      <p>Project</p>
-      <p>Project</p>
-      <p>Project</p>
-      <p>Project</p>
-      <p>Project</p>
+      <p>HTML, CSS & JavaScript</p>
+      <p>JavaScript & TypeScript</p>
+      <p>Accessibility</p>
+      <p>React</p>
+      <p>Backend with Node.js</p>
     </Container>
     </>
   )
@@ -19,12 +19,25 @@ export const SideMenu = () => {
 const Container = styled.section `
 display: flex;
 flex-direction: column;
-align-items: center;
+text-align: left;
 min-width: 12%;
 background-color: ${({ theme }) => theme.colors.background};
 display: none;
 
+h3 {
+  margin-bottom: 24px;
+}
+
+p {
+  transition: ease .3s;
+}
+
+p:hover {
+  transform: scale(.97);
+}
+
 @media ${MediaQueries.biggerSizes} {
 display: flex;
+margin-left: 50px;
 }
 `
