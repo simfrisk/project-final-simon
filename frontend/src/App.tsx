@@ -8,6 +8,7 @@ import { ReviewPage } from './sections/05-review-page/01-main/ReviewPage';
 import styled from 'styled-components';
 import { MediaQueries } from './themes/mediaQueries';
 import { LandingPage } from './sections/01-lading-page/01-main/LandingPage';
+import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
@@ -20,6 +21,7 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LogInPage />} />
+            <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/library" element={<VideoLibraryPage />} />
             <Route path="/review/:projectId" element={<ReviewPage />} />
           </Routes>

@@ -15,7 +15,7 @@ export const Hero = () => {
             Time-stamped feedback tools built for classrooms, courses, and content creators.
           </SubTitle>
           <MainButtonWrapper>
-            <MainButton text="Get Started" url="/login" />
+            <MainButton text="Get Started" url="/signUp" />
             <MainButton text="Login" url="/login" />
           </MainButtonWrapper>
         </Content>

@@ -1,39 +1,78 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Navigation } from "../../global-components/Navigation";
+import React from "react";
 
-export const LogInPage = () => {
+// Define form element structure
+type LoginFormElements = HTMLFormElement & {
+  email: HTMLInputElement;
+  password: HTMLInputElement;
+};
+
+export const LogInPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.target as LoginFormElements;
+
+    if (form.checkValidity()) {
+      const email = form.email.value;
+      const password = form.password.value;
+
+      console.log("Form submitted:", { email, password });
+
+      // Redirect after successful login
+      navigate("/library/");
+    } else {
+      form.reportValidity(); // show validation tooltips
+    }
+  };
 
   return (
     <>
-    <Navigation />
-    <Container>
-      <SideContainer />
-      <CardContainer>
-        <Card>
-          <LogoContainer>
-          <Logo src="/logo2.png" alt="Classync logo" />
-          </LogoContainer>
-          <WelcomeMessage>
-          <h3>Welcome</h3>
-          <p>Nice to have you back.</p>
-          </WelcomeMessage>
-          <label>
-            <span>Email Adress</span>
-            <input type="text" placeholder="Enter Email"/>
-          </label>
-          <label>
-            <span>Password</span>
-            <input type="password" placeholder="Enter Password"/>
-          </label>
+      <Navigation />
+      <Container>
+        <SideContainer />
+        <CardContainer>
+          <Card>
+            <LogoContainer>
+              <Logo src="/logo2.png" alt="Classync logo" />
+            </LogoContainer>
+            <WelcomeMessage>
+              <h3>Welcome</h3>
+              <p>Nice to have you back.</p>
+            </WelcomeMessage>
 
-          <StyledButtonLink to="/library/">Enter</StyledButtonLink>
-          <StyledLink to="/library">Create Account</StyledLink>
-        
-        </Card>
-      </CardContainer>
-    </Container>
+            <form onSubmit={handleSubmit} noValidate>
+              <label>
+                <span>Email Address</span>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter Email"
+                  required
+                />
+              </label>
+              <label>
+                <span>Password</span>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  required
+                />
+              </label>
+              <ButtonWrapper>
+                <StyledButton type="submit">Login</StyledButton>
+              </ButtonWrapper>
+            </form>
+
+            <StyledLink to="/signUp">Create Account</StyledLink>
+          </Card>
+        </CardContainer>
+      </Container>
     </>
   );
 };
@@ -51,61 +90,64 @@ const SideContainer = styled.section`
   }
 `;
 
-const Container = styled.div `
-display: flex;
-justify-content: center;
-height: 94dvh;
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 94dvh;
+`;
 
-`
+const CardContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 
-const CardContainer = styled.div `
-display: flex;
-justify-content: center;
-width: 100%;
-
-@media ${MediaQueries.biggerSizes} {
-max-width: 2000px;
+  @media ${MediaQueries.biggerSizes} {
+    max-width: 2000px;
   }
-`
+`;
 
-const Card = styled.section `
-display: flex;
-flex-direction: column;
-padding: 20px;
-width: 100%;
-max-width: 600px;
-margin: 64px auto; 
+const Card = styled.section`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 64px auto;
 
-
- @media ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     justify-content: center;
     width: 95%;
   }
 
-input {
-  height: 40px;
-  background-color: #F6F6F6;
-  border: none;
-  border-radius: 5px;
-  margin: 10px 0;
-  width: 100%;
-  padding: 10px 10px;
-}
-`
+  input {
+    height: 40px;
+    background-color: #f6f6f6;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 0;
+    width: 100%;
+    padding: 10px 10px;
+  }
+`;
 
-const LogoContainer = styled.div `
+const LogoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Logo = styled.img`
+  height: 150px;
+  width: 150px;
+  border-radius: 20px;
+  margin-left: 15px;
+`;
+
+const ButtonWrapper = styled.div `
 display: flex;
 justify-content: center;
 `
 
-const Logo = styled.img `
-height: 150px;
-width: 150px;
-border-radius: 20px;
-margin-left: 15px;
-`
-
-const StyledButtonLink = styled(Link)`
+const StyledButton = styled.button`
   display: inline-block;
   padding: 10px 20px;
   background-color: ${({ theme }) => theme.colors.primary};
@@ -116,26 +158,26 @@ const StyledButtonLink = styled(Link)`
   font-size: 16px;
   cursor: pointer;
   height: 50px;
-  margin: 40px 0;
-  text-align: center; 
-  align-content: center;
-  transition: ease .3s;
+  margin: 40px auto; 
+  text-align: center;
+  transition: ease 0.3s;
+
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
-    transform: scale(.98);
+    transform: scale(0.98);
   }
 `;
 
 const StyledLink = styled(Link)`
-color: ${({ theme }) => theme.colors.text};
-text-decoration: none;
-text-align: center;
-transition: ease .3s;
+  color: ${({ theme }) => theme.colors.text};
+  text-decoration: none;
+  text-align: center;
+  transition: ease 0.3s;
 
   &:hover {
     color: ${({ theme }) => theme.colors.textHover};
-    transform: scale(.95);
+    transform: scale(0.95);
   }
 
   &:active {
@@ -143,7 +185,7 @@ transition: ease .3s;
   }
 `;
 
-const WelcomeMessage = styled.div `
-text-align: center;
-margin: 10px 0 30px 0;
-`
+const WelcomeMessage = styled.div`
+  text-align: center;
+  margin: 10px 0 30px 0;
+`;
