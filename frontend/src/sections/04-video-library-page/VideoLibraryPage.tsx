@@ -91,6 +91,7 @@ const Container = styled.div`
   padding: 0 20px;
   box-sizing: border-box;
   overflow-x: hidden;
+  
 `;
 
 const ProjectWrapper = styled.div`
@@ -100,6 +101,7 @@ const ProjectWrapper = styled.div`
   justify-content: center;
   box-sizing: border-box;
   grid-template-columns: 1fr;
+
 
   @media ${MediaQueries.biggerSizes} {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
