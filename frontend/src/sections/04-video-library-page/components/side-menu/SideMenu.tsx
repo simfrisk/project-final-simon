@@ -28,6 +28,7 @@ background-color: ${({ theme }) => theme.colors.background};
 height: 85dvh;
 justify-content: space-between;
 align-items: center;
+margin-top: 60px;
 display: none;
 
 h3 {

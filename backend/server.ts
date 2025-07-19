@@ -1,21 +1,24 @@
 import express, { Application } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import { getHome } from "./endpoints/getHome";
-import { getProjects } from "./endpoints/getProjects";
-import { postProject } from "./endpoints/postProject";
+import dotenv from "dotenv";
+
+import { authenticateUser } from "./middleware/authenticateUser";
 import { resetDatabase } from "./setup/resetDatabase";
-import { getProjectById } from "./endpoints/getProjectById";
-import { postCommentById } from "./endpoints/postCommentById";
-import { getComments } from "./endpoints/getComments";
-import { getReplies } from "./endpoints/getReplies";
-import { getCommentById } from "./endpoints/getCommentById";
-import { postReplyById } from "./endpoints/postReplyById";
-import dotenv from "dotenv"
-import { deleteReply } from "./endpoints/deleteReply";
-import { patchReply } from "./endpoints/patchReply";
+
 import { deleteComment } from "./endpoints/deleteComment";
 import { deleteProject } from "./endpoints/deleteProject";
+import { deleteReply } from "./endpoints/deleteReply";
+import { getCommentById } from "./endpoints/getCommentById";
+import { getComments } from "./endpoints/getComments";
+import { getHome } from "./endpoints/getHome";
+import { getProjectById } from "./endpoints/getProjectById";
+import { getProjects } from "./endpoints/getProjects";
+import { getReplies } from "./endpoints/getReplies";
+import { patchReply } from "./endpoints/patchReply";
+import { postCommentById } from "./endpoints/postCommentById";
+import { postProject } from "./endpoints/postProject";
+import { postReplyById } from "./endpoints/postReplyById";
 
 dotenv.config();
 
@@ -33,7 +36,7 @@ resetDatabase()
 // API Home Route
 // Home + Projects
 app.get("/", getHome(app));
-app.get("/projects", getProjects);
+app.get("/projects", authenticateUser, getProjects);
 app.get("/projects/:projectId", getProjectById);
 
 // Comments

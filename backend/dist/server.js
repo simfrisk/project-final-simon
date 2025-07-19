@@ -6,21 +6,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const getHome_1 = require("./endpoints/getHome");
-const getProjects_1 = require("./endpoints/getProjects");
-const postProject_1 = require("./endpoints/postProject");
-const resetDatabase_1 = require("./setup/resetDatabase");
-const getProjectById_1 = require("./endpoints/getProjectById");
-const postCommentById_1 = require("./endpoints/postCommentById");
-const getComments_1 = require("./endpoints/getComments");
-const getReplies_1 = require("./endpoints/getReplies");
-const getCommentById_1 = require("./endpoints/getCommentById");
-const postReplyById_1 = require("./endpoints/postReplyById");
 const dotenv_1 = __importDefault(require("dotenv"));
-const deleteReply_1 = require("./endpoints/deleteReply");
-const patchReply_1 = require("./endpoints/patchReply");
+const authenticateUser_1 = require("./middleware/authenticateUser");
+const resetDatabase_1 = require("./setup/resetDatabase");
 const deleteComment_1 = require("./endpoints/deleteComment");
 const deleteProject_1 = require("./endpoints/deleteProject");
+const deleteReply_1 = require("./endpoints/deleteReply");
+const getCommentById_1 = require("./endpoints/getCommentById");
+const getComments_1 = require("./endpoints/getComments");
+const getHome_1 = require("./endpoints/getHome");
+const getProjectById_1 = require("./endpoints/getProjectById");
+const getProjects_1 = require("./endpoints/getProjects");
+const getReplies_1 = require("./endpoints/getReplies");
+const patchReply_1 = require("./endpoints/patchReply");
+const postCommentById_1 = require("./endpoints/postCommentById");
+const postProject_1 = require("./endpoints/postProject");
+const postReplyById_1 = require("./endpoints/postReplyById");
 dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -32,7 +33,7 @@ app.use(express_1.default.json());
 // API Home Route
 // Home + Projects
 app.get("/", (0, getHome_1.getHome)(app));
-app.get("/projects", getProjects_1.getProjects);
+app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
 app.get("/projects/:projectId", getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project
