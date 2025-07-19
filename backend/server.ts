@@ -19,6 +19,7 @@ import { patchReply } from "./endpoints/patchReply";
 import { postCommentById } from "./endpoints/postCommentById";
 import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
+import { postUser } from "./endpoints/postUser";
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
+app.post("/projects", postUser)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);
