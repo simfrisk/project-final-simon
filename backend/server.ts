@@ -51,7 +51,7 @@ app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
-app.post("/projects", postUser)
+app.post("/user", postUser)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);
