@@ -20,6 +20,7 @@ import { postCommentById } from "./endpoints/postCommentById";
 import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
+import { postSession } from "./endpoints/postSession";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 app.post("/user", postUser)
+app.post("/session", postSession)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);
