@@ -22,6 +22,7 @@ const patchReply_1 = require("./endpoints/patchReply");
 const postCommentById_1 = require("./endpoints/postCommentById");
 const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
+const postUser_1 = require("./endpoints/postUser");
 dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -44,6 +45,7 @@ app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for
 app.post("/projects", postProject_1.postProject);
 app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
+app.post("/user", postUser_1.postUser);
 // Patch
 app.patch("/replies/:replyId", patchReply_1.patchReply);
 // Delete
