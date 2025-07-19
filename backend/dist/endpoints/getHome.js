@@ -8,7 +8,7 @@ const express_list_endpoints_1 = __importDefault(require("express-list-endpoints
 const getHome = (app) => (req, res) => {
     const endpoints = (0, express_list_endpoints_1.default)(app);
     res.json({
-        message: "Welcome to the Happy Thoughts API",
+        message: "Welcome to the Classymc API",
         endpoints,
     });
 };
