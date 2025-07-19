@@ -30,27 +30,6 @@ export const LogInPage: React.FC = () => {
     }
   };
 
-  // If valid, continue login
-    fetch("https://happy-thoughts-zcsh.onrender.com/sessions", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.accessToken) {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("userId", data.userId); 
-          navigate("/thoughts");
-        } else {
-          setLoginError("Invalid email or password. Please try again.");
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to post to API:", err);
-      });
-  };
-
   return (
     <>
       <Navigation />
