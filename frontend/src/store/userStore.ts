@@ -13,9 +13,19 @@ interface UserStore {
   logout: () => void;
 }
 
+// Rehydrate user info from localStorage if available
+const savedEmail = localStorage.getItem("email");
+const savedUserId = localStorage.getItem("userId");
+const savedToken = localStorage.getItem("accessToken");
+
+const initialUser: AuthUser | null =
+  savedEmail && savedUserId && savedToken
+    ? { email: savedEmail, userId: savedUserId, accessToken: savedToken }
+    : null;
+
 export const useUserStore = create<UserStore>((set) => ({
-  user: null,
-  isLoggedIn: false,
+  user: initialUser,
+  isLoggedIn: !!initialUser,
 
   login: async (email, password) => {
     try {
@@ -29,8 +39,10 @@ export const useUserStore = create<UserStore>((set) => ({
 
       if (res.ok && data.accessToken) {
         const user = { email, userId: data.userId, accessToken: data.accessToken };
-        localStorage.setItem("accessToken", data.accessToken);
+        // Save to localStorage
+        localStorage.setItem("email", email);
         localStorage.setItem("userId", data.userId);
+        localStorage.setItem("accessToken", data.accessToken);
         set({ user, isLoggedIn: true });
         return true;
       } else {
@@ -43,8 +55,9 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   logout: () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("email");
     localStorage.removeItem("userId");
+    localStorage.removeItem("accessToken");
     set({ user: null, isLoggedIn: false });
   },
 }));

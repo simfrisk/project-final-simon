@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useUserStore } from "./userStore";
 
 export interface ProjectType {
   _id?: string;
@@ -10,20 +11,20 @@ export interface ProjectType {
 
 interface ProjectsStore {
   projects: ProjectType[];
-  project: ProjectType | null; // 👈 single project view
+  project: ProjectType | null;
   loading: boolean;
   error: string | null;
   message: string | null;
 
   fetchProjects: () => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
-  addProject: (newProject: ProjectType) => void;
+  addProject: (newProject: ProjectType) => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectsStore>((set) => ({
   projects: [],
-  project: null, // 👈 initialize single project here
+  project: null,
   loading: false,
   error: null,
   message: null,
@@ -31,11 +32,18 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   fetchProjects: async () => {
     set({ loading: true, error: null, message: null });
     try {
-      const response = await fetch("https://project-final-simon.onrender.com/projects");
+      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+
+      const response = await fetch("https://project-final-simon.onrender.com/projects", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
+      });
+
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
-      console.log(json)
 
       if (json.success) {
         set({
@@ -62,17 +70,23 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
 
   fetchProjectById: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
-
     try {
-      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`);
+      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+
+      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
+      });
+
       if (!response.ok) throw new Error("Network response was not ok");
 
       const json = await response.json();
-      console.log(json)
 
       if (json.success) {
         set({
-          project: json.response, // 👈 set single project here
+          project: json.response,
           loading: false,
           error: null,
           message: json.message || "Project fetched successfully",
@@ -96,12 +110,19 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   addProject: async (newProject) => {
     set({ loading: true, error: null, message: null });
     try {
+      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+
       const res = await fetch("https://project-final-simon.onrender.com/projects", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
         body: JSON.stringify(newProject),
       });
+
       if (!res.ok) throw new Error("Failed to add project");
+
       const json = await res.json();
 
       if (json.success) {
@@ -122,8 +143,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   deleteProject: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
     try {
+      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+
       const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
         method: "DELETE",
+        headers: {
+          Authorization: token || "",
+        },
       });
 
       if (!response.ok) throw new Error("Failed to delete project");
