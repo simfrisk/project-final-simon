@@ -76,7 +76,7 @@ export const SignUpPage: React.FC = () => {
                 <span>Full name</span>
                 <input
                   type="text"
-                  name="fullName"
+                  name="name"
                   placeholder="Enter full name"
                   minLength={3}
                   value={formData.name}
