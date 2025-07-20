@@ -111,6 +111,7 @@ const SideContainer = styled.section`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: ${({theme}) => theme.colors.secondary};
 
   @media ${MediaQueries.biggerSizes} {
     display: block;
