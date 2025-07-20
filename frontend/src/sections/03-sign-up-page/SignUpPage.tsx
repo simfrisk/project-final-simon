@@ -17,8 +17,8 @@ export const SignUpPage: React.FC = () => {
   const { createUser } = useUserStore();
 
   const [formData, setFormData] = useState({
-      email: "",
       name: "",
+      email: "",
       password: "",
     });
 
@@ -36,7 +36,7 @@ export const SignUpPage: React.FC = () => {
       return;
     }
 
-    const success = await createUser(formData.email, formData.password, formData.name);
+    const success = await createUser(formData.name, formData.email, formData.password);
 
     if (success) {
       navigate("/library/");
@@ -60,17 +60,6 @@ export const SignUpPage: React.FC = () => {
             </WelcomeMessage>
 
             <form onSubmit={handleSubmit} noValidate>
-              <label>
-                <span>Email</span>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
 
               <label>
                 <span>Full name</span>
@@ -80,6 +69,18 @@ export const SignUpPage: React.FC = () => {
                   placeholder="Enter full name"
                   minLength={3}
                   value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter Email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
                 />

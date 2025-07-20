@@ -11,7 +11,7 @@ interface UserStore {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  createUser: (email: string, password: string, name: string) => Promise<boolean>;
+  createUser: (name: string, email: string, password: string) => Promise<boolean>;
 }
 
 // Rehydrate user info from localStorage if available
@@ -62,12 +62,12 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ user: null, isLoggedIn: false });
   },
 
-  createUser: async (email, password, name) => {
+  createUser: async (name, email, password) => {
     try {
-      const res = await fetch("https://project-final-simon.onrender.com/post", {
+      const res = await fetch("https://project-final-simon.onrender.com/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
