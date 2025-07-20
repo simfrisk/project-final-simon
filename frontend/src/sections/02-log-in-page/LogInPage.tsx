@@ -1,10 +1,11 @@
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { MediaQueries } from "../../themes/mediaQueries";
+import { useUserStore } from "../../store/userStore";
 import { Navigation } from "../../global-components/Navigation";
+import { MediaQueries } from "../../themes/mediaQueries";
 
-
-// Define form element structure
+// Types
 type LoginFormElements = HTMLFormElement & {
   email: HTMLInputElement;
   password: HTMLInputElement;
@@ -12,21 +13,33 @@ type LoginFormElements = HTMLFormElement & {
 
 export const LogInPage: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useUserStore();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as LoginFormElements;
 
-    if (form.checkValidity()) {
-      const email = form.email.value;
-      const password = form.password.value;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
 
-      console.log("Form submitted:", { email, password });
+    const success = await login(formData.email, formData.password);
 
-      // Redirect after successful login
+    if (success) {
       navigate("/library/");
     } else {
-      form.reportValidity(); // show validation tooltips
+      alert("Login failed. Please check your credentials.");
     }
   };
 
@@ -40,6 +53,7 @@ export const LogInPage: React.FC = () => {
             <LogoContainer>
               <Logo src="/logo2.png" alt="Classync logo" />
             </LogoContainer>
+
             <WelcomeMessage>
               <h3>Welcome</h3>
               <p>Nice to have you back.</p>
@@ -52,6 +66,8 @@ export const LogInPage: React.FC = () => {
                   type="email"
                   name="email"
                   placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                 />
               </label>
@@ -60,9 +76,11 @@ export const LogInPage: React.FC = () => {
                 <input
                   type="password"
                   name="password"
-                  minLength={3}
                   placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
                   required
+                  minLength={3}
                 />
               </label>
               <ButtonWrapper>
@@ -78,6 +96,14 @@ export const LogInPage: React.FC = () => {
   );
 };
 
+// -------------------- Styled Components --------------------
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 94dvh;
+`;
+
 const SideContainer = styled.section`
   display: none;
   width: 80%;
@@ -85,17 +111,10 @@ const SideContainer = styled.section`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: ${({ theme }) => theme.colors.secondary};
 
   @media ${MediaQueries.biggerSizes} {
     display: block;
   }
-`;
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  height: 94dvh;
 `;
 
 const CardContainer = styled.div`
@@ -144,26 +163,27 @@ const Logo = styled.img`
   margin-left: 15px;
 `;
 
-const ButtonWrapper = styled.div `
-display: flex;
-justify-content: center;
-`
+const WelcomeMessage = styled.div`
+  text-align: center;
+  margin: 10px 0 30px 0;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const StyledButton = styled.button`
-  display: inline-block;
   padding: 10px 20px;
   background-color: ${({ theme }) => theme.colors.primary};
   color: white;
-  text-decoration: none;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   height: 50px;
-  margin: 40px auto; 
-  text-align: center;
+  margin: 40px auto;
   transition: ease 0.3s;
-
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
@@ -185,9 +205,4 @@ const StyledLink = styled(Link)`
   &:active {
     color: ${({ theme }) => theme.colors.textActive};
   }
-`;
-
-const WelcomeMessage = styled.div`
-  text-align: center;
-  margin: 10px 0 30px 0;
 `;
