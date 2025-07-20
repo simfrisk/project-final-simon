@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import { MediaQueries } from './themes/mediaQueries';
 import { LandingPage } from './sections/01-lading-page/01-main/LandingPage';
 import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
+import { RequireAuthentication } from './utils/RequireAuthentication';
+import { PageNotFound } from './global-components/PageNotFound';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
@@ -19,14 +21,35 @@ export const App = () => {
       <AppContainer>
         <BrowserRouter>
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LogInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
-            <Route path="/library" element={<VideoLibraryPage />} />
-            <Route path="/review/:projectId" element={<ReviewPage />} />
+
+            {/* Protected routes */}
+            <Route
+              path="/library"
+              element={
+                <RequireAuthentication>
+                  <VideoLibraryPage />
+                </RequireAuthentication>
+              }
+            />
+            <Route
+              path="/review/:projectId"
+              element={
+                <RequireAuthentication>
+                  <ReviewPage />
+                </RequireAuthentication>
+              }
+            />
+
+             {/* Fallback 404 route */}
+           <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
-          <ToggleThemeButton onClick={toggleTheme}>
+
+        <ToggleThemeButton onClick={toggleTheme}>
           Toggle Theme
         </ToggleThemeButton>
       </AppContainer>
@@ -56,10 +79,10 @@ const ToggleThemeButton = styled.button`
   transition: ease .3s;
 
   &:hover {
-transform: scale(.97);
+    transform: scale(.97);
   }
 
-@media ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     display: block;
   }
 `;

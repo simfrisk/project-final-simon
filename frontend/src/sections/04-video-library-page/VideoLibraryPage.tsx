@@ -8,25 +8,16 @@ import { SideMenu } from "./components/side-menu/SideMenu";
 import { Navigation } from "../../global-components/Navigation";
 import { Section } from "../../global-components/Section";
 import { MediaQueries } from "../../themes/mediaQueries";
-import { useUserStore } from "../../store/userStore";
-import { useNavigate } from "react-router-dom";
 
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
   const loading = useProjectStore((state) => state.loading);
   const error = useProjectStore((state) => state.error);
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-    navigate("/login");
-    return;
-  }
-
     fetchProjects();
-}, [isLoggedIn, fetchProjects, navigate]);
+  }, [fetchProjects]);
 
   if (loading) {
     return (
