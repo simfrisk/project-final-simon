@@ -11,7 +11,7 @@ export const postUser = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "User created",
-      id: user._id,
+      userId: user._id,
       accessToken: user.accessToken,
     })
   } catch (error) {

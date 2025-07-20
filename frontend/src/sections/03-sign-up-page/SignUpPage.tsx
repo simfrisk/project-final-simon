@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { Navigation } from "../../global-components/Navigation";
+import { useUserStore } from "../../store/userStore";
+import { useState } from "react";
 
 // Define the expected form fields
 type SignUpFormElements = HTMLFormElement & {
@@ -12,22 +14,34 @@ type SignUpFormElements = HTMLFormElement & {
 
 export const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
+  const { createUser } = useUserStore();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.target as SignUpFormElements;
+  const [formData, setFormData] = useState({
+      email: "",
+      name: "",
+      password: "",
+    });
 
-    if (form.checkValidity()) {
-      const email = form.email.value;
-      const fullName = form.fullName.value;
-      const password = form.password.value;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-      console.log("Form submitted:", { email, fullName, password });
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  const form = e.target as SignUpFormElements;
 
-      // Redirect after successful validation
+ if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const success = await createUser(formData.email, formData.password, formData.name);
+
+    if (success) {
       navigate("/library/");
     } else {
-      form.reportValidity(); // Trigger browser validation messages
+      alert("Sign up failed. Please check your credentials.");
     }
   };
 
@@ -52,6 +66,8 @@ export const SignUpPage: React.FC = () => {
                   type="email"
                   name="email"
                   placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                 />
               </label>
@@ -63,6 +79,8 @@ export const SignUpPage: React.FC = () => {
                   name="fullName"
                   placeholder="Enter full name"
                   minLength={3}
+                  value={formData.name}
+                  onChange={handleChange}
                   required
                 />
               </label>
@@ -73,6 +91,8 @@ export const SignUpPage: React.FC = () => {
                   type="password"
                   name="password"
                   placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
                   required
                 />
               </label>
