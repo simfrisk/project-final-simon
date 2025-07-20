@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/userStore";
 import { Navigation } from "../../global-components/Navigation";
 import { MediaQueries } from "../../themes/mediaQueries";
+import { useEffect } from "react";
 
 // Types
 type LoginFormElements = HTMLFormElement & {
@@ -42,6 +43,14 @@ export const LogInPage: React.FC = () => {
       alert("Login failed. Please check your credentials.");
     }
   };
+
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+
+useEffect(() => {
+  if (isLoggedIn) {
+    navigate("/library");
+  }
+}, [isLoggedIn, navigate]);
 
   return (
     <>
