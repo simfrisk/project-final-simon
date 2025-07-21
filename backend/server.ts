@@ -21,6 +21,7 @@ import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
+import { postUploadVideo } from "./endpoints/postUploadVideo";
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 app.post("/user", postUser)
 app.post("/session", postSession)
+app.post("/upload", postUploadVideo)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);

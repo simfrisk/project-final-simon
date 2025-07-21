@@ -24,6 +24,7 @@ const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
+const postUploadVideo_1 = require("./endpoints/postUploadVideo");
 dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -48,6 +49,7 @@ app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 app.post("/user", postUser_1.postUser);
 app.post("/session", postSession_1.postSession);
+app.post("/upload", postUploadVideo_1.postUploadVideo);
 // Patch
 app.patch("/replies/:replyId", patchReply_1.patchReply);
 // Delete
