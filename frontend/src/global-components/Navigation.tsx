@@ -60,7 +60,7 @@ export const Navigation = () => {
 const Container = styled.nav`
   background-color: ${({ theme }) => theme.colors.primary};
   color: white;
-  height: 60px;
+  height: 8vh;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -68,14 +68,19 @@ const Container = styled.nav`
   align-items: center;
   padding: 30px 30px;
   align-items: center;
-  position: relative; // 👈 important
-  z-index: 10;    
+  position: relative; 
+  z-index: 1000; 
+  
+  @media ${MediaQueries.biggerSizes} {
+    height: 60px;
+  }
 `;
 
 const StyledLink = styled(Link)`
   color: white;
   text-decoration: none;
   transition: ease 0.3s;
+  z-index: 2000;
 
   &:hover {
     transform: scale(0.94);
@@ -107,6 +112,7 @@ const DesktopMenu = styled.div `
 
 const HamburgerWrapper = styled.div<MenuProps>`
   display: block;
+  z-index: 2000;
 
   @media  ${MediaQueries.biggerSizes} {
     display: none;
@@ -116,23 +122,24 @@ const HamburgerWrapper = styled.div<MenuProps>`
 const MobileMenu = styled.div<MenuProps>`
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 60px;
+  position: fixed;
+  top: 8dvh;
   right: 0;
   width: 100dvw;
+  height: 92dvh;
   background-color: ${({ theme }) => theme.colors.primary};
-  z-index: 1000;
   align-items: center;
   padding-top: 40px;
-  
-  // transition for height and opacity
-  transition: height 0.3s ease, opacity 0.3s ease;
+  z-index: 10;
+
+  transition: transform 0.3s ease, opacity 0.5s ease;
   overflow: hidden;
 
-  // control height and opacity based on isOpen
-  height: ${({ isOpen }) => (isOpen ? "100dvh" : "0")};  // adjust 200px to your content height or max-height
+  /* Slide from top */
+  transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(-100%)")};
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  
+  pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")};
+
   @media ${MediaQueries.biggerSizes} {
     display: none;
   }
