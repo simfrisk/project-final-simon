@@ -69,7 +69,7 @@ app.post("/test-upload", (req, res) => {
             return res.status(400).json({ success: false, message: err.message });
         }
         console.log("File received:", req.file);
-        console.log("Body:", req.body);
+        console.log("Body logs:", req.body);
         res.json({ success: true, file: req.file, body: req.body });
     });
 });
