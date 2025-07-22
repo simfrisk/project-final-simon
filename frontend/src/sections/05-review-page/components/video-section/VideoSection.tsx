@@ -13,6 +13,7 @@ import { useVideoProgress } from './utils/useVideoProgress';
 import { commentStore } from '../../../../store/commentStore';
 import type { MessageType } from '../../../../store/commentStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
+import { useProjectStore } from '../../../../store/projectStore';
 
 //#endregion
 
@@ -45,6 +46,32 @@ export const VideoSection = () => {
   const currentTime = useTimecode((state) => state.timecode);
   const setTimecode = useTimecode((state) => state.setTimecode);
   const duration = formatTime(videoRef.current?.duration || 0);
+
+  const projectVideo = useProjectStore((state) => state.project?.video);
+
+  // State to hold the video URL for the <video> element
+const [videoUrl, setVideoUrl] = useState<string | null>(null);
+
+useEffect(() => {
+  if (!projectVideo) {
+    setVideoUrl(null);
+    return;
+  }
+
+  if (typeof projectVideo === "string") {
+    // If it's already a URL string, use it directly
+    setVideoUrl(projectVideo);
+  } else if (projectVideo instanceof File) {
+    // If it's a File object, create a blob URL
+    const url = URL.createObjectURL(projectVideo);
+    setVideoUrl(url);
+
+    // Cleanup on unmount or when projectVideo changes
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }
+}, [projectVideo]);
 
 
 //This adds the timecode to zustand TimeCodeStore
@@ -106,8 +133,10 @@ useEffect(() => {
 
   return (
     <Container>
+     
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
-        <source src="/video2.mp4" type="video/mp4" />
+        {videoUrl && <source src={videoUrl} type="video/mp4" />}
+        Your browser does not support the video tag.
       </StyledVideo>
 
       <Controls>
