@@ -4,6 +4,9 @@ exports.postProject = void 0;
 const Projects_1 = require("../models/Projects");
 const postProject = async (req, res) => {
     try {
+        // Debug logs to see what data is received
+        console.log("Received body:", req.body);
+        console.log("Received file:", req.file);
         const { projectName, projectDescription } = req.body;
         if (!projectName) {
             return res.status(400).json({
@@ -13,7 +16,6 @@ const postProject = async (req, res) => {
             });
         }
         if (!req.file) {
-            // Optional: if you require a video file for every project
             return res.status(400).json({
                 success: false,
                 response: null,
@@ -36,14 +38,12 @@ const postProject = async (req, res) => {
     catch (error) {
         console.error("Error in postProject:", error);
         if (error instanceof Error) {
-            // You can differentiate error types here if needed
             return res.status(500).json({
                 success: false,
                 response: null,
                 message: error.message,
             });
         }
-        // Fallback generic error response
         return res.status(500).json({
             success: false,
             response: null,
