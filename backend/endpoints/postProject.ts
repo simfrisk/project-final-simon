@@ -3,7 +3,7 @@ import { Project } from "../models/Projects";
 
 export const postProject = async (req: Request, res: Response): Promise<Response> => {
   try {
-    // Add these logs right at the start of your try block
+    // Debug logs to see what data is received
     console.log("Received body:", req.body);
     console.log("Received file:", req.file);
 
