@@ -9,6 +9,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const authenticateUser_1 = require("./middleware/authenticateUser");
 const resetDatabase_1 = require("./setup/resetDatabase");
+const uploadVideo_1 = require("./middleware/uploadVideo");
 const deleteComment_1 = require("./endpoints/deleteComment");
 const deleteProject_1 = require("./endpoints/deleteProject");
 const deleteReply_1 = require("./endpoints/deleteReply");
@@ -24,7 +25,6 @@ const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
-const postUploadVideo_1 = require("./endpoints/postUploadVideo");
 dotenv_1.default.config();
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
@@ -44,12 +44,11 @@ app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comm
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for a comment
 // Posting
-app.post("/projects", postProject_1.postProject);
+app.post("/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
 app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 app.post("/user", postUser_1.postUser);
 app.post("/session", postSession_1.postSession);
-app.post("/upload", postUploadVideo_1.postUploadVideo);
 // Patch
 app.patch("/replies/:replyId", patchReply_1.patchReply);
 // Delete

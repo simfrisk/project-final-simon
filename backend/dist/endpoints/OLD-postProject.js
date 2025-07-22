@@ -5,7 +5,6 @@ const Projects_1 = require("../models/Projects");
 const postProject = async (req, res) => {
     try {
         const { projectName, projectDescription } = req.body;
-        const videoUrl = req.file?.path || "";
         if (!projectName) {
             return res.status(400).json({
                 success: false,
@@ -13,11 +12,7 @@ const postProject = async (req, res) => {
                 message: "Project name is required"
             });
         }
-        const newProject = new Projects_1.Project({
-            projectName,
-            projectDescription,
-            video: videoUrl,
-        });
+        const newProject = new Projects_1.Project({ projectName, projectDescription });
         const savedNewProject = await newProject.save();
         return res.status(201).json({
             success: true,
