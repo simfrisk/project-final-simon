@@ -30,8 +30,21 @@ const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
 const app = (0, express_1.default)();
+const allowedOrigins = [
+    "http://localhost:5173", // your local dev
+    "https://class-review.netlify.app" // your deployed frontend
+];
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true); // Allow requests like curl or Postman with no origin
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
