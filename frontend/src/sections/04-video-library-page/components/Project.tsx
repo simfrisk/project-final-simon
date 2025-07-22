@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useProjectStore } from "../../../store/projectStore";
+import type { ProjectType } from "../../../store/projectStore";
 
-interface ProjectProps {
+interface ProjectProps extends Pick<ProjectType, "_id" | "projectName" | "projectDescription" | "thumbnail"> {
   projectId: string;
-  projectName: string;
-  projectDescription: string;
 }
 
-export const Project = ({ projectId, projectName, projectDescription }: ProjectProps) => {
+export const Project = ({ projectId, projectName, projectDescription, thumbnail }: ProjectProps) => {
 
 const deleteProject = useProjectStore((state) => state.deleteProject);
 
   return (
     <StyledLink to={`/review/${projectId}`}>
       <Card>
-        <Thumbnail src="https://res.cloudinary.com/dgr7l5nsx/video/upload/so_3,w_300,h_200,c_fill/v1753193328/videos/rvkw1uneata2q8rbob0d.jpg" alt="Thumbnail" />
+        <Thumbnail src={thumbnail || "/fallback-thumbnail.jpg"} alt="Thumbnail" />
         <TextContainer>
           <h3>{projectName}</h3>
           <p>{projectDescription}</p>

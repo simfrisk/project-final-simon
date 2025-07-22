@@ -7,6 +7,7 @@ export interface ProjectType {
   projectName: string;
   projectDescription: string;
   video: string | File | null;
+  thumbnail?: string;
   comments?: any[]; // optionally type your comment
 }
 

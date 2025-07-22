@@ -4,6 +4,7 @@ export interface Project extends Document {
   projectName: string;
   projectDescription?: string;
   video?: string;
+  thumbnail?: string
   comments: Types.ObjectId[];
 }
 
@@ -11,6 +12,7 @@ const ProjectSchema = new Schema<Project>({
   projectName: { type: String, required: true },
   projectDescription: String,
   video: String,
+  thumbnail: String,
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 

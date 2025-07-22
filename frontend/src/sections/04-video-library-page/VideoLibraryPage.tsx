@@ -43,12 +43,13 @@ export const VideoLibraryPage = () => {
                 <h2>Class Title</h2>
               </HeaderWrapper>
             <ProjectWrapper>
-              {projects.map(({ _id, projectName, projectDescription }) => (
+              {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
                 <Project 
                   key={_id} 
                   projectId={_id ?? ""}
                   projectName={projectName} 
-                  projectDescription={projectDescription} 
+                  projectDescription={projectDescription}
+                  thumbnail={thumbnail} 
                 />
               ))}
             </ProjectWrapper>
