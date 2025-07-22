@@ -57,7 +57,8 @@ app.get("/comments/:commentId", getCommentById);       // Single comment by ID
 app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 
 // Posting
-app.post("/projects", uploadVideo.single("video"), postProject);
+// app.post("/projects", uploadVideo.single("video"), postProject);
+app.post("/projects", postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 app.post("/user", postUser)
