@@ -25,7 +25,6 @@ import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
 
-import { directUpload } from "./test";
 
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
