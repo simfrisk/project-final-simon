@@ -17,27 +17,32 @@ export const SignUpPage: React.FC = () => {
   const { createUser } = useUserStore();
 
   const [formData, setFormData] = useState({
-      name: "",
-      email: "",
-      password: "",
-      role: "",
-    });
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  setFormData((prev) => ({ ...prev, [name]: value }));
-};
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  const form = e.target as SignUpFormElements;
+    e.preventDefault();
+    const form = e.target as SignUpFormElements;
 
- if (!form.checkValidity()) {
+    if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-  const success = await createUser(formData.name, formData.email, formData.password, formData.role);
+    const success = await createUser(
+      formData.name,
+      formData.email,
+      formData.password,
+      formData.role
+    );
 
     if (success) {
       navigate("/library/");
@@ -61,7 +66,6 @@ export const SignUpPage: React.FC = () => {
             </WelcomeMessage>
 
             <form onSubmit={handleSubmit} noValidate>
-
               <label>
                 <span>Full name</span>
                 <input
@@ -99,31 +103,33 @@ export const SignUpPage: React.FC = () => {
                 />
               </label>
 
-              <label htmlFor="role-teacher">
-              <input
-                id="role-teacher"
-                type="radio"
-                name="role"
-                value="teacher"
-                checked={formData.role === "teacher"}
-                onChange={handleChange}
-                required
-              />
-              Teacher
-            </label>
+              <RoleGroup>
+                <RoleLabel htmlFor="role-teacher" selected={formData.role === "teacher"}>
+                  <input
+                    id="role-teacher"
+                    type="radio"
+                    name="role"
+                    value="teacher"
+                    checked={formData.role === "teacher"}
+                    onChange={handleChange}
+                    required
+                  />
+                  Teacher
+                </RoleLabel>
 
-            <label htmlFor="role-student">
-              <input
-                id="role-student"
-                type="radio"
-                name="role"
-                value="student"
-                checked={formData.role === "student"}
-                onChange={handleChange}
-                required
-              />
-              Student
-            </label>
+                <RoleLabel htmlFor="role-student" selected={formData.role === "student"}>
+                  <input
+                    id="role-student"
+                    type="radio"
+                    name="role"
+                    value="student"
+                    checked={formData.role === "student"}
+                    onChange={handleChange}
+                    required
+                  />
+                  Student
+                </RoleLabel>
+              </RoleGroup>
 
               <ButtonWrapper>
                 <StyledButton type="submit">Sign up</StyledButton>
@@ -141,6 +147,14 @@ export const SignUpPage: React.FC = () => {
   );
 };
 
+// STYLED COMPONENTS
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 94dvh;
+`;
+
 const SideContainer = styled.section`
   display: none;
   width: 80%;
@@ -148,17 +162,11 @@ const SideContainer = styled.section`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: ${({theme}) => theme.colors.secondary};
+  background-color: ${({ theme }) => theme.colors.secondary};
 
   @media ${MediaQueries.biggerSizes} {
     display: block;
   }
-`;
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  height: 94dvh;
 `;
 
 const CardContainer = styled.div`
@@ -207,10 +215,15 @@ const Logo = styled.img`
   margin-left: 15px;
 `;
 
-const ButtonWrapper = styled.div `
-display: flex;
-justify-content: center;
-`
+const WelcomeMessage = styled.div`
+  text-align: center;
+  margin: 10px 0 30px 0;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -249,14 +262,49 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const WelcomeMessage = styled.div`
-  text-align: center;
-  margin: 10px 0 30px 0;
-`
+const LinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`;
 
-const LinkContainer = styled.div `
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 4px;
-`
+const RoleGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+`;
+
+const RoleLabel = styled.label<{ selected: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  input[type="radio"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  input[type="radio"]:checked::before {
+    content: "";
+    display: block;
+    width: 90%;
+    height: 90%;
+    background-color: ${({ theme }) => theme.colors.primary};
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+  }
+`;
