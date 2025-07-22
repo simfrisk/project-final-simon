@@ -31,7 +31,14 @@ mongoose.connect(mongoUrl);
 const port: number = parseInt(process.env.PORT || "8080");
 const app: Application = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // replace with your frontend URL
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.options("*", cors()); // handles preflight requests
+
 app.use(express.json());
 
 resetDatabase()
@@ -50,7 +57,7 @@ app.get("/comments/:commentId", getCommentById);       // Single comment by ID
 app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 
 // Posting
-// app.post("/projects", uploadVideo.single("video"), postProject);
+app.post("/projects", uploadVideo.single("video"), postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 app.post("/user", postUser)
