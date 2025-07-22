@@ -13,20 +13,19 @@ interface MenuProps {
 export const Navigation = () => {
   const { logout } = useUserStore();
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
-  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const handleLogout = (): void => {
-    logout(); 
-    navigate("/"); 
+    logout();
+    navigate("/");
     setIsMenuOpen(false);
   };
 
-    const toggleMenu = (): void => {
+  const toggleMenu = (): void => {
     setIsMenuOpen((prev) => !prev);
   };
-
-
 
   return (
     <Container>
@@ -34,25 +33,31 @@ export const Navigation = () => {
         <h3>Classync</h3>
       </StyledLink>
 
-        <DesktopMenu>
-          <ToggleThemeButton onClick={toggleTheme}>
-            Toggle Theme
-          </ToggleThemeButton>
+      <DesktopMenu>
+        <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
+
+        {isLoggedIn ? (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-        </DesktopMenu>
+        ) : (
+          <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
+        )}
+      </DesktopMenu>
 
-        <HamburgerWrapper isOpen={isMenuOpen} onClick={toggleMenu}>
-          <HamburgerMenu />
-        </HamburgerWrapper>
+      <HamburgerWrapper isOpen={isMenuOpen} onClick={toggleMenu}>
+        <HamburgerMenu />
+      </HamburgerWrapper>
 
-        <MobileMenu isOpen={isMenuOpen}>
+      <MobileMenu isOpen={isMenuOpen}>
+        {isLoggedIn ? (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-              <ToggleThemeButton onClick={toggleTheme}>
-                Toggle Theme
-              </ToggleThemeButton>
-          <StyledNavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</StyledNavLink>
-        </MobileMenu>
+        ) : (
+          <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
+        )}
 
+        <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
+
+        <StyledNavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</StyledNavLink>
+      </MobileMenu>
     </Container>
   );
 };
@@ -67,10 +72,9 @@ const Container = styled.nav`
   align-content: center;
   align-items: center;
   padding: 30px 30px;
-  align-items: center;
-  position: relative; 
-  z-index: 1000; 
-  
+  position: relative;
+  z-index: 1000;
+
   @media ${MediaQueries.biggerSizes} {
     height: 60px;
   }
@@ -81,6 +85,16 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   transition: ease 0.3s;
   z-index: 2000;
+
+  &:hover {
+    transform: scale(0.94);
+  }
+`;
+
+const StyledNavLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  transition: ease 0.3s;
 
   &:hover {
     transform: scale(0.94);
@@ -100,21 +114,21 @@ const LogoutButton = styled.button`
   }
 `;
 
-const DesktopMenu = styled.div `
+const DesktopMenu = styled.div`
   display: none;
   align-items: center;
   gap: 20px;
 
-  @media  ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     display: flex;
   }
-`
+`;
 
 const HamburgerWrapper = styled.div<MenuProps>`
   display: block;
   z-index: 2000;
 
-  @media  ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     display: none;
   }
 `;
@@ -135,7 +149,6 @@ const MobileMenu = styled.div<MenuProps>`
   transition: transform 0.3s ease, opacity 0.5s ease;
   overflow: hidden;
 
-  /* Slide from top */
   transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(-100%)")};
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
   pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")};
@@ -146,16 +159,6 @@ const MobileMenu = styled.div<MenuProps>`
 
   a, button {
     margin-bottom: 10px;
-  }
-`;
-
-const StyledNavLink = styled(Link) `
-  color: white;
-  text-decoration: none;
-  transition: ease 0.3s;
-
-  &:hover {
-    transform: scale(0.94);
   }
 `;
 
@@ -170,14 +173,13 @@ const ToggleThemeButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  transition: ease .3s;
+  transition: ease 0.3s;
 
   &:hover {
-    transform: scale(.97);
+    transform: scale(0.97);
   }
 
   @media ${MediaQueries.biggerSizes} {
-      position: static;
+    position: static;
   }
-
 `;
