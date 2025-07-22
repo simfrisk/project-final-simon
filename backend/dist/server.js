@@ -56,7 +56,7 @@ app.use(express_1.default.urlencoded({ extended: true })); // <-- add this line
 // Home + Projects
 app.get("/", (0, getHome_1.getHome)(app));
 app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
-app.get("/projects/:projectId", getProjectById_1.getProjectById);
+app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project
 app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comment by ID

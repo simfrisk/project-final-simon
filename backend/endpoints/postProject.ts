@@ -4,7 +4,7 @@ import { Project } from "../models/Projects";
 const generateThumbnailUrl = (videoUrl: string): string => {
   if (!videoUrl) return "";
   return videoUrl
-    .replace("/video/upload/", "/video/upload/so_3,w_300,h_200,c_fill/")
+    .replace("/video/upload/", "/video/upload/so_3,w_600,h_400,c_fill/")
     .replace(/\.(mp4|mov|avi)$/i, ".jpg");
 };
 
