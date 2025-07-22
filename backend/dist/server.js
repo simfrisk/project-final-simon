@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const authenticateUser_1 = require("./middleware/authenticateUser");
 const resetDatabase_1 = require("./setup/resetDatabase");
 const uploadVideo_1 = require("./middleware/uploadVideo");
@@ -25,7 +26,7 @@ const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
-dotenv_1.default.config();
+const test_1 = require("./test");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -62,6 +63,7 @@ app.patch("/replies/:replyId", patchReply_1.patchReply);
 app.delete("/projects/:projectId", deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", deleteReply_1.deleteReply);
+app.post("/upload-direct", test_1.directUpload);
 app.post("/test-upload", (req, res) => {
     uploadVideo_1.uploadVideo.single("video")(req, res, (err) => {
         if (err) {

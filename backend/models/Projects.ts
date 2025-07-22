@@ -14,4 +14,4 @@ const ProjectSchema = new Schema<Project>({
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 
-export const Project = model<Project>("Project", ProjectSchema);
+export const Project = model<Project>("Project", ProjectSchema);  

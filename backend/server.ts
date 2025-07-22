@@ -25,6 +25,8 @@ import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
 
+import { directUpload } from "./test";
+
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -73,6 +75,8 @@ app.patch("/replies/:replyId", patchReply);
 app.delete("/projects/:projectId", deleteProject)
 app.delete("/comments/:commentId", deleteComment)
 app.delete("/replies/:replyId", deleteReply);
+
+app.post("/upload-direct", directUpload);
 
 app.post("/test-upload", (req, res) => {
   uploadVideo.single("video")(req, res, (err) => {
