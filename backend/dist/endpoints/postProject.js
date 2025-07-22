@@ -15,13 +15,13 @@ const postProject = async (req, res) => {
                 message: "Project name is required",
             });
         }
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                response: null,
-                message: "Video file is required",
-            });
-        }
+        // if (!req.file) {
+        //   return res.status(400).json({
+        //     success: false,
+        //     response: null,
+        //     message: "Video file is required",
+        //   });
+        // }
         const videoUrl = req.file?.path || "";
         const newProject = new Projects_1.Project({
             projectName,

@@ -17,13 +17,13 @@ export const postProject = async (req: Request, res: Response): Promise<Response
       });
     }
 
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Video file is required",
-      });
-    }
+    // if (!req.file) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     response: null,
+    //     message: "Video file is required",
+    //   });
+    // }
 
     const videoUrl = (req.file as any)?.path || "";
 
