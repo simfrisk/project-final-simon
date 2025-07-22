@@ -92,9 +92,15 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledNavLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
   color: white;
   text-decoration: none;
   transition: ease 0.3s;
+  padding: 0; /* remove any default padding */
+  border: none; /* just in case */
+  background: none;
+  font-size: 18px;
 
   &:hover {
     transform: scale(0.94);
@@ -102,13 +108,17 @@ const StyledNavLink = styled(Link)`
 `;
 
 const LogoutButton = styled.button`
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 18px;
   color: white;
   background: none;
   border: none;
   cursor: pointer;
   transition: ease 0.3s;
-
+  padding: 0;
+  font-family: inherit; /* to match link font */
+  
   &:hover {
     transform: scale(0.94);
   }
@@ -142,8 +152,9 @@ const MobileMenu = styled.div<MenuProps>`
   width: 100dvw;
   height: 92dvh;
   background-color: ${({ theme }) => theme.colors.primary};
-  align-items: center;
-  padding-top: 40px;
+  align-items: flex-start;
+  padding-top: 50px;
+  padding-left: 30px;
   z-index: 10;
 
   transition: transform 0.3s ease, opacity 0.5s ease;
@@ -164,7 +175,7 @@ const MobileMenu = styled.div<MenuProps>`
 
 const ToggleThemeButton = styled.button`
   position: fixed;
-  right: 10px;
+  left: 10px;
   bottom: 10px;
   margin: 20px;
   padding: 10px 16px;
