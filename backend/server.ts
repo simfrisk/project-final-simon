@@ -76,20 +76,6 @@ app.delete("/projects/:projectId", deleteProject)
 app.delete("/comments/:commentId", deleteComment)
 app.delete("/replies/:replyId", deleteReply);
 
-app.post("/upload-direct", directUpload);
-
-app.post("/test-upload", (req, res) => {
-  uploadVideo.single("video")(req, res, (err) => {
-    if (err) {
-      console.error("Multer upload error:", err);
-      return res.status(400).json({ success: false, message: err.message });
-    }
-    console.log("File received:", req.file);
-    console.log("Body logs:", req.body);
-    res.json({ success: true, file: req.file, body: req.body });
-  });
-});
-
 // Start the server
 app.listen(port, (): void => {
   console.log(`Server running on http://localhost:${port}`);
