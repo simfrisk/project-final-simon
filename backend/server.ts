@@ -1,7 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Application } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 
 import { authenticateUser } from "./middleware/authenticateUser";
 import { resetDatabase } from "./setup/resetDatabase";
@@ -23,7 +25,6 @@ import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
 
-dotenv.config();
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);

@@ -1,9 +1,18 @@
+// middleware/uploadVideo.ts
+
+import dotenv from "dotenv";
+dotenv.config(); // ✅ this MUST be before Cloudinary config
+
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import dotenv from "dotenv";
 
-dotenv.config();
+// Optional: debug log
+console.log("Cloudinary ENV check:", {
+  name: process.env.CLOUDINARY_CLOUD_NAME,
+  keySet: !!process.env.CLOUDINARY_API_KEY,
+  secretSet: !!process.env.CLOUDINARY_API_SECRET,
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
