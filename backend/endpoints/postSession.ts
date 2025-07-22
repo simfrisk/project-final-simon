@@ -9,6 +9,8 @@ export const postSession = async (req: Request, res: Response): Promise<void> =>
     if (user && bcrypt.compareSync(req.body.password, user.password)) {
       res.json({
         userId: user._id,
+        name: user.name,
+        role: user.role,
         accessToken: user.accessToken,
       });
     } else {

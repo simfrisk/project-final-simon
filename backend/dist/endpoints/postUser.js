@@ -8,9 +8,22 @@ const user_1 = require("../models/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const postUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
+        const allowedRoles = ["teacher", "student"];
+        if (!allowedRoles.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid role. Allowed roles: ${allowedRoles.join(", ")}`,
+            });
+        }
         const salt = bcrypt_1.default.genSaltSync();
-        const user = new user_1.UserModel({ name, email, password: bcrypt_1.default.hashSync(password, salt) });
+        const hashedPassword = bcrypt_1.default.hashSync(password, salt);
+        const user = new user_1.UserModel({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+        });
         await user.save();
         res.status(201).json({
             success: true,
@@ -24,7 +37,7 @@ const postUser = async (req, res) => {
         res.status(400).json({
             success: false,
             message: "Could not create user",
-            errors: error
+            errors: error,
         });
     }
 };

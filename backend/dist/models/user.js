@@ -21,6 +21,10 @@ const UserSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        required: true
+    },
     accessToken: {
         type: String,
         default: () => crypto_1.default.randomBytes(128).toString("hex")

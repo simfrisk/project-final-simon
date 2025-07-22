@@ -20,12 +20,13 @@ export const SignUpPage: React.FC = () => {
       name: "",
       email: "",
       password: "",
+      role: "",
     });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const { name, value } = e.target;
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -36,7 +37,7 @@ export const SignUpPage: React.FC = () => {
       return;
     }
 
-    const success = await createUser(formData.name, formData.email, formData.password);
+  const success = await createUser(formData.name, formData.email, formData.password, formData.role);
 
     if (success) {
       navigate("/library/");
@@ -97,6 +98,32 @@ export const SignUpPage: React.FC = () => {
                   required
                 />
               </label>
+
+              <label htmlFor="role-teacher">
+              <input
+                id="role-teacher"
+                type="radio"
+                name="role"
+                value="teacher"
+                checked={formData.role === "teacher"}
+                onChange={handleChange}
+                required
+              />
+              Teacher
+            </label>
+
+            <label htmlFor="role-student">
+              <input
+                id="role-student"
+                type="radio"
+                name="role"
+                value="student"
+                checked={formData.role === "student"}
+                onChange={handleChange}
+                required
+              />
+              Student
+            </label>
 
               <ButtonWrapper>
                 <StyledButton type="submit">Sign up</StyledButton>

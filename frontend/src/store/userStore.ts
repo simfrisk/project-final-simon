@@ -2,8 +2,10 @@ import { create } from "zustand";
 
 interface AuthUser {
   email: string;
+  name: string;
   userId: string;
   accessToken: string;
+  role: string;
 }
 
 interface UserStore {
@@ -11,17 +13,25 @@ interface UserStore {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  createUser: (name: string, email: string, password: string) => Promise<boolean>;
+  createUser: (name: string, email: string, password: string, role: string) => Promise<boolean>;
 }
 
 // Rehydrate user info from localStorage if available
 const savedEmail = localStorage.getItem("email");
 const savedUserId = localStorage.getItem("userId");
 const savedToken = localStorage.getItem("accessToken");
+const savedRole = localStorage.getItem("role");
+const savedName = localStorage.getItem("name");
 
 const initialUser: AuthUser | null =
-  savedEmail && savedUserId && savedToken
-    ? { email: savedEmail, userId: savedUserId, accessToken: savedToken }
+  savedEmail && savedUserId && savedToken && savedRole && savedName
+    ? {
+      email: savedEmail,
+      userId: savedUserId,
+      role: savedRole,
+      accessToken: savedToken,
+      name: savedName,
+    }
     : null;
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -39,11 +49,22 @@ export const useUserStore = create<UserStore>((set) => ({
       const data = await res.json();
 
       if (res.ok && data.accessToken) {
-        const user = { email, userId: data.userId, accessToken: data.accessToken };
+        // Make sure backend sends back "name" in the session response
+        const user = {
+          email,
+          userId: data.userId,
+          accessToken: data.accessToken,
+          role: data.role || "student",
+          name: data.name || ""
+        };
+
         // Save to localStorage
         localStorage.setItem("email", email);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("name", user.name);
+
         set({ user, isLoggedIn: true });
         return true;
       } else {
@@ -59,34 +80,39 @@ export const useUserStore = create<UserStore>((set) => ({
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("name");
     set({ user: null, isLoggedIn: false });
   },
 
-  createUser: async (name, email, password) => {
+  createUser: async (name, email, password, role) => {
     try {
       const res = await fetch("https://project-final-simon.onrender.com/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.accessToken) {
-        const user = { email, userId: data.userId, accessToken: data.accessToken };
+        const user = { email, userId: data.userId, accessToken: data.accessToken, role, name };
+
         // Save to localStorage
         localStorage.setItem("email", email);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("role", role);
+        localStorage.setItem("name", name);
+
         set({ user, isLoggedIn: true });
         return true;
       } else {
         return false;
       }
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error("Create user failed:", err);
       return false;
     }
   },
 }));
-

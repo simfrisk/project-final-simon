@@ -5,6 +5,7 @@ export interface UserType extends Document {
   name: string
   email: string
   password: string
+  role: string
   accessToken: string
 }
 
@@ -20,6 +21,10 @@ const UserSchema = new Schema<UserType>({
     unique: true
   },
   password: {
+    type: String,
+    required: true
+  },
+  role: {
     type: String,
     required: true
   },

@@ -12,6 +12,8 @@ const postSession = async (req, res) => {
         if (user && bcrypt_1.default.compareSync(req.body.password, user.password)) {
             res.json({
                 userId: user._id,
+                name: user.name,
+                role: user.role,
                 accessToken: user.accessToken,
             });
         }
