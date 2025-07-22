@@ -32,7 +32,7 @@ const port: number = parseInt(process.env.PORT || "8080");
 const app: Application = express();
 
 app.use(cors({
-  origin: "http://localhost:5173", // replace with your frontend URL
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
@@ -40,8 +40,9 @@ app.use(cors({
 app.options("*", cors()); // handles preflight requests
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // <-- add this line
 
-resetDatabase()
+resetDatabase();
 
 // API Home Route
 // Home + Projects

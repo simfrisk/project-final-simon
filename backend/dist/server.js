@@ -31,12 +31,13 @@ mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173", // replace with your frontend URL
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.options("*", (0, cors_1.default)()); // handles preflight requests
 app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true })); // <-- add this line
 (0, resetDatabase_1.resetDatabase)();
 // API Home Route
 // Home + Projects
