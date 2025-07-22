@@ -15,7 +15,7 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
   return (
     <StyledLink to={`/review/${projectId}`}>
       <Card>
-        <Thumbnail src="/thumbnail.png" alt="Thumbnail" />
+        <Thumbnail src="https://res.cloudinary.com/dgr7l5nsx/video/upload/so_3,w_300,h_200,c_fill/v1753193328/videos/rvkw1uneata2q8rbob0d.jpg" alt="Thumbnail" />
         <TextContainer>
           <h3>{projectName}</h3>
           <p>{projectDescription}</p>
