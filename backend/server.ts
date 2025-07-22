@@ -60,7 +60,7 @@ resetDatabase();
 // Home + Projects
 app.get("/", getHome(app));
 app.get("/projects", authenticateUser, getProjects);
-app.get("/projects/:projectId", getProjectById);
+app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
 app.get("/projects/:projectId/comments", getComments); // All comments for a project
