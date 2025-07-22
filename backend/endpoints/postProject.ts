@@ -3,6 +3,10 @@ import { Project } from "../models/Projects";
 
 export const postProject = async (req: Request, res: Response): Promise<Response> => {
   try {
+    // Add these logs right at the start of your try block
+    console.log("Received body:", req.body);
+    console.log("Received file:", req.file);
+
     const { projectName, projectDescription } = req.body;
 
     if (!projectName) {
@@ -14,7 +18,6 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     }
 
     if (!req.file) {
-      // Optional: if you require a video file for every project
       return res.status(400).json({
         success: false,
         response: null,
@@ -41,7 +44,6 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     console.error("Error in postProject:", error);
 
     if (error instanceof Error) {
-      // You can differentiate error types here if needed
       return res.status(500).json({
         success: false,
         response: null,
@@ -49,7 +51,6 @@ export const postProject = async (req: Request, res: Response): Promise<Response
       });
     }
 
-    // Fallback generic error response
     return res.status(500).json({
       success: false,
       response: null,
