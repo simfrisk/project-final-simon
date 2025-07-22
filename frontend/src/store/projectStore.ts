@@ -6,7 +6,7 @@ export interface ProjectType {
   projectName: string;
   projectDescription: string;
   video: string | File | null;
-  comments?: any[]; // optionally type your comments
+  comments?: any[]; // optionally type your comment
 }
 
 interface ProjectsStore {
@@ -55,7 +55,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       } else {
         set({
           loading: false,
-          error: json.message || "Failed to fetch projects",
+          error: json.message || "Failed to fetch the projects",
           message: null,
         });
       }
