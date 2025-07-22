@@ -62,6 +62,11 @@ app.patch("/replies/:replyId", patchReply_1.patchReply);
 app.delete("/projects/:projectId", deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", deleteReply_1.deleteReply);
+app.post("/test-upload", uploadVideo_1.uploadVideo.single("video"), (req, res) => {
+    console.log("File received:", req.file);
+    console.log("Body:", req.body);
+    res.json({ success: true, file: req.file, body: req.body });
+});
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

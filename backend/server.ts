@@ -73,6 +73,12 @@ app.delete("/projects/:projectId", deleteProject)
 app.delete("/comments/:commentId", deleteComment)
 app.delete("/replies/:replyId", deleteReply);
 
+app.post("/test-upload", uploadVideo.single("video"), (req, res) => {
+  console.log("File received:", req.file);
+  console.log("Body:", req.body);
+  res.json({ success: true, file: req.file, body: req.body });
+});
+
 // Start the server
 app.listen(port, (): void => {
   console.log(`Server running on http://localhost:${port}`);
