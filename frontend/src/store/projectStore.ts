@@ -117,7 +117,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       formData.append("projectName", newProject.projectName);
       formData.append("projectDescription", newProject.projectDescription || "");
 
-      if (newProject.video && newProject.video instanceof File) {
+      if (newProject.video) {
         formData.append("video", newProject.video);
       }
 
