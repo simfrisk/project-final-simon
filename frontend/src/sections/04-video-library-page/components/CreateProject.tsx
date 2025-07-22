@@ -9,6 +9,8 @@ export const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
 
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
   const handleCreateProject = () => {
     if (!projectName.trim()) return;
 
@@ -35,6 +37,8 @@ export const CreateProject = () => {
         value={projectDescription}
         onChange={(e) => setProjectDescription(e.target.value)}
       />
+      <input type="file" accept="video/*" onChange={e => e.target.files && setVideoFile(e.target.files[0])} />
+    {/* your inputs and button */}
       <AddProjectBtn onClick={handleCreateProject}>+ Project</AddProjectBtn>
     </FormContainer>
   );

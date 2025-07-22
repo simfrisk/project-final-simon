@@ -3,7 +3,7 @@ import { Hero } from "../components/Hero";
 import styled from "styled-components";
 import { ExplainSection } from "../components/ExplainSection";
 import { Footer } from "../components/Footer";
-import VideoUploader from "../../../testing";
+// import VideoUploader from "../../../testing";
 // import { VideoUploader } from "../components/test";
 
 export const LandingPage = () => {
@@ -14,7 +14,7 @@ export const LandingPage = () => {
       <ExplainSection />
       {/* <VideoUploader /> */}
       <Footer />
-      <VideoUploader />
+      {/* <VideoUploader /> */}
     </Container>
 
   )

@@ -4,7 +4,6 @@ import { Project } from "../models/Projects";
 export const postProject = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { projectName, projectDescription } = req.body;
-    const videoUrl = (req.file as any)?.path || "";
 
     if (!projectName) {
       return res.status(400).json({
@@ -14,12 +13,7 @@ export const postProject = async (req: Request, res: Response): Promise<Response
       });
     }
 
-    const newProject = new Project({
-      projectName,
-      projectDescription,
-      video: videoUrl,
-    });
-
+    const newProject = new Project({ projectName, projectDescription });
     const savedNewProject = await newProject.save();
 
     return res.status(201).json({

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 import { authenticateUser } from "./middleware/authenticateUser";
 import { resetDatabase } from "./setup/resetDatabase";
+import { uploadVideo } from "./middleware/uploadVideo";
 
 import { deleteComment } from "./endpoints/deleteComment";
 import { deleteProject } from "./endpoints/deleteProject";
@@ -21,7 +22,6 @@ import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
-import { postUploadVideo } from "./endpoints/postUploadVideo";
 
 dotenv.config();
 
@@ -50,12 +50,11 @@ app.get("/comments/:commentId", getCommentById);       // Single comment by ID
 app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
 
 // Posting
-app.post("/projects", postProject);
+app.post("/projects", uploadVideo.single("video"), postProject);
 app.post("/projects/:projectId/comments/", postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById);
 app.post("/user", postUser)
 app.post("/session", postSession)
-app.post("/upload", postUploadVideo)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);
