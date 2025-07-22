@@ -63,8 +63,8 @@ app.delete("/projects/:projectId", deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", deleteReply_1.deleteReply);
 app.post("/test-upload", uploadVideo_1.uploadVideo.single("video"), (req, res) => {
-    console.log("File received:", req.file);
-    console.log("Body:", req.body);
+    console.log("File received:", JSON.stringify(req.file, null, 2));
+    console.log("Body:", JSON.stringify(req.body, null, 2));
     res.json({ success: true, file: req.file, body: req.body });
 });
 // Start the server

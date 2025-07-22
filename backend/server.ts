@@ -74,8 +74,8 @@ app.delete("/comments/:commentId", deleteComment)
 app.delete("/replies/:replyId", deleteReply);
 
 app.post("/test-upload", uploadVideo.single("video"), (req, res) => {
-  console.log("File received:", req.file);
-  console.log("Body:", req.body);
+  console.log("File received:", JSON.stringify(req.file, null, 2));
+  console.log("Body:", JSON.stringify(req.body, null, 2));
   res.json({ success: true, file: req.file, body: req.body });
 });
 
