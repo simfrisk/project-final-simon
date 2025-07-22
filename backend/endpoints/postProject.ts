@@ -24,7 +24,9 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     }
 
     const videoUrl = (req.file as any)?.path || "";
-    const thumbnailUrl = generateThumbnailUrl(videoUrl); // <-- add this
+    const thumbnailUrl = generateThumbnailUrl(videoUrl);
+
+    console.log("Generated thumbnail URL:", thumbnailUrl); // ✅ Log this
 
     const newProject = new Project({
       projectName,
