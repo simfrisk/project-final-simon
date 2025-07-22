@@ -17,12 +17,13 @@ export const CreateProject = () => {
     addProject({
       projectName,
       projectDescription,
-      video: "", // or default path
+      video: videoFile,
     });
 
     // Clear inputs after creation
     setProjectName("");
     setProjectDescription("");
+    setVideoFile(null);
   };
 
   return (

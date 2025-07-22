@@ -9,6 +9,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const authenticateUser_1 = require("./middleware/authenticateUser");
 const resetDatabase_1 = require("./setup/resetDatabase");
+const uploadVideo_1 = require("./middleware/uploadVideo");
 const deleteComment_1 = require("./endpoints/deleteComment");
 const deleteProject_1 = require("./endpoints/deleteProject");
 const deleteReply_1 = require("./endpoints/deleteReply");
@@ -20,6 +21,7 @@ const getProjects_1 = require("./endpoints/getProjects");
 const getReplies_1 = require("./endpoints/getReplies");
 const patchReply_1 = require("./endpoints/patchReply");
 const postCommentById_1 = require("./endpoints/postCommentById");
+const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
@@ -28,7 +30,12 @@ const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5173", // replace with your frontend URL
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
+app.options("*", (0, cors_1.default)()); // handles preflight requests
 app.use(express_1.default.json());
 (0, resetDatabase_1.resetDatabase)();
 // API Home Route
@@ -42,7 +49,7 @@ app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comm
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for a comment
 // Posting
-// app.post("/projects", uploadVideo.single("video"), postProject);
+app.post("/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
 app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
 app.post("/user", postUser_1.postUser);

@@ -5,7 +5,7 @@ export interface ProjectType {
   _id?: string;
   projectName: string;
   projectDescription: string;
-  video: string;
+  video: string | File | null;
   comments?: any[]; // optionally type your comments
 }
 
@@ -109,16 +109,24 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
 
   addProject: async (newProject) => {
     set({ loading: true, error: null, message: null });
+
     try {
       const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+
+      const formData = new FormData();
+      formData.append("projectName", newProject.projectName);
+      formData.append("projectDescription", newProject.projectDescription || "");
+
+      if (newProject.video && newProject.video instanceof File) {
+        formData.append("video", newProject.video);
+      }
 
       const res = await fetch("https://project-final-simon.onrender.com/projects", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: token || "",
         },
-        body: JSON.stringify(newProject),
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Failed to add project");
