@@ -6,7 +6,7 @@ const generateThumbnailUrl = (videoUrl) => {
     if (!videoUrl)
         return "";
     return videoUrl
-        .replace("/video/upload/", "/video/upload/so_3,e_video_thumbnail,w_300,h_200,c_fill/")
+        .replace("/video/upload/", "/video/upload/so_3,w_300,h_200,c_fill/")
         .replace(/\.(mp4|mov|avi)$/i, ".jpg");
 };
 const postProject = async (req, res) => {
