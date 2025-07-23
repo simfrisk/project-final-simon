@@ -1,14 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // ✅ import useState
 import { Navigation } from "../../global-components/Navigation";
 import { commentStore } from "../../store/commentStore";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";  // Use react-router-dom for navigation
+import { useNavigate } from "react-router-dom";
 import { SmallButton } from "../../global-components/buttons";
 
 export const TeachersPage = () => {
   const comments = commentStore((state) => state.allComments);
   const fetchAllComments = commentStore((state) => state.fetchAllComments);
   const navigate = useNavigate();
+
+  const [showComments, setShowComments] = useState(false); // ✅ manage toggle state
 
   useEffect(() => {
     fetchAllComments();
@@ -20,28 +22,63 @@ export const TeachersPage = () => {
       <Title>Teachers dashboard</Title>
 
       <Sections>
-        <SmallButton text={"Projects"}></SmallButton>
-        <SmallButton text={"All comments"}></SmallButton>
-        <SmallButton text={"Projects"}></SmallButton>
+        <SmallButton text={"Projects"} />
+        <SmallButton text={"All comments"} />
+        <SmallButton text={"Projects"} />
       </Sections>
 
       <Wrapper>
-        <CardContainer>
-          <CardHeader>
-            <h3>Project Title</h3>
-            <p>3 comments</p>
-          </CardHeader>
-          <CardContent>
-            <ImageContainer>
-            <img src="/SImon1.jpg" alt="" />
-            </ImageContainer>
-            <p>This a sample comment</p>
-          </CardContent>
-          <CardFooter>
-            <p>10 min ago</p>
-            <p>12 Likes</p>
-          </CardFooter>
-        </CardContainer>
+        <CardMainContainer>
+          <CardContainer onClick={() => setShowComments((prev) => !prev)}> 
+            <CardHeader>
+              <h3>Project Title</h3>
+              <p>3 comments</p>
+            </CardHeader>
+          </CardContainer>
+
+          {showComments && (
+            <>
+              <CommentSection>
+                <CardContent>
+                  <ImageContainer>
+                    <img src="/SImon1.jpg" alt="" />
+                  </ImageContainer>
+                  <p>This a sample comment</p>
+                </CardContent>
+                <CardFooter>
+                  <p>10 min ago</p>
+                  <p>12 Likes</p>
+                </CardFooter>
+              </CommentSection>
+
+              <CommentSection>
+                <CardContent>
+                  <ImageContainer>
+                    <img src="/SImon1.jpg" alt="" />
+                  </ImageContainer>
+                  <p>What do you mean by this</p>
+                </CardContent>
+                <CardFooter>
+                  <p>10 min ago</p>
+                  <p>12 Likes</p>
+                </CardFooter>
+              </CommentSection>
+
+              <CommentSection>
+                <CardContent>
+                  <ImageContainer>
+                    <img src="/SImon1.jpg" alt="" />
+                  </ImageContainer>
+                  <p>Why is there not description of this</p>
+                </CardContent>
+                <CardFooter>
+                  <p>14 min ago</p>
+                  <p>7 Likes</p>
+                </CardFooter>
+              </CommentSection>
+            </>
+          )}
+        </CardMainContainer>
       </Wrapper>
 
       <CommentsTable>
@@ -84,17 +121,27 @@ margin-bottom: 10px;
 const Wrapper = styled.div `
 display: flex;
 justify-content: center;
+align-items: center;
+flex-direction: column;
+`
+
+const CardMainContainer = styled.div `
+  width: 90%;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+  border-radius: 15px;
+  background-color: #f6f6f6;
+  transition: ease .3s;
+
+  &:hover {
+    transform: scale(.98);
+  }
 `
 
 const CardContainer = styled.article `
   display: flex;
   flex-direction: column;
-  width: 90%;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
-  border-radius: 15px;
-  background-color: #f6f6f6;
+  width: 100%;
   padding: 20px 30px;
-  margin-bottom: 30px;
 
   p {
     color: #656565; 
@@ -104,6 +151,8 @@ const CardContainer = styled.article `
 const CardHeader = styled.div `
 display: flex;
 justify-content: space-between;
+align-items: center;
+align-content: center;
 `
 const CardContent = styled.div `
 display: flex;
@@ -115,10 +164,8 @@ const CardFooter = styled.div `
 display: flex;
 justify-content: space-between;
 color: #656565;
-
 `
   
-
 const ImageContainer = styled.div`
   flex-shrink: 0;
   height: 32px;
@@ -130,6 +177,21 @@ const ImageContainer = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+`
+
+const CommentSection = styled.div `
+  display: flex;
+  flex-direction: column;
+  width: 10 0%;
+  padding: 20px 30px;
+  box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
+  border-radius: 10px;
+  transition: ease .3s;
+
+  &:hover {
+    transform: scale(.96);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 `
 
