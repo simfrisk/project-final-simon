@@ -1,4 +1,7 @@
+// store/commentStore.ts
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { getToken } from "../utils/token";
 
 export interface ReplyType {
   _id: string;
@@ -23,7 +26,8 @@ export interface NewMessageType {
 }
 
 interface MessageStore {
-  messages: MessageType[];
+  allComments: MessageType[];
+  projectComments: MessageType[];
   selectedTimeStamp: string | null;
   setSelectedTimeStamp: (stamp: string) => void;
   addMessage: (msg: NewMessageType) => Promise<void>;
@@ -32,214 +36,246 @@ interface MessageStore {
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
-  fetchAllComments: () => Promise<void>; // ✅ NEW
+  fetchAllComments: () => Promise<void>;
 }
 
-export const commentStore = create<MessageStore>((set) => {
-  const token = localStorage.getItem("token"); // ✅ Now it's valid
+export const commentStore = create<MessageStore>()(
+  persist(
+    (set) => ({
+      allComments: [],
+      projectComments: [],
+      selectedTimeStamp: null,
 
-  return {
-    messages: [],
-    selectedTimeStamp: null,
+      setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
 
-    setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
+      addMessage: async (msg) => {
+        try {
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/projects/${msg.projectId}/comments`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(msg),
+            }
+          );
 
-    addMessage: async (msg) => {
-      try {
-        const response = await fetch(`https://project-final-simon.onrender.com/projects/${msg.projectId}/comments`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(msg),
-        });
+          if (!response.ok) throw new Error("Failed to post comment");
 
-        if (!response.ok) throw new Error("Failed to post comment");
+          const data = await response.json();
 
-        const data = await response.json();
+          if (data.success && data.response) {
+            const newMessage: MessageType = {
+              _id: data.response._id,
+              content: data.response.content,
+              projectId: data.response.projectId,
+              createdAt: new Date(data.response.createdAt),
+              timeStamp: data.response.timeStamp,
+              replies: [],
+            };
 
-        if (data.success && data.response) {
-          const newMessage: MessageType = {
-            _id: data.response._id,
-            content: data.response.content,
-            projectId: data.response.projectId,
-            createdAt: new Date(data.response.createdAt),
-            timeStamp: data.response.timeStamp,
-            replies: [],
-          };
-
-          set((state) => ({
-            messages: [...state.messages, newMessage],
-          }));
-        } else {
-          console.error("Post failed:", data.message || "No comment in response");
-        }
-      } catch (err: any) {
-        console.error("Error posting comment:", err.message || "Unknown error");
-      }
-    },
-
-    addReply: async (reply) => {
-      try {
-        const response = await fetch(
-          `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ content: reply.content }),
+            set((state) => ({
+              projectComments: [...state.projectComments, newMessage],
+              allComments: [...state.allComments, newMessage],
+            }));
           }
-        );
-
-        if (!response.ok) throw new Error("Failed to post reply");
-
-        const data = await response.json();
-
-        if (data.success && data.response) {
-          const newReply: ReplyType = {
-            _id: data.response._id,
-            content: data.response.content,
-            commentId: data.response.commentId,
-            createdAt: new Date(data.response.createdAt),
-          };
-
-          set((state) => ({
-            messages: state.messages.map((msg) =>
-              msg._id === newReply.commentId
-                ? {
-                  ...msg,
-                  replies: [...(msg.replies || []), newReply],
-                }
-                : msg
-            ),
-          }));
-        } else {
-          console.error("Post reply failed:", data.message || "No reply in response");
+        } catch (err: any) {
+          console.error("Error posting comment:", err.message || "Unknown error");
         }
-      } catch (err: any) {
-        console.error("Error posting reply:", err.message || "Unknown error");
-      }
-    },
+      },
 
-    clearMessages: () => set({ messages: [] }),
+      addReply: async (reply) => {
+        try {
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content: reply.content }),
+            }
+          );
 
-    deleteComment: async (commentId) => {
-      try {
-        const response = await fetch(`https://project-final-simon.onrender.com/comments/${commentId}`, {
-          method: "DELETE",
-        });
+          if (!response.ok) throw new Error("Failed to post reply");
 
-        if (!response.ok) throw new Error("Failed to delete comment");
+          const data = await response.json();
 
-        const data = await response.json();
+          if (data.success && data.response) {
+            const newReply: ReplyType = {
+              _id: data.response._id,
+              content: data.response.content,
+              commentId: data.response.commentId,
+              createdAt: new Date(data.response.createdAt),
+            };
 
-        if (data.success) {
-          set((state) => ({
-            messages: state.messages.filter((msg) => msg._id !== commentId),
-          }));
-        } else {
-          console.error("Delete comment failed:", data.message);
+            const updateReplies = (messages: MessageType[]) =>
+              messages.map((msg) =>
+                msg._id === newReply.commentId
+                  ? { ...msg, replies: [...(msg.replies || []), newReply] }
+                  : msg
+              );
+
+            set((state) => ({
+              projectComments: updateReplies(state.projectComments),
+              allComments: updateReplies(state.allComments),
+            }));
+          }
+        } catch (err: any) {
+          console.error("Error posting reply:", err.message || "Unknown error");
         }
-      } catch (err: any) {
-        console.error("Error deleting comment:", err.message || "Unknown error");
-      }
-    },
+      },
 
-    deleteReply: async (replyId, commentId) => {
-      try {
-        const response = await fetch(`https://project-final-simon.onrender.com/replies/${replyId}`, {
-          method: "DELETE",
-        });
+      clearMessages: () => set({ projectComments: [], allComments: [] }),
 
-        if (!response.ok) throw new Error("Failed to delete reply");
+      deleteComment: async (commentId) => {
+        try {
+          const token = getToken();
+          if (!token) throw new Error("Missing token");
 
-        const data = await response.json();
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/${commentId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: token,
+              },
+            }
+          );
 
-        if (data.success) {
-          set((state) => ({
-            messages: state.messages.map((msg) =>
-              msg._id === commentId
-                ? {
-                  ...msg,
-                  replies: (msg.replies || []).filter((reply) => reply._id !== replyId),
-                }
-                : msg
-            ),
-          }));
-        } else {
-          console.error("Delete reply failed:", data.message);
+          if (!response.ok) throw new Error("Failed to delete comment");
+
+          const data = await response.json();
+
+          if (data.success) {
+            set((state) => ({
+              projectComments: state.projectComments.filter((msg) => msg._id !== commentId),
+              allComments: state.allComments.filter((msg) => msg._id !== commentId),
+            }));
+          }
+        } catch (err: any) {
+          console.error("Error deleting comment:", err.message || "Unknown error");
         }
-      } catch (err: any) {
-        console.error("Error deleting reply:", err.message || "Unknown error");
-      }
-    },
+      },
 
-    fetchComments: async (projectId) => {
-      try {
-        const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}/comments`);
-        if (!response.ok) throw new Error("Network response was not ok");
+      deleteReply: async (replyId, commentId) => {
+        try {
+          const token = getToken();
+          if (!token) throw new Error("Missing token");
 
-        const json = await response.json();
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/replies/${replyId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: token,
+              },
+            }
+          );
 
-        if (json.success && Array.isArray(json.response)) {
-          const mappedMessages: MessageType[] = json.response.map((item: any) => ({
-            _id: item._id,
-            content: item.content,
-            projectId: item.projectId,
-            createdAt: new Date(item.createdAt),
-            timeStamp: item.timeStamp,
-            replies: (item.replies || []).map((reply: any) => ({
-              _id: reply._id,
-              content: reply.content,
-              commentId: reply.commentId,
-              createdAt: new Date(reply.createdAt),
-            })),
-          }));
+          if (!response.ok) throw new Error("Failed to delete reply");
 
-          set({ messages: mappedMessages });
-        } else {
-          console.error("Failed to fetch messages:", json.message);
+          const data = await response.json();
+
+          if (data.success) {
+            const filterReplies = (messages: MessageType[]) =>
+              messages.map((msg) =>
+                msg._id === commentId
+                  ? {
+                    ...msg,
+                    replies: (msg.replies || []).filter((reply) => reply._id !== replyId),
+                  }
+                  : msg
+              );
+
+            set((state) => ({
+              projectComments: filterReplies(state.projectComments),
+              allComments: filterReplies(state.allComments),
+            }));
+          }
+        } catch (err: any) {
+          console.error("Error deleting reply:", err.message || "Unknown error");
         }
-      } catch (err: any) {
-        console.error("Fetch error:", err.message || "Unknown error");
-      }
-    },
+      },
 
+      fetchComments: async (projectId) => {
+        try {
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/projects/${projectId}/comments`
+          );
 
-    fetchAllComments: async () => {
-      try {
-        const response = await fetch(`https://project-final-simon.onrender.com/comments/all`, {
-          method: "GET",
-          headers: {
-            Authorization: token || "",
-          },
-        });
+          if (!response.ok) throw new Error("Network response was not ok");
 
-        if (!response.ok) throw new Error("Network response was not ok");
+          const json = await response.json();
 
-        const json = await response.json();
+          if (json.success && Array.isArray(json.response)) {
+            const mappedMessages: MessageType[] = json.response.map((item: any) => ({
+              _id: item._id,
+              content: item.content,
+              projectId: item.projectId,
+              createdAt: new Date(item.createdAt),
+              timeStamp: item.timeStamp,
+              replies: (item.replies || []).map((reply: any) => ({
+                _id: reply._id,
+                content: reply.content,
+                commentId: reply.commentId,
+                createdAt: new Date(reply.createdAt),
+              })),
+            }));
 
-        if (json.success && Array.isArray(json.response)) {
-          const mappedMessages: MessageType[] = json.response.map((item: any) => ({
-            _id: item._id,
-            content: item.content,
-            projectId: item.projectId,
-            createdAt: new Date(item.createdAt),
-            timeStamp: item.timeStamp,
-            replies: (item.replies || []).map((reply: any) => ({
-              _id: reply._id,
-              content: reply.content,
-              commentId: reply.commentId,
-              createdAt: new Date(reply.createdAt),
-            })),
-          }));
-
-          set({ messages: mappedMessages });
-        } else {
-          console.error("Failed to fetch all messages:", json.message);
+            set({ projectComments: mappedMessages });
+          }
+        } catch (err: any) {
+          console.error("Fetch error:", err.message || "Unknown error");
         }
-      } catch (err: any) {
-        console.error("Fetch all error:", err.message || "Unknown error");
-      }
-    },
-  };
-});
+      },
+
+      fetchAllComments: async () => {
+        try {
+          const token = getToken();
+
+          if (!token) {
+            console.warn("No token found. Cannot fetch all comments.");
+            return;
+          }
+
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/all`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: token,
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          const json = await response.json();
+
+          if (json.success && Array.isArray(json.response)) {
+            const mappedMessages: MessageType[] = json.response.map((item: any) => ({
+              _id: item._id,
+              content: item.content,
+              projectId: item.projectId,
+              createdAt: new Date(item.createdAt),
+              timeStamp: item.timeStamp,
+              replies: (item.replies || []).map((reply: any) => ({
+                _id: reply._id,
+                content: reply.content,
+                commentId: reply.commentId,
+                createdAt: new Date(reply.createdAt),
+              })),
+            }));
+
+            set({ allComments: mappedMessages });
+          } else {
+            console.error("Failed to fetch all messages:", json.message);
+          }
+        } catch (err: any) {
+          console.error("Fetch all error:", err.message || "Unknown error");
+        }
+      },
+    }),
+    {
+      name: "comment-storage",
+    }
+  )
+);

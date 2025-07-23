@@ -32,7 +32,7 @@ export const VideoSection = () => {
 
   // console.log(videoRef.current)
   
-  const messages: MessageType[] = commentStore((state) => state.messages);
+  const messages: MessageType[] = commentStore((state) => state.projectComments);
 
   //Controls the playback
   const { progress, isPlaying } = useVideoProgress(videoRef);

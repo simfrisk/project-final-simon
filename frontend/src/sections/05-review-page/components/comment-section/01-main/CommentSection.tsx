@@ -15,7 +15,7 @@ export const CommentSection = () => {
   const addReply = commentStore((state) => state.addReply);
   
   //These are the messages and then turned into a number and then sorted
-  const rawMessages: MessageType[] = commentStore((state) => state.messages);
+  const rawMessages: MessageType[] = commentStore((state) => state.projectComments);
   const messages = [...rawMessages].sort((a, b) => {
   return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
 }); 

@@ -4,7 +4,7 @@ import { commentStore } from "../../store/commentStore";
 import styled from "styled-components";
 
 export const TeachersPage = () => {
-  const comments = commentStore((state) => state.messages);
+  const comments = commentStore((state) => state.allComments)
   const fetchAllComments = commentStore((state) => state.fetchAllComments);
 
   useEffect(() => {

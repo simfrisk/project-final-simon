@@ -1,6 +1,6 @@
-
+// store/projectStore.ts
 import { create } from "zustand";
-import { useUserStore } from "./userStore";
+import { getToken } from "../utils/token";
 
 export interface ProjectType {
   _id?: string;
@@ -8,7 +8,7 @@ export interface ProjectType {
   projectDescription: string;
   video: string | File | null;
   thumbnail?: string;
-  comments?: any[]; // optionally type your comment
+  comments?: any[];
 }
 
 interface ProjectsStore {
@@ -34,12 +34,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   fetchProjects: async () => {
     set({ loading: true, error: null, message: null });
     try {
-      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
 
       const response = await fetch("https://project-final-simon.onrender.com/projects", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token || "",
+          Authorization: token,
         },
       });
 
@@ -73,12 +74,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   fetchProjectById: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
     try {
-      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
 
       const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token || "",
+          Authorization: token,
         },
       });
 
@@ -113,12 +115,12 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     set({ loading: true, error: null, message: null });
 
     try {
-      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
 
       const formData = new FormData();
       formData.append("projectName", newProject.projectName);
       formData.append("projectDescription", newProject.projectDescription || "");
-
       if (newProject.video) {
         formData.append("video", newProject.video);
       }
@@ -126,7 +128,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const res = await fetch("https://project-final-simon.onrender.com/projects", {
         method: "POST",
         headers: {
-          Authorization: token || "",
+          Authorization: token,
         },
         body: formData,
       });
@@ -153,12 +155,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   deleteProject: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
     try {
-      const token = useUserStore.getState().user?.accessToken || localStorage.getItem("accessToken");
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
 
       const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
         method: "DELETE",
         headers: {
-          Authorization: token || "",
+          Authorization: token,
         },
       });
 
