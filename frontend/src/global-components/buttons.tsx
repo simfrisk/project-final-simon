@@ -4,33 +4,56 @@ import { MediaQueries } from "../themes/mediaQueries";
 
 interface MainButtonProps {
   text: string;
-  url: string;
+  url?: string;
 }
 
+// MainButton component
 export const MainButton: React.FC<MainButtonProps> = ({ text, url }) => {
-  return (
-    <Link to={url}>
-      <Button>{text}</Button>
-    </Link>
-  );
+  const button = <MainStyledButton>{text}</MainStyledButton>;
+  return url ? <Link to={url}>{button}</Link> : button;
 };
 
-const Button = styled.button `
-background-color: ${({ theme }) => theme.colors.secondary};
-color: white;
-padding: 22px 35px;
-border-radius: 35px;
-font-size: 1rem;
-border: none;
-transition: ease .3s;
+// SmallButton component
+export const SmallButton: React.FC<MainButtonProps> = ({ text, url }) => {
+  const button = <SmallStyledButton>{text}</SmallStyledButton>;
+  return url ? <Link to={url}>{button}</Link> : button;
+};
 
-@media ${MediaQueries.biggerSizes} {
-  font-size: 1.2rem;
-}
+// Styled components
+const MainStyledButton = styled.button`
+  background-color: ${({ theme }) => theme.colors.secondary};
+  color: white;
+  padding: 22px 35px;
+  border-radius: 35px;
+  font-size: 1rem;
+  border: none;
+  transition: ease 0.3s;
 
-&:hover {
-  scale: .95;
-  background-color: ${({ theme }) => theme.colors.secondaryHover};
-}
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 1.2rem;
+  }
 
-`
+  &:hover {
+    scale: 0.95;
+    background-color: ${({ theme }) => theme.colors.secondaryHover};
+  }
+`;
+
+const SmallStyledButton = styled.button`
+  background-color: ${({ theme }) => theme.colors.background};
+  color: black;
+  padding: 10px 15px;
+  border-radius: 35px;
+  font-size: 0.9rem;
+  border: none;
+  transition: ease 0.3s;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    scale: 0.95;
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
