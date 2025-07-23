@@ -64,8 +64,8 @@ app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProje
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project
-app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comment by ID
 app.get("/comments/all", getAllComments_1.getAllComments); //Gets comments from all projects
+app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comment by ID
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for a comment
 // Posting
