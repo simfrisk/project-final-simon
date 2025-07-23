@@ -69,7 +69,7 @@ app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
 app.get("/projects/:projectId/comments", getComments); // All comments for a project
-app.get("/comments/all", getAllComments);            //Gets comments from all projects
+app.get("/comments/all", authenticateUser, getAllComments);            //Gets comments from all projects
 app.get("/comments/:commentId", getCommentById);       // Single comment by ID
 
 // Replies
