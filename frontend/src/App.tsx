@@ -10,6 +10,7 @@ import { LandingPage } from './sections/01-lading-page/01-main/LandingPage';
 import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
 import { RequireAuthentication } from './utils/RequireAuthentication';
 import { PageNotFound } from './global-components/PageNotFound';
+import { TeachersPage } from './sections/06-teachers-page/TeachersPage';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
@@ -23,6 +24,7 @@ export const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LogInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
+            <Route path="/teachersPage" element={<TeachersPage />} />
 
             {/* Protected routes */}
             <Route

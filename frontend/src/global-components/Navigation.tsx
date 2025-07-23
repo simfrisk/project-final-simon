@@ -7,15 +7,16 @@ import { MediaQueries } from "../themes/mediaQueries";
 import { useThemeStore } from "../store/themeStore";
 
 interface MenuProps {
-  isOpen: boolean;
+  $isOpen: boolean;
 }
 
 export const Navigation = () => {
-  const { logout } = useUserStore();
+  const user = useUserStore((state) => state.user);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const logout = useUserStore((state) => state.logout);
 
   const handleLogout = (): void => {
     logout();
@@ -43,16 +44,21 @@ export const Navigation = () => {
         )}
       </DesktopMenu>
 
-      <HamburgerWrapper isOpen={isMenuOpen} onClick={toggleMenu}>
+      <HamburgerWrapper $isOpen={isMenuOpen} onClick={toggleMenu}>
         <HamburgerMenu />
       </HamburgerWrapper>
 
-      <MobileMenu isOpen={isMenuOpen}>
+      <MobileMenu $isOpen={isMenuOpen}>
         {isLoggedIn ? (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
         ) : (
           <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
         )}
+       {user?.role === "teacher" && (
+        <StyledNavLink to="/teachersPage" onClick={() => setIsMenuOpen(false)}>
+          Teacher Dashboard
+        </StyledNavLink>
+)}
 
         <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
 
@@ -160,9 +166,9 @@ const MobileMenu = styled.div<MenuProps>`
   transition: transform 0.3s ease, opacity 0.5s ease;
   overflow: hidden;
 
-  transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(-100%)")};
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")};
+    transform: ${({ $isOpen }) => ($isOpen ? "translateY(0)" : "translateY(-100%)")};
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
 
   @media ${MediaQueries.biggerSizes} {
     display: none;

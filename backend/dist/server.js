@@ -26,6 +26,7 @@ const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
+const getAllComments_1 = require("./endpoints/getAllComments");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -34,23 +35,27 @@ const allowedOrigins = [
     "http://localhost:5173", // your local dev
     "https://class-review.netlify.app" // your deployed frontend
 ];
+// First, parse incoming request bodies
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+// Then, configure CORS
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
         if (!origin)
-            return callback(null, true); // Allow requests like curl or Postman with no origin
+            return callback(null, true); // allow curl/postman with no origin
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         }
         else {
-            callback(new Error("Not allowed by CORS"));
+            callback(null, false); // silently fail without throwing error
+            // or you can do callback(new Error("Not allowed by CORS"));
         }
     },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.options("*", (0, cors_1.default)()); // handles preflight requests
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true })); // <-- add this line
+// Handle OPTIONS preflight requests
+app.options("*", (0, cors_1.default)());
 (0, resetDatabase_1.resetDatabase)();
 // API Home Route
 // Home + Projects
@@ -60,6 +65,7 @@ app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectB
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project
 app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comment by ID
+app.get("/comments/all", getAllComments_1.getAllComments); //Gets comments from all projects
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for a comment
 // Posting

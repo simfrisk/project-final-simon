@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface ReplyType {
   _id: string;
@@ -32,6 +32,7 @@ interface MessageStore {
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
+  fetchAllComments: () => Promise<void>; // ✅ NEW
 }
 
 export const commentStore = create<MessageStore>((set) => ({
@@ -132,7 +133,6 @@ export const commentStore = create<MessageStore>((set) => ({
         set((state) => ({
           messages: state.messages.filter((msg) => msg._id !== commentId),
         }));
-
       } else {
         console.error("Delete comment failed:", data.message);
       }
@@ -198,6 +198,31 @@ export const commentStore = create<MessageStore>((set) => ({
       }
     } catch (err: any) {
       console.error("Fetch error:", err.message || "Unknown error");
+    }
+  },
+
+  fetchAllComments: async () => {
+    try {
+      const response = await fetch(`https://project-final-simon.onrender.com/comments/all`);
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+
+      if (json.success && Array.isArray(json.response)) {
+        const mappedMessages: MessageType[] = json.response.map((item: any) => ({
+          _id: item._id,
+          content: item.content,
+          projectId: item.projectId,
+          createdAt: new Date(item.createdAt),
+          timeStamp: item.timeStamp,
+        }));
+
+        set({ messages: mappedMessages });
+      } else {
+        console.error("Failed to fetch all messages:", json.message);
+      }
+    } catch (err: any) {
+      console.error("Fetch all error:", err.message || "Unknown error");
     }
   },
 }));

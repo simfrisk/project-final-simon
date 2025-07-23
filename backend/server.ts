@@ -24,6 +24,7 @@ import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
+import { getAllComments } from "./endpoints/getAllComments";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -69,6 +70,7 @@ app.get("/projects/:projectId", authenticateUser, getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments); // All comments for a project
 app.get("/comments/:commentId", getCommentById);       // Single comment by ID
+app.get("/comments/all", getAllComments);            //Gets comments from all projects
 
 // Replies
 app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
