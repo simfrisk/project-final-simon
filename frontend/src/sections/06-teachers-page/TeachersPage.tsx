@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"; // ✅ import useState
+import { useEffect, useState } from "react";
 import { Navigation } from "../../global-components/Navigation";
 import { commentStore } from "../../store/commentStore";
 import styled from "styled-components";
@@ -10,7 +10,7 @@ export const TeachersPage = () => {
   const fetchAllComments = commentStore((state) => state.fetchAllComments);
   const navigate = useNavigate();
 
-  const [showComments, setShowComments] = useState(false); // ✅ manage toggle state
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     fetchAllComments();
@@ -29,7 +29,7 @@ export const TeachersPage = () => {
 
       <Wrapper>
         <CardMainContainer>
-          <CardContainer onClick={() => setShowComments((prev) => !prev)}> 
+          <CardContainer onClick={() => setShowComments((prev) => !prev)}>
             <CardHeader>
               <h3>Project Title</h3>
               <p>3 comments</p>
@@ -46,8 +46,8 @@ export const TeachersPage = () => {
                   <p>This a sample comment</p>
                 </CardContent>
                 <CardFooter>
-                  <p>10 min ago</p>
-                  <p>12 Likes</p>
+                  <p>8 min ago</p>
+                  <p>4 Likes</p>
                 </CardFooter>
               </CommentSection>
 
@@ -81,91 +81,96 @@ export const TeachersPage = () => {
         </CardMainContainer>
       </Wrapper>
 
-      <CommentsTable>
-        <thead>
-          <tr>
-            <th>Content</th>
-            <th>Project ID</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {comments.map((comment) => (
-            <tr
-              key={comment._id}
-              onClick={() => navigate(`/review/${comment.projectId}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <td>{comment.content}</td>
-              <td>{comment.projectId}</td>
-              <td>{comment.timeStamp}</td>
+      <CommentsWrapper>
+        <CommentsTable>
+          <thead>
+            <tr>
+              <th>Content</th>
+              <th>Project ID</th>
+              <th>Timestamp</th>
             </tr>
-          ))}
-        </tbody>
-      </CommentsTable>
+          </thead>
+          <tbody>
+            {comments.map((comment) => (
+              <tr
+                key={comment._id}
+                onClick={() => navigate(`/review/${comment.projectId}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <td>{comment.content}</td>
+                <td>{comment.projectId}</td>
+                <td>{comment.timeStamp}</td>
+              </tr>
+            ))}
+          </tbody>
+        </CommentsTable>
+      </CommentsWrapper>
     </>
   );
 };
+
+// Styled Components
 
 const Title = styled.h2`
   text-align: center;
   margin-top: 40px;
 `;
 
-const Sections = styled.div `
-display: flex;
-justify-content: center;
-margin-bottom: 10px;
-`
+const Sections = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+`;
 
-const Wrapper = styled.div `
-display: flex;
-justify-content: center;
-align-items: center;
-flex-direction: column;
-`
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+`;
 
-const CardMainContainer = styled.div `
+const CardMainContainer = styled.div`
   width: 90%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   border-radius: 15px;
   background-color: #f6f6f6;
-  transition: ease .3s;
+  transition: ease 0.3s;
 
   &:hover {
-    transform: scale(.98);
+    transform: scale(0.98);
   }
-`
+`;
 
-const CardContainer = styled.article `
+const CardContainer = styled.article`
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 20px 30px;
 
   p {
-    color: #656565; 
+    color: #656565;
   }
-`
+`;
 
-const CardHeader = styled.div `
-display: flex;
-justify-content: space-between;
-align-items: center;
-align-content: center;
-`
-const CardContent = styled.div `
-display: flex;
-color: #656565;
-column-gap: 10px;
-`
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-const CardFooter = styled.div `
-display: flex;
-justify-content: space-between;
-color: #656565;
-`
-  
+const CardContent = styled.div`
+  display: flex;
+  color: #656565;
+  column-gap: 10px;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: #656565;
+`;
+
 const ImageContainer = styled.div`
   flex-shrink: 0;
   height: 32px;
@@ -178,32 +183,44 @@ const ImageContainer = styled.div`
     height: 100%;
     object-fit: cover;
   }
-`
+`;
 
-const CommentSection = styled.div `
+const CommentSection = styled.div`
   display: flex;
   flex-direction: column;
-  width: 10 0%;
+  width: 100%; 
   padding: 20px 30px;
   box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
   border-radius: 10px;
-  transition: ease .3s;
+  transition: ease 0.3s;
 
   &:hover {
-    transform: scale(.96);
+    transform: scale(0.96);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
-`
+`;
+
+const CommentsWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+  margin-top: 30px;
+`;
 
 const CommentsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px; 
 
   th,
   td {
     padding: 12px 16px;
     border: 1px solid #ddd;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   thead {
