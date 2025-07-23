@@ -37,6 +37,10 @@ export const Navigation = () => {
       <DesktopMenu>
         <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
 
+        {user?.role === "teacher" && (
+          <StyledNavLink to="/teachersPage">Teachers Dashboard</StyledNavLink>
+        )}
+
         {isLoggedIn ? (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
         ) : (
@@ -110,6 +114,10 @@ const StyledNavLink = styled(Link)`
 
   &:hover {
     transform: scale(0.94);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 0 20px;
   }
 `;
 
@@ -198,5 +206,6 @@ const ToggleThemeButton = styled.button`
 
   @media ${MediaQueries.biggerSizes} {
     position: static;
+    margin: 0;
   }
 `;
