@@ -42,7 +42,10 @@ export const Navigation = () => {
         )}
 
         {isLoggedIn ? (
-          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+           <>
+              <StyledNavLink to="/library">Library</StyledNavLink>
+              <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+            </>
         ) : (
           <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
         )}
@@ -53,20 +56,27 @@ export const Navigation = () => {
       </HamburgerWrapper>
 
       <MobileMenu $isOpen={isMenuOpen}>
-        {isLoggedIn ? (
-          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-        ) : (
-          <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
-        )}
+        
+        <StyledNavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</StyledNavLink>
+
        {user?.role === "teacher" && (
         <StyledNavLink to="/teachersPage" onClick={() => setIsMenuOpen(false)}>
           Teacher Dashboard
         </StyledNavLink>
-)}
+        )}
+
+        {isLoggedIn ? (
+          <>
+            <StyledNavLink to="/library">Library</StyledNavLink>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+          </>
+        ) : ( 
+            <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
+         
+        )}
+
 
         <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
-
-        <StyledNavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</StyledNavLink>
       </MobileMenu>
     </Container>
   );
