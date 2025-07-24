@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TeacherProjectCardProps {
   projectId: string;
@@ -35,28 +36,48 @@ export const TeacherProjectCard = ({
         <p>{projectDescription}</p>
       </CardContainer>
 
-      {showComments && comments.length > 0 && (
-        <CommentSection>
-          {comments.map((comment) => (
-            <CardContent
-              key={comment._id}
-              onClick={(e) => e.stopPropagation()}  
-              to={`/review/${projectId}`}
+      <AnimatePresence initial={false}>
+        {showComments && comments.length > 0 && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <motion.div
+              initial={{ y: -10 }}
+              animate={{ y: 0 }}
+              exit={{ y: -10 }}
+              transition={{ duration: 0.3 }}
             >
-              <ImageContainer>
-                <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
-              </ImageContainer>
-              <div>
-                <p>{comment.content}</p>
-                <CardFooter>
-                  <p>{moment(comment.createdAt).fromNow()}</p>
-                  <p>{`${comment.likes ?? 4} Likes`}</p>
-                </CardFooter>
-              </div>
-            </CardContent>
-          ))}
-        </CommentSection>
-      )}
+              <CommentSection>
+                {comments.map((comment) => (
+                  <CardContent
+                    key={comment._id}
+                    onClick={(e) => e.stopPropagation()}
+                    to={`/review/${projectId}`}
+                  >
+                    <ImageContainer>
+                      <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
+                    </ImageContainer>
+                    <div>
+                      <p>{comment.content}</p>
+                      <CardFooter>
+                        <p>{moment(comment.createdAt).fromNow()}</p>
+                        <p>{`${comment.likes ?? 4} Likes`}</p>
+                      </CardFooter>
+                    </div>
+                  </CardContent>
+                ))}
+              </CommentSection>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+
+
     </CardMainContainer>
   );
 };
@@ -98,6 +119,7 @@ const CardHeader = styled.div`
 
 const CommentSection = styled.div`
   width: 100%;
+  overflow: hidden;
 `;
 
 const CardContent = styled(Link)`
