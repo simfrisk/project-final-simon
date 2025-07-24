@@ -20,7 +20,8 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
           <p>{projectDescription}</p>
         </TextContainer>
         <CardFooter>     
-          <p>Teachers Name</p>         
+          <p>Professor Daniels</p>     
+          <Edit>    
           <img src="/icons/edit.svg" alt="Edit Icon" />
           <img src="/icons/delete.svg" alt="Delete Icon"
             onClick={(e) => {
@@ -29,13 +30,33 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
               deleteProject(projectId);
             }}
           />
-          <p>Video Length</p>
+          </Edit>
+          <p>Duration: 12:23</p>
         </CardFooter>
 
       </Card>
     </StyledLink>
   );
 };
+
+const Edit = styled.div`
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  margin: 0 20px 0 0;
+  cursor: pointer;
+  transform: translatey(30%);
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
+
+  img:hover {
+    transition: ease .3s;
+    transform: scale(0.9);
+  }
+`;
 
 const Card = styled.div `
 display: flex;
@@ -48,6 +69,13 @@ box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
 
 &:hover {
   transform: scale(.98);
+}
+
+&:hover ${Edit} {
+  opacity: 1;
+  visibility: visible;
+  transform: translatey(0%);
+  transition: opacity 1s ease, visibility 0s linear 0s, transform 0.4s ease;
 }
 `
 
@@ -71,7 +99,9 @@ margin: 20px;
 
 const CardFooter = styled.div `
 display: flex;
-column-gap: 10px;
-margin: 0 0 20px 20px;
+justify-content: space-between;
+margin: 20px 20px;
 `
+
+
 
