@@ -21,13 +21,17 @@ export const ReviewPage = () => {
   const fetchComments = commentStore((state) => state.fetchComments);
 
 
-useEffect(() => {
-  if (projectId) {
-    fetchProjectById(projectId);
-    fetchComments(projectId);
-  }
-}, [projectId]);
+  useEffect(() => {
+    if (projectId) {
+      fetchProjectById(projectId);
+      fetchComments(projectId);
+    }
 
+    return () => {
+      useProjectStore.setState({ project: null });
+      commentStore.setState({ comments: [] });
+    };
+  }, [projectId, fetchProjectById, fetchComments]);
   return (
     <>
     <ReviewNav />
