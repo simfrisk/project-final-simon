@@ -53,6 +53,7 @@ export const TeacherProjectCard = ({
             >
               <CommentSection>
                 {comments.map((comment) => (
+                  <CommentWrapper>
                   <CardContent
                     key={comment._id}
                     onClick={(e) => e.stopPropagation()}
@@ -69,6 +70,7 @@ export const TeacherProjectCard = ({
                       </CardFooter>
                     </div>
                   </CardContent>
+                  </CommentWrapper>
                 ))}
               </CommentSection>
             </motion.div>
@@ -134,15 +136,12 @@ const CardContent = styled(Link)`
   flex-direction: column;
   width: 100%;
   padding: 20px 30px;
-  box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
-  border-radius: 10px;
   transition: ease 0.3s;
   text-decoration: none;
   color: inherit;
 
  &:hover {
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
-    background-color: #eeeeee;
+    transform: scale(.995);
   }
 `;
 
@@ -167,3 +166,14 @@ const ImageContainer = styled.div`
     object-fit: cover;
   }
 `;
+
+const CommentWrapper = styled.div `
+  box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
+  border-radius: 10px;
+  transition: ease 0.3s;
+
+  &:hover {
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+    background-color: #eeeeee;
+  }
+`
