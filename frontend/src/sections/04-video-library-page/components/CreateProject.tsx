@@ -72,6 +72,7 @@ export const CreateProject = () => {
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
   width: 100%;
   background-color: #e1e1e1;
@@ -79,7 +80,7 @@ const FormContainer = styled.div`
   padding: 10px;
 
   @media ${MediaQueries.biggerSizes} {
-    width: 800px;
+    width: 500px;
   }
 `;
 
@@ -87,7 +88,7 @@ const Input = styled.input`
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  width: 200px;
+  width: 100%;
 `;
 
 const AddProjectBtn = styled.button`

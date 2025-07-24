@@ -93,9 +93,11 @@ const CardMainContainer = styled.div`
   margin-bottom: 20px;
   text-decoration: none;
   color: inherit;
+  transition: ease .3s;
 
   &:hover {
-    transform: scale(0.98);
+    transform: scale(.995);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 `;
 
@@ -105,9 +107,14 @@ const CardContainer = styled.article`
   width: 100%;
   padding: 20px 30px;
   cursor: pointer;
+  transition: 0.3s ease;
 
   p {
     color: #656565;
+  }
+
+  &:hover {
+    transform: scale(.998);
   }
 `;
 
@@ -133,9 +140,9 @@ const CardContent = styled(Link)`
   text-decoration: none;
   color: inherit;
 
-  &:hover {
-    transform: scale(0.96);
+ &:hover {
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+    background-color: #eeeeee;
   }
 `;
 
