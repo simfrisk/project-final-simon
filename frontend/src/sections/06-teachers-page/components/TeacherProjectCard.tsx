@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 interface TeacherProjectCardProps {
   projectId: string;
@@ -48,7 +49,7 @@ export const TeacherProjectCard = ({
               <div>
                 <p>{comment.content}</p>
                 <CardFooter>
-                  <p>{new Date(comment.createdAt).toLocaleString()}</p>
+                  <p>{moment(comment.createdAt).fromNow()}</p>
                   <p>{`${comment.likes ?? 4} Likes`}</p>
                 </CardFooter>
               </div>
