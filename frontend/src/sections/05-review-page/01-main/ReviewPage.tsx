@@ -29,7 +29,7 @@ export const ReviewPage = () => {
 
     return () => {
       useProjectStore.setState({ project: null });
-      commentStore.setState({ comments: [] });
+      commentStore.setState({ projectComments: [] }); // ✅ valid
     };
   }, [projectId, fetchProjectById, fetchComments]);
   return (
