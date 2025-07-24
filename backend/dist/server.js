@@ -27,6 +27,7 @@ const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
 const postSession_1 = require("./endpoints/postSession");
 const getAllComments_1 = require("./endpoints/getAllComments");
+const getProjectsWithComments_1 = require("./endpoints/getProjectsWithComments");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -61,6 +62,7 @@ app.options("*", (0, cors_1.default)());
 // Home + Projects
 app.get("/", (0, getHome_1.getHome)(app));
 app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
+app.get("/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project

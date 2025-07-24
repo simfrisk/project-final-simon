@@ -19,6 +19,7 @@ interface ProjectsStore {
   message: string | null;
 
   fetchProjects: () => Promise<void>;
+  fetchProjectsWithComments: () => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
   addProject: (newProject: ProjectType) => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
@@ -59,6 +60,46 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
         set({
           loading: false,
           error: json.message || "Failed to fetch the projects",
+          message: null,
+        });
+      }
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Unknown error",
+        message: null,
+      });
+    }
+  },
+
+  fetchProjectsWithComments: async () => {
+    set({ loading: true, error: null, message: null });
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
+
+      const response = await fetch("https://project-final-simon.onrender.com/projects/with-comments", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+
+      if (json.success) {
+        set({
+          projects: json.response,
+          loading: false,
+          error: null,
+          message: json.message || "Projects with comments fetched successfully",
+        });
+      } else {
+        set({
+          loading: false,
+          error: json.message || "Failed to fetch the projects with comments",
           message: null,
         });
       }
