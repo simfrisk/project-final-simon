@@ -91,11 +91,17 @@ aspect-ratio: 16 / 9;
 border-radius: 10px;
 `
 
-const TextContainer = styled.div `
-display: flex;
-flex-direction: column;
-margin: 20px;
-`
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+
+  p, h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
 
 const CardFooter = styled.div `
 display: flex;
