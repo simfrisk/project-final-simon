@@ -5,6 +5,7 @@ export interface CommentType extends Document {
   projectId: Types.ObjectId;
   createdAt: Date;
   timeStamp?: string;
+  isChecked: boolean;
   replies: Types.ObjectId[];
 }
 
@@ -13,6 +14,7 @@ const CommentSchema = new Schema<CommentType>({
   projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
   createdAt: { type: Date, default: Date.now },
   timeStamp: String,
+  isChecked: { type: Boolean, required: true, default: false },
   replies: [{ type: Schema.Types.ObjectId, ref: "Reply" }],
 });
 
