@@ -6,6 +6,7 @@ const Comment_1 = require("../models/Comment");
 const postCommentById = async (req, res) => {
     const { projectId } = req.params;
     const { content, timeStamp } = req.body;
+    // Validate required fields
     if (!content || !timeStamp) {
         return res.status(400).json({
             success: false,
@@ -14,6 +15,7 @@ const postCommentById = async (req, res) => {
         });
     }
     try {
+        // Find the project
         const project = await Projects_1.Project.findById(projectId);
         if (!project) {
             return res.status(404).json({
@@ -22,16 +24,21 @@ const postCommentById = async (req, res) => {
                 message: "Project not found",
             });
         }
+        // Create a new comment
         const newComment = new Comment_1.CommentModel({
             content,
             projectId: project._id,
             createdAt: new Date(),
             timeStamp,
+            isChecked: false,
             replies: [],
         });
+        // Save the comment
         await newComment.save();
+        // Add comment to the project
         project.comments.push(newComment._id);
         await project.save();
+        // Respond with success
         return res.status(201).json({
             success: true,
             response: newComment,

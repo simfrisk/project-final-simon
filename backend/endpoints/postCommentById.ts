@@ -37,7 +37,7 @@ export const postCommentById = async (
       projectId: project._id,
       createdAt: new Date(),
       timeStamp,
-      isChecked: false, // default value
+      isChecked: false,
       replies: [],
     });
 
