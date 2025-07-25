@@ -22,7 +22,6 @@ export const CommentForm = () => {
       content: text,
       timeStamp: timecode,
       projectId: projectId,
-      isChecked: false 
     });
 
     setText('');
