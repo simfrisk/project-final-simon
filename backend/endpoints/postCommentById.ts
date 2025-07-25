@@ -1,12 +1,16 @@
-import { Project } from "../models/Projects";
-import { CommentModel } from "../models/Comment";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
+import { Project } from "../models/Projects";
+import { CommentModel } from "../models/Comment";
 
-export const postCommentById = async (req: Request, res: Response): Promise<Response> => {
+export const postCommentById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { projectId } = req.params;
   const { content, timeStamp } = req.body;
 
+  // Validate required fields
   if (!content || !timeStamp) {
     return res.status(400).json({
       success: false,
@@ -16,7 +20,9 @@ export const postCommentById = async (req: Request, res: Response): Promise<Resp
   }
 
   try {
+    // Find the project
     const project = await Project.findById(projectId);
+
     if (!project) {
       return res.status(404).json({
         success: false,
@@ -25,20 +31,24 @@ export const postCommentById = async (req: Request, res: Response): Promise<Resp
       });
     }
 
+    // Create a new comment
     const newComment = new CommentModel({
       content,
       projectId: project._id,
       createdAt: new Date(),
       timeStamp,
-      isChecked: false,
+      isChecked: false, // default value
       replies: [],
     });
 
+    // Save the comment
     await newComment.save();
 
+    // Add comment to the project
     project.comments.push(newComment._id as Types.ObjectId);
     await project.save();
 
+    // Respond with success
     return res.status(201).json({
       success: true,
       response: newComment,

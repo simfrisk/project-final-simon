@@ -24,6 +24,7 @@ export interface NewMessageType {
   content: string;
   projectId?: string;
   timeStamp: string;
+  isCheked?: boolean
 }
 
 interface MessageStore {
