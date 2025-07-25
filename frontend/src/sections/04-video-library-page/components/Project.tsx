@@ -95,9 +95,11 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px;
+  max-width: 100%;
 
   p, h3 {
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
   }
