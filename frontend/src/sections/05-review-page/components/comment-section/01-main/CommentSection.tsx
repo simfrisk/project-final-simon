@@ -20,8 +20,13 @@ export const CommentSection = () => {
   return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
 }); 
 
+  const toggleCheck = commentStore((state) => state.toggleCheck);
   const deleteComment = commentStore((state) => state.deleteComment);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
+
+  const handleToggleCheck = (id: string) => {
+  toggleCheck(id);
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,9 +52,14 @@ export const CommentSection = () => {
     }
   };
 
+    interface Props {
+      isChecked: boolean;
+      onToggle: () => void;
+    }
+
   return (
     <CommentListContainer>
-      {messages.map(({ _id, content, createdAt, timeStamp, replies }) => (
+      {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked }) => (
         <Card key={_id} onClick={() => setSelectedTimeStamp(timeStamp)} tabIndex={0}>
           <TopSection>
             <ImageContainer>
@@ -64,7 +74,10 @@ export const CommentSection = () => {
             </Content>
             <CheckBtn>
               <CircleCheckboxLabel>
-                <HiddenCheckbox />
+                <HiddenCheckbox
+                  checked={isChecked}
+                  onChange={() => handleToggleCheck(_id)}
+                />
                 <StyledCircle />
               </CircleCheckboxLabel>
             </CheckBtn>

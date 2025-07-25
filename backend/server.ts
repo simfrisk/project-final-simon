@@ -19,6 +19,7 @@ import { getProjectById } from "./endpoints/getProjectById";
 import { getProjects } from "./endpoints/getProjects";
 import { getReplies } from "./endpoints/getReplies";
 import { patchReply } from "./endpoints/patchReply";
+import { patchIsChecked } from "./endpoints/patchIsChecked";
 import { postCommentById } from "./endpoints/postCommentById";
 import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
@@ -87,6 +88,7 @@ app.post("/session", postSession)
 
 // Patch
 app.patch("/replies/:replyId", patchReply);
+app.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked)
 
 // Delete
 app.delete("/projects/:projectId", deleteProject)

@@ -16,6 +16,7 @@ export interface MessageType {
   projectId?: string;
   createdAt?: Date;
   timeStamp: string;
+  isChecked: boolean;
   replies?: ReplyType[];
 }
 
@@ -33,6 +34,7 @@ interface MessageStore {
   addMessage: (msg: NewMessageType) => Promise<void>;
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
+  toggleCheck: (commentId: string) => Promise<void>;
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
@@ -70,6 +72,7 @@ export const commentStore = create<MessageStore>()(
               projectId: data.response.projectId,
               createdAt: new Date(data.response.createdAt),
               timeStamp: data.response.timeStamp,
+              isChecked: data.response.isChecked,
               replies: [],
             };
 
@@ -124,6 +127,43 @@ export const commentStore = create<MessageStore>()(
       },
 
       clearMessages: () => set({ projectComments: [], allComments: [] }),
+
+      toggleCheck: async (commentId) => {
+        try {
+          const token = getToken();
+          if (!token) throw new Error("Missing token");
+
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/${commentId}/toggle-check`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: token,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to toggle isChecked");
+
+          const updated = await response.json();
+
+          set((state) => {
+            const updateComments = (comments: MessageType[]) =>
+              comments.map((msg) =>
+                msg._id === commentId ? { ...msg, isChecked: !msg.isChecked } : msg
+              );
+
+            return {
+              projectComments: updateComments(state.projectComments),
+              allComments: updateComments(state.allComments),
+            };
+          });
+        } catch (err: any) {
+          console.error("Toggle check failed:", err.message || "Unknown error");
+        }
+      },
+
 
       deleteComment: async (commentId) => {
         try {
@@ -212,6 +252,7 @@ export const commentStore = create<MessageStore>()(
               projectId: item.projectId,
               createdAt: new Date(item.createdAt),
               timeStamp: item.timeStamp,
+              isChecked: item.isChecked,
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
@@ -257,6 +298,7 @@ export const commentStore = create<MessageStore>()(
               projectId: item.projectId,
               createdAt: new Date(item.createdAt),
               timeStamp: item.timeStamp,
+              isChecked: item.isChecked,
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
