@@ -30,6 +30,7 @@ export const postCommentById = async (req: Request, res: Response): Promise<Resp
       projectId: project._id,
       createdAt: new Date(),
       timeStamp,
+      isChecked: false,
       replies: [],
     });
 
