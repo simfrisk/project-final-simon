@@ -11,21 +11,20 @@ export const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
   display: none;
 `;
 
-export const StyledCircle = styled.span`
+export const StyledCircle = styled.span<{ $checked: boolean }>`
   width: 20px;
   height: 20px;
   border: 2px solid #333;
-  border-radius: 50%; /* Makes it circular */
+  border-radius: 50%;
   display: inline-block;
   position: relative;
   transition: background 0.2s ease;
 
-  ${HiddenCheckbox}:checked + & {
-    background: #333;
-  }
+  background: ${({ $checked }) => ($checked ? '#333' : 'transparent')};
 
-  ${HiddenCheckbox}:checked + &::after {
-    content: "";
+  &::after {
+    content: '';
+    display: ${({ $checked }) => ($checked ? 'block' : 'none')};
     position: absolute;
     top: 50%;
     left: 50%;

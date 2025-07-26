@@ -29,7 +29,7 @@ const { deleteReply } = commentStore();
         <CheckBtn>
           <CircleCheckboxLabel>
             <HiddenCheckbox />
-            <StyledCircle />
+            <StyledCircle $checked={false} />
           </CircleCheckboxLabel>
         </CheckBtn>
       </TopSection>

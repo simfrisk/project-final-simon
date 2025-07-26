@@ -148,14 +148,23 @@ export const commentStore = create<MessageStore>()(
 
           const updated = await response.json();
 
+          // Assuming updated.response contains the updated comment object
+          const updatedComment = updated.response;
+
+
+
+          if (!updatedComment) {
+            throw new Error("No updated comment returned from backend");
+          }
+
           set((state) => {
             const updateComments = (comments: MessageType[]) =>
               comments.map((msg) =>
-                msg._id === commentId ? { ...msg, isChecked: !msg.isChecked } : msg
+                msg._id === updatedComment._id ? { ...msg, ...updatedComment } : msg
               );
 
             return {
-              projectComments: updateComments(state.projectComments),
+              projectComments: [...updateComments(state.projectComments)],
               allComments: updateComments(state.allComments),
             };
           });
