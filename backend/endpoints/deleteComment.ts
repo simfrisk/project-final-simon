@@ -18,6 +18,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     }
 
     // Check if current user is the owner
+    // @ts-ignore
     const isOwner = comment.commentCreatedBy.toString() === req.user?._id.toString();
     const isTeacher = req.user?.role === "teacher";
 
