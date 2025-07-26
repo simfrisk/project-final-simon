@@ -2,6 +2,7 @@ import { Schema, Document, Types, model } from "mongoose"
 import crypto from "crypto"
 
 export interface UserType extends Document {
+  _id: Types.ObjectId;
   name: string
   email: string
   password: string

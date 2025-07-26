@@ -8,7 +8,6 @@ export const deleteComment = async (req: Request, res: Response) => {
 
   try {
     const comment = await CommentModel.findById(commentId);
-
     if (!comment) {
       return res.status(404).json({
         success: false,
@@ -17,10 +16,17 @@ export const deleteComment = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if current user is the owner
-    // @ts-ignore
-    const isOwner = comment.commentCreatedBy.toString() === req.user?._id.toString();
-    const isTeacher = req.user?.role === "teacher";
+    const user = req.user;
+
+    if (!user || !user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "You must be logged in to delete a comment.",
+      });
+    }
+
+    const isOwner = comment.commentCreatedBy.toString() === user._id.toString();
+    const isTeacher = user.role === "teacher";
 
     if (!isOwner && !isTeacher) {
       return res.status(403).json({
@@ -29,16 +35,8 @@ export const deleteComment = async (req: Request, res: Response) => {
       });
     }
 
-    // Delete all replies
     await Reply.deleteMany({ commentId: comment._id });
-
-    // Remove the comment reference from the project
-    await Project.updateOne(
-      { _id: comment.projectId },
-      { $pull: { comments: comment._id } }
-    );
-
-    // Delete the comment
+    await Project.updateOne({ _id: comment.projectId }, { $pull: { comments: comment._id } });
     await comment.deleteOne();
 
     return res.status(200).json({
@@ -46,6 +44,7 @@ export const deleteComment = async (req: Request, res: Response) => {
       response: comment,
       message: "Comment and its replies were deleted",
     });
+
   } catch (error) {
     return res.status(500).json({
       success: false,
