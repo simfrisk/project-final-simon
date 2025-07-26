@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { motion, AnimatePresence } from "framer-motion";
+import { MediaQueries } from "../../../themes/mediaQueries";
 
 interface TeacherProjectCardProps {
   projectId: string;
@@ -28,14 +29,19 @@ export const TeacherProjectCard = ({
   const [showComments, setShowComments] = useState(false);
 
   return (
-    <CardMainContainer>
-      <CardContainer onClick={() => setShowComments((prev) => !prev)}>
-        <CardHeader>
-          <h3>{projectName}</h3>
-          <p>{`${comments.length} items`}</p>
-        </CardHeader>
-        <p>{projectDescription}</p>
-      </CardContainer>
+    <CardWrapper>
+      <CardInner onClick={() => setShowComments((prev) => !prev)}>
+        <CardThumbnail>
+          <img src={thumbnail} alt="Thumbnail of project" />
+        </CardThumbnail>
+        <CardContentWrapper>
+          <CardHeader>
+            <h3>{projectName}</h3>
+            <p>{`${comments.length} items`}</p>
+          </CardHeader>
+          <p>{projectDescription}</p>
+        </CardContentWrapper>
+      </CardInner>
 
       <AnimatePresence initial={false}>
         {showComments && comments.length > 0 && (
@@ -52,114 +58,142 @@ export const TeacherProjectCard = ({
               exit={{ y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              
-              <CommentSection>
+              <CommentList>
                 {comments
-                  .filter(comment => comment.isChecked === false)
+                  .filter((comment) => comment.isChecked === false)
                   .map((comment) => (
-                    <CommentWrapper key={comment._id}>
-                      <CardContent
-                        onClick={(e) => e.stopPropagation()}
+                    <CommentItem key={comment._id}>
+                      <CommentLink
                         to={`/review/${projectId}`}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <ImageContainer>
+                        <CommentThumbnail>
                           <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
-                        </ImageContainer>
+                        </CommentThumbnail>
                         <div>
                           <p>{comment.content}</p>
-                          <CardFooter>
+                          <CommentFooter>
                             <p>{moment(comment.createdAt).fromNow()}</p>
                             <p>{`${comment.likes ?? 4} Likes`}</p>
-                          </CardFooter>
+                          </CommentFooter>
                         </div>
-                      </CardContent>
-                    </CommentWrapper>
-                ))}
-              </CommentSection>
+                      </CommentLink>
+                    </CommentItem>
+                  ))}
+              </CommentList>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-
-
-    </CardMainContainer>
+    </CardWrapper>
   );
 };
 
 // Styled Components
 
-const CardMainContainer = styled.div`
+const CardWrapper = styled.div`
   width: 90%;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+  max-width: 1000px;
+  margin-bottom: 20px;
   border-radius: 15px;
   background-color: #f6f6f6;
-  transition: ease 0.3s;
-  margin-bottom: 20px;
-  text-decoration: none;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   color: inherit;
-  transition: ease .3s;
+  text-decoration: none;
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(.995);
+    transform: scale(0.995);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 `;
 
-const CardContainer = styled.article`
+const CardInner = styled.article`
   display: flex;
-  flex-direction: column;
   width: 100%;
+  align-items: center;
   padding: 20px 30px;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: transform 0.3s ease;
 
   p {
     color: #656565;
   }
 
   &:hover {
-    transform: scale(.998);
+    transform: scale(0.998);
   }
+`;
+
+const CardThumbnail = styled.div`
+  width: 50px;
+  height: 60px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-right: 20px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 70px;
+    height: 70px;
+    margin-right: 30px;
+  }
+`;
+
+const CardContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 `;
 
 const CardHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 `;
 
-const CommentSection = styled.div`
+const CommentList = styled.div`
   width: 100%;
   overflow: hidden;
 `;
 
-const CardContent = styled(Link)`
+const CommentItem = styled.div`
+  border-radius: 10px;
+  box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background-color: #eeeeee;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+  }
+`;
+
+const CommentLink = styled(Link)`
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 20px 30px;
-  transition: ease 0.3s;
   text-decoration: none;
   color: inherit;
+  transition: transform 0.3s ease;
 
- &:hover {
-    transform: scale(.995);
+  &:hover {
+    transform: scale(0.995);
   }
 `;
 
-const CardFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 4px;
-`;
-
-const ImageContainer = styled.div`
+const CommentThumbnail = styled.div`
   flex-shrink: 0;
-  height: 32px;
   width: 32px;
+  height: 32px;
   border-radius: 50px;
   overflow: hidden;
 
@@ -170,13 +204,10 @@ const ImageContainer = styled.div`
   }
 `;
 
-const CommentWrapper = styled.div `
-  box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
-  border-radius: 10px;
-  transition: ease 0.3s;
-
-  &:hover {
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
-    background-color: #eeeeee;
-  }
-`
+const CommentFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+`;
