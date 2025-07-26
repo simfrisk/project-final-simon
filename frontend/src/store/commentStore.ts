@@ -53,11 +53,16 @@ export const commentStore = create<MessageStore>()(
 
       addMessage: async (msg) => {
         try {
+          const token = getToken();
+
           const response = await fetch(
             `https://project-final-simon.onrender.com/projects/${msg.projectId}/comments`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token || "",
+              },
               body: JSON.stringify(msg),
             }
           );
@@ -90,11 +95,16 @@ export const commentStore = create<MessageStore>()(
 
       addReply: async (reply) => {
         try {
+          const token = getToken();
+
           const response = await fetch(
             `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token || "",
+              },
               body: JSON.stringify({ content: reply.content }),
             }
           );
@@ -248,8 +258,16 @@ export const commentStore = create<MessageStore>()(
 
       fetchComments: async (projectId) => {
         try {
+          const token = getToken();
+
           const response = await fetch(
-            `https://project-final-simon.onrender.com/projects/${projectId}/comments`
+            `https://project-final-simon.onrender.com/projects/${projectId}/comments`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: token || "",
+              },
+            }
           );
 
           if (!response.ok) throw new Error("Network response was not ok");
