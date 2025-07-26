@@ -7,6 +7,7 @@ export interface CommentType extends Document {
   timeStamp?: string;
   isChecked: boolean;
   replies: Types.ObjectId[];
+  commentCreatedBy: Types.ObjectId;
 }
 
 const CommentSchema = new Schema<CommentType>({
@@ -16,6 +17,7 @@ const CommentSchema = new Schema<CommentType>({
   timeStamp: String,
   isChecked: { type: Boolean, required: true, default: false },
   replies: [{ type: Schema.Types.ObjectId, ref: "Reply" }],
+  commentCreatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 export const CommentModel = model<CommentType>("Comment", CommentSchema);

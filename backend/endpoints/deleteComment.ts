@@ -8,6 +8,7 @@ export const deleteComment = async (req: Request, res: Response) => {
 
   try {
     const comment = await CommentModel.findById(commentId);
+
     if (!comment) {
       return res.status(404).json({
         success: false,
@@ -16,7 +17,18 @@ export const deleteComment = async (req: Request, res: Response) => {
       });
     }
 
-    // Delete all replies for this comment
+    // Check if current user is the owner
+    const isOwner = comment.commentCreatedBy.toString() === req.user?._id.toString();
+    const isTeacher = req.user?.role === "teacher";
+
+    if (!isOwner && !isTeacher) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this comment",
+      });
+    }
+
+    // Delete all replies
     await Reply.deleteMany({ commentId: comment._id });
 
     // Remove the comment reference from the project
@@ -25,7 +37,7 @@ export const deleteComment = async (req: Request, res: Response) => {
       { $pull: { comments: comment._id } }
     );
 
-    // Delete the comment itself
+    // Delete the comment
     await comment.deleteOne();
 
     return res.status(200).json({

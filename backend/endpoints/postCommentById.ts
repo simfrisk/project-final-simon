@@ -38,6 +38,7 @@ export const postCommentById = async (
       createdAt: new Date(),
       timeStamp,
       isChecked: false,
+      commentCreatedBy: req.user?._id,
       replies: [],
     });
 
