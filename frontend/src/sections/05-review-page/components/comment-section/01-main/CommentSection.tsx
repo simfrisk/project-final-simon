@@ -183,7 +183,7 @@ const ReactionGroup = styled.div`
   column-gap: 10px;
 `;
 
-const Card = styled.div<{ $checked: boolean }>`
+const Card = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
