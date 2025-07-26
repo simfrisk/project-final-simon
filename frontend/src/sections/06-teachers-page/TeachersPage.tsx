@@ -27,15 +27,20 @@ useEffect(() => {
       </Sections>
 
       <Wrapper>
-        {projects.map(({ _id, projectName, projectDescription, thumbnail, comments }) => (
-          <TeacherProjectCard 
-            key={_id} 
-            projectId={_id ?? ""}
-            projectName={projectName} 
-            projectDescription={projectDescription}
-            thumbnail={thumbnail} 
-            comments={comments}
-          />
+        {projects
+          .filter(project =>
+            Array.isArray(project.comments) &&
+            project.comments.some((comment: any) => comment.isChecked === false)
+          )
+          .map(({ _id, projectName, projectDescription, thumbnail, comments }) => (
+            <TeacherProjectCard 
+              key={_id} 
+              projectId={_id ?? ""}
+              projectName={projectName} 
+              projectDescription={projectDescription}
+              thumbnail={thumbnail} 
+              comments={comments}
+            />
         ))}
       </Wrapper>
     </>

@@ -14,6 +14,7 @@ interface TeacherProjectCardProps {
     content: string;
     createdAt: string;
     likes?: number;
+    isChecked: boolean;
   }>;
 }
 
@@ -51,26 +52,28 @@ export const TeacherProjectCard = ({
               exit={{ y: -10 }}
               transition={{ duration: 0.3 }}
             >
+              
               <CommentSection>
-                {comments.map((comment) => (
-                  <CommentWrapper>
-                  <CardContent
-                    key={comment._id}
-                    onClick={(e) => e.stopPropagation()}
-                    to={`/review/${projectId}`}
-                  >
-                    <ImageContainer>
-                      <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
-                    </ImageContainer>
-                    <div>
-                      <p>{comment.content}</p>
-                      <CardFooter>
-                        <p>{moment(comment.createdAt).fromNow()}</p>
-                        <p>{`${comment.likes ?? 4} Likes`}</p>
-                      </CardFooter>
-                    </div>
-                  </CardContent>
-                  </CommentWrapper>
+                {comments
+                  .filter(comment => comment.isChecked === false)
+                  .map((comment) => (
+                    <CommentWrapper key={comment._id}>
+                      <CardContent
+                        onClick={(e) => e.stopPropagation()}
+                        to={`/review/${projectId}`}
+                      >
+                        <ImageContainer>
+                          <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
+                        </ImageContainer>
+                        <div>
+                          <p>{comment.content}</p>
+                          <CardFooter>
+                            <p>{moment(comment.createdAt).fromNow()}</p>
+                            <p>{`${comment.likes ?? 4} Likes`}</p>
+                          </CardFooter>
+                        </div>
+                      </CardContent>
+                    </CommentWrapper>
                 ))}
               </CommentSection>
             </motion.div>
