@@ -1,9 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { motion, AnimatePresence } from "framer-motion";
 import { MediaQueries } from "../../../themes/mediaQueries";
+import { useVideoStore } from "../../../store/videoStore";
+import { unFormatTime } from "../../05-review-page/components/video-section/utils/unFormatTime";
 
 interface TeacherProjectCardProps {
   projectId: string;
@@ -15,6 +17,7 @@ interface TeacherProjectCardProps {
     content: string;
     createdAt: string;
     likes?: number;
+    timeStamp: string;
     isChecked: boolean;
   }>;
 }
@@ -27,6 +30,28 @@ export const TeacherProjectCard = ({
   projectId,
 }: TeacherProjectCardProps) => {
   const [showComments, setShowComments] = useState(false);
+  
+  // const [currentTimeStamp, setCurrentTimeStamp] = useState("")
+
+
+  const navigate = useNavigate();
+
+  const timeStampHandler = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    commentId: string,
+    timeStamp: string
+  ) => {
+    e.stopPropagation();
+
+    const newTimecode = unFormatTime(timeStamp);
+
+    // Store timestamp in Zustand
+    useVideoStore.getState().setTimeCode(newTimecode);
+    console.log(newTimecode)
+
+    // Navigate
+    navigate(`/review/${projectId}?commentId=${commentId}`);
+  };
 
   return (
     <CardWrapper>
@@ -63,10 +88,7 @@ export const TeacherProjectCard = ({
                   .filter((comment) => comment.isChecked === false)
                   .map((comment) => (
                     <CommentItem key={comment._id}>
-                      <CommentLink
-                        to={`/review/${projectId}`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <CommentLink onClick={(e) => timeStampHandler(e, comment._id, comment.timeStamp)}>
                         <CommentThumbnail>
                           <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
                         </CommentThumbnail>
@@ -181,7 +203,7 @@ const CommentItem = styled.div`
   }
 `;
 
-const CommentLink = styled(Link)`
+const CommentLink = styled.div`
   display: flex;
   flex-direction: row; 
   align-items: center;

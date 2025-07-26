@@ -7,31 +7,33 @@ import { formatTime } from './utils/formatTime'
 import { unFormatTime } from './utils/unFormatTime';
 import { useTogglePlay } from './utils/togglePlay';
 import { useChangeVolume } from './utils/changeVolume'
-import {getHandleTimelineClick} from './utils/handleTimelineClick'
+import { getHandleTimelineClick } from './utils/handleTimelineClick'
 import { useGoToTime } from './utils/goToTime'
 import { useVideoProgress } from './utils/useVideoProgress';
 import { commentStore } from '../../../../store/commentStore';
 import type { MessageType } from '../../../../store/commentStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
+import { useVideoStore } from '../../../../store/videoStore';  // Import Zustand video store
 
 //#endregion
 
 //#region ---- Functions -----
 
 export const VideoSection = () => {
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = useState(1);
-  const [videoLoaded, setVideoLoaded] = useState(false)
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  // Zustand store values
+  const storedTime = useVideoStore((state) => state.currentTime);
+  const setTimeCode = useVideoStore((state) => state.setTimeCode);
 
   //This is for when clicking on comments to get the time here
   const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
   const selectedTimecode = unFormatTime(selectedTimeStamp ?? "00:00");
 
-  // console.log(videoRef.current)
-  
   const messages: MessageType[] = commentStore((state) => state.projectComments);
 
   //Controls the playback
@@ -50,90 +52,121 @@ export const VideoSection = () => {
   const projectVideo = useProjectStore((state) => state.project?.video);
 
   // State to hold the video URL for the <video> element
-const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
-useEffect(() => {
-  if (!projectVideo) {
-    setVideoUrl(null);
-    return;
-  }
-
-  if (typeof projectVideo === "string") {
-    // If it's already a URL string, use it directly
-    setVideoUrl(projectVideo);
-  } else if (projectVideo instanceof File) {
-    // If it's a File object, create a blob URL
-    const url = URL.createObjectURL(projectVideo);
-    setVideoUrl(url);
-
-    // Cleanup on unmount or when projectVideo changes
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }
-}, [projectVideo]);
-
-
-//This adds the timecode to zustand TimeCodeStore
-useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
-
-  const handleTimeUpdate = () => {
-    //Here is the log for the actual time
-    console.log(video.currentTime)
-    //Here I set the timeCode to a sting as Minutes and Seconds
-    setTimecode(formatTime(video.currentTime));
-  };
-
-  video.addEventListener('timeupdate', handleTimeUpdate);
-
-  return () => {
-    video.removeEventListener('timeupdate', handleTimeUpdate);
-  };
-}, [setTimecode]);
-
-//This goes to the time when click on the comment
-const lastSeekedTime = useRef<number | null>(null);
-//This to
-useEffect(() => {
-  if (
-    selectedTimecode !== null &&
-    selectedTimecode !== lastSeekedTime.current
-  ) {
-    goToTime(selectedTimecode);
-
-    if (videoRef.current) {
-      videoRef.current.pause()
+  useEffect(() => {
+    if (!projectVideo) {
+      setVideoUrl(null);
+      return;
     }
 
-    lastSeekedTime.current = selectedTimecode; 
-  }
-}, [selectedTimecode, goToTime]);
+    if (typeof projectVideo === "string") {
+      // If it's already a URL string, use it directly
+      setVideoUrl(projectVideo);
+    } else if (projectVideo instanceof File) {
+      // If it's a File object, create a blob URL
+      const url = URL.createObjectURL(projectVideo);
+      setVideoUrl(url);
 
-useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
+      // Cleanup on unmount or when projectVideo changes
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }
+  }, [projectVideo]);
 
-  const handleLoadedMetadata = () => {
-    setVideoLoaded(true);
-  };
+  // Sync video time with Zustand currentTime on video load
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
 
-  video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    const handleLoadedMetadata = () => {
+      setVideoLoaded(true);
 
-  return () => {
-    video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-  };
-}, []);
+      if (storedTime && !isNaN(storedTime)) {
+        goToTime(storedTime);
+        video.pause();
+      }
+    };
 
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+  }, [goToTime, storedTime]);
+
+  // Update Zustand currentTime as video plays
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => {
+      setTimeCode(video.currentTime);
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [setTimeCode]);
+
+  //This adds the timecode to zustand TimeCodeStore
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => {
+      setTimecode(formatTime(video.currentTime));
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [setTimecode]);
+
+  //This goes to the time when click on the comment
+  const lastSeekedTime = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (
+      selectedTimecode !== null &&
+      selectedTimecode !== lastSeekedTime.current
+    ) {
+      goToTime(selectedTimecode);
+
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+
+      lastSeekedTime.current = selectedTimecode; 
+    }
+  }, [selectedTimecode, goToTime]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
+      setVideoLoaded(true);
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+  }, []);
 
   //#endregion
 
-//#region ---- Return -----
+  //#region ---- Return -----
 
   return (
     <Container>
-     
       <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
         {videoUrl && <source src={videoUrl} type="video/mp4" />}
         Your browser does not support the video tag.
@@ -159,7 +192,7 @@ useEffect(() => {
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
-       {videoLoaded && messages.map(({ _id, timeStamp, content }) => {
+        {videoLoaded && messages.map(({ _id, timeStamp, content }) => {
           const timeInSeconds = unFormatTime(timeStamp);
           const percent = videoRef.current?.duration
             ? (timeInSeconds / videoRef.current.duration) * 100
@@ -212,7 +245,6 @@ const Controls = styled.div`
   gap: 16px;
   z-index: 1;
 `;
-
 
 const VolumeControl = styled.div`
   display: flex;
@@ -268,7 +300,6 @@ const Marker = styled.div`
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.2s;
-
 `;
 
 const MarkerMessage = styled.p`
