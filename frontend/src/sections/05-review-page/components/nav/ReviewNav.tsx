@@ -1,11 +1,14 @@
 import styled from "styled-components";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 export const ReviewNav = () => {
+
+ const navigate = useNavigate();
+
   return (
   <Container>
-    <BackContainer to="/library">
-    <img src="/icons/back.svg" alt="" />
+    <BackContainer onClick={() => navigate(-1)}>
+    <img src="/icons/back.svg" alt="Go back" />
     <p>Go back</p>
     </BackContainer>
   </Container>
@@ -22,7 +25,7 @@ width: 100%;
 border-bottom: solid gray 1px;
 `
 
-const BackContainer = styled(Link) `
+const BackContainer = styled.div `
 color:  ${({ theme }) => theme.colors.text};
 display: flex;
 align-content: center;

@@ -70,13 +70,13 @@ export const TeacherProjectCard = ({
                         <CommentThumbnail>
                           <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
                         </CommentThumbnail>
-                        <div>
+                        <CommentContent>
                           <p>{comment.content}</p>
                           <CommentFooter>
                             <p>{moment(comment.createdAt).fromNow()}</p>
                             <p>{`${comment.likes ?? 4} Likes`}</p>
                           </CommentFooter>
-                        </div>
+                        </CommentContent>
                       </CommentLink>
                     </CommentItem>
                   ))}
@@ -105,6 +105,10 @@ const CardWrapper = styled.div`
   &:hover {
     transform: scale(0.995);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
+  }
+
+    p, h3 {
+    margin: 0;
   }
 `;
 
@@ -170,6 +174,7 @@ const CommentItem = styled.div`
   box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
+
   &:hover {
     background-color: #eeeeee;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
@@ -178,9 +183,12 @@ const CommentItem = styled.div`
 
 const CommentLink = styled(Link)`
   display: flex;
-  flex-direction: column;
+  flex-direction: row; 
+  align-items: center;
+  
+  gap: 22px;
   width: 100%;
-  padding: 20px 30px;
+  padding: 14px 30px;
   text-decoration: none;
   color: inherit;
   transition: transform 0.3s ease;
@@ -192,8 +200,8 @@ const CommentLink = styled(Link)`
 
 const CommentThumbnail = styled.div`
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: 50px;
   overflow: hidden;
 
@@ -202,10 +210,22 @@ const CommentThumbnail = styled.div`
     height: 100%;
     object-fit: cover;
   }
+
+  @media ${MediaQueries.biggerSizes} {
+    margin-left: 30px;
+  }
+`;
+
+const CommentContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
 `;
 
 const CommentFooter = styled.div`
   display: flex;
+  width: 100%;
   justify-content: space-between;
   font-size: 0.8rem;
   color: #888;
