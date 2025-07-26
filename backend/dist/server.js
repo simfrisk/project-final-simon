@@ -66,25 +66,24 @@ app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProje
 app.get("/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
-app.get("/projects/:projectId/comments", getComments_1.getComments); // All comments for a project
-app.get("/comments/all", authenticateUser_1.authenticateUser, getAllComments_1.getAllComments); //Gets comments from all projects
-app.get("/comments/:commentId", getCommentById_1.getCommentById); // Single comment by ID
+app.get("/projects/:projectId/comments", getComments_1.getComments); // no auth needed for fetching
+app.get("/comments/all", authenticateUser_1.authenticateUser, getAllComments_1.getAllComments);
+app.get("/comments/:commentId", getCommentById_1.getCommentById);
 // Replies
-app.get("/comments/:commentId/replies", getReplies_1.getReplies); // Replies for a comment
+app.get("/comments/:commentId/replies", getReplies_1.getReplies);
 // Posting
 app.post("/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
-// app.post("/projects", postProject);
-app.post("/projects/:projectId/comments/", postCommentById_1.postCommentById);
-app.post("/comments/:commentId/replies/", postReplyById_1.postReplyById);
+app.post("/projects/:projectId/comments/", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
+app.post("/comments/:commentId/replies/", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
 app.post("/user", postUser_1.postUser);
 app.post("/session", postSession_1.postSession);
 // Patch
-app.patch("/replies/:replyId", patchReply_1.patchReply);
+app.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1.patchReply);
 app.patch("/comments/:commentId/toggle-check", authenticateUser_1.authenticateUser, patchIsChecked_1.patchIsChecked);
 // Delete
-app.delete("/projects/:projectId", deleteProject_1.deleteProject);
-app.delete("/comments/:commentId", deleteComment_1.deleteComment);
-app.delete("/replies/:replyId", deleteReply_1.deleteReply);
+app.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
+app.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
+app.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

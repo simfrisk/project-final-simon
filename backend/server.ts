@@ -71,29 +71,28 @@ app.get("/projects/with-comments", authenticateUser, getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
-app.get("/projects/:projectId/comments", getComments); // All comments for a project
-app.get("/comments/all", authenticateUser, getAllComments);            //Gets comments from all projects
-app.get("/comments/:commentId", getCommentById);       // Single comment by ID
+app.get("/projects/:projectId/comments", getComments); // no auth needed for fetching
+app.get("/comments/all", authenticateUser, getAllComments);
+app.get("/comments/:commentId", getCommentById);
 
 // Replies
-app.get("/comments/:commentId/replies", getReplies);   // Replies for a comment
+app.get("/comments/:commentId/replies", getReplies);
 
 // Posting
 app.post("/projects", uploadVideo.single("video"), postProject);
-// app.post("/projects", postProject);
-app.post("/projects/:projectId/comments/", postCommentById);
-app.post("/comments/:commentId/replies/", postReplyById);
-app.post("/user", postUser)
-app.post("/session", postSession)
+app.post("/projects/:projectId/comments/", authenticateUser, postCommentById);
+app.post("/comments/:commentId/replies/", authenticateUser, postReplyById);
+app.post("/user", postUser);
+app.post("/session", postSession);
 
 // Patch
-app.patch("/replies/:replyId", patchReply);
-app.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked)
+app.patch("/replies/:replyId", authenticateUser, patchReply);
+app.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked);
 
 // Delete
-app.delete("/projects/:projectId", deleteProject)
-app.delete("/comments/:commentId", deleteComment)
-app.delete("/replies/:replyId", deleteReply);
+app.delete("/projects/:projectId", authenticateUser, deleteProject);
+app.delete("/comments/:commentId", authenticateUser, deleteComment);
+app.delete("/replies/:replyId", authenticateUser, deleteReply);
 
 // Start the server
 app.listen(port, (): void => {
