@@ -305,7 +305,7 @@ const Marker = styled.div`
 const MarkerMessage = styled.p`
   display: none;
   position: absolute;
-  bottom: 50%;
+  bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   background: #ffffff;
