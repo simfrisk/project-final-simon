@@ -97,7 +97,7 @@ export const CommentSection = () => {
                 <img src="/icons/like.svg" alt="Like button" />
               </ActionButtonIcon>
             </ReactionGroup>
-              {(user?.role === 'teacher' || user?._id === commentCreatedBy) && (
+              {(user?.role === 'teacher' || user?.userId === commentCreatedBy) && (
                 <Edit>
                   <img src="/icons/edit.svg" alt="Edit Icon" />
                   <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />

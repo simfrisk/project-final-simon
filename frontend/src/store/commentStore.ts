@@ -74,6 +74,7 @@ export const commentStore = create<MessageStore>()(
               createdAt: new Date(data.response.createdAt),
               timeStamp: data.response.timeStamp,
               isChecked: data.response.isChecked,
+              commentCreatedBy: data.response.commentCreatedBy,
               replies: [],
             };
 
