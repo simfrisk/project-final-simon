@@ -15,11 +15,20 @@ const deleteComment = async (req, res) => {
                 message: "Comment could not be found",
             });
         }
-        // Delete all replies for this comment
+        // Check if current user is the owner
+        const isOwner = comment.commentCreatedBy.toString() === req.user?._id.toString();
+        const isTeacher = req.user?.role === "teacher";
+        if (!isOwner && !isTeacher) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to delete this comment",
+            });
+        }
+        // Delete all replies
         await Reply_1.Reply.deleteMany({ commentId: comment._id });
         // Remove the comment reference from the project
         await Projects_1.Project.updateOne({ _id: comment.projectId }, { $pull: { comments: comment._id } });
-        // Delete the comment itself
+        // Delete the comment
         await comment.deleteOne();
         return res.status(200).json({
             success: true,

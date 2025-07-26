@@ -9,5 +9,6 @@ const CommentSchema = new mongoose_1.Schema({
     timeStamp: String,
     isChecked: { type: Boolean, required: true, default: false },
     replies: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Reply" }],
+    commentCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
 });
 exports.CommentModel = (0, mongoose_1.model)("Comment", CommentSchema);

@@ -31,6 +31,7 @@ const postCommentById = async (req, res) => {
             createdAt: new Date(),
             timeStamp,
             isChecked: false,
+            commentCreatedBy: req.user?._id,
             replies: [],
         });
         // Save the comment

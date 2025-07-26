@@ -11,8 +11,12 @@ import {
 import { ReplyCard } from '../components/ReplyCard';
 import { MediaQueries } from '../../../../../themes/mediaQueries';
 import { unFormatTime } from '../../video-section/utils/unFormatTime';
+import { useUserStore } from '../../../../../store/userStore';
 
 export const CommentSection = () => {
+
+  const {user} = useUserStore()
+
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 
@@ -56,7 +60,7 @@ export const CommentSection = () => {
 
   return (
     <CommentListContainer>
-      {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked }) => (
+      {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy }) => (
         <Card
           key={_id}
           onClick={() => setSelectedTimeStamp(timeStamp)}
@@ -93,10 +97,12 @@ export const CommentSection = () => {
                 <img src="/icons/like.svg" alt="Like button" />
               </ActionButtonIcon>
             </ReactionGroup>
-            <Edit>
-              <img src="/icons/edit.svg" alt="Edit Icon" />
-              <img src="/icons/delete.svg" alt="Delete Icon" onClick={() => deleteComment(_id)} />
-            </Edit>
+              {(user?.role === 'teacher' || user?._id === commentCreatedBy) && (
+                <Edit>
+                  <img src="/icons/edit.svg" alt="Edit Icon" />
+                  <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />
+                </Edit>
+              )}
           </CardFooter>
 
           {replyToCommentId === _id && (
