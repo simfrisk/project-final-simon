@@ -14,7 +14,8 @@ import { commentStore } from '../../../../store/commentStore';
 import type { MessageType } from '../../../../store/commentStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
-import { useVideoStore } from '../../../../store/videoStore';  // Import Zustand video store
+import { useVideoStore } from '../../../../store/videoStore';  
+
 
 //#endregion
 
@@ -51,7 +52,6 @@ export const VideoSection = () => {
 
   const projectVideo = useProjectStore((state) => state.project?.video);
 
-  // State to hold the video URL for the <video> element
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,21 +61,17 @@ export const VideoSection = () => {
     }
 
     if (typeof projectVideo === "string") {
-      // If it's already a URL string, use it directly
       setVideoUrl(projectVideo);
     } else if (projectVideo instanceof File) {
-      // If it's a File object, create a blob URL
       const url = URL.createObjectURL(projectVideo);
       setVideoUrl(url);
 
-      // Cleanup on unmount or when projectVideo changes
       return () => {
         URL.revokeObjectURL(url);
       };
     }
   }, [projectVideo]);
 
-  // Sync video time with Zustand currentTime on video load
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -96,7 +92,6 @@ export const VideoSection = () => {
     };
   }, [goToTime, storedTime]);
 
-  // Update Zustand currentTime as video plays
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -112,7 +107,6 @@ export const VideoSection = () => {
     };
   }, [setTimeCode]);
 
-  //This adds the timecode to zustand TimeCodeStore
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -128,7 +122,6 @@ export const VideoSection = () => {
     };
   }, [setTimecode]);
 
-  //This goes to the time when click on the comment
   const lastSeekedTime = useRef<number | null>(null);
 
   useEffect(() => {
@@ -315,9 +308,9 @@ const MarkerMessage = styled.p`
   border-radius: 10px;
   font-size: 14px;
   z-index: 3;
+  width: max-content; 
   max-width: 300px; 
   min-width: 100px; 
-  width: max-content; 
   white-space: normal;
   word-wrap: break-word;
   text-align: center;
