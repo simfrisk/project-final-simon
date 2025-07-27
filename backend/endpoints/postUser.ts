@@ -32,6 +32,7 @@ export const postUser = async (req: Request, res: Response) => {
       success: true,
       message: "User created",
       userId: user._id,
+      profileImage: user.profileImage,
       accessToken: user.accessToken,
     });
   } catch (error) {
