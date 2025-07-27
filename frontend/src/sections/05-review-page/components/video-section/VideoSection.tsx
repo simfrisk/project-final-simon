@@ -198,8 +198,11 @@ export const VideoSection = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 goToTime(timeInSeconds);
-              }}
-            >
+
+              commentStore.getState().setSelectedCommentId(_id);
+              commentStore.getState().setSelectedTimeStamp(timeStamp);
+            }}
+          >
               <Marker />
               <MarkerMessage>{content}</MarkerMessage>
             </MarkerWrapper>
