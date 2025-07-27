@@ -102,33 +102,32 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ user: null, isLoggedIn: false });
   },
 
-  createUser: async (name, email, password, role, profileImage) => {
+  createUser: async (formData) => {
     try {
       const res = await fetch("https://project-final-simon.onrender.com/user", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role, profileImage }),
+        body: formData, // No need to set headers manually for FormData
       });
 
       const data = await res.json();
 
       if (res.ok && data.accessToken) {
         const user = {
-          email,
+          email: formData.get("email") as string,
           userId: data.userId,
           accessToken: data.accessToken,
-          role,
-          name,
-          profileImage,
+          role: formData.get("role") as string,
+          name: formData.get("name") as string,
+          profileImage: data.profileImage,
         };
 
         // Save to localStorage
-        localStorage.setItem("email", email);
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("role", role);
-        localStorage.setItem("name", name);
-        localStorage.setItem("profileImage", profileImage);
+        localStorage.setItem("email", user.email);
+        localStorage.setItem("userId", user.userId);
+        localStorage.setItem("accessToken", user.accessToken);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("profileImage", user.profileImage);
 
         set({ user, isLoggedIn: true });
         return true;

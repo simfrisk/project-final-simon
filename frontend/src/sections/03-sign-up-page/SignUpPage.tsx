@@ -8,46 +8,44 @@ import { useState } from "react";
 // Define the expected form fields
 type SignUpFormElements = HTMLFormElement & {
   email: HTMLInputElement;
-  fullName: HTMLInputElement;
+  name: HTMLInputElement;
   password: HTMLInputElement;
+  role: RadioNodeList;
+  image: HTMLInputElement;
 };
 
 export const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
   const { createUser } = useUserStore();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const [preview, setPreview] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as SignUpFormElements;
 
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
+    const formData = new FormData();
+    formData.append("name", form.name.value);
+    formData.append("email", form.email.value);
+    formData.append("password", form.password.value);
+    formData.append("role", form.role.value);
+    if (form.image.files?.[0]) {
+      formData.append("image", form.image.files[0]);
     }
 
-    const success = await createUser(
-      formData.name,
-      formData.email,
-      formData.password,
-      formData.role
-    );
+    const success = await createUser(formData);
 
     if (success) {
       navigate("/library/");
     } else {
       alert("Sign up failed. Please check your credentials.");
+    }
+  };
+
+  const handlePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -73,8 +71,6 @@ export const SignUpPage: React.FC = () => {
                   name="name"
                   placeholder="Enter full name"
                   minLength={3}
-                  value={formData.name}
-                  onChange={handleChange}
                   required
                 />
               </label>
@@ -85,8 +81,6 @@ export const SignUpPage: React.FC = () => {
                   type="email"
                   name="email"
                   placeholder="Enter Email"
-                  value={formData.email}
-                  onChange={handleChange}
                   required
                 />
               </label>
@@ -97,39 +91,45 @@ export const SignUpPage: React.FC = () => {
                   type="password"
                   name="password"
                   placeholder="Enter Password"
-                  value={formData.password}
-                  onChange={handleChange}
                   required
                 />
               </label>
 
               <RoleGroup>
-                <RoleLabel htmlFor="role-teacher" selected={formData.role === "teacher"}>
+                <RoleLabel htmlFor="role-teacher" selected={false}>
                   <input
                     id="role-teacher"
                     type="radio"
                     name="role"
                     value="teacher"
-                    checked={formData.role === "teacher"}
-                    onChange={handleChange}
                     required
                   />
                   Teacher
                 </RoleLabel>
 
-                <RoleLabel htmlFor="role-student" selected={formData.role === "student"}>
+                <RoleLabel htmlFor="role-student" selected={false}>
                   <input
                     id="role-student"
                     type="radio"
                     name="role"
                     value="student"
-                    checked={formData.role === "student"}
-                    onChange={handleChange}
                     required
                   />
                   Student
                 </RoleLabel>
               </RoleGroup>
+
+              <label>
+                <span>Upload profile picture</span>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handlePreview}
+                />
+              </label>
+
+              {preview && <img src={preview} alt="Preview" height={80} style={{ marginTop: "10px", borderRadius: "10px" }} />}
 
               <ButtonWrapper>
                 <StyledButton type="submit">Sign up</StyledButton>
