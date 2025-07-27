@@ -65,7 +65,7 @@ export const CommentSection = () => {
         <Card
           key={_id}
           onClick={() => {
-            commentStore.getState().setSelectedTimeStamp(timeStamp);
+            setSelectedTimeStamp(timeStamp);
             commentStore.getState().setSelectedCommentId(_id);
           }}
           tabIndex={0}
