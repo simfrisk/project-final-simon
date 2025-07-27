@@ -137,8 +137,8 @@ const CardWrapper = styled.div`
 const CardInner = styled.article`
   display: flex;
   width: 100%;
-  align-items: center;
-  padding: 20px 30px;
+  align-items: stretch; // Important!
+  padding-right: 30px;
   cursor: pointer;
   transition: transform 0.3s ease;
 
@@ -152,22 +152,25 @@ const CardInner = styled.article`
 `;
 
 const CardThumbnail = styled.div`
-  width: 50px;
-  height: 60px;
+  width: 100px;
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
   overflow: hidden;
-  border-radius: 8px;
+  border: 4px solid #f6f6f6;
+  border-radius: 15px;
   margin-right: 20px;
+
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
   @media ${MediaQueries.biggerSizes} {
-    width: 70px;
-    height: 70px;
+    width: 130px;
+    aspect-ratio: 4 / 3;
     margin-right: 30px;
   }
 `;
@@ -177,6 +180,7 @@ const CardContentWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  padding: 20px 0;
 `;
 
 const CardHeader = styled.div`
@@ -234,7 +238,9 @@ const CommentThumbnail = styled.div`
   }
 
   @media ${MediaQueries.biggerSizes} {
-    margin-left: 30px;
+    margin-left: 20px;
+    width: 40px;
+    height: 40px;
   }
 `;
 
