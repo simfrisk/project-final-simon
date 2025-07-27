@@ -56,6 +56,9 @@ export const TeacherProjectCard = ({
   return (
     <CardWrapper>
       <CardInner onClick={() => setShowComments((prev) => !prev)}>
+        <CardThumbnail>
+          <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail of project" />
+        </CardThumbnail>
         <CardContentWrapper>
           <CardHeader>
             <h3>{projectName}</h3>
@@ -85,11 +88,13 @@ export const TeacherProjectCard = ({
                   .filter((comment) => comment.isChecked === false)
                   .map((comment) => (
                     <CommentItem key={comment._id}>
-                      <CommentLink onClick={(e) => timeStampHandler(e, comment._id, comment.timeStamp)}>
+                      <CommentLink
+                        onClick={(e) => timeStampHandler(e, comment._id, comment.timeStamp)}
+                      >
                         <CommentThumbnail>
                           <img
                             src={comment.commentCreatedBy?.profileImage || "/default-profile.jpg"}
-                            alt="User profile"
+                            alt={`${comment.commentCreatedBy?.name || "User"} profile`}
                           />
                         </CommentThumbnail>
                         <CommentContent>
@@ -129,7 +134,8 @@ const CardWrapper = styled.div`
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 
-  p, h3 {
+  p,
+  h3 {
     margin: 0;
   }
 `;
@@ -137,8 +143,8 @@ const CardWrapper = styled.div`
 const CardInner = styled.article`
   display: flex;
   width: 100%;
-  align-items: stretch;
-  padding: 20px 30px;
+  align-items: stretch; // Important!
+  padding-right: 30px;
   cursor: pointer;
   transition: transform 0.3s ease;
 
@@ -148,6 +154,29 @@ const CardInner = styled.article`
 
   &:hover {
     transform: scale(0.998);
+  }
+`;
+
+const CardThumbnail = styled.div`
+  width: 100px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 4px solid #f6f6f6;
+  border-radius: 15px;
+  margin-right: 20px; 
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 130px;
+    aspect-ratio: 4 / 3;
+    margin-right: 30px;
   }
 `;
 
@@ -210,7 +239,6 @@ const CommentThumbnail = styled.div`
   }
 
   @media ${MediaQueries.biggerSizes} {
-    margin-left: 20px;
     width: 40px;
     height: 40px;
   }
