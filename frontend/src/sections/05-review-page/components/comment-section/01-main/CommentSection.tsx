@@ -14,8 +14,7 @@ import { unFormatTime } from '../../video-section/utils/unFormatTime';
 import { useUserStore } from '../../../../../store/userStore';
 
 export const CommentSection = () => {
-
-  const {user} = useUserStore()
+  const { user } = useUserStore();
 
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
@@ -67,18 +66,21 @@ export const CommentSection = () => {
           key={_id}
           onClick={() => {
             commentStore.getState().setSelectedTimeStamp(timeStamp);
-            commentStore.getState().setSelectedCommentId(_id);  // also update selection on click here
+            commentStore.getState().setSelectedCommentId(_id);
           }}
           tabIndex={0}
-          className={selectedCommentId === _id ? "active-comment" : ""}  // highlight active comment
+          className={selectedCommentId === _id ? "active-comment" : ""}
         >
           <TopSection>
             <ImageContainer>
-              <img src="/SImon1.jpg" alt="Profile img" />
+              <img
+                src={commentCreatedBy?.profileImage || "/default-profile.png"}
+                alt={`${commentCreatedBy?.name || "Anonymous"}'s profile image`}
+              />
             </ImageContainer>
             <Content>
               <CardHeader>
-                <strong>Anonymous</strong>
+                <strong>{commentCreatedBy?.name || "Anonymous"}</strong>
                 <Dot>&middot;</Dot>
                 <span>{moment(createdAt).fromNow()}</span>
               </CardHeader>
@@ -103,12 +105,12 @@ export const CommentSection = () => {
                 <img src="/icons/like.svg" alt="Like button" />
               </ActionButtonIcon>
             </ReactionGroup>
-              {(user?.role === 'teacher' || user?.userId === commentCreatedBy) && (
-                <Edit>
-                  <img src="/icons/edit.svg" alt="Edit Icon" />
-                  <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />
-                </Edit>
-              )}
+            {(user?.role === 'teacher' || user?.userId === commentCreatedBy?._id) && (
+              <Edit>
+                <img src="/icons/edit.svg" alt="Edit Icon" />
+                <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />
+              </Edit>
+            )}
           </CardFooter>
 
           {replyToCommentId === _id && (
@@ -233,7 +235,7 @@ const Card = styled.div`
    &.active-comment {
     border-left: 4px solid #007bff;
     background-color: #e6f0ff;
-    transform: scale(0.98); /* optional */
+    transform: scale(0.98);
   }
 `;
 

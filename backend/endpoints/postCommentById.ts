@@ -45,11 +45,14 @@ export const postCommentById = async (
     // Save the comment
     await newComment.save();
 
+    // Populate the commentCreatedBy field before returning
+    await newComment.populate("commentCreatedBy", "name profileImage");
+
     // Add comment to the project
     project.comments.push(newComment._id as Types.ObjectId);
     await project.save();
 
-    // Respond with success
+    // Respond with success and populated comment
     return res.status(201).json({
       success: true,
       response: newComment,

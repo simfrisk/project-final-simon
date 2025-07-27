@@ -17,7 +17,11 @@ export interface MessageType {
   createdAt?: Date;
   timeStamp: string;
   isChecked: boolean;
-  commentCreatedBy: string;
+  commentCreatedBy: {
+    _id: string;
+    name: string;
+    profileImage: string;
+  };
   replies?: ReplyType[];
 }
 
@@ -83,7 +87,11 @@ export const commentStore = create<MessageStore>()(
               createdAt: new Date(data.response.createdAt),
               timeStamp: data.response.timeStamp,
               isChecked: data.response.isChecked,
-              commentCreatedBy: data.response.commentCreatedBy,
+              commentCreatedBy: {
+                _id: data.response.commentCreatedBy._id,
+                name: data.response.commentCreatedBy.name,
+                profileImage: data.response.commentCreatedBy.profileImage,
+              },
               replies: [],
             };
 
@@ -283,7 +291,11 @@ export const commentStore = create<MessageStore>()(
               createdAt: new Date(item.createdAt),
               timeStamp: item.timeStamp,
               isChecked: item.isChecked,
-              commentCreatedBy: item.commentCreatedBy,
+              commentCreatedBy: {
+                _id: item.commentCreatedBy._id,
+                name: item.commentCreatedBy.name,
+                profileImage: item.commentCreatedBy.profileImage,
+              },
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
