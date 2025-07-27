@@ -11,6 +11,7 @@ export const postSession = async (req: Request, res: Response): Promise<void> =>
         userId: user._id,
         name: user.name,
         role: user.role,
+        profileImage: user.profileImage,
         accessToken: user.accessToken,
       });
     } else {
