@@ -17,7 +17,7 @@ export interface MessageType {
   createdAt?: Date;
   timeStamp: string;
   isChecked: boolean;
-  commentCreatedBy: string
+  commentCreatedBy: string;
   replies?: ReplyType[];
 }
 
@@ -32,6 +32,8 @@ interface MessageStore {
   projectComments: MessageType[];
   selectedTimeStamp: string | null;
   setSelectedTimeStamp: (stamp: string) => void;
+  selectedCommentId: string | null;
+  setSelectedCommentId: (id: string | null) => void;
   addMessage: (msg: NewMessageType) => Promise<void>;
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
@@ -48,8 +50,10 @@ export const commentStore = create<MessageStore>()(
       allComments: [],
       projectComments: [],
       selectedTimeStamp: null,
+      selectedCommentId: null,
 
       setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
+      setSelectedCommentId: (id) => set({ selectedCommentId: id }),
 
       addMessage: async (msg) => {
         try {
@@ -163,8 +167,6 @@ export const commentStore = create<MessageStore>()(
           // Assuming updated.response contains the updated comment object
           const updatedComment = updated.response;
 
-
-
           if (!updatedComment) {
             throw new Error("No updated comment returned from backend");
           }
@@ -184,7 +186,6 @@ export const commentStore = create<MessageStore>()(
           console.error("Toggle check failed:", err.message || "Unknown error");
         }
       },
-
 
       deleteComment: async (commentId) => {
         try {

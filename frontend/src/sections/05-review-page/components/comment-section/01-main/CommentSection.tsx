@@ -20,6 +20,8 @@ export const CommentSection = () => {
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 
+  const selectedCommentId = commentStore((state) => state.selectedCommentId);
+
   const addReply = commentStore((state) => state.addReply);
   const rawMessages: MessageType[] = commentStore((state) => state.projectComments);
   const messages = [...rawMessages].sort((a, b) => {
@@ -63,8 +65,12 @@ export const CommentSection = () => {
       {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy }) => (
         <Card
           key={_id}
-          onClick={() => setSelectedTimeStamp(timeStamp)}
+          onClick={() => {
+            commentStore.getState().setSelectedTimeStamp(timeStamp);
+            commentStore.getState().setSelectedCommentId(_id);  // also update selection on click here
+          }}
           tabIndex={0}
+          className={selectedCommentId === _id ? "active-comment" : ""}  // highlight active comment
         >
           <TopSection>
             <ImageContainer>
@@ -222,6 +228,12 @@ const Card = styled.div`
     opacity: 1;
     visibility: visible;
     transform: translatey(0%);
+  }
+
+   &.active-comment {
+    border-left: 4px solid #007bff;
+    background-color: #e6f0ff;
+    transform: scale(0.98); /* optional */
   }
 `;
 

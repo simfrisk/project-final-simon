@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { useVideoStore } from "../../../store/videoStore";
 import { unFormatTime } from "../../05-review-page/components/video-section/utils/unFormatTime";
+import { commentStore } from "../../../store/commentStore";
 
 interface TeacherProjectCardProps {
   projectId: string;
@@ -47,7 +48,9 @@ export const TeacherProjectCard = ({
 
     // Store timestamp in Zustand
     useVideoStore.getState().setTimeCode(newTimecode);
-    console.log(newTimecode)
+    useVideoStore.getState().setTimeCode(newTimecode);
+  commentStore.getState().setSelectedTimeStamp(timeStamp);
+  commentStore.getState().setSelectedCommentId(commentId); 
 
     // Navigate
     navigate(`/review/${projectId}?commentId=${commentId}`);
