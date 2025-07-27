@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import { authenticateUser } from "./middleware/authenticateUser";
 import { resetDatabase } from "./setup/resetDatabase";
 import { uploadVideo } from "./middleware/uploadVideo";
+import { uploadImage } from "./middleware/uploadImage";
 
 import { deleteComment } from "./endpoints/deleteComment";
 import { deleteProject } from "./endpoints/deleteProject";
@@ -71,7 +72,7 @@ app.get("/projects/with-comments", authenticateUser, getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
-app.get("/projects/:projectId/comments", getComments); // no auth needed for fetching
+app.get("/projects/:projectId/comments", getComments);
 app.get("/comments/all", authenticateUser, getAllComments);
 app.get("/comments/:commentId", getCommentById);
 
@@ -82,7 +83,7 @@ app.get("/comments/:commentId/replies", getReplies);
 app.post("/projects", uploadVideo.single("video"), postProject);
 app.post("/projects/:projectId/comments/", authenticateUser, postCommentById);
 app.post("/comments/:commentId/replies/", authenticateUser, postReplyById);
-app.post("/user", postUser);
+app.post("/user", uploadImage.single("image"), postUser);
 app.post("/session", postSession);
 
 // Patch
