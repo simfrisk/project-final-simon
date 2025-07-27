@@ -31,6 +31,7 @@ const postUser = async (req, res) => {
             success: true,
             message: "User created",
             userId: user._id,
+            profileImage: user.profileImage,
             accessToken: user.accessToken,
         });
     }
