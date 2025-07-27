@@ -4,9 +4,14 @@ import { Project } from "../models/Projects";
 export const getProjectsWithComments = async (req: Request, res: Response): Promise<Response> => {
   try {
     const result = await Project.find()
-      .populate("comments")
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'commentCreatedBy',
+          select: 'name profileImage',
+        }
+      })
       .select("projectName projectDescription video thumbnail comments");
-
 
     return res.status(200).json({
       success: true,

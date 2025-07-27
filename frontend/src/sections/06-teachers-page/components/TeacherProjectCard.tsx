@@ -17,9 +17,13 @@ interface TeacherProjectCardProps {
     _id: string;
     content: string;
     createdAt: string;
-    likes?: number;
     timeStamp: string;
     isChecked: boolean;
+    likes?: number;
+    commentCreatedBy: {
+      name: string;
+      profileImage: string;
+    };
   }>;
 }
 
@@ -31,10 +35,6 @@ export const TeacherProjectCard = ({
   projectId,
 }: TeacherProjectCardProps) => {
   const [showComments, setShowComments] = useState(false);
-  
-  // const [currentTimeStamp, setCurrentTimeStamp] = useState("")
-
-
   const navigate = useNavigate();
 
   const timeStampHandler = (
@@ -46,22 +46,16 @@ export const TeacherProjectCard = ({
 
     const newTimecode = unFormatTime(timeStamp);
 
-    // Store timestamp in Zustand
     useVideoStore.getState().setTimeCode(newTimecode);
-    useVideoStore.getState().setTimeCode(newTimecode);
-  commentStore.getState().setSelectedTimeStamp(timeStamp);
-  commentStore.getState().setSelectedCommentId(commentId); 
+    commentStore.getState().setSelectedTimeStamp(timeStamp);
+    commentStore.getState().setSelectedCommentId(commentId);
 
-    // Navigate
     navigate(`/review/${projectId}?commentId=${commentId}`);
   };
 
   return (
     <CardWrapper>
       <CardInner onClick={() => setShowComments((prev) => !prev)}>
-        <CardThumbnail>
-          <img src={thumbnail} alt="Thumbnail of project" />
-        </CardThumbnail>
         <CardContentWrapper>
           <CardHeader>
             <h3>{projectName}</h3>
@@ -93,13 +87,16 @@ export const TeacherProjectCard = ({
                     <CommentItem key={comment._id}>
                       <CommentLink onClick={(e) => timeStampHandler(e, comment._id, comment.timeStamp)}>
                         <CommentThumbnail>
-                          <img src={thumbnail || "/default-thumb.jpg"} alt="Thumbnail" />
+                          <img
+                            src={comment.commentCreatedBy?.profileImage || "/default-profile.jpg"}
+                            alt="User profile"
+                          />
                         </CommentThumbnail>
                         <CommentContent>
                           <p>{comment.content}</p>
                           <CommentFooter>
                             <p>{moment(comment.createdAt).fromNow()}</p>
-                            <p>{`${comment.likes ?? 4} Likes`}</p>
+                            <p>{comment.commentCreatedBy?.name || "Unknown user"}</p>
                           </CommentFooter>
                         </CommentContent>
                       </CommentLink>
@@ -132,7 +129,7 @@ const CardWrapper = styled.div`
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 
-    p, h3 {
+  p, h3 {
     margin: 0;
   }
 `;
@@ -140,8 +137,8 @@ const CardWrapper = styled.div`
 const CardInner = styled.article`
   display: flex;
   width: 100%;
-  align-items: stretch; // Important!
-  padding-right: 30px;
+  align-items: stretch;
+  padding: 20px 30px;
   cursor: pointer;
   transition: transform 0.3s ease;
 
@@ -154,36 +151,11 @@ const CardInner = styled.article`
   }
 `;
 
-const CardThumbnail = styled.div`
-  width: 100px;
-  aspect-ratio: 1 / 1;
-  flex-shrink: 0;
-  overflow: hidden;
-  border: 4px solid #f6f6f6;
-  border-radius: 15px;
-  margin-right: 20px;
-
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    width: 130px;
-    aspect-ratio: 4 / 3;
-    margin-right: 30px;
-  }
-`;
-
 const CardContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  padding: 20px 0;
 `;
 
 const CardHeader = styled.div`
@@ -203,7 +175,6 @@ const CommentItem = styled.div`
   box-shadow: 0 -2px 0 rgba(32, 32, 32, 0.07);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
-
   &:hover {
     background-color: #eeeeee;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
@@ -212,9 +183,7 @@ const CommentItem = styled.div`
 
 const CommentLink = styled.div`
   display: flex;
-  flex-direction: row; 
   align-items: center;
-  
   gap: 22px;
   width: 100%;
   padding: 14px 30px;
@@ -231,7 +200,7 @@ const CommentThumbnail = styled.div`
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  border-radius: 50px;
+  border-radius: 50%;
   overflow: hidden;
 
   img {
@@ -251,12 +220,10 @@ const CommentContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-
 `;
 
 const CommentFooter = styled.div`
   display: flex;
-  width: 100%;
   justify-content: space-between;
   font-size: 0.8rem;
   color: #888;

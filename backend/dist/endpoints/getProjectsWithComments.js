@@ -5,7 +5,13 @@ const Projects_1 = require("../models/Projects");
 const getProjectsWithComments = async (req, res) => {
     try {
         const result = await Projects_1.Project.find()
-            .populate("comments")
+            .populate({
+            path: 'comments',
+            populate: {
+                path: 'commentCreatedBy',
+                select: 'name profileImage',
+            }
+        })
             .select("projectName projectDescription video thumbnail comments");
         return res.status(200).json({
             success: true,

@@ -342,7 +342,11 @@ export const commentStore = create<MessageStore>()(
               createdAt: new Date(item.createdAt),
               timeStamp: item.timeStamp,
               isChecked: item.isChecked,
-              commentCreatedBy: item.commentCreatedBy,
+              commentCreatedBy: {
+                _id: item.commentCreatedBy._id,
+                name: item.commentCreatedBy.name,
+                profileImage: item.commentCreatedBy.profileImage,
+              },
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
