@@ -23,12 +23,11 @@ const postProject = async (req, res) => {
         }
         const videoUrl = req.file?.path || "";
         const thumbnailUrl = generateThumbnailUrl(videoUrl);
-        console.log("Generated thumbnail URL:", thumbnailUrl); // ✅ Log this
         const newProject = new Projects_1.Project({
             projectName,
             projectDescription,
             video: videoUrl,
-            thumbnail: thumbnailUrl, // <-- now this works
+            thumbnail: thumbnailUrl,
         });
         const savedNewProject = await newProject.save();
         return res.status(201).json({

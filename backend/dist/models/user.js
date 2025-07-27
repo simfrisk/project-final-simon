@@ -25,6 +25,10 @@ const UserSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    profileImage: {
+        type: String,
+        default: "/SImon.png"
+    },
     accessToken: {
         type: String,
         default: () => crypto_1.default.randomBytes(128).toString("hex")

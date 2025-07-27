@@ -7,6 +7,7 @@ export interface UserType extends Document {
   email: string
   password: string
   role: string
+  profileImage: string
   accessToken: string
 }
 
@@ -28,6 +29,10 @@ const UserSchema = new Schema<UserType>({
   role: {
     type: String,
     required: true
+  },
+  profileImage: {
+    type: String,
+    default: "/SImon.png"
   },
   accessToken: {
     type: String,

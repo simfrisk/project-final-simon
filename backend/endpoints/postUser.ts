@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 export const postUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, profileImage } = req.body;
 
     const allowedRoles = ["teacher", "student"];
     if (!allowedRoles.includes(role)) {
@@ -22,6 +22,7 @@ export const postUser = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
       role,
+      profileImage,
     });
 
     await user.save();
