@@ -4,7 +4,8 @@ import bcrypt from "bcrypt";
 
 export const postUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role, profileImage } = req.body;
+    const { name, email, password, role } = req.body;
+    const profileImage = (req.file as any)?.path || req.body.profileImage;
 
     const allowedRoles = ["teacher", "student"];
     if (!allowedRoles.includes(role)) {

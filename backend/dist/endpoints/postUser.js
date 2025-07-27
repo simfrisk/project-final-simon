@@ -8,7 +8,8 @@ const user_1 = require("../models/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const postUser = async (req, res) => {
     try {
-        const { name, email, password, role, profileImage } = req.body;
+        const { name, email, password, role } = req.body;
+        const profileImage = req.file?.path || req.body.profileImage;
         const allowedRoles = ["teacher", "student"];
         if (!allowedRoles.includes(role)) {
             return res.status(400).json({

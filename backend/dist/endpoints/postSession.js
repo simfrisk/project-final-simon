@@ -14,6 +14,7 @@ const postSession = async (req, res) => {
                 userId: user._id,
                 name: user.name,
                 role: user.role,
+                profileImage: user.profileImage,
                 accessToken: user.accessToken,
             });
         }
