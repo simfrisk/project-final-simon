@@ -6,7 +6,8 @@ const getComments = async (req, res) => {
     const { projectId } = req.params;
     try {
         const comments = await Comment_1.CommentModel.find({ projectId })
-            .populate("replies");
+            .populate("replies")
+            .populate("commentCreatedBy", "name profileImage");
         return res.status(200).json({
             success: true,
             response: comments,
