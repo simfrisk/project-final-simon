@@ -5,13 +5,13 @@ const Projects_1 = require("../models/Projects");
 const Comment_1 = require("../models/Comment");
 const postCommentById = async (req, res) => {
     const { projectId } = req.params;
-    const { content, timeStamp } = req.body;
+    const { content, timeStamp, commentType } = req.body;
     // Validate required fields
-    if (!content || !timeStamp) {
+    if (!content || !timeStamp || !commentType) {
         return res.status(400).json({
             success: false,
             response: null,
-            message: "Comment text and timestamp are required",
+            message: "Comment text, timestamp, and comment type are required",
         });
     }
     try {
@@ -32,6 +32,7 @@ const postCommentById = async (req, res) => {
             timeStamp,
             isChecked: false,
             commentCreatedBy: req.user?._id,
+            commentType,
             replies: [],
         });
         // Save the comment

@@ -1,6 +1,6 @@
 // store/commentStore.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { getToken } from "../utils/token";
 
 export interface ReplyType {
@@ -23,6 +23,7 @@ export interface MessageType {
     profileImage: string;
     role?: 'teacher' | 'student' | string;
   };
+  commentType: string;
   replies?: ReplyType[];
 }
 
@@ -30,6 +31,7 @@ export interface NewMessageType {
   content: string;
   projectId?: string;
   timeStamp: string;
+  commentType: string;
 }
 
 interface MessageStore {
@@ -94,6 +96,7 @@ export const commentStore = create<MessageStore>()(
                 profileImage: data.response.commentCreatedBy.profileImage,
                 role: data.response.commentCreatedBy.role,
               },
+              commentType: data.response.CommentType,
               replies: [],
             };
 
@@ -191,6 +194,7 @@ export const commentStore = create<MessageStore>()(
               profileImage: data.response.commentCreatedBy.profileImage,
               role: data.response.commentCreatedBy.role,
             },
+            commentType: data.response.commentCreatedBy.commentType,
             replies: (data.response.replies || []).map((reply: any) => ({
               _id: reply._id,
               content: reply.content,
@@ -317,6 +321,7 @@ export const commentStore = create<MessageStore>()(
                 profileImage: item.commentCreatedBy.profileImage,
                 role: item.commentCreatedBy.role,
               },
+              commentType: item.commentType,
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
@@ -369,6 +374,7 @@ export const commentStore = create<MessageStore>()(
                 profileImage: item.commentCreatedBy.profileImage,
                 role: item.commentCreatedBy.role,
               },
+              commentType: item.commentType,
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
                 content: reply.content,
@@ -388,6 +394,7 @@ export const commentStore = create<MessageStore>()(
     }),
     {
       name: "comment-storage",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
