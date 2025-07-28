@@ -32,8 +32,9 @@ export const CommentSection = () => {
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
   const handleToggleCheck = async (id: string) => {
+    if (user?.role !== 'teacher') return;
     await toggleCheck(id);
-  };
+  };  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,15 +86,17 @@ export const CommentSection = () => {
                 <span>{moment(createdAt).fromNow()}</span>
               </CardHeader>
             </Content>
-            <CheckBtn $checked={isChecked}>
-              <CircleCheckboxLabel>
-                <HiddenCheckbox
-                  checked={isChecked}
-                  onChange={() => handleToggleCheck(_id)}
-                />
-                <StyledCircle $checked={isChecked} />
-              </CircleCheckboxLabel>
-            </CheckBtn>
+            {(user?.role === 'teacher' || isChecked) && (
+              <CheckBtn $checked={isChecked}>
+                <CircleCheckboxLabel>
+                  <HiddenCheckbox
+                    checked={isChecked}
+                    onChange={() => handleToggleCheck(_id)}
+                  />
+                  <StyledCircle $checked={isChecked} />
+                </CircleCheckboxLabel>
+              </CheckBtn>
+            )}
           </TopSection>
 
           <CardMain>{content}</CardMain>
@@ -244,7 +247,7 @@ const ImageContainer = styled.div<{ $role?: string }>`
   height: 32px;
   width: 32px;
   border-radius: 50px;
-  border: solid 2px ${({ $role }) => ($role === 'teacher' ? "#ff8903" : "none")};
+  border: solid 2px ${({ $role }) => ($role === 'teacher' ? "#ffa703" : "none")};
   overflow: hidden;
 
   img { 
