@@ -5,7 +5,8 @@ export const patchIsChecked = async (req: Request, res: Response): Promise<Respo
   const { commentId } = req.params;
 
   try {
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
+      .populate("commentCreatedBy", "name profileImage role");
 
     if (!comment) {
       return res.status(404).json({
