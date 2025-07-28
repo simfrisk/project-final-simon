@@ -21,7 +21,10 @@ export const CommentHeader = ({ setDescription, description }: CommentHeaderProp
         Description
       </TabButton>
       <TabButton $active={description} onClick={() => setDescription(true)}>
-        Comments
+        Questions
+      </TabButton>
+      <TabButton $active={description} onClick={() => setDescription(true)}>
+        Private
       </TabButton>
       </ButtonGroup>
     </Container>
