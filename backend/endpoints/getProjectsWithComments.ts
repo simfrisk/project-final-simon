@@ -6,6 +6,7 @@ export const getProjectsWithComments = async (req: Request, res: Response): Prom
     const result = await Project.find()
       .populate({
         path: 'comments',
+        match: { commentType: 'question' }, // ✅ filter comments here
         populate: {
           path: 'commentCreatedBy',
           select: 'name profileImage role',

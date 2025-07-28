@@ -8,14 +8,14 @@ export const postCommentById = async (
   res: Response
 ): Promise<Response> => {
   const { projectId } = req.params;
-  const { content, timeStamp } = req.body;
+  const { content, timeStamp, commentType } = req.body;
 
   // Validate required fields
-  if (!content || !timeStamp) {
+  if (!content || !timeStamp || !commentType) {
     return res.status(400).json({
       success: false,
       response: null,
-      message: "Comment text and timestamp are required",
+      message: "Comment text, timestamp, and comment type are required",
     });
   }
 
@@ -39,6 +39,7 @@ export const postCommentById = async (
       timeStamp,
       isChecked: false,
       commentCreatedBy: req.user?._id,
+      commentType,
       replies: [],
     });
 

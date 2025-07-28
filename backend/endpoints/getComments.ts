@@ -5,7 +5,8 @@ export const getComments = async (req: Request, res: Response): Promise<Response
   const { projectId } = req.params;
 
   try {
-    const comments = await CommentModel.find({ projectId })
+    const comments = await CommentModel.find({ projectId, commentType: "question" })
+
       .populate("replies")
       .populate("commentCreatedBy", "name profileImage role");
     return res.status(200).json({

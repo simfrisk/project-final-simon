@@ -5,7 +5,7 @@ export const getCommentById = async (req: Request, res: Response): Promise<Respo
   const { commentId } = req.params;
 
   try {
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById({ commentId, commentType: "question" });
     if (!comment) {
       return res.status(404).json({
         success: false,
