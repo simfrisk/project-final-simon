@@ -244,7 +244,7 @@ const ImageContainer = styled.div<{ $role?: string }>`
   height: 32px;
   width: 32px;
   border-radius: 50px;
-  border: solid 2px ${({ $role }) => ($role === 'teacher' ? 'orange' : 'blue')};
+  border: solid 2px ${({ $role }) => ($role === 'teacher' ? "#ff8903" : "none")};
   overflow: hidden;
 
   img { 
