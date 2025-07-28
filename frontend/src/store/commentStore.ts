@@ -21,6 +21,7 @@ export interface MessageType {
     _id: string;
     name: string;
     profileImage: string;
+    role?: 'teacher' | 'student' | string;
   };
   replies?: ReplyType[];
 }
@@ -91,6 +92,7 @@ export const commentStore = create<MessageStore>()(
                 _id: data.response.commentCreatedBy._id,
                 name: data.response.commentCreatedBy.name,
                 profileImage: data.response.commentCreatedBy.profileImage,
+                role: data.response.commentCreatedBy.role,
               },
               replies: [],
             };
@@ -295,6 +297,7 @@ export const commentStore = create<MessageStore>()(
                 _id: item.commentCreatedBy._id,
                 name: item.commentCreatedBy.name,
                 profileImage: item.commentCreatedBy.profileImage,
+                role: item.commentCreatedBy.role,
               },
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,
@@ -346,6 +349,7 @@ export const commentStore = create<MessageStore>()(
                 _id: item.commentCreatedBy._id,
                 name: item.commentCreatedBy.name,
                 profileImage: item.commentCreatedBy.profileImage,
+                role: item.commentCreatedBy.role,
               },
               replies: (item.replies || []).map((reply: any) => ({
                 _id: reply._id,

@@ -9,7 +9,7 @@ const getProjectsWithComments = async (req, res) => {
             path: 'comments',
             populate: {
                 path: 'commentCreatedBy',
-                select: 'name profileImage',
+                select: 'name profileImage role',
             }
         })
             .select("projectName projectDescription video thumbnail comments");

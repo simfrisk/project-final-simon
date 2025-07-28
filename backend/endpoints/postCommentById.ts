@@ -46,7 +46,7 @@ export const postCommentById = async (
     await newComment.save();
 
     // Populate the commentCreatedBy field before returning
-    await newComment.populate("commentCreatedBy", "name profileImage");
+    await newComment.populate("commentCreatedBy", "name profileImage role");
 
     // Add comment to the project
     project.comments.push(newComment._id as Types.ObjectId);

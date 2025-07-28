@@ -72,7 +72,7 @@ export const CommentSection = () => {
           className={selectedCommentId === _id ? "active-comment" : ""}
         >
           <TopSection>
-            <ImageContainer>
+            <ImageContainer $role={commentCreatedBy?.role}>
               <img
                 src={commentCreatedBy?.profileImage || "/default-profile.png"}
                 alt={`${commentCreatedBy?.name || "Anonymous"}'s profile image`}
@@ -239,14 +239,15 @@ const Card = styled.div`
   }
 `;
 
-const ImageContainer = styled.div`
+const ImageContainer = styled.div<{ $role?: string }>`
   flex-shrink: 0;
   height: 32px;
   width: 32px;
   border-radius: 50px;
+  border: solid 2px ${({ $role }) => ($role === 'teacher' ? 'orange' : 'blue')};
   overflow: hidden;
 
-  img {
+  img { 
     width: 100%;
     height: 100%;
     object-fit: cover;
