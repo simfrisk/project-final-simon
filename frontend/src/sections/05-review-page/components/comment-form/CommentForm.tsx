@@ -10,6 +10,7 @@ export const CommentForm = () => {
   const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
   const timecode = useTimecode((state) => state.timecode);
+  const [commentType, setCommentType] = useState("question");
 
   const project = useProjectStore((state) => state.project);
   const projectId = project?._id; 
@@ -22,6 +23,7 @@ export const CommentForm = () => {
       content: text,
       timeStamp: timecode,
       projectId: projectId,
+      commentType,
     });
 
     setText('');
@@ -43,9 +45,10 @@ export const CommentForm = () => {
           <input type="checkbox" />
         </TimeTag>
 
-        <Select name="Teacher">
+        <Select value={commentType} onChange={(e) => setCommentType(e.target.value)}>
           <option value="question">Question</option>
-          <option value="comment">Comment</option>
+          <option value="public">Comment</option>
+          <option value="private">Comment</option>
         </Select>
 
         <SendButton type="submit">Send</SendButton>
