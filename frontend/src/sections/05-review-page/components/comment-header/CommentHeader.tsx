@@ -1,31 +1,37 @@
 import styled from "styled-components";
 import { useProjectStore } from "../../../../store/projectStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
+import { useTabStore } from "../../../../store/tabStore";
 
-interface CommentHeaderProps {
-  setDescription: (value: boolean) => void;
-  description: boolean;
-}
-
-export const CommentHeader = ({ setDescription, description }: CommentHeaderProps) => {
-
+export const CommentHeader = () => {
   const project = useProjectStore((state) => state.project);
+  const activeTab = useTabStore((state) => state.activeTab);
+  const setActiveTab = useTabStore((state) => state.setActiveTab);
 
-  if (!project) return null; // or show a loading indicator
+  if (!project) return null;
 
   return (
     <Container>
       <Title>{project.projectName}</Title>
       <ButtonGroup>
-        <TabButton $active={!description} onClick={() => setDescription(false)}>
-        Description
-      </TabButton>
-      <TabButton $active={description} onClick={() => setDescription(true)}>
-        Questions
-      </TabButton>
-      <TabButton $active={description} onClick={() => setDescription(true)}>
-        Private
-      </TabButton>
+        <TabButton
+          $active={activeTab === "description"}
+          onClick={() => setActiveTab("description")}
+        >
+          Description
+        </TabButton>
+        <TabButton
+          $active={activeTab === "question"}
+          onClick={() => setActiveTab("question")}
+        >
+          Question
+        </TabButton>
+        <TabButton
+          $active={activeTab === "comments"}
+          onClick={() => setActiveTab("comments")}
+        >
+          Comments
+        </TabButton>
       </ButtonGroup>
     </Container>
   );
@@ -39,10 +45,9 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.offBackground};
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
 
-   @media ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     padding: 0 0 10px 0;
   }
-
 `;
 
 const Title = styled.h3`
@@ -50,7 +55,7 @@ const Title = styled.h3`
   font-size: 24px;
   font-weight: 700;
 
-    @media ${MediaQueries.biggerSizes} {
+  @media ${MediaQueries.biggerSizes} {
     margin: 25px 0;
   }
 `;
@@ -72,7 +77,7 @@ const TabButton = styled.button<{ $active?: boolean }>`
 
   &:hover {
     background-color: ${({ $active }) => ($active ? "#0056b3" : "#e6f0ff")};
-    transform: scale(.96);
+    transform: scale(0.96);
   }
 
   &:focus {

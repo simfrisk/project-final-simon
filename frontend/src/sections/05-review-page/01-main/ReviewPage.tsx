@@ -1,25 +1,24 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CommentForm } from "../components/comment-form/CommentForm";
 import { CommentSection } from "../components/comment-section/01-main/CommentSection";
 import { VideoSection } from "../components/video-section/VideoSection";
 import { CommentHeader } from "../components/comment-header/CommentHeader";
 import { MediaQueries } from "../../../themes/mediaQueries";
-import { DescriptionSection } from "../components/description/DescriptionSection"
+import { DescriptionSection } from "../components/description/DescriptionSection";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../../../store/projectStore";
 import { commentStore } from "../../../store/commentStore";
 import { ReviewNav } from "../components/nav/ReviewNav";
+import { useTabStore } from "../../../store/tabStore";
 
 export const ReviewPage = () => {
-  // const project = useProjectStore((state) => state.projects);
-
   const { projectId } = useParams<{ projectId: string }>();
-  const [description, setDescription] = useState(true);
-  
+
+  const activeTab = useTabStore((state) => state.activeTab);
+
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
   const fetchComments = commentStore((state) => state.fetchComments);
-
 
   useEffect(() => {
     if (projectId) {
@@ -29,31 +28,29 @@ export const ReviewPage = () => {
 
     return () => {
       useProjectStore.setState({ project: null });
-      commentStore.setState({ projectComments: [] }); // ✅ valid
+      commentStore.setState({ projectComments: [] });
     };
   }, [projectId, fetchProjectById, fetchComments]);
+
   return (
     <>
-    <ReviewNav />
-    <Container>
-      <StyledVideoSection />
-      <RightColumn>
-        <StyledCommentHeader setDescription={setDescription} description={description}/>
-      {description && <StyledCommentSection />}
-      {!description && <StyledDescriptionSection />}
-      </RightColumn>
-      {description && <StyledCommentForm />}
-    </Container>
+      <ReviewNav />
+      <Container>
+        <StyledVideoSection />
+        <RightColumn>
+          <StyledCommentHeader />
+          {(activeTab === "question" || activeTab === "comments") && <StyledCommentSection />}
+          {activeTab === "description" && <StyledDescriptionSection />}
+        </RightColumn>
+        {(activeTab === "question" || activeTab === "comments") && <StyledCommentForm />}
+      </Container>
     </>
   );
 };
 
-
-
 const Container = styled.div`
   display: grid;
   width: 100%;
-
 
   @media ${MediaQueries.biggerSizes} {
     grid-template-columns: 1fr 400px;
@@ -73,25 +70,18 @@ const StyledCommentForm = styled(CommentForm)`
 `;
 
 const RightColumn = styled.div`
-@media ${MediaQueries.biggerSizes} {
-  grid-area: right;
-  display: flex;
-  flex-direction: column;
-  background-color: ${({ theme }) => theme.colors.offBackground};
-  height: 100vh;  
-}
+  @media ${MediaQueries.biggerSizes} {
+    grid-area: right;
+    display: flex;
+    flex-direction: column;
+    background-color: ${({ theme }) => theme.colors.offBackground};
+    height: 100vh;
+  }
 `;
 
-const StyledCommentHeader = styled(({ setDescription, ...props }) => (
-  <CommentHeader {...props} setDescription={setDescription} />
-))`
-  /* styles */
-`;
+// Just use CommentHeader directly; no props needed
+const StyledCommentHeader = styled(CommentHeader)``;
 
-const StyledCommentSection = styled(CommentSection)`
-  /* Same here */
-`;
+const StyledCommentSection = styled(CommentSection)``;
 
-const StyledDescriptionSection = styled(DescriptionSection)`
-  /* Same here */
-`;
+const StyledDescriptionSection = styled(DescriptionSection)``;
