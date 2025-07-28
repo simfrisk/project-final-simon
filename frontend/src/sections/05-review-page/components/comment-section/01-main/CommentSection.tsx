@@ -23,7 +23,9 @@ export const CommentSection = () => {
 
   const addReply = commentStore((state) => state.addReply);
   const rawMessages: MessageType[] = commentStore((state) => state.projectComments);
-  const messages = [...rawMessages].sort((a, b) => {
+  const messages = [...rawMessages]
+  .filter((msg) => msg.commentType === 'question')
+  .sort((a, b) => {
     return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
   });
 

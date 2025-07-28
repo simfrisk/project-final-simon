@@ -96,7 +96,7 @@ export const commentStore = create<MessageStore>()(
                 profileImage: data.response.commentCreatedBy.profileImage,
                 role: data.response.commentCreatedBy.role,
               },
-              commentType: data.response.CommentType,
+              commentType: data.response.commentType,
               replies: [],
             };
 
@@ -194,7 +194,7 @@ export const commentStore = create<MessageStore>()(
               profileImage: data.response.commentCreatedBy.profileImage,
               role: data.response.commentCreatedBy.role,
             },
-            commentType: data.response.commentCreatedBy.commentType,
+            commentType: data.response.commentType,
             replies: (data.response.replies || []).map((reply: any) => ({
               _id: reply._id,
               content: reply.content,

@@ -10,10 +10,10 @@ export const TeachersPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments);
 
-useEffect(() => {
-  console.log("Fetching projects with comments...");
-  fetchProjectsWithComments();
-}, []);
+  useEffect(() => {
+    console.log("Fetching projects with comments...");
+    fetchProjectsWithComments();
+  }, []);
 
   return (
     <>
@@ -30,18 +30,28 @@ useEffect(() => {
         {projects
           .filter(project =>
             Array.isArray(project.comments) &&
-            project.comments.some((comment: any) => comment.isChecked === false)
+            project.comments.some(
+              (comment: any) =>
+                comment.commentType === "question" && comment.isChecked === false
+            )
           )
-          .map(({ _id, projectName, projectDescription, thumbnail, comments }) => (
-            <TeacherProjectCard 
-              key={_id} 
-              projectId={_id ?? ""}
-              projectName={projectName} 
-              projectDescription={projectDescription}
-              thumbnail={thumbnail} 
-              comments={comments}
-            />
-        ))}
+          .map(({ _id, projectName, projectDescription, thumbnail, comments }) => {
+            const questionComments = (comments ?? []).filter(
+              (comment: any) =>
+                comment.commentType === "question" && comment.isChecked === false
+            );
+
+            return (
+              <TeacherProjectCard
+                key={_id}
+                projectId={_id ?? ""}
+                projectName={projectName}
+                projectDescription={projectDescription}
+                thumbnail={thumbnail}
+                comments={questionComments}
+              />
+            );
+          })}
       </Wrapper>
     </>
   );
