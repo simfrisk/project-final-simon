@@ -172,14 +172,32 @@ export const commentStore = create<MessageStore>()(
 
           if (!response.ok) throw new Error("Failed to toggle isChecked");
 
-          const updated = await response.json();
+          const data = await response.json();
 
-          // Assuming updated.response contains the updated comment object
-          const updatedComment = updated.response;
-
-          if (!updatedComment) {
+          if (!data.success || !data.response) {
             throw new Error("No updated comment returned from backend");
           }
+
+          const updatedComment: MessageType = {
+            _id: data.response._id,
+            content: data.response.content,
+            projectId: data.response.projectId,
+            createdAt: new Date(data.response.createdAt),
+            timeStamp: data.response.timeStamp,
+            isChecked: data.response.isChecked,
+            commentCreatedBy: {
+              _id: data.response.commentCreatedBy._id,
+              name: data.response.commentCreatedBy.name,
+              profileImage: data.response.commentCreatedBy.profileImage,
+              role: data.response.commentCreatedBy.role,
+            },
+            replies: (data.response.replies || []).map((reply: any) => ({
+              _id: reply._id,
+              content: reply.content,
+              commentId: reply.commentId,
+              createdAt: new Date(reply.createdAt),
+            })),
+          };
 
           set((state) => {
             const updateComments = (comments: MessageType[]) =>
@@ -188,7 +206,7 @@ export const commentStore = create<MessageStore>()(
               );
 
             return {
-              projectComments: [...updateComments(state.projectComments)],
+              projectComments: updateComments(state.projectComments),
               allComments: updateComments(state.allComments),
             };
           });
