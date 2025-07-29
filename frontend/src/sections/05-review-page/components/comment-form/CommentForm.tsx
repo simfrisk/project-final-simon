@@ -48,7 +48,6 @@ export const CommentForm = () => {
         <Select value={commentType} onChange={(e) => setCommentType(e.target.value)}>
           <option value="question">Question</option>
           <option value="public">Public comment</option>
-          <option value="private">Privet comment</option>
         </Select>
 
         <SendButton type="submit">Send</SendButton>
