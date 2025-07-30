@@ -15,6 +15,11 @@ import { useTabStore } from "../../../store/tabStore";
 export const ReviewPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
 
+  // Early return if projectId is missing to satisfy type checker
+  if (!projectId) {
+    return <div>Project ID not found</div>;
+  }
+
   const activeTab = useTabStore((state) => state.activeTab);
 
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
@@ -22,11 +27,9 @@ export const ReviewPage = () => {
   const fetchPrivateComments = commentStore((state) => state.fetchPrivateComments);
 
   useEffect(() => {
-    if (projectId) {
-      fetchProjectById(projectId);
-      fetchComments(projectId);
-      fetchPrivateComments(projectId);
-    }
+    fetchProjectById(projectId);
+    fetchComments(projectId);
+    fetchPrivateComments(projectId);
 
     return () => {
       useProjectStore.setState({ project: null });
@@ -45,8 +48,13 @@ export const ReviewPage = () => {
         <RightColumn>
           <StyledCommentHeader />
           {activeTab === "description" && <StyledDescriptionSection />}
-          {activeTab === "question" && <StyledQuestionSection />}
-          {activeTab === "private" && <StyledPrivateSection />}
+          {activeTab === "question" && (
+            // Changed type from "question" to "public" to match prop types
+            <StyledQuestionSection projectId={projectId} type="public" />
+          )}
+          {activeTab === "private" && (
+            <StyledPrivateSection projectId={projectId} type="private" />
+          )}
         </RightColumn>
         {(activeTab === "question" || activeTab === "private") && <StyledCommentForm />}
       </Container>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { MessageType } from '../../../../../store/commentStore';
 import styled from 'styled-components';
 import moment from 'moment';
@@ -13,8 +13,23 @@ import { MediaQueries } from '../../../../../themes/mediaQueries';
 import { unFormatTime } from '../../video-section/utils/unFormatTime';
 import { useUserStore } from '../../../../../store/userStore';
 
-export const CommentSection = () => {
+type Props = {
+  projectId: string;
+  type: 'private' | 'public'; // or whatever string literals you're using
+};
+
+export const CommentSection = ({ projectId, type }: Props) => {
   const { user } = useUserStore();
+
+    useEffect(() => {
+    if (!projectId) return;
+
+    if (type === "private") {
+      commentStore.getState().fetchPrivateComments(projectId);
+    } else {
+      commentStore.getState().fetchComments(projectId);
+    }
+  }, [projectId, type]);
 
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
@@ -22,9 +37,11 @@ export const CommentSection = () => {
   const selectedCommentId = commentStore((state) => state.selectedCommentId);
 
   const addReply = commentStore((state) => state.addReply);
-  const rawMessages: MessageType[] = commentStore((state) => state.projectComments);
+  const rawMessages: MessageType[] =
+    type === "private"
+      ? commentStore((state) => state.privateComments)
+      : commentStore((state) => state.projectComments);
   const messages = [...rawMessages]
-  .filter((msg) => msg.commentType === 'question')
   .sort((a, b) => {
     return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
   });

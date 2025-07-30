@@ -96,7 +96,7 @@ export const commentStore = create<MessageStore>()(
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: token || "",
+                ...(token ? { Authorization: token } : {}),
               },
               body: JSON.stringify(msg),
             }
@@ -126,7 +126,7 @@ export const commentStore = create<MessageStore>()(
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: token || "",
+                ...(token ? { Authorization: token } : {}),
               },
               body: JSON.stringify({ content: reply.content }),
             }
@@ -172,7 +172,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "PATCH",
               headers: {
-                Authorization: token,
+                ...(token ? { Authorization: token } : {}),
                 "Content-Type": "application/json",
               },
             }
@@ -210,7 +210,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "DELETE",
               headers: {
-                Authorization: token,
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
@@ -238,7 +238,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "DELETE",
               headers: {
-                Authorization: token,
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
@@ -276,7 +276,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "GET",
               headers: {
-                Authorization: token || "",
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
@@ -300,7 +300,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "GET",
               headers: {
-                Authorization: token,
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
@@ -324,7 +324,7 @@ export const commentStore = create<MessageStore>()(
             {
               method: "GET",
               headers: {
-                Authorization: token || "",
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
