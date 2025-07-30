@@ -19,11 +19,13 @@ export const ReviewPage = () => {
 
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
   const fetchComments = commentStore((state) => state.fetchComments);
+  // const fetchPrivateCOmments = commentStore((state) => state.fetchPrivateCOmments);
 
   useEffect(() => {
     if (projectId) {
       fetchProjectById(projectId);
       fetchComments(projectId);
+      //fetchPrivateCOmments(projectId, userId);
     }
 
     return () => {

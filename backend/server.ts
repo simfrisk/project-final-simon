@@ -28,6 +28,7 @@ import { postUser } from "./endpoints/postUser";
 import { postSession } from "./endpoints/postSession";
 import { getAllComments } from "./endpoints/getAllComments";
 import { getProjectsWithComments } from "./endpoints/getProjectsWithComments";
+import { getPrivateComments } from "./endpoints/getPrivateComments";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -75,6 +76,7 @@ app.get("/projects/:projectId", authenticateUser, getProjectById);
 app.get("/projects/:projectId/comments", getComments);
 app.get("/comments/all", authenticateUser, getAllComments);
 app.get("/comments/:commentId", getCommentById);
+app.get("/projects/:projectId/comments/private", authenticateUser, getPrivateComments);
 
 // Replies
 app.get("/comments/:commentId/replies", getReplies);

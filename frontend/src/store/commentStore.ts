@@ -49,6 +49,7 @@ interface MessageStore {
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
   fetchAllComments: () => Promise<void>;
+  fetchPrivateComments: (projectId: string) => Promise<void>;
 }
 
 export const commentStore = create<MessageStore>()(
@@ -397,4 +398,52 @@ export const commentStore = create<MessageStore>()(
       storage: createJSONStorage(() => localStorage),
     }
   )
-);
+),
+
+  fetchPrivateComments: async (projectId) => {
+    try {
+      const token = getToken();
+
+      const response = await fetch(
+        `https://project-final-simon.onrender.com/projects/${projectId}/comments`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const json = await response.json();
+
+      if (json.success && Array.isArray(json.response)) {
+        const mappedMessages: MessageType[] = json.response.map((item: any) => ({
+          _id: item._id,
+          content: item.content,
+          projectId: item.projectId,
+          createdAt: new Date(item.createdAt),
+          timeStamp: item.timeStamp,
+          isChecked: item.isChecked,
+          commentCreatedBy: {
+            _id: item.commentCreatedBy._id,
+            name: item.commentCreatedBy.name,
+            profileImage: item.commentCreatedBy.profileImage,
+            role: item.commentCreatedBy.role,
+          },
+          commentType: item.commentType,
+          replies: (item.replies || []).map((reply: any) => ({
+            _id: reply._id,
+            content: reply.content,
+            commentId: reply.commentId,
+            createdAt: new Date(reply.createdAt),
+          })),
+        }));
+
+        set({ projectComments: mappedMessages });
+      }
+    } catch (err: any) {
+      console.error("Fetch error:", err.message || "Unknown error");
+    }
+  },
