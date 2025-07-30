@@ -27,8 +27,8 @@ export const CommentHeader = () => {
           Question
         </TabButton>
         <TabButton
-          $active={activeTab === "comments"}
-          onClick={() => setActiveTab("comments")}
+          $active={activeTab === "private"}
+          onClick={() => setActiveTab("private")}
         >
           Comments
         </TabButton>

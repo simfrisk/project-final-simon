@@ -19,20 +19,23 @@ export const ReviewPage = () => {
 
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
   const fetchComments = commentStore((state) => state.fetchComments);
-  // const fetchPrivateCOmments = commentStore((state) => state.fetchPrivateCOmments);
+  const fetchPrivateComments = commentStore((state) => state.fetchPrivateComments);
 
   useEffect(() => {
     if (projectId) {
       fetchProjectById(projectId);
       fetchComments(projectId);
-      //fetchPrivateCOmments(projectId, userId);
+      fetchPrivateComments(projectId);
     }
 
     return () => {
       useProjectStore.setState({ project: null });
-      commentStore.setState({ projectComments: [] });
+      commentStore.setState({
+        projectComments: [],
+        privateComments: [],
+      });
     };
-  }, [projectId, fetchProjectById, fetchComments]);
+  }, [projectId, fetchProjectById, fetchComments, fetchPrivateComments]);
 
   return (
     <>
@@ -41,10 +44,11 @@ export const ReviewPage = () => {
         <StyledVideoSection />
         <RightColumn>
           <StyledCommentHeader />
-          {(activeTab === "question" || activeTab === "comments") && <StyledCommentSection />}
           {activeTab === "description" && <StyledDescriptionSection />}
+          {activeTab === "question" && <StyledQuestionSection />}
+          {activeTab === "private" && <StyledPrivateSection />}
         </RightColumn>
-        {(activeTab === "question" || activeTab === "comments") && <StyledCommentForm />}
+        {(activeTab === "question" || activeTab === "private") && <StyledCommentForm />}
       </Container>
     </>
   );
@@ -84,6 +88,6 @@ const RightColumn = styled.div`
 // Just use CommentHeader directly; no props needed
 const StyledCommentHeader = styled(CommentHeader)``;
 
-const StyledCommentSection = styled(CommentSection)``;
-
+const StyledQuestionSection = styled(CommentSection)``;
+const StyledPrivateSection = styled(CommentSection)``;
 const StyledDescriptionSection = styled(DescriptionSection)``;
