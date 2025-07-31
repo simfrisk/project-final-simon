@@ -15,13 +15,15 @@ import type { MessageType } from '../../../../store/commentStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
 import { useVideoStore } from '../../../../store/videoStore';  
-
+import { useTabStore } from '../../../../store/tabStore';
 
 //#endregion
 
 //#region ---- Functions -----
 
 export const VideoSection = () => {
+  const activeTab = useTabStore((state) => state.activeTab);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = useState(1);
@@ -35,7 +37,10 @@ export const VideoSection = () => {
   const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
   const selectedTimecode = unFormatTime(selectedTimeStamp ?? "00:00");
 
-  const messages: MessageType[] = commentStore((state) => state.projectComments);
+ 
+  const messages: MessageType[] = commentStore((state) =>
+    activeTab === "private" ? state.privateComments : state.projectComments
+  );
 
   //Controls the playback
   const { progress, isPlaying } = useVideoProgress(videoRef);
@@ -185,6 +190,7 @@ export const VideoSection = () => {
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
+
         {videoLoaded && messages.map(({ _id, timeStamp, content }) => {
           const timeInSeconds = unFormatTime(timeStamp);
           const percent = videoRef.current?.duration
