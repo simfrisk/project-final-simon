@@ -15,7 +15,7 @@ import { useUserStore } from '../../../../../store/userStore';
 
 type Props = {
   projectId: string;
-  type: 'private' | 'public'; // or whatever string literals you're using
+  type: 'private' | 'question'; 
 };
 
 export const CommentSection = ({ projectId, type }: Props) => {

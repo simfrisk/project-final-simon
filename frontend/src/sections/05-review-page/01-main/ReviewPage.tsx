@@ -15,18 +15,14 @@ import { useTabStore } from "../../../store/tabStore";
 export const ReviewPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
 
-  // Early return if projectId is missing to satisfy type checker
-  if (!projectId) {
-    return <div>Project ID not found</div>;
-  }
-
   const activeTab = useTabStore((state) => state.activeTab);
-
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById);
   const fetchComments = commentStore((state) => state.fetchComments);
   const fetchPrivateComments = commentStore((state) => state.fetchPrivateComments);
 
   useEffect(() => {
+    if (!projectId) return;
+
     fetchProjectById(projectId);
     fetchComments(projectId);
     fetchPrivateComments(projectId);
@@ -40,23 +36,36 @@ export const ReviewPage = () => {
     };
   }, [projectId, fetchProjectById, fetchComments, fetchPrivateComments]);
 
+  if (!projectId) {
+    return <div>Project ID not found</div>;
+  }
+
   return (
     <>
       <ReviewNav />
       <Container>
         <StyledVideoSection />
         <RightColumn>
+
           <StyledCommentHeader />
-          {activeTab === "description" && <StyledDescriptionSection />}
+
+          {activeTab === "description" && 
+            <StyledDescriptionSection />}
+
           {activeTab === "question" && (
-            // Changed type from "question" to "public" to match prop types
-            <StyledQuestionSection projectId={projectId} type="public" />
+            <StyledQuestionSection projectId={projectId} type="question" />
           )}
+
           {activeTab === "private" && (
             <StyledPrivateSection projectId={projectId} type="private" />
           )}
+          
         </RightColumn>
-        {(activeTab === "question" || activeTab === "private") && <StyledCommentForm />}
+        {(activeTab === "question") && 
+          <StyledQuestionCommentForm type="question" />}
+        {(activeTab === "private") && 
+          <StyledPrivetCommentForm type="private"/>}
+
       </Container>
     </>
   );
@@ -79,7 +88,11 @@ const StyledVideoSection = styled(VideoSection)`
   grid-area: video;
 `;
 
-const StyledCommentForm = styled(CommentForm)`
+const StyledQuestionCommentForm = styled(CommentForm)`
+  grid-area: form;
+`;
+
+const StyledPrivetCommentForm = styled(CommentForm)`
   grid-area: form;
 `;
 

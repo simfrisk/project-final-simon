@@ -5,12 +5,16 @@ import { useVideoStore } from '../../../../store/videoStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
 
-export const CommentForm = () => {
+type Props = {
+  type: 'private' | 'question' | 'public'; 
+};
+
+export const CommentForm = ({ type }: Props) => {
   const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
   const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
   const timecode = useTimecode((state) => state.timecode);
-  const [commentType, setCommentType] = useState("question");
+  const [commentType, setCommentType] = useState(type);
 
   const project = useProjectStore((state) => state.project);
   const projectId = project?._id; 
@@ -45,9 +49,9 @@ export const CommentForm = () => {
           <input type="checkbox" />
         </TimeTag>
 
-        <Select value={commentType} onChange={(e) => setCommentType(e.target.value)}>
-          <option value="question">Question</option>
-          <option value="public">Public comment</option>
+        <Select value={commentType} onChange={(e) => setCommentType(e.target.value as 'private' | 'question' | 'public')}>
+          <option value={type}>{type}</option>
+          <option value="puplic">Public Comment</option>
         </Select>
 
         <SendButton type="submit">Send</SendButton>

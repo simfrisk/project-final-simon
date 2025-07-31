@@ -107,10 +107,20 @@ export const commentStore = create<MessageStore>()(
           const data = await response.json();
           if (data.success && data.response) {
             const newMessage = mapComment(data.response);
-            set((state) => ({
-              projectComments: [...state.projectComments, newMessage],
-              allComments: [...state.allComments, newMessage],
-            }));
+
+            set((state) => {
+              const updates: Partial<MessageStore> = {
+                allComments: [...state.allComments, newMessage],
+              };
+
+              if (newMessage.commentType === "private") {
+                updates.privateComments = [...state.privateComments, newMessage];
+              } else {
+                updates.projectComments = [...state.projectComments, newMessage];
+              }
+
+              return updates;
+            });
           }
         } catch (err: any) {
           console.error("Error posting comment:", err.message);
