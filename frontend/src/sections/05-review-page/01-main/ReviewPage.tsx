@@ -52,13 +52,10 @@ export const ReviewPage = () => {
           {activeTab === "description" && 
             <StyledDescriptionSection />}
 
-          {activeTab === "question" && (
-            <StyledQuestionSection projectId={projectId} type="question" />
+          {activeTab !== "description" && (
+            <StyledCommentSection projectId={projectId} type="question" />
           )}
 
-          {activeTab === "private" && (
-            <StyledPrivateSection projectId={projectId} type="private" />
-          )}
           
         </RightColumn>
 
@@ -104,6 +101,5 @@ const RightColumn = styled.div`
 // Just use CommentHeader directly; no props needed
 const StyledCommentHeader = styled(CommentHeader)``;
 
-const StyledQuestionSection = styled(CommentSection)``;
-const StyledPrivateSection = styled(CommentSection)``;
+const StyledCommentSection = styled(CommentSection)``;
 const StyledDescriptionSection = styled(DescriptionSection)``;

@@ -12,24 +12,13 @@ import { ReplyCard } from '../components/ReplyCard';
 import { MediaQueries } from '../../../../../themes/mediaQueries';
 import { unFormatTime } from '../../video-section/utils/unFormatTime';
 import { useUserStore } from '../../../../../store/userStore';
+import { useTabStore } from '../../../../../store/tabStore';
 
-type Props = {
-  projectId: string;
-  type: 'private' | 'question'; 
-};
+export const CommentSection = () => {
 
-export const CommentSection = ({ projectId, type }: Props) => {
+  const activeTab = useTabStore((state) => state.activeTab);
+
   const { user } = useUserStore();
-
-    useEffect(() => {
-    if (!projectId) return;
-
-    if (type === "private") {
-      commentStore.getState().fetchPrivateComments(projectId);
-    } else {
-      commentStore.getState().fetchComments(projectId);
-    }
-  }, [projectId, type]);
 
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
@@ -38,7 +27,7 @@ export const CommentSection = ({ projectId, type }: Props) => {
 
   const addReply = commentStore((state) => state.addReply);
   const rawMessages: MessageType[] =
-    type === "private"
+    activeTab === "private"
       ? commentStore((state) => state.privateComments)
       : commentStore((state) => state.projectComments);
   const messages = [...rawMessages]
