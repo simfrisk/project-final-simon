@@ -4,17 +4,16 @@ import { commentStore } from '../../../../store/commentStore';
 import { useVideoStore } from '../../../../store/videoStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
+import { useTabStore } from '../../../../store/tabStore';
 
-type Props = {
-  type: 'private' | 'question' | 'public'; 
-};
+export const CommentForm = () => {
 
-export const CommentForm = ({ type }: Props) => {
+  const activeTab = useTabStore((state) => state.activeTab);
+
   const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
   const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
   const timecode = useTimecode((state) => state.timecode);
-  const [commentType, setCommentType] = useState(type);
 
   const project = useProjectStore((state) => state.project);
   const projectId = project?._id; 
@@ -27,7 +26,7 @@ export const CommentForm = ({ type }: Props) => {
       content: text,
       timeStamp: timecode,
       projectId: projectId,
-      commentType,
+      commentType: activeTab
     });
 
     setText('');
@@ -49,8 +48,8 @@ export const CommentForm = ({ type }: Props) => {
           <input type="checkbox" />
         </TimeTag>
 
-        <Select value={commentType} onChange={(e) => setCommentType(e.target.value as 'private' | 'question' | 'public')}>
-          <option value={type}>{type}</option>
+        <Select value={activeTab} onChange={(e) => activeTab(e.target.value as 'private' | 'question' | 'public')}>
+          <option value={activeTab}>{activeTab}</option>
           <option value="puplic">Public Comment</option>
         </Select>
 

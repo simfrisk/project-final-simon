@@ -61,10 +61,8 @@ export const ReviewPage = () => {
           )}
           
         </RightColumn>
-        {(activeTab === "question") && 
-          <StyledQuestionCommentForm type="question" />}
-        {(activeTab === "private") && 
-          <StyledPrivetCommentForm type="private"/>}
+
+          <StyledCommentForm />
 
       </Container>
     </>
@@ -88,13 +86,10 @@ const StyledVideoSection = styled(VideoSection)`
   grid-area: video;
 `;
 
-const StyledQuestionCommentForm = styled(CommentForm)`
+const StyledCommentForm = styled(CommentForm)`
   grid-area: form;
 `;
 
-const StyledPrivetCommentForm = styled(CommentForm)`
-  grid-area: form;
-`;
 
 const RightColumn = styled.div`
   @media ${MediaQueries.biggerSizes} {
