@@ -21,7 +21,7 @@ export const CommentHeader = () => {
           Description
         </TabButton>
         <TabButton
-          $active={activeTab === "question"}
+          $active={activeTab === "question" || activeTab === "public"}
           onClick={() => setActiveTab("question")}
         >
           Question

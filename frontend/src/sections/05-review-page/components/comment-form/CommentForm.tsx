@@ -9,6 +9,7 @@ import { useTabStore } from '../../../../store/tabStore';
 export const CommentForm = () => {
 
   const activeTab = useTabStore((state) => state.activeTab);
+  const setActiveTab = useTabStore((state) => state.setActiveTab);
 
   const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
   const [text, setText] = useState('');
@@ -48,10 +49,14 @@ export const CommentForm = () => {
           <input type="checkbox" />
         </TimeTag>
 
-        <Select value={activeTab} onChange={(e) => activeTab(e.target.value as 'private' | 'question' | 'public')}>
+          {activeTab === "question" && (
+        <Select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value as 'description' | 'question' | 'private' | 'public')}>
           <option value={activeTab}>{activeTab}</option>
-          <option value="puplic">Public Comment</option>
+          <option value="public">Public Comment</option>
         </Select>
+         )}
 
         <SendButton type="submit">Send</SendButton>
       </Footer>
