@@ -11,6 +11,7 @@ import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
 import { RequireAuthentication } from './utils/RequireAuthentication';
 import { PageNotFound } from './global-components/PageNotFound';
 import { TeachersPage } from './sections/06-teachers-page/TeachersPage';
+import './utils/moment-config';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);

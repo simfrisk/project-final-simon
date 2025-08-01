@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { MessageType } from '../../../../../store/commentStore';
 import styled from 'styled-components';
 import moment from 'moment';

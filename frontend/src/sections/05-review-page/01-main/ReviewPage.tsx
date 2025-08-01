@@ -51,11 +51,9 @@ export const ReviewPage = () => {
 
           {activeTab === "description" && 
             <StyledDescriptionSection />}
-
           {activeTab !== "description" && (
-            <StyledCommentSection projectId={projectId} type="question" />
+            <StyledCommentSection/>
           )}
-
           
         </RightColumn>
 
