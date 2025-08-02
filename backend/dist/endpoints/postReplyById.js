@@ -25,8 +25,11 @@ const postReplyById = async (req, res) => {
         const newReply = new Reply_1.Reply({
             content,
             commentId: comment._id,
+            isChecked: false,
+            replyCreatedBy: req.user?._id,
         });
         await newReply.save();
+        await newReply.populate("replyCreatedBy", "name profileImage role");
         comment.replies.push(newReply._id);
         await comment.save();
         return res.status(201).json({

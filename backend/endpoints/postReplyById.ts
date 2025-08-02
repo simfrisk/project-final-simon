@@ -29,9 +29,14 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
     const newReply = new Reply({
       content,
       commentId: comment._id,
+      isChecked: false,
+      replyCreatedBy: req.user?._id,
+
     });
 
     await newReply.save();
+
+    await newReply.populate("replyCreatedBy", "name profileImage role");
 
     comment.replies.push(newReply._id as Types.ObjectId);
     await comment.save();
