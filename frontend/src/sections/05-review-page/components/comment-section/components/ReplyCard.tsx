@@ -17,11 +17,14 @@ const { deleteReply } = commentStore();
     <Card>
       <TopSection>
         <ImageContainer>
-          <img src="/teacher.jpg" alt="Profile img" />
+          <img
+                src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
+                alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
+              />
         </ImageContainer>
         <Content>
           <CardHeader>
-            <strong>Teacher</strong>
+            <strong>{reply.replyCreatedBy?.name || "Anonymous"}</strong>
             <Dot>&middot;</Dot>
             <span>{moment(reply.createdAt).fromNow()}</span>
           </CardHeader>
