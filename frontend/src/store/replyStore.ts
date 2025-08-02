@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { ReplyType } from "./commentStore";
+import { getToken } from "../utils/token";
 
 interface ReplyInput {
   content: string;
@@ -17,12 +18,15 @@ export const replyStore = create<ReplyStore>((set) => ({
 
   addReply: async (reply) => {
     try {
+      const token = getToken();
+
       const response = await fetch(
         `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: token } : {}),
           },
           body: JSON.stringify({ content: reply.content }),
         }
@@ -38,6 +42,12 @@ export const replyStore = create<ReplyStore>((set) => ({
           content: data.response.content,
           commentId: data.response.commentId,
           createdAt: new Date(data.response.createdAt),
+          replyCreatedBy: {
+            _id: data.response.replyCreatedBy?._id,
+            name: data.response.replyCreatedBy?.name,
+            profileImage: data.response.replyCreatedBy?.profileImage,
+            role: data.response.replyCreatedBy?.role,
+          },
         };
 
         set((state) => ({

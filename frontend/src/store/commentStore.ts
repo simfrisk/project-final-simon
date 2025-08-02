@@ -1,4 +1,3 @@
-// store/commentStore.ts
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { getToken } from "../utils/token";
@@ -8,6 +7,12 @@ export interface ReplyType {
   content: string;
   commentId: string;
   createdAt: Date;
+  replyCreatedBy?: {
+    _id: string;
+    name: string;
+    profileImage: string;
+    role?: 'teacher' | 'student' | string;
+  };
 }
 
 export interface MessageType {
@@ -72,6 +77,12 @@ const mapComment = (item: any): MessageType => ({
     content: reply.content,
     commentId: reply.commentId,
     createdAt: new Date(reply.createdAt),
+    replyCreatedBy: {
+      _id: reply.replyCreatedBy?._id,
+      name: reply.replyCreatedBy?.name,
+      profileImage: reply.replyCreatedBy?.profileImage,
+      role: reply.replyCreatedBy?.role,
+    },
   })),
 });
 
@@ -151,6 +162,12 @@ export const commentStore = create<MessageStore>()(
               content: data.response.content,
               commentId: data.response.commentId,
               createdAt: new Date(data.response.createdAt),
+              replyCreatedBy: {
+                _id: data.response.replyCreatedBy?._id,
+                name: data.response.replyCreatedBy?.name,
+                profileImage: data.response.replyCreatedBy?.profileImage,
+                role: data.response.replyCreatedBy?.role,
+              },
             };
 
             const updateReplies = (comments: MessageType[]) =>
