@@ -71,8 +71,10 @@ export const CommentSection = () => {
   return (
     <CommentListContainer>
       {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy }) => (
+        
         <Card
           key={_id}
+          $role={commentCreatedBy?.role}
           onClick={() => {
             setSelectedTimeStamp(timeStamp);
             commentStore.getState().setSelectedCommentId(_id);
@@ -208,7 +210,7 @@ const ReactionGroup = styled.div`
   column-gap: 10px;
 `;
 
-const Card = styled.div`
+const Card = styled.div<{ $role?: string }>`
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -218,15 +220,17 @@ const Card = styled.div`
   transition: 0.3s ease;
   align-items: center;
   cursor: pointer;
+  background-color: ${({ $role }) => ($role === 'teacher' ? ' #deeafb' : 'none')};
+
 
   &:hover {
     transform: scale(0.98);
-    background-color: #fafafa;
+    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
   }
 
   &:focus {
     transform: scale(0.98);
-    background-color: #fafafa;
+    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
     border-left: solid #007bff 3px;
     transition: ease 0.2s;
   }
@@ -244,18 +248,17 @@ const Card = styled.div`
   }
 
    &.active-comment {
-    border-left: 4px solid #007bff;
-    background-color: #e6f0ff;
+    border-left: solid #007bff 3px;
+    /* background-color: #e6f0ff; */
     transform: scale(0.98);
   }
-`;
+`
 
 const ImageContainer = styled.div<{ $role?: string }>`
   flex-shrink: 0;
   height: 32px;
   width: 32px;
   border-radius: 50px;
-  border: solid 2px ${({ $role }) => ($role === 'teacher' ? "#ffa703" : "none")};
   overflow: hidden;
 
   img { 
