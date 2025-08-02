@@ -7,7 +7,13 @@ export const getComments = async (req: Request, res: Response): Promise<Response
   try {
     const comments = await CommentModel.find({ projectId, commentType: "question" })
 
-      .populate("replies")
+      .populate({
+        path: "replies",
+        populate: {
+          path: "replyCreatedBy",
+          select: "name profileImage role"
+        }
+      })
       .populate("commentCreatedBy", "name profileImage role");
     return res.status(200).json({
       success: true,
