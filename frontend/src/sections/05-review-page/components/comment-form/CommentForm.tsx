@@ -49,11 +49,11 @@ export const CommentForm = () => {
           <input type="checkbox" />
         </TimeTag>
 
-          {activeTab === "question" && (
+          {activeTab !== "private" && (
         <Select
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as 'description' | 'question' | 'private' | 'public')}>
-          <option value={activeTab}>{activeTab}</option>
+          <option value="1uestion">Question</option>
           <option value="public">Public Comment</option>
         </Select>
          )}
