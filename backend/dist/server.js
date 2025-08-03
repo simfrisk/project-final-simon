@@ -22,6 +22,7 @@ const getProjectById_1 = require("./endpoints/getProjectById");
 const getProjects_1 = require("./endpoints/getProjects");
 const getReplies_1 = require("./endpoints/getReplies");
 const patchReply_1 = require("./endpoints/patchReply");
+const patchComment_1 = require("./endpoints/patchComment");
 const patchIsChecked_1 = require("./endpoints/patchIsChecked");
 const postCommentById_1 = require("./endpoints/postCommentById");
 const postProject_1 = require("./endpoints/postProject");
@@ -82,6 +83,7 @@ app.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser
 app.post("/session", postSession_1.postSession);
 // Patch
 app.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1.patchReply);
+app.patch("/comments/:commentId", authenticateUser_1.authenticateUser, patchComment_1.patchComment);
 app.patch("/comments/:commentId/toggle-check", authenticateUser_1.authenticateUser, patchIsChecked_1.patchIsChecked);
 // Delete
 app.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
