@@ -32,6 +32,11 @@ export interface MessageType {
   replies?: ReplyType[];
 }
 
+interface UpdateCommentInput {
+  commentId: string;
+  content: string;
+}
+
 export interface NewMessageType {
   content: string;
   projectId?: string;
@@ -51,6 +56,7 @@ interface MessageStore {
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
   toggleCheck: (commentId: string) => Promise<void>;
+  updateComment: (update: UpdateCommentInput) => Promise<void>;
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
@@ -226,6 +232,47 @@ export const commentStore = create<MessageStore>()(
           }));
         } catch (err: any) {
           console.error("Toggle check failed:", err.message);
+        }
+      },
+
+      updateComment: async ({ commentId, content }) => {
+        try {
+          const token = getToken();
+
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/${commentId}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: token } : {}),
+              },
+              body: JSON.stringify({ newContent: content }),
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to update comment");
+
+          const data = await response.json();
+
+          if (data.success && data.response) {
+            const updatedComment = mapComment(data.response);
+
+            const updateComments = (comments: MessageType[]) =>
+              comments.map((msg) =>
+                msg._id === commentId ? { ...msg, content: updatedComment.content } : msg
+              );
+
+            set((state) => ({
+              projectComments: updateComments(state.projectComments),
+              allComments: updateComments(state.allComments),
+              privateComments: updateComments(state.privateComments),
+            }));
+          } else {
+            console.error("Update failed:", data.message || "No comment returned");
+          }
+        } catch (err: any) {
+          console.error("Error updating comment:", err.message || "Unknown error");
         }
       },
 

@@ -236,7 +236,7 @@ const CardMain = styled.div`
     padding: 8px 14px;
     border: none;
     border-radius: 15px;
-    margin: 8px 6px;
+    margin: 8px 2px;
     color: white;
     background-color: #007bff;
   }

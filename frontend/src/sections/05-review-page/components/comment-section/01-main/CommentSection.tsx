@@ -15,25 +15,26 @@ import { useUserStore } from '../../../../../store/userStore';
 import { useTabStore } from '../../../../../store/tabStore';
 
 export const CommentSection = () => {
-
   const activeTab = useTabStore((state) => state.activeTab);
-
   const { user } = useUserStore();
 
   const [reply, setReply] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editedContent, setEditedContent] = useState('');
 
   const selectedCommentId = commentStore((state) => state.selectedCommentId);
-
   const addReply = commentStore((state) => state.addReply);
+  const updateComment = commentStore((state) => state.updateComment);
+
   const rawMessages: MessageType[] =
     activeTab === "private"
       ? commentStore((state) => state.privateComments)
       : commentStore((state) => state.projectComments);
-  const messages = [...rawMessages]
-  .sort((a, b) => {
-    return unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp);
-  });
+
+  const messages = [...rawMessages].sort(
+    (a, b) => unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp)
+  );
 
   const toggleCheck = commentStore((state) => state.toggleCheck);
   const deleteComment = commentStore((state) => state.deleteComment);
@@ -42,7 +43,7 @@ export const CommentSection = () => {
   const handleToggleCheck = async (id: string) => {
     if (user?.role !== 'teacher') return;
     await toggleCheck(id);
-  };  
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,10 +69,21 @@ export const CommentSection = () => {
     }
   };
 
+  const handleSaveEdit = async (commentId: string) => {
+    if (!editedContent.trim()) return;
+
+    await updateComment({
+      commentId,
+      content: editedContent.trim(),
+    });
+
+    setEditingCommentId(null);
+    setEditedContent('');
+  };
+
   return (
     <CommentListContainer>
       {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy }) => (
-        
         <Card
           key={_id}
           $role={commentCreatedBy?.role}
@@ -109,7 +121,35 @@ export const CommentSection = () => {
             )}
           </TopSection>
 
-          <CardMain>{content}</CardMain>
+          <CardMain>
+            {editingCommentId === _id ? (
+              <>
+                <textarea
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  rows={3}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    fontSize: "14px",
+                    borderRadius: "8px",
+                    border: "1px solid lightgray",
+                  }}
+                />
+                <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
+                  <button onClick={() => handleSaveEdit(_id)}>Save</button>
+                  <button onClick={() => {
+                    setEditingCommentId(null);
+                    setEditedContent(content);
+                  }}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              content
+            )}
+          </CardMain>
 
           <CardFooter>
             <ReactionGroup>
@@ -120,7 +160,16 @@ export const CommentSection = () => {
             </ReactionGroup>
             {(user?.role === 'teacher' || user?.userId === commentCreatedBy?._id) && (
               <Edit>
-                <img src="/icons/edit.svg" alt="Edit Icon"/>
+                {editingCommentId !== _id && (
+                  <img
+                    src="/icons/edit.svg"
+                    alt="Edit Icon"
+                    onClick={() => {
+                      setEditingCommentId(_id);
+                      setEditedContent(content);
+                    }}
+                  />
+                )}
                 <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />
               </Edit>
             )}
@@ -289,6 +338,21 @@ const CardMain = styled.p`
   width: 100%;
   margin: 8px 0;
   color: #333333;
+
+   button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 15px;
+    margin: 8px 2px;
+    color: white;
+    background-color: #007bff;
+    transition: ease .3s;
+  }
+
+  button:hover {
+    background-color: #1988fe;
+    transform: scale(.97);
+  }
 `;
 
 const CardFooter = styled.div`
