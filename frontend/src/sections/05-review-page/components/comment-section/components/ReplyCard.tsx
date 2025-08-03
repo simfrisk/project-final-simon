@@ -1,27 +1,42 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../../global-components/checkbox';
 import type { ReplyType } from '../../../../../store/commentStore';
 import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
+import { replyStore } from '../../../../../store/replyStore'; // import your replyStore
+import { useState } from 'react';
 
 type ReplyCardProps = {
   reply: ReplyType;
-  setReplyToCommentId: (id: string | null) => void;  // new prop to open reply input on main comment
+  setReplyToCommentId: (id: string | null) => void;
 };
 
-
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
+  const { deleteReply } = commentStore();
+  const { updateReply } = replyStore();
 
-const { deleteReply } = commentStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(reply.content);
+
+  const handleSaveEdit = async () => {
+    if (editedContent.trim() === '') return;
+
+    await updateReply({
+      replyId: reply._id,
+      content: editedContent.trim(),
+    });
+
+    setIsEditing(false);
+  };
 
   return (
     <Card $role={reply.replyCreatedBy?.role}>
       <TopSection>
         <ImageContainer>
           <img
-                src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
-                alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
-              />
+            src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
+            alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
+          />
         </ImageContainer>
         <Content>
           <CardHeader>
@@ -38,33 +53,67 @@ const { deleteReply } = commentStore();
         </CheckBtn>
       </TopSection>
 
-      <CardMain>{reply.content}</CardMain>
+      <CardMain>
+        {isEditing ? (
+          <>
+            <textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              rows={3}
+              style={{
+                width: "100%",
+                padding: "8px",
+                fontSize: "14px",
+                borderRadius: "8px",
+                border: "1px solid lightgray",
+              }}
+            />
+            <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
+              <button onClick={handleSaveEdit}>Save</button>
+              <button onClick={() => { setIsEditing(false); setEditedContent(reply.content); }}>
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          reply.content
+        )}
+      </CardMain>
 
       <CardFooter>
         <React>
-          {/* When clicked, this sets the reply input to open at the main comment id */}
           <ActionButton onClick={() => setReplyToCommentId(reply.commentId)}>Reply</ActionButton>
           <ActionButtonIcon>
             <img src="/icons/like.svg" alt="Like button" />
           </ActionButtonIcon>
         </React>
         <Edit>
-          <img src="/icons/edit.svg" alt="Edit Icon" />
-          <img onClick={() => deleteReply(reply._id, reply.commentId)} src="/icons/delete.svg" alt="Delete Icon" />
+          {!isEditing && (
+            <img
+              src="/icons/edit.svg"
+              alt="Edit Icon"
+              onClick={() => setIsEditing(true)}
+            />
+          )}
+          <img
+            onClick={() => deleteReply(reply._id, reply.commentId)}
+            src="/icons/delete.svg"
+            alt="Delete Icon"
+          />
         </Edit>
       </CardFooter>
     </Card>
   );
 };
 
-const TopSection = styled.div `
+const TopSection = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
   gap: 15px;
   align-items: center;
-`
+`;
 
 const CheckBtn = styled.div`
   opacity: 0;
@@ -76,7 +125,7 @@ const CheckBtn = styled.div`
   width: 40px;
   cursor: pointer;
   transform: translatey(30%);
-  transition: 
+  transition:
     opacity 0.3s ease,
     visibility 0s linear 0.3s,
     transform 0.3s ease;
@@ -93,27 +142,27 @@ const Edit = styled.div`
   margin: 0 20px 0 0;
   cursor: pointer;
   transform: translatey(30%);
-  transition: 
+  transition:
     opacity 0.3s ease,
     visibility 0s linear 0.3s,
     transform 0.3s ease;
 
-    img {
-        transform: scale(.80);
-    }
+  img {
+    transform: scale(0.80);
+  }
 `;
 
-const React = styled.div `
-display: flex;
-column-gap: 10px;
-`
+const React = styled.div`
+  display: flex;
+  column-gap: 10px;
+`;
 
 const Card = styled.div<{ $role?: string }>`
   width: 100%;
   margin: 12px auto;
   display: flex;
   flex-direction: column;
-  background-color: ${({ $role }) => ($role === 'teacher' ? ' #deeafb' : '#ffffff')};
+  background-color: ${({ $role }) => ($role === 'teacher' ? '#deeafb' : '#ffffff')};
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
@@ -131,22 +180,20 @@ const Card = styled.div<{ $role?: string }>`
     opacity: 1;
     visibility: visible;
     transform: translatey(0%);
-    transition: 
+    transition:
       opacity 1s ease,
       visibility 0s linear 0s,
       transform 0.4s ease;
-   
   }
 
   &:hover ${CheckBtn} {
     opacity: 1;
     visibility: visible;
     transform: translatey(0%);
-    transition: 
+    transition:
       opacity 1s ease,
       visibility 0s linear 0s,
       transform 0.4s ease;
-   
   }
 `;
 
@@ -177,14 +224,22 @@ const CardHeader = styled.div`
   color: #555555;
 `;
 
-const Dot = styled.span`
-`;
+const Dot = styled.span``;
 
-const CardMain = styled.p`
-text-align: left;
-width: 100%;
+const CardMain = styled.div`
+  text-align: left;
+  width: 100%;
   margin: 8px 0;
   color: #333333;
+
+    button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 15px;
+    margin: 8px 6px;
+    color: white;
+    background-color: #007bff;
+  }
 `;
 
 const CardFooter = styled.div`
@@ -208,7 +263,7 @@ const ActionButtonIcon = styled.button`
   background: none;
   border: none;
   padding: 0;
-  transform: scale(.70);
+  transform: scale(0.70);
   cursor: pointer;
 
   &:hover {

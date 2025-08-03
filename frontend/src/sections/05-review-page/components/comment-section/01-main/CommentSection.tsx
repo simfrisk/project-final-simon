@@ -120,22 +120,23 @@ export const CommentSection = () => {
             </ReactionGroup>
             {(user?.role === 'teacher' || user?.userId === commentCreatedBy?._id) && (
               <Edit>
-                <img src="/icons/edit.svg" alt="Edit Icon" />
+                <img src="/icons/edit.svg" alt="Edit Icon"/>
                 <img onClick={() => deleteComment(_id)} src="/icons/delete.svg" alt="Delete Icon" />
               </Edit>
             )}
           </CardFooter>
 
           {replyToCommentId === _id && (
-            <form onSubmit={handleSubmit}>
+            <AddReplyForm onSubmit={handleSubmit}>
               <input
                 type="text"
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
                 placeholder="Write a reply..."
+                aria-label="Write a reply for the comment"
               />
-              <button type="submit">Submit</button>
-            </form>
+              <button type="submit" aria-label='Subimt the reply '>Add</button>
+            </AddReplyForm>
           )}
 
           <ReplyCardContainer>
@@ -325,3 +326,21 @@ const ActionButtonIcon = styled.button`
 const ReplyCardContainer = styled.div`
   width: 100%;
 `;
+
+const AddReplyForm = styled.form `
+  input {
+      padding: 6px 12px;
+      border: solid 1px black;
+      border-radius: 6px;
+      margin: 8px 6px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 15px;
+      margin: 8px 6px;
+      color: white;
+      background-color: #007bff;
+    }
+`
