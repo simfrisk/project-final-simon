@@ -9,12 +9,13 @@ type ReplyCardProps = {
   setReplyToCommentId: (id: string | null) => void;  // new prop to open reply input on main comment
 };
 
+
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
 
 const { deleteReply } = commentStore();
 
   return (
-    <Card>
+    <Card $role={reply.replyCreatedBy?.role}>
       <TopSection>
         <ImageContainer>
           <img
@@ -107,12 +108,12 @@ display: flex;
 column-gap: 10px;
 `
 
-const Card = styled.div`
+const Card = styled.div<{ $role?: string }>`
   width: 100%;
   margin: 12px auto;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: ${({ $role }) => ($role === 'teacher' ? ' #deeafb' : '#ffffff')};
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
@@ -123,7 +124,7 @@ const Card = styled.div`
 
   &:hover {
     transform: scale(0.98);
-       background-color: #fafafa;
+    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
   }
 
   &:hover ${Edit} {
