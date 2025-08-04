@@ -3,9 +3,9 @@ import { ClassModel } from "../models/Class";
 
 export const postClass = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { title } = req.body;
+    const { classTitle } = req.body;
 
-    if (!title) {
+    if (!classTitle) {
       return res.status(400).json({
         success: false,
         response: null,
@@ -13,7 +13,7 @@ export const postClass = async (req: Request, res: Response): Promise<Response> 
       });
     }
 
-    const newClass = new ClassModel({ title });
+    const newClass = new ClassModel({ classTitle });
     const savedNewClass = await newClass.save();
 
     return res.status(201).json({

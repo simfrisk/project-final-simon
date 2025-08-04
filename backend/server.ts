@@ -31,6 +31,9 @@ import { postSession } from "./endpoints/postSession";
 import { getAllComments } from "./endpoints/getAllComments";
 import { getProjectsWithComments } from "./endpoints/getProjectsWithComments";
 import { getPrivateComments } from "./endpoints/getPrivateComments";
+import { deleteClass } from "./endpoints/deleteClass";
+import { getClasses } from "./endpoints/getClasses";
+import { getClassById } from "./endpoints/getClassById";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -70,8 +73,10 @@ resetDatabase();
 // API Home Route
 // Home + Projects
 app.get("/", getHome(app));
+app.get("/classes", authenticateUser, getClasses);
+app.get("/classes/:classId", authenticateUser, getClassById);
 app.get("/classes/:classId/projects", authenticateUser, getProjects);
-app.get("/classes/classId/projects/with-comments", authenticateUser, getProjectsWithComments);
+app.get("/classes/:classId/projects/with-comments", authenticateUser, getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
@@ -85,9 +90,9 @@ app.get("/comments/:commentId/replies", getReplies);
 
 // Posting
 app.post("/classes", uploadVideo.single("video"), postClass);
-app.post("/classes/:classId/projects", uploadVideo.single("video"), postProject);
-app.post("/projects/:projectId/comments/", authenticateUser, postCommentById);
-app.post("/comments/:commentId/replies/", authenticateUser, postReplyById);
+app.post("/classes/:classId/projects", authenticateUser, postProject);
+app.post("/projects/:projectId/comments", authenticateUser, postCommentById);
+app.post("/comments/:commentId/replies", authenticateUser, postReplyById);
 app.post("/user", uploadImage.single("image"), postUser);
 app.post("/session", postSession);
 
@@ -97,6 +102,7 @@ app.patch("/comments/:commentId", authenticateUser, patchComment);
 app.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked);
 
 // Delete
+app.delete("/classes/:classId", authenticateUser, deleteClass);
 app.delete("/projects/:projectId", authenticateUser, deleteProject);
 app.delete("/comments/:commentId", authenticateUser, deleteComment);
 app.delete("/replies/:replyId", authenticateUser, deleteReply);

@@ -33,6 +33,9 @@ const postSession_1 = require("./endpoints/postSession");
 const getAllComments_1 = require("./endpoints/getAllComments");
 const getProjectsWithComments_1 = require("./endpoints/getProjectsWithComments");
 const getPrivateComments_1 = require("./endpoints/getPrivateComments");
+const deleteClass_1 = require("./endpoints/deleteClass");
+const getClasses_1 = require("./endpoints/getClasses");
+const getClassById_1 = require("./endpoints/getClassById");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -66,8 +69,10 @@ app.options("*", (0, cors_1.default)());
 // API Home Route
 // Home + Projects
 app.get("/", (0, getHome_1.getHome)(app));
+app.get("/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
+app.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);
 app.get("/classes/:classId/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
-app.get("/classes/classId/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
+app.get("/classes/:classId/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments);
@@ -78,9 +83,9 @@ app.get("/projects/:projectId/comments/private", authenticateUser_1.authenticate
 app.get("/comments/:commentId/replies", getReplies_1.getReplies);
 // Posting
 app.post("/classes", uploadVideo_1.uploadVideo.single("video"), postClass_1.postClass);
-app.post("/classes/:classId/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
-app.post("/projects/:projectId/comments/", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
-app.post("/comments/:commentId/replies/", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
+app.post("/classes/:classId/projects", authenticateUser_1.authenticateUser, postProject_1.postProject);
+app.post("/projects/:projectId/comments", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
+app.post("/comments/:commentId/replies", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
 app.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
 app.post("/session", postSession_1.postSession);
 // Patch
@@ -88,6 +93,7 @@ app.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1
 app.patch("/comments/:commentId", authenticateUser_1.authenticateUser, patchComment_1.patchComment);
 app.patch("/comments/:commentId/toggle-check", authenticateUser_1.authenticateUser, patchIsChecked_1.patchIsChecked);
 // Delete
+app.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteClass_1.deleteClass);
 app.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
