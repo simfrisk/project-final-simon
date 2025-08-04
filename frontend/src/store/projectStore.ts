@@ -72,13 +72,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
-  fetchProjectsWithComments: async (classId: string) => {
+  fetchProjectsWithComments: async () => {
     set({ loading: true, error: null, message: null });
     try {
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects/with-comments`, {
+      const response = await fetch(`https://project-final-simon.onrender.com/classes/projects/with-comments`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,

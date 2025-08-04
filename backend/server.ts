@@ -76,7 +76,7 @@ app.get("/", getHome(app));
 app.get("/classes", authenticateUser, getClasses);
 app.get("/classes/:classId", authenticateUser, getClassById);
 app.get("/classes/:classId/projects", authenticateUser, getProjects);
-app.get("/classes/:classId/projects/with-comments", authenticateUser, getProjectsWithComments);
+app.get("/classes/projects/with-comments", authenticateUser, getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments

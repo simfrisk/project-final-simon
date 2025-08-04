@@ -72,7 +72,7 @@ app.get("/", (0, getHome_1.getHome)(app));
 app.get("/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
 app.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);
 app.get("/classes/:classId/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
-app.get("/classes/:classId/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
+app.get("/classes/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments);

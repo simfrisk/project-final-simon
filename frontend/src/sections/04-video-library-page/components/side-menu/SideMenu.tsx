@@ -30,9 +30,11 @@ export const SideMenu = () => {
            <h3>Classes</h3>
          <ProjectWrapper>
             {classes.map((cls) => (
-            <Class to={`/library/classes/${cls._id}/projects`} key={cls._id}>{cls.classTitle}</Class>
-          ))}
-          </ProjectWrapper>
+              <Class to={`/library/classes/${cls._id}/projects`} key={cls._id}>
+                {cls.classTitle}
+              </Class>
+            ))}
+        </ProjectWrapper>
       </TopSection>
       <BottomSection>
 

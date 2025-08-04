@@ -3,7 +3,6 @@ import { ThemeProvider } from 'styled-components';
 import { useThemeStore } from './store/themeStore';
 import { lightTheme, darkTheme } from './themes/colorThemes';
 import { LogInPage } from './sections/02-log-in-page/LogInPage';
-import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryPage';
 import { ReviewPage } from './sections/05-review-page/01-main/ReviewPage';
 import styled from 'styled-components';
 import { LandingPage } from './sections/01-lading-page/01-main/LandingPage';
@@ -11,12 +10,15 @@ import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
 import { RequireAuthentication } from './utils/RequireAuthentication';
 import { PageNotFound } from './global-components/PageNotFound';
 import { TeachersPage } from './sections/06-teachers-page/TeachersPage';
-import './utils/moment-config';
+
+import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryPage';
+import { ChooseClassMessage } from './sections/04-video-library-page/components/ChooseClassMessage';  // You’ll create this
+import { ProjectsList } from './sections/04-video-library-page/components/ProjectsList';       // And this
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
 
-   return (
+  return (
     <ThemeProvider theme={themeMode === 'light' ? lightTheme : darkTheme}>
       <AppContainer>
         <BrowserRouter>
@@ -27,25 +29,31 @@ export const App = () => {
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/teachersPage" element={<TeachersPage />} />
 
-            {/* Protected routes */}
-            <Route path="/library" element={
-              <RequireAuthentication>
-                <VideoLibraryPage />
-              </RequireAuthentication>
-            } />
-            <Route path="/library/classes/:classId/projects" element={
-              <RequireAuthentication>
-                <VideoLibraryPage />
-              </RequireAuthentication>
-            } />
+            {/* Protected routes with nested routing */}
+            <Route
+              path="/library"
+              element={
+                <RequireAuthentication>
+                  <VideoLibraryPage />
+                </RequireAuthentication>
+              }
+            >
+              {/* If no class selected */}
+              <Route index element={<ChooseClassMessage />} />
+              {/* When classId is selected */}
+              <Route path="classes/:classId/projects" element={<ProjectsList />} />
+            </Route>
 
-            <Route path="/review/:projectId" element={
-              <RequireAuthentication>
-                <ReviewPage />
-              </RequireAuthentication>
-            } />
+            <Route
+              path="/review/:projectId"
+              element={
+                <RequireAuthentication>
+                  <ReviewPage />
+                </RequireAuthentication>
+              }
+            />
 
-            {/* Fallback 404 route */}
+            {/* Fallback 404 */}
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
