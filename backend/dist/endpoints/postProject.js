@@ -13,6 +13,7 @@ const postProject = async (req, res) => {
     try {
         console.log("Received body:", req.body);
         console.log("Received file:", req.file);
+        const { classId } = req.params; // ✅ Grab it from the URL
         const { projectName, projectDescription } = req.body;
         if (!projectName) {
             return res.status(400).json({
@@ -24,6 +25,7 @@ const postProject = async (req, res) => {
         const videoUrl = req.file?.path || "";
         const thumbnailUrl = generateThumbnailUrl(videoUrl);
         const newProject = new Projects_1.Project({
+            classId, // ✅ Include classId
             projectName,
             projectDescription,
             video: videoUrl,
