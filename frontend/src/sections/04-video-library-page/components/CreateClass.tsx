@@ -2,17 +2,20 @@ import styled from "styled-components";
 import { useState } from "react";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { useClassStore } from "../../../store/classStore";
+import { useEditingStore } from "../../../store/editStore";
 
 
 export const CreateClass = () => {
 
    const addClass = useClassStore((state) => state.addClass);
    const [classTitle, setClassTitle] = useState("");
+    const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
 
     const handleCreateProject = async () => {
     if (!classTitle.trim()) return;
     await addClass(classTitle);
     setClassTitle("");
+    setIsEditingClass(false)
   };
 
   return (

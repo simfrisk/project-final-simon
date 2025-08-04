@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { useProjectStore } from "../../../store/projectStore";
 import { MediaQueries } from "../../../themes/mediaQueries";
+import { useEditingStore } from "../../../store/editStore";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
@@ -13,6 +14,9 @@ export const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,6 +55,7 @@ export const CreateProject = () => {
     setProjectName("");
     setProjectDescription("");
     setVideoFile(null);
+    setIsEditingProject(false)
   };
 
   return (

@@ -65,8 +65,8 @@ export const ProjectsList = () => {
         {(isEditingClass || isEditingProject) && (
       <TransparentBackground onClick={handleTransparentBackground}>
         <CreateWrapper onClick={(e) => e.stopPropagation()}>
-          {userRole === 'teacher' && isEditingClass && <CreateProject />}
-          {userRole === 'teacher' && isEditingProject && <CreateClass />}
+          {userRole === 'teacher' && isEditingClass && <CreateClass />}
+          {userRole === 'teacher' && isEditingProject && <CreateProject />}
         </CreateWrapper>
       </TransparentBackground>
     )}
@@ -110,7 +110,12 @@ const LoadingContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100dvh;
+  height: 80dvh;
+  width: 100%;
+
+  @media ${MediaQueries.biggerSizes} {
+  width: 80%;
+  }
 `;
 
 const HeaderWrapper = styled.div`
