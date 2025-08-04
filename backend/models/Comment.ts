@@ -1,8 +1,8 @@
-import { Schema, Document, Types, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 export type CommentCategory = "question" | "public" | "private";
 
-export interface CommentType extends Document {
+export interface CommentType {
   content: string;
   projectId: Types.ObjectId;
   createdAt: Date;
@@ -25,7 +25,6 @@ const CommentSchema = new Schema<CommentType>({
     type: String,
     enum: ["question", "public", "private"],
     required: true,
-
   }
 });
 

@@ -23,6 +23,7 @@ import { patchReply } from "./endpoints/patchReply";
 import { patchComment } from "./endpoints/patchComment";
 import { patchIsChecked } from "./endpoints/patchIsChecked";
 import { postCommentById } from "./endpoints/postCommentById";
+import { postClass } from "./endpoints/postClass";
 import { postProject } from "./endpoints/postProject";
 import { postReplyById } from "./endpoints/postReplyById";
 import { postUser } from "./endpoints/postUser";
@@ -69,8 +70,8 @@ resetDatabase();
 // API Home Route
 // Home + Projects
 app.get("/", getHome(app));
-app.get("/projects", authenticateUser, getProjects);
-app.get("/projects/with-comments", authenticateUser, getProjectsWithComments);
+app.get("/classes/:classId/projects", authenticateUser, getProjects);
+app.get("/classes/classId/projects/with-comments", authenticateUser, getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser, getProjectById);
 
 // Comments
@@ -83,7 +84,8 @@ app.get("/projects/:projectId/comments/private", authenticateUser, getPrivateCom
 app.get("/comments/:commentId/replies", getReplies);
 
 // Posting
-app.post("/projects", uploadVideo.single("video"), postProject);
+app.post("/classes", uploadVideo.single("video"), postClass);
+app.post("/classes/:classId/projects", uploadVideo.single("video"), postProject);
 app.post("/projects/:projectId/comments/", authenticateUser, postCommentById);
 app.post("/comments/:commentId/replies/", authenticateUser, postReplyById);
 app.post("/user", uploadImage.single("image"), postUser);

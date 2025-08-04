@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document, Types, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 
-export interface Project extends Document {
+export interface Project {
+  classId: Types.ObjectId;
   projectName: string;
   projectDescription?: string;
   video?: string;
@@ -9,6 +10,7 @@ export interface Project extends Document {
 }
 
 const ProjectSchema = new Schema<Project>({
+  classId: { type: Schema.Types.ObjectId, ref: "Class", required: true },
   projectName: { type: String, required: true },
   projectDescription: String,
   video: String,
