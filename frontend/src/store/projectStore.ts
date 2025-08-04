@@ -18,10 +18,10 @@ interface ProjectsStore {
   error: string | null;
   message: string | null;
 
-  fetchProjects: () => Promise<void>;
-  fetchProjectsWithComments: () => Promise<void>;
+  fetchProjects: (classId: string) => Promise<void>;
+  fetchProjectsWithComments: (classId: string) => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
-  addProject: (newProject: ProjectType) => Promise<void>;
+  addProject: (classId: string, newProject: ProjectType) => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
 }
 
@@ -32,13 +32,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   error: null,
   message: null,
 
-  fetchProjects: async () => {
+  fetchProjects: async (classId: string) => {
     set({ loading: true, error: null, message: null });
     try {
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch("https://project-final-simon.onrender.com/projects", {
+      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -72,13 +72,13 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
-  fetchProjectsWithComments: async () => {
+  fetchProjectsWithComments: async (classId: string) => {
     set({ loading: true, error: null, message: null });
     try {
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch("https://project-final-simon.onrender.com/projects/with-comments", {
+      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects/with-comments`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -152,7 +152,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
-  addProject: async (newProject) => {
+  addProject: async (classId: string, newProject: ProjectType) => {
     set({ loading: true, error: null, message: null });
 
     try {
@@ -166,7 +166,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
         formData.append("video", newProject.video);
       }
 
-      const res = await fetch("https://project-final-simon.onrender.com/projects", {
+      const res = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects`, {
         method: "POST",
         headers: {
           Authorization: token,

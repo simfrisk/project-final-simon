@@ -25,6 +25,7 @@ const patchReply_1 = require("./endpoints/patchReply");
 const patchComment_1 = require("./endpoints/patchComment");
 const patchIsChecked_1 = require("./endpoints/patchIsChecked");
 const postCommentById_1 = require("./endpoints/postCommentById");
+const postClass_1 = require("./endpoints/postClass");
 const postProject_1 = require("./endpoints/postProject");
 const postReplyById_1 = require("./endpoints/postReplyById");
 const postUser_1 = require("./endpoints/postUser");
@@ -65,8 +66,8 @@ app.options("*", (0, cors_1.default)());
 // API Home Route
 // Home + Projects
 app.get("/", (0, getHome_1.getHome)(app));
-app.get("/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
-app.get("/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
+app.get("/classes/:classId/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
+app.get("/classes/classId/projects/with-comments", authenticateUser_1.authenticateUser, getProjectsWithComments_1.getProjectsWithComments);
 app.get("/projects/:projectId", authenticateUser_1.authenticateUser, getProjectById_1.getProjectById);
 // Comments
 app.get("/projects/:projectId/comments", getComments_1.getComments);
@@ -76,7 +77,8 @@ app.get("/projects/:projectId/comments/private", authenticateUser_1.authenticate
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies);
 // Posting
-app.post("/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
+app.post("/classes", uploadVideo_1.uploadVideo.single("video"), postClass_1.postClass);
+app.post("/classes/:classId/projects", uploadVideo_1.uploadVideo.single("video"), postProject_1.postProject);
 app.post("/projects/:projectId/comments/", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies/", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
 app.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
