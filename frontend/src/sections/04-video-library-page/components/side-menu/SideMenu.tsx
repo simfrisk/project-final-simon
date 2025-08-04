@@ -65,13 +65,6 @@ h3 {
   margin-bottom: 24px;
 }
 
-p {
-  transition: ease .3s;
-}
-
-p:hover {
-  transform: scale(.97);
-}
 
 @media ${MediaQueries.biggerSizes} {
 display: flex;
@@ -83,11 +76,26 @@ const TopSection = styled.div `
 `
 
 const ProjectWrapper = styled.div `
-`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+
+
+` 
 
 const Class = styled(Link) `
-color: black;
-text-decoration: none;
+  color: black;
+  text-decoration: none;
+  transition: ease .2s;
+  
+
+  &:hover {
+    transform: scale(.97);
+    }
 `
 
 const BottomSection = styled.div `
