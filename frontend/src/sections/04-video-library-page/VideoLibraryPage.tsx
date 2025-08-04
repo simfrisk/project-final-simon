@@ -13,13 +13,14 @@ import { useUserStore } from "../../store/userStore";
 export const VideoLibraryPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
+
   const loading = useProjectStore((state) => state.loading);
   const error = useProjectStore((state) => state.error);
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
 
   useEffect(() => {
-    fetchProjects();
+    fetchProjects(classId);
   }, [fetchProjects]);
 
   if (loading) {

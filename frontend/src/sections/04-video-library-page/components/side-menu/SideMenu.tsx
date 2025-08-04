@@ -1,13 +1,18 @@
 import styled from "styled-components";
+import { useEffect } from "react";
+import { useClassStore } from "../../../../store/classStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 import { useState } from "react";
-import { useClassStore } from "../../../../store/classStore";
 
 export const SideMenu = () => {
-
+  
+  const fetchClasses = useClassStore((state) => state.fetchClasses);
+  const addClass = useClassStore((state) => state.addClass)
   const [classTitle, setClassTitle] = useState("")
 
-  const addClass = useClassStore((state) => state.addClass)
+  useEffect(() => {
+      fetchClasses();
+    }, [fetchClasses]);
 
     const handleCreateProject = async () => {
       if (!classTitle.trim()) return;
@@ -21,12 +26,12 @@ export const SideMenu = () => {
     <>
     <Container>
       <TopSection>
-        <h3>Classes</h3>
-        <p>HTML, CSS & JavaScript</p>
-        <p>JavaScript & TypeScript</p>
-        <p>Accessibility</p>
-        <p>React</p>
-        <p>Backend with Node.js</p>
+           <h3>Classes</h3>
+         <ProjectWrapper>
+            {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
+              <Class><p>{classTitle}</p></Class>
+            ))}
+          </ProjectWrapper>
       </TopSection>
       <BottomSection>
 
@@ -74,6 +79,9 @@ display: flex;
 `
 
 const TopSection = styled.div `
+`
+
+const ProjectWrapper = styled.div `
 `
 
 const BottomSection = styled.div `

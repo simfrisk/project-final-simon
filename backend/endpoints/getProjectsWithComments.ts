@@ -3,7 +3,9 @@ import { Project } from "../models/Projects";
 
 export const getProjectsWithComments = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const result = await Project.find()
+    const { classId } = req.params;
+
+    const result = await Project.find({ classId })
       .populate({
         path: 'comments',
         match: { commentType: 'question' },

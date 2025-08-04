@@ -3,7 +3,10 @@ import { Project } from "../models/Projects";
 
 export const getProjects = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const result = await Project.find().select("projectName projectDescription video thumbnail classId");
+    const { classId } = req.params;
+
+    const result = await Project.find({ classId })
+      .select("projectName projectDescription video thumbnail classId");
 
     return res.status(200).json({
       success: true,

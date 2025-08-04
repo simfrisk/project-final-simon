@@ -4,7 +4,8 @@ exports.getProjectsWithComments = void 0;
 const Projects_1 = require("../models/Projects");
 const getProjectsWithComments = async (req, res) => {
     try {
-        const result = await Projects_1.Project.find()
+        const { classId } = req.params;
+        const result = await Projects_1.Project.find({ classId })
             .populate({
             path: 'comments',
             match: { commentType: 'question' },
