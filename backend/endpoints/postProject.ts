@@ -28,7 +28,7 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     const thumbnailUrl = generateThumbnailUrl(videoUrl);
 
     const newProject = new Project({
-      classId, // ✅ Include classId
+      classId,
       projectName,
       projectDescription,
       video: videoUrl,

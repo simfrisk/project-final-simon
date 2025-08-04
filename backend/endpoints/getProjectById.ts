@@ -14,11 +14,11 @@ export const getProjectById = async (req: Request, res: Response): Promise<Respo
         message: "Project was not found",
       })
     }
-    const { _id, projectName, projectDescription, video } = project;
+    const { _id, projectName, projectDescription, video, classId } = project;
 
     return res.status(200).json({
       success: true,
-      response: { _id, projectName, projectDescription, video },
+      response: { _id, projectName, projectDescription, video, classId },
       message: "Project found",
     });
   } catch (error) {

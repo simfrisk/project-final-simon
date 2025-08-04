@@ -25,7 +25,7 @@ const postProject = async (req, res) => {
         const videoUrl = req.file?.path || "";
         const thumbnailUrl = generateThumbnailUrl(videoUrl);
         const newProject = new Projects_1.Project({
-            classId, // ✅ Include classId
+            classId,
             projectName,
             projectDescription,
             video: videoUrl,
