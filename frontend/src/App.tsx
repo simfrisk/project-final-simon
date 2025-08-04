@@ -16,7 +16,7 @@ import './utils/moment-config';
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
 
-  return (
+   return (
     <ThemeProvider theme={themeMode === 'light' ? lightTheme : darkTheme}>
       <AppContainer>
         <BrowserRouter>
@@ -28,33 +28,32 @@ export const App = () => {
             <Route path="/teachersPage" element={<TeachersPage />} />
 
             {/* Protected routes */}
-            <Route
-              path="/library"
-              element={
-                <RequireAuthentication>
-                  <VideoLibraryPage />
-                </RequireAuthentication>
-              }
-            />
-            <Route
-              path="/review/:projectId"
-              element={
-                <RequireAuthentication>
-                  <ReviewPage />
-                </RequireAuthentication>
-              }
-            />
+            <Route path="/library" element={
+              <RequireAuthentication>
+                <VideoLibraryPage />
+              </RequireAuthentication>
+            } />
+            <Route path="/library/classes/:classId/projects" element={
+              <RequireAuthentication>
+                <VideoLibraryPage />
+              </RequireAuthentication>
+            } />
 
-             {/* Fallback 404 route */}
-           <Route path="*" element={<PageNotFound />} />
+            <Route path="/review/:projectId" element={
+              <RequireAuthentication>
+                <ReviewPage />
+              </RequireAuthentication>
+            } />
+
+            {/* Fallback 404 route */}
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
-
-   
       </AppContainer>
     </ThemeProvider>
   );
 };
+
 
 const AppContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.background};

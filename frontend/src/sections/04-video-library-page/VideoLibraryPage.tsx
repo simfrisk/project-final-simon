@@ -22,8 +22,28 @@ export const VideoLibraryPage = () => {
   const userRole = user?.role;
 
   useEffect(() => {
-    if (classId) fetchProjects(classId);
-    }, [fetchProjects, classId]);
+    if (classId) {
+      fetchProjects(classId);
+    }
+  }, [fetchProjects, classId]);
+
+  if (!classId) {
+    return (
+      <>
+        <Navigation />
+        <Section>
+          <Content>
+            <SideMenuContainer>
+              <SideMenu />
+            </SideMenuContainer>
+            <Container>
+              <h2>Please choose a class from the sidebar.</h2>
+            </Container>
+          </Content>
+        </Section>
+      </>
+    );
+  }
 
   if (loading) {
     return (
@@ -45,17 +65,17 @@ export const VideoLibraryPage = () => {
             <SideMenu />
           </SideMenuContainer>
           <Container>
-              <HeaderWrapper>
-                <h2>Class Title</h2>
-              </HeaderWrapper>
+            <HeaderWrapper>
+              <h2>Class Title</h2> {/* You can replace with actual class title */}
+            </HeaderWrapper>
             <ProjectWrapper>
               {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
-                <Project 
-                  key={_id} 
+                <Project
+                  key={_id}
                   projectId={_id ?? ""}
-                  projectName={projectName} 
+                  projectName={projectName}
                   projectDescription={projectDescription}
-                  thumbnail={thumbnail} 
+                  thumbnail={thumbnail}
                 />
               ))}
             </ProjectWrapper>
