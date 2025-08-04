@@ -9,8 +9,10 @@ import { Navigation } from "../../global-components/Navigation";
 import { Section } from "../../global-components/Section";
 import { MediaQueries } from "../../themes/mediaQueries";
 import { useUserStore } from "../../store/userStore";
+import { useParams } from "react-router-dom";
 
 export const VideoLibraryPage = () => {
+  const { classId } = useParams();
   const projects = useProjectStore((state) => state.projects);
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
 
@@ -20,8 +22,8 @@ export const VideoLibraryPage = () => {
   const userRole = user?.role;
 
   useEffect(() => {
-    fetchProjects(classId);
-  }, [fetchProjects]);
+    if (classId) fetchProjects(classId);
+    }, [fetchProjects, classId]);
 
   if (loading) {
     return (

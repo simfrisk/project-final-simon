@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { getToken } from "../utils/token";
 
 export interface ClassType {
-  _id?: string;
+  _id: string;
   classTitle: string;
   classDescription: string;
 }

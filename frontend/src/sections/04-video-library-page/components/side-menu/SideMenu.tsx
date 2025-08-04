@@ -3,9 +3,10 @@ import { useEffect } from "react";
 import { useClassStore } from "../../../../store/classStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const SideMenu = () => {
-  
+  const classes = useClassStore((state) => state.classes);
   const fetchClasses = useClassStore((state) => state.fetchClasses);
   const addClass = useClassStore((state) => state.addClass)
   const [classTitle, setClassTitle] = useState("")
@@ -28,9 +29,9 @@ export const SideMenu = () => {
       <TopSection>
            <h3>Classes</h3>
          <ProjectWrapper>
-            {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
-              <Class><p>{classTitle}</p></Class>
-            ))}
+            {classes.map((cls) => (
+            <Class to={`/classes/${cls._id}/projects`} key={cls._id}>{cls.classTitle}</Class>
+          ))}
           </ProjectWrapper>
       </TopSection>
       <BottomSection>
@@ -82,6 +83,11 @@ const TopSection = styled.div `
 `
 
 const ProjectWrapper = styled.div `
+`
+
+const Class = styled(Link) `
+color: black;
+text-decoration: none;
 `
 
 const BottomSection = styled.div `
