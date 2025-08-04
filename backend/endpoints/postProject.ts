@@ -13,6 +13,7 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     console.log("Received body:", req.body);
     console.log("Received file:", req.file);
 
+    const { classId } = req.params; // ✅ Grab it from the URL
     const { projectName, projectDescription } = req.body;
 
     if (!projectName) {
@@ -27,6 +28,7 @@ export const postProject = async (req: Request, res: Response): Promise<Response
     const thumbnailUrl = generateThumbnailUrl(videoUrl);
 
     const newProject = new Project({
+      classId, // ✅ Include classId
       projectName,
       projectDescription,
       video: videoUrl,
