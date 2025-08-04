@@ -1,83 +1,83 @@
 import styled from "styled-components";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useClassStore } from "../../../../store/classStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes);
   const fetchClasses = useClassStore((state) => state.fetchClasses);
-  const addClass = useClassStore((state) => state.addClass)
-  const [classTitle, setClassTitle] = useState("")
+  const addClass = useClassStore((state) => state.addClass);
+  const [classTitle, setClassTitle] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
-      fetchClasses();
-    }, [fetchClasses]);
+    fetchClasses();
+  }, [fetchClasses]);
 
-    const handleCreateProject = async () => {
-      if (!classTitle.trim()) return;
-
-      await addClass(classTitle);
-
-      setClassTitle("");
-    };
+  const handleCreateProject = async () => {
+    if (!classTitle.trim()) return;
+    await addClass(classTitle);
+    setClassTitle("");
+  };
 
   return (
     <>
-    <Container>
-      <TopSection>
-           <h3>Classes</h3>
-         <ProjectWrapper>
-            {classes.map((cls) => (
-              <Class to={`/library/classes/${cls._id}/projects`} key={cls._id}>
-                {cls.classTitle}
-              </Class>
-            ))}
-        </ProjectWrapper>
-      </TopSection>
-      <BottomSection>
+      <Container>
+        <TopSection>
+          <h3>Classes</h3>
+          <ProjectWrapper>
+            {classes.map((cls) => {
+              const to = `/library/classes/${cls._id}/projects`;
+              const isActive = location.pathname === to;
 
-        <FormContainer>
-          <Input
-            placeholder="Project Name"
-            value={classTitle}
-            onChange={(e) => setClassTitle(e.target.value)}
-          />
-          <StyledButton type="submit" onClick={handleCreateProject}>+ Class</StyledButton>
-        </FormContainer>
-
-      </BottomSection>
-    </Container>
+              return (
+                <Class to={to} key={cls._id} $active={isActive}>
+                  {cls.classTitle}
+                </Class>
+              );
+            })}
+          </ProjectWrapper>
+        </TopSection>
+        <BottomSection>
+          <FormContainer>
+            <Input
+              placeholder="Project Name"
+              value={classTitle}
+              onChange={(e) => setClassTitle(e.target.value)}
+            />
+            <StyledButton type="submit" onClick={handleCreateProject}>
+              + Class
+            </StyledButton>
+          </FormContainer>
+        </BottomSection>
+      </Container>
     </>
-  )
+  );
 };
 
-const Container = styled.section `
-display: flex;
-flex-direction: column;
-background-color: ${({ theme }) => theme.colors.background};
-height: 85dvh;
-justify-content: space-between;
-align-items: center;
-margin-top: 60px;
-display: none;
+const Container = styled.section`
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.background};
+  height: 85dvh;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 60px;
+  display: none;
 
-h3 {
-  margin-bottom: 24px;
-}
+  h3 {
+    margin-bottom: 24px;
+  }
 
+  @media ${MediaQueries.biggerSizes} {
+    display: flex;
+  }
+`;
 
-@media ${MediaQueries.biggerSizes} {
-display: flex;
+const TopSection = styled.div``;
 
-}
-`
-
-const TopSection = styled.div `
-`
-
-const ProjectWrapper = styled.div `
+const ProjectWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -85,23 +85,20 @@ const ProjectWrapper = styled.div `
   width: 100%;
   border-radius: 10px;
   padding: 10px;
+`;
 
-
-` 
-
-const Class = styled(Link) `
+const Class = styled(Link)<{ $active: boolean }>`
   color: black;
   text-decoration: none;
-  transition: ease .2s;
-  
+  transition: ease 0.2s;
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
 
   &:hover {
-    transform: scale(.97);
-    }
-`
+    transform: scale(0.97);
+  }
+`;
 
-const BottomSection = styled.div `
-`
+const BottomSection = styled.div``;
 
 const StyledButton = styled.button`
   display: inline-block;

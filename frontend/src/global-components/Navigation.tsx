@@ -32,6 +32,7 @@ export const Navigation = () => {
     <Container>
       <StyledLink to="/">
         <h3>Classync</h3>
+        <p>Beta</p>
       </StyledLink>
 
       <DesktopMenu>
@@ -101,6 +102,8 @@ const Container = styled.nav`
 `;
 
 const StyledLink = styled(Link)`
+  display: flex;
+  column-gap: 7px;
   color: white;
   text-decoration: none;
   transition: ease 0.3s;
@@ -108,6 +111,11 @@ const StyledLink = styled(Link)`
 
   &:hover {
     transform: scale(0.94);
+  }
+
+  p {
+    font-size: 12px;
+    transform: translateY(2px);
   }
 `;
 
