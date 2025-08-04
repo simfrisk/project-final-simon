@@ -59,10 +59,10 @@ export const SideMenu = () => {
 const Container = styled.section`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  row-gap: 40px;
   background-color: ${({ theme }) => theme.colors.background};
   height: 85dvh;
-  justify-content: space-between;
-  align-items: center;
   margin-top: 60px;
   display: none;
 

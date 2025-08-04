@@ -1,11 +1,13 @@
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
 import { useProjectStore } from "../../../store/projectStore";
 import { MediaQueries } from "../../../themes/mediaQueries";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
 export const CreateProject = () => {
+  const { classId } = useParams<{ classId: string }>();
   const addProject = useProjectStore((state) => state.addProject);
 
   const [projectName, setProjectName] = useState("");
@@ -29,12 +31,17 @@ export const CreateProject = () => {
   const handleCreateProject = async () => {
     if (!projectName.trim()) return;
 
-    if (videoFile && videoFile.size > MAX_FILE_SIZE) {
-      alert("Video file size exceeds 100MB. Please select a smaller file.");
+    if (!classId) {
+      alert("No class ID found in the route.");
       return;
     }
 
-    await addProject({
+    if (videoFile && videoFile.size > MAX_FILE_SIZE) {
+      alert("Video file size exceeds 100MB.");
+      return;
+    }
+
+    await addProject(classId, {
       projectName,
       projectDescription,
       video: videoFile,
@@ -58,11 +65,7 @@ export const CreateProject = () => {
         value={projectDescription}
         onChange={(e) => setProjectDescription(e.target.value)}
       />
-      <input
-        type="file"
-        accept="video/*"
-        onChange={handleFileChange}
-      />
+      <input type="file" accept="video/*" onChange={handleFileChange} />
       <AddProjectBtn onClick={handleCreateProject}>+ Project</AddProjectBtn>
     </FormContainer>
   );

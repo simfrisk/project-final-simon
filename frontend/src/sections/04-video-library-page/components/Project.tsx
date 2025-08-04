@@ -94,21 +94,31 @@ border-radius: 10px;
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 20px;
+  margin: 20px 20px 5px 20px;
   max-width: 100%;
+  height: 100px;
 
-  p, h3 {
-    white-space: normal;
-    word-break: break-word;
+  h3 {
+    white-space: nowrap;       /* prevent title wrap */
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  p {
+    display: -webkit-box;         /* important for multiline ellipsis */
+    -webkit-line-clamp: 2;        /* limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;          /* allow wrapping inside the lines */
+    margin-top: 8px;
   }
 `;
 
 const CardFooter = styled.div `
 display: flex;
 justify-content: space-between;
-margin: 20px 20px;
+margin: 2px 20px 20px 20px;
 `
 
 
