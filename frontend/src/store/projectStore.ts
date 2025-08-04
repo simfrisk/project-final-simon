@@ -19,7 +19,7 @@ interface ProjectsStore {
   message: string | null;
 
   fetchProjects: (classId: string) => Promise<void>;
-  fetchProjectsWithComments: (classId: string) => Promise<void>;
+  fetchProjectsWithComments: () => Promise<void>;
   fetchProjectById: (projectId: string) => Promise<void>;
   addProject: (classId: string, newProject: ProjectType) => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
