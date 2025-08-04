@@ -3,10 +3,12 @@ import { useParams } from 'react-router-dom';
 import { useProjectStore } from '../../../store/projectStore';
 import { Project } from './Project';
 import { CreateProject } from './CreateProject';
+import { CreateClass } from './CreateClass';
 import styled from 'styled-components';
 import { Loader } from '../../../global-components/loader';
 import { useUserStore } from '../../../store/userStore';
 import { MediaQueries } from '../../../themes/mediaQueries';
+import { useEditingStore } from '../../../store/editStore';
 
 export const ProjectsList = () => {
   const { classId } = useParams();
@@ -16,6 +18,16 @@ export const ProjectsList = () => {
   const error = useProjectStore((state) => state.error);
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
+
+  const isEditingClass = useEditingStore((state) => state.isEditingClass);
+  const isEditingProject = useEditingStore((state) => state.isEditingProject);
+  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+
+  const handleTransparentBackground = () => {
+    setIsEditingClass(false)
+    setIsEditingProject(false)
+  }
 
   useEffect(() => {
     if (classId) {
@@ -50,7 +62,14 @@ export const ProjectsList = () => {
           />
         ))}
       </ProjectWrapper>
-      <CreateWrapper>{userRole === 'teacher' && <CreateProject />}</CreateWrapper>
+        {(isEditingClass || isEditingProject) && (
+      <TransparentBackground onClick={handleTransparentBackground}>
+        <CreateWrapper onClick={(e) => e.stopPropagation()}>
+          {userRole === 'teacher' && isEditingClass && <CreateProject />}
+          {userRole === 'teacher' && isEditingProject && <CreateClass />}
+        </CreateWrapper>
+      </TransparentBackground>
+    )}
     </Container>
   );
 };
@@ -58,6 +77,7 @@ export const ProjectsList = () => {
 // STYLED COMPONENTS
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
@@ -99,8 +119,20 @@ const HeaderWrapper = styled.div`
   width: 100%;
 `;
 
+const TransparentBackground = styled.div `
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(2, 2, 2, 0.621); 
+  z-index: 10; 
+`
+
 const CreateWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Make sure it's on top of other elements */
 `;

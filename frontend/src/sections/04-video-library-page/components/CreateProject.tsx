@@ -55,12 +55,12 @@ export const CreateProject = () => {
 
   return (
     <FormContainer>
-      <Input
+      <ProjectNameInput
         placeholder="Project Name"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
       />
-      <Input
+      <DescriptionTextArea
         placeholder="Project Description"
         value={projectDescription}
         onChange={(e) => setProjectDescription(e.target.value)}
@@ -77,7 +77,7 @@ const FormContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 10px;
-  width: 100%;
+  width: 92vw;
   background-color: #e1e1e1;
   border-radius: 10px;
   padding: 10px;
@@ -87,11 +87,19 @@ const FormContainer = styled.div`
   }
 `;
 
-const Input = styled.input`
+const ProjectNameInput = styled.textarea`
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   width: 100%;
+`;
+
+const DescriptionTextArea = styled.textarea`
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  min-height: 200px;
 `;
 
 const AddProjectBtn = styled.button`

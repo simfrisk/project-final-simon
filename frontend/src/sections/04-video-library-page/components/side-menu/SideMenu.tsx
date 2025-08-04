@@ -1,24 +1,29 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useClassStore } from "../../../../store/classStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 import { Link, useLocation } from "react-router-dom";
+import { useEditingStore } from "../../../../store/editStore";
 
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes);
   const fetchClasses = useClassStore((state) => state.fetchClasses);
-  const addClass = useClassStore((state) => state.addClass);
-  const [classTitle, setClassTitle] = useState("");
   const location = useLocation();
+
+  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+
 
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
 
-  const handleCreateProject = async () => {
-    if (!classTitle.trim()) return;
-    await addClass(classTitle);
-    setClassTitle("");
+  const handleEditClass = async () => {
+    setIsEditingClass(true)
+  };
+
+  const handleEditProject = async () => {
+    setIsEditingProject(true)
   };
 
   return (
@@ -41,13 +46,11 @@ export const SideMenu = () => {
         </TopSection>
         <BottomSection>
           <FormContainer>
-            <Input
-              placeholder="Project Name"
-              value={classTitle}
-              onChange={(e) => setClassTitle(e.target.value)}
-            />
-            <StyledButton type="submit" onClick={handleCreateProject}>
+            <StyledButton type="submit" onClick={handleEditClass}>
               + Class
+            </StyledButton>
+            <StyledButton type="submit" onClick={handleEditProject}>
+              + Project
             </StyledButton>
           </FormContainer>
         </BottomSection>
@@ -98,7 +101,9 @@ const Class = styled(Link)<{ $active: boolean }>`
   }
 `;
 
-const BottomSection = styled.div``;
+const BottomSection = styled.div`
+width: 50%;
+`;
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -110,8 +115,8 @@ const StyledButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  height: 50px;
-  margin: 40px 0;
+  height: 40px;
+  margin: 10px 0;
   text-align: center;
   transition: ease 0.3s;
 
@@ -125,20 +130,10 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
   width: 100%;
-  background-color: #e1e1e1;
   border-radius: 10px;
-  padding: 10px;
 
   @media ${MediaQueries.biggerSizes} {
     width: 100%;
   }
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
 `;
