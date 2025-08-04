@@ -4,15 +4,15 @@ exports.postClass = void 0;
 const Class_1 = require("../models/Class");
 const postClass = async (req, res) => {
     try {
-        const { title } = req.body;
-        if (!title) {
+        const { classTitle } = req.body;
+        if (!classTitle) {
             return res.status(400).json({
                 success: false,
                 response: null,
                 message: "Class title is required",
             });
         }
-        const newClass = new Class_1.ClassModel({ title });
+        const newClass = new Class_1.ClassModel({ classTitle });
         const savedNewClass = await newClass.save();
         return res.status(201).json({
             success: true,

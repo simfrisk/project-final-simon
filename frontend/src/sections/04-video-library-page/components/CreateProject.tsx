@@ -26,7 +26,7 @@ export const CreateProject = () => {
     setVideoFile(file);
   };
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (!projectName.trim()) return;
 
     if (videoFile && videoFile.size > MAX_FILE_SIZE) {
@@ -34,7 +34,7 @@ export const CreateProject = () => {
       return;
     }
 
-    addProject({
+    await addProject({
       projectName,
       projectDescription,
       video: videoFile,

@@ -82,8 +82,8 @@ app.get("/projects/:projectId/comments/private", authenticateUser_1.authenticate
 // Replies
 app.get("/comments/:commentId/replies", getReplies_1.getReplies);
 // Posting
-app.post("/classes", uploadVideo_1.uploadVideo.single("video"), postClass_1.postClass);
-app.post("/classes/:classId/projects", authenticateUser_1.authenticateUser, postProject_1.postProject);
+app.post("/classes", postClass_1.postClass);
+app.post("/classes/:classId/projects", uploadVideo_1.uploadVideo.single("video"), authenticateUser_1.authenticateUser, postProject_1.postProject);
 app.post("/projects/:projectId/comments", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
 app.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);

@@ -1,7 +1,22 @@
 import styled from "styled-components";
 import { MediaQueries } from "../../../../themes/mediaQueries";
+import { useState } from "react";
+import { useClassStore } from "../../../../store/classStore";
 
 export const SideMenu = () => {
+
+  const [classTitle, setClassTitle] = useState("")
+
+  const addClass = useClassStore((state) => state.addClass)
+
+    const handleCreateProject = async () => {
+      if (!classTitle.trim()) return;
+
+      await addClass(classTitle);
+
+      setClassTitle("");
+    };
+
   return (
     <>
     <Container>
@@ -14,7 +29,16 @@ export const SideMenu = () => {
         <p>Backend with Node.js</p>
       </TopSection>
       <BottomSection>
-        <StyledButton type="submit">Create new class</StyledButton>
+
+        <FormContainer>
+          <Input
+            placeholder="Project Name"
+            value={classTitle}
+            onChange={(e) => setClassTitle(e.target.value)}
+          />
+          <StyledButton type="submit" onClick={handleCreateProject}>+ Class</StyledButton>
+        </FormContainer>
+
       </BottomSection>
     </Container>
     </>
@@ -74,4 +98,26 @@ const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(0.98);
   }
+`;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background-color: #e1e1e1;
+  border-radius: 10px;
+  padding: 10px;
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 100%;
+  }
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
 `;

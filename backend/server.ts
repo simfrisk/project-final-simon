@@ -89,8 +89,8 @@ app.get("/projects/:projectId/comments/private", authenticateUser, getPrivateCom
 app.get("/comments/:commentId/replies", getReplies);
 
 // Posting
-app.post("/classes", uploadVideo.single("video"), postClass);
-app.post("/classes/:classId/projects", authenticateUser, postProject);
+app.post("/classes", postClass);
+app.post("/classes/:classId/projects", uploadVideo.single("video"), authenticateUser, postProject);
 app.post("/projects/:projectId/comments", authenticateUser, postCommentById);
 app.post("/comments/:commentId/replies", authenticateUser, postReplyById);
 app.post("/user", uploadImage.single("image"), postUser);
