@@ -9,6 +9,7 @@ import { Loader } from '../../../global-components/loader';
 import { useUserStore } from '../../../store/userStore';
 import { MediaQueries } from '../../../themes/mediaQueries';
 import { useEditingStore } from '../../../store/editStore';
+import { useClassStore } from '../../../store/classStore';
 
 export const ProjectsList = () => {
   const { classId } = useParams();
@@ -24,16 +25,31 @@ export const ProjectsList = () => {
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
 
+  const fetchClassById = useClassStore((state) => state.fetchClassById);
+  const currentClass = useClassStore((state) => state.class); 
+  const classes = useClassStore((state) => state.classes);
+  const fetchClasses = useClassStore((state) => state.fetchClasses);
+
   const handleTransparentBackground = () => {
-    setIsEditingClass(false)
-    setIsEditingProject(false)
-  }
+    setIsEditingClass(false);
+    setIsEditingProject(false);
+  };
 
   useEffect(() => {
-    if (classId) {
-      fetchProjects(classId);
-    }
-  }, [fetchProjects, classId]);
+      if (classId) {
+        fetchProjects(classId);
+        fetchClassById(classId);
+      }
+      fetchClasses(); 
+    }, [fetchProjects, fetchClassById, fetchClasses, classId]);
+
+     const handleEditClass = async () => {
+        setIsEditingClass(true)
+      };
+
+      const handleEditProject = async () => {
+        setIsEditingProject(true)
+      };
 
   if (loading) {
     return (
@@ -49,7 +65,22 @@ export const ProjectsList = () => {
   return (
     <Container>
       <HeaderWrapper>
-        <h2>Class Title</h2> {/* Replace with actual class title if available */}
+         <h2>{currentClass?.classTitle ?? 'Loading class title...'}</h2>
+          <ClassSelect>
+            {classes.map((cls) => (
+              <option key={cls._id} value={cls._id}>
+                {cls.classTitle}
+              </option>
+            ))}
+          </ClassSelect>
+          <ButtonContainer>
+            <StyledButton type="submit" onClick={handleEditClass}>
+            + Class
+          </StyledButton>
+          <StyledButton type="submit" onClick={handleEditProject}>
+            + Project
+          </StyledButton>
+        </ButtonContainer>
       </HeaderWrapper>
       <ProjectWrapper>
         {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
@@ -120,8 +151,64 @@ const LoadingContainer = styled.div`
 
 const HeaderWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  text-align: center;
   width: 100%;
+`;
+
+const ButtonContainer = styled.div `
+`
+
+const ClassSelect = styled.select`
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  width: 205px; /* 👈 Wider dropdown */
+  max-width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}55;
+  }
+
+  option {
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }
+`;
+
+const StyledButton = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  height: 40px;
+  margin: 10px 4px;
+  text-align: center;
+  transition: ease 0.3s;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+    transform: scale(0.98);
+  }
 `;
 
 const TransparentBackground = styled.div `
