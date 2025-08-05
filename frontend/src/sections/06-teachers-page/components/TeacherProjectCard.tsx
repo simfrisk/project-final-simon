@@ -138,6 +138,21 @@ const CardWrapper = styled.div`
   h3 {
     margin: 0;
   }
+
+  h3 {
+    white-space: nowrap;       /* prevent title wrap */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  p {
+    display: -webkit-box;         /* important for multiline ellipsis */
+    -webkit-line-clamp: 2;        /* limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;          /* allow wrapping inside the lines */
+  }
 `;
 
 const CardInner = styled.article`
