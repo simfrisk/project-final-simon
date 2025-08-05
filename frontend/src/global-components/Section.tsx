@@ -17,7 +17,7 @@ export const Section = styled.section<SectionProps>`
       ? "white"
       : props.theme.colors.text};
   width: 100%;
-  padding: 64px 0;
+  padding: 34px 0;
 
   @media ${MediaQueries.biggerSizes} {
     padding: 84px 0;

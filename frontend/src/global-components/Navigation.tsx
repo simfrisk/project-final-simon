@@ -53,6 +53,7 @@ export const Navigation = () => {
       </DesktopMenu>
 
       <HamburgerWrapper $isOpen={isMenuOpen} onClick={toggleMenu}>
+        <p>Profile</p>
         <HamburgerMenu />
       </HamburgerWrapper>
 
@@ -167,7 +168,9 @@ const DesktopMenu = styled.div`
 `;
 
 const HamburgerWrapper = styled.div<MenuProps>`
-  display: block;
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
   z-index: 2000;
 
   @media ${MediaQueries.biggerSizes} {

@@ -1,24 +1,38 @@
+import { useOutletContext } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useProjectStore } from '../../../store/projectStore';
-import { Project } from './Project';
-import { CreateProject } from './CreateProject';
-import { CreateClass } from './CreateClass';
 import styled from 'styled-components';
-import { Loader } from '../../../global-components/loader';
+
+import { useProjectStore } from '../../../store/projectStore';
 import { useUserStore } from '../../../store/userStore';
-import { MediaQueries } from '../../../themes/mediaQueries';
 import { useEditingStore } from '../../../store/editStore';
 import { useClassStore } from '../../../store/classStore';
 
-export const ProjectsList = () => {
-  const { classId } = useParams();
-  const navigate = useNavigate();
+import { Project } from './Project';
+import { CreateProject } from './CreateProject';
+import { CreateClass } from './CreateClass';
+import { Loader } from '../../../global-components/loader';
+import { MediaQueries } from '../../../themes/mediaQueries';
 
-  const projects = useProjectStore((state) => state.projects);
+type Class = {
+  _id: string;
+  classTitle: string;
+};
+
+type OutletContextType = {
+  classId?: string;
+  classes: Class[];
+  handleClassChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+};
+
+export const ProjectsList = () => {
+  const { classId } =
+    useOutletContext<OutletContextType>();
+
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
+  const projects = useProjectStore((state) => state.projects);
   const loading = useProjectStore((state) => state.loading);
   const error = useProjectStore((state) => state.error);
+
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
 
@@ -29,34 +43,21 @@ export const ProjectsList = () => {
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
   const currentClass = useClassStore((state) => state.class);
-  const classes = useClassStore((state) => state.classes);
-  const fetchClasses = useClassStore((state) => state.fetchClasses);
-
-  const handleTransparentBackground = () => {
-    setIsEditingClass(false);
-    setIsEditingProject(false);
-  };
 
   useEffect(() => {
     if (classId) {
       fetchProjects(classId);
       fetchClassById(classId);
     }
-    fetchClasses();
-  }, [fetchProjects, fetchClassById, fetchClasses, classId]);
+  }, [fetchProjects, fetchClassById, classId]);
 
-  const handleEditClass = () => {
-    setIsEditingClass(true);
+  const handleTransparentBackground = () => {
+    setIsEditingClass(false);
+    setIsEditingProject(false);
   };
 
-  const handleEditProject = () => {
-    setIsEditingProject(true);
-  };
-
-  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedClassId = e.target.value;
-    navigate(`/library/classes/${selectedClassId}/projects`);
-  };
+  const handleEditClass = () => setIsEditingClass(true);
+  const handleEditProject = () => setIsEditingProject(true);
 
   if (loading) {
     return (
@@ -73,14 +74,6 @@ export const ProjectsList = () => {
     <Container>
       <HeaderWrapper>
         <h2>{currentClass?.classTitle ?? 'Loading class title...'}</h2>
-
-        <ClassSelect value={classId} onChange={handleClassChange}>
-          {classes.map((cls) => (
-            <option key={cls._id} value={cls._id}>
-              {cls.classTitle}
-            </option>
-          ))}
-        </ClassSelect>
 
         <ButtonContainer>
           <StyledButton type="button" onClick={handleEditClass}>
@@ -163,12 +156,14 @@ const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   width: 100%;
 `;
 
-const ButtonContainer = styled.div``;
+const ButtonContainer = styled.div`
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }`;
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -207,35 +202,4 @@ const CreateWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-`;
-
-const ClassSelect = styled.select`
-  text-align: center;
-  padding: 10px 16px;
-  font-size: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  cursor: pointer;
-  width: 203px; 
-  max-width: 100%;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primaryHover};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}55;
-  }
-
-  option {
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    display: inline-block;
-  }
 `;
