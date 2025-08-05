@@ -73,8 +73,9 @@ export const ProjectsList = () => {
   return (
     <Container>
       <HeaderWrapper>
-        <h2>{currentClass?.classTitle ?? 'Loading class title...'}</h2>
+        <ClassTitle>{currentClass?.classTitle ?? 'Loading class title...'}</ClassTitle>
 
+        {userRole === 'teacher' && (
         <ButtonContainer>
           <StyledButton type="button" onClick={handleEditClass}>
             + Class
@@ -82,7 +83,7 @@ export const ProjectsList = () => {
           <StyledButton type="button" onClick={handleEditProject}>
             + Project
           </StyledButton>
-        </ButtonContainer>
+        </ButtonContainer>)}
       </HeaderWrapper>
 
       <ProjectWrapper>
@@ -159,6 +160,14 @@ const HeaderWrapper = styled.div`
   text-align: center;
   width: 100%;
 `;
+
+const ClassTitle = styled.h2 `
+display: none;
+
+@media ${MediaQueries.biggerSizes} {
+  display: block;
+}
+`
 
 const ButtonContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {

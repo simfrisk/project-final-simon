@@ -5,6 +5,7 @@ import { MediaQueries } from "../../../../themes/mediaQueries";
 import { Link, useLocation } from "react-router-dom";
 import { useEditingStore } from "../../../../store/editStore";
 import { useNavigate, useParams } from 'react-router-dom';
+import { useUserStore } from "../../../../store/userStore";
 
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes);
@@ -13,6 +14,9 @@ export const SideMenu = () => {
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+
+  const user = useUserStore((state) => state.user);
+  const userRole = user?.role;
 
 
   useEffect(() => {
@@ -54,6 +58,7 @@ export const SideMenu = () => {
             })}
           </ProjectWrapper>
         </TopSection>
+        {userRole === 'teacher' && (
         <BottomSection>
           <FormContainer>
             <StyledButton type="submit" onClick={handleEditClass}>
@@ -63,7 +68,7 @@ export const SideMenu = () => {
               + Project
             </StyledButton>
           </FormContainer>
-        </BottomSection>
+        </BottomSection>)}
       </Container>
     </>
   );

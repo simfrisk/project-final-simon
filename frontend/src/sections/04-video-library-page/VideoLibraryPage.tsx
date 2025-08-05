@@ -77,7 +77,7 @@ const TopBar = styled.div`
 const ClassSelect = styled.select`
   text-align: center;
   padding: 10px 16px;
-  font-size: 16px;
+  font-size: 24px;
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 8px;
   background-color: ${({ theme }) => theme.colors.background};
