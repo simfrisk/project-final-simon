@@ -4,6 +4,7 @@ import { useClassStore } from "../../../../store/classStore";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 import { Link, useLocation } from "react-router-dom";
 import { useEditingStore } from "../../../../store/editStore";
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes);
@@ -17,6 +18,15 @@ export const SideMenu = () => {
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
+
+  const { classId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!classId && classes.length > 0) {
+      navigate(`/library/classes/${classes[0]._id}/projects`, { replace: true });
+    }
+  }, [classId, classes, navigate]);
 
   const handleEditClass = async () => {
     setIsEditingClass(true)
