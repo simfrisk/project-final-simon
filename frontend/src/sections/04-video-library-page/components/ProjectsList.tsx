@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../../../store/projectStore';
 import { Project } from './Project';
 import { CreateProject } from './CreateProject';
@@ -13,6 +13,8 @@ import { useClassStore } from '../../../store/classStore';
 
 export const ProjectsList = () => {
   const { classId } = useParams();
+  const navigate = useNavigate();
+
   const projects = useProjectStore((state) => state.projects);
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
   const loading = useProjectStore((state) => state.loading);
@@ -26,7 +28,7 @@ export const ProjectsList = () => {
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
-  const currentClass = useClassStore((state) => state.class); 
+  const currentClass = useClassStore((state) => state.class);
   const classes = useClassStore((state) => state.classes);
   const fetchClasses = useClassStore((state) => state.fetchClasses);
 
@@ -36,20 +38,25 @@ export const ProjectsList = () => {
   };
 
   useEffect(() => {
-      if (classId) {
-        fetchProjects(classId);
-        fetchClassById(classId);
-      }
-      fetchClasses(); 
-    }, [fetchProjects, fetchClassById, fetchClasses, classId]);
+    if (classId) {
+      fetchProjects(classId);
+      fetchClassById(classId);
+    }
+    fetchClasses();
+  }, [fetchProjects, fetchClassById, fetchClasses, classId]);
 
-     const handleEditClass = async () => {
-        setIsEditingClass(true)
-      };
+  const handleEditClass = () => {
+    setIsEditingClass(true);
+  };
 
-      const handleEditProject = async () => {
-        setIsEditingProject(true)
-      };
+  const handleEditProject = () => {
+    setIsEditingProject(true);
+  };
+
+  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedClassId = e.target.value;
+    navigate(`/library/classes/${selectedClassId}/projects`);
+  };
 
   if (loading) {
     return (
@@ -65,23 +72,26 @@ export const ProjectsList = () => {
   return (
     <Container>
       <HeaderWrapper>
-         <h2>{currentClass?.classTitle ?? 'Loading class title...'}</h2>
-          <ClassSelect>
-            {classes.map((cls) => (
-              <option key={cls._id} value={cls._id}>
-                {cls.classTitle}
-              </option>
-            ))}
-          </ClassSelect>
-          <ButtonContainer>
-            <StyledButton type="submit" onClick={handleEditClass}>
+        <h2>{currentClass?.classTitle ?? 'Loading class title...'}</h2>
+
+        <ClassSelect value={classId} onChange={handleClassChange}>
+          {classes.map((cls) => (
+            <option key={cls._id} value={cls._id}>
+              {cls.classTitle}
+            </option>
+          ))}
+        </ClassSelect>
+
+        <ButtonContainer>
+          <StyledButton type="button" onClick={handleEditClass}>
             + Class
           </StyledButton>
-          <StyledButton type="submit" onClick={handleEditProject}>
+          <StyledButton type="button" onClick={handleEditProject}>
             + Project
           </StyledButton>
         </ButtonContainer>
       </HeaderWrapper>
+
       <ProjectWrapper>
         {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
           <Project
@@ -93,14 +103,15 @@ export const ProjectsList = () => {
           />
         ))}
       </ProjectWrapper>
-        {(isEditingClass || isEditingProject) && (
-      <TransparentBackground onClick={handleTransparentBackground}>
-        <CreateWrapper onClick={(e) => e.stopPropagation()}>
-          {userRole === 'teacher' && isEditingClass && <CreateClass />}
-          {userRole === 'teacher' && isEditingProject && <CreateProject />}
-        </CreateWrapper>
-      </TransparentBackground>
-    )}
+
+      {(isEditingClass || isEditingProject) && (
+        <TransparentBackground onClick={handleTransparentBackground}>
+          <CreateWrapper onClick={(e) => e.stopPropagation()}>
+            {userRole === 'teacher' && isEditingClass && <CreateClass />}
+            {userRole === 'teacher' && isEditingProject && <CreateProject />}
+          </CreateWrapper>
+        </TransparentBackground>
+      )}
     </Container>
   );
 };
@@ -112,7 +123,6 @@ const Container = styled.div`
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  flex-wrap: wrap;
   gap: 24px;
   padding: 0 20px;
   box-sizing: border-box;
@@ -145,7 +155,7 @@ const LoadingContainer = styled.div`
   width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
-  width: 80%;
+    width: 80%;
   }
 `;
 
@@ -158,37 +168,7 @@ const HeaderWrapper = styled.div`
   width: 100%;
 `;
 
-const ButtonContainer = styled.div `
-`
-
-const ClassSelect = styled.select`
-  text-align: center;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  cursor: pointer;
-  width: 205px; /* 👈 Wider dropdown */
-  max-width: 100%;
-  transition: border-color 0.3s, box-shadow 0.3s;
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primaryHover};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}55;
-  }
-
-  option {
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    display: none;
-  }
-`;
+const ButtonContainer = styled.div``;
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -211,20 +191,51 @@ const StyledButton = styled.button`
   }
 `;
 
-const TransparentBackground = styled.div `
+const TransparentBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(2, 2, 2, 0.621); 
-  z-index: 10; 
-`
+  background-color: rgba(2, 2, 2, 0.621);
+  z-index: 10;
+`;
 
 const CreateWrapper = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000; /* Make sure it's on top of other elements */
+  z-index: 1000;
+`;
+
+const ClassSelect = styled.select`
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  width: 203px; 
+  max-width: 100%;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}55;
+  }
+
+  option {
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    display: inline-block;
+  }
 `;
