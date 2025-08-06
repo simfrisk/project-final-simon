@@ -153,6 +153,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   height: 94dvh;
+  margin-bottom: 40px;
 `;
 
 const SideContainer = styled.section`
