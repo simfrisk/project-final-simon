@@ -57,7 +57,9 @@ export const ReviewPage = () => {
           
         </RightColumn>
 
+          {activeTab !== "description" && (
           <StyledCommentForm />
+          )}
 
       </Container>
     </>
