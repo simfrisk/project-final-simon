@@ -4,18 +4,23 @@ import { MediaQueries } from "../themes/mediaQueries";
 
 interface SectionProps {
   secondarySection?: boolean;
+  thirdSection?: boolean;
   children?: React.ReactNode;
 }
 
 export const Section = styled.section<SectionProps>`
-  background-color: ${(props) =>
-    props.secondarySection
-      ? props.theme.colors.primary
-      : props.theme.colors.background};
-  color: ${(props) =>
-    props.secondarySection
-      ? "white"
-      : props.theme.colors.text};
+  background-color: ${(props) => {
+    if (props.thirdSection) return "#e8e8e8"; // Light gray background
+    if (props.secondarySection) return props.theme.colors.primary;
+    return props.theme.colors.background;
+  }};
+
+  color: ${(props) => {
+    if (props.thirdSection) return props.theme.colors.text; // or customize if needed
+    if (props.secondarySection) return "white";
+    return props.theme.colors.text;
+  }};
+
   width: 100%;
   padding: 34px 0;
 

@@ -47,6 +47,13 @@ p {
   margin: 4px 0;
 }
 
+strong {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.6;
+  margin: 4px 0;
+}
+
 small {
   font-size: 14px;
   font-weight: 400;
