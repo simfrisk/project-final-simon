@@ -13,6 +13,7 @@ import { MediaQueries } from '../../../../../themes/mediaQueries';
 import { unFormatTime } from '../../video-section/utils/unFormatTime';
 import { useUserStore } from '../../../../../store/userStore';
 import { useTabStore } from '../../../../../store/tabStore';
+import { useVideoStore } from '../../../../../store/videoStore';
 
 export const CommentSection = () => {
   const activeTab = useTabStore((state) => state.activeTab);
@@ -88,8 +89,11 @@ export const CommentSection = () => {
           key={_id}
           $role={commentCreatedBy?.role}
           onClick={() => {
+            const seconds = unFormatTime(timeStamp);
             setSelectedTimeStamp(timeStamp);
             commentStore.getState().setSelectedCommentId(_id);
+            useVideoStore.getState().setTimeCode(seconds);
+            useVideoStore.getState().incrementMarkerTrigger();
           }}
           tabIndex={0}
           className={selectedCommentId === _id ? "active-comment" : ""}

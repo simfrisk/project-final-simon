@@ -1,5 +1,4 @@
 //#region ---- Imports -----
-
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
@@ -11,20 +10,18 @@ import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
 import { useVideoStore } from '../../../../store/videoStore';
 import { useTabStore } from '../../../../store/tabStore';
-
 //#endregion
 
 export const VideoSection = () => {
   const activeTab = useTabStore((state) => state.activeTab);
 
   const timelineRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
   const [volume, setVolume] = useState(1);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  // Zustand: Get video store state/actions
   const {
     isPlaying,
     togglePlay,
@@ -32,11 +29,10 @@ export const VideoSection = () => {
     setVideoRef,
     setTimeCode,
     currentTime,
+    markerTriggerCount,
   } = useVideoStore();
 
   const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
-  const selectedTimecode = unFormatTime(selectedTimeStamp ?? "00:00");
-
   const messages: MessageType[] = commentStore((state) =>
     activeTab === "private" ? state.privateComments : state.projectComments
   );
@@ -45,7 +41,6 @@ export const VideoSection = () => {
   const formattedTime = useTimecode((state) => state.timecode);
 
   const projectVideo = useProjectStore((state) => state.project?.video);
-
   const duration = formatTime(videoEl?.duration || 0);
 
   // Sync local videoRef with Zustand store
@@ -102,17 +97,14 @@ export const VideoSection = () => {
     return () => video.removeEventListener("timeupdate", handleTimeUpdate);
   }, [setTimeCode, setTimecode]);
 
-  // Handle comment jump
-  const lastSeekedTime = useRef<number | null>(null);
+  // ✅ Seek video when markerTriggerCount changes
   useEffect(() => {
-    if (selectedTimecode !== null && selectedTimecode !== lastSeekedTime.current) {
-      if (videoRef.current) {
-        videoRef.current.currentTime = selectedTimecode;
-        videoRef.current.pause();
-      }
-      lastSeekedTime.current = selectedTimecode;
-    }
-  }, [selectedTimecode]);
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = currentTime;
+    video.pause(); // Optional: remove this line to auto-play after seek
+  }, [markerTriggerCount]);
 
   // Volume
   const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,13 +175,12 @@ export const VideoSection = () => {
                 style={{ left: `${percent}%` }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (videoRef.current) {
-                    videoRef.current.currentTime = timeInSeconds;
-                    videoRef.current.pause();
-                  }
 
                   commentStore.getState().setSelectedCommentId(_id);
                   commentStore.getState().setSelectedTimeStamp(timeStamp);
+
+                  useVideoStore.getState().setTimeCode(timeInSeconds);
+                  useVideoStore.getState().incrementMarkerTrigger();
                 }}
               >
                 <Marker />
@@ -201,8 +192,6 @@ export const VideoSection = () => {
     </Container>
   );
 };
-
-//#endregion
 
 //#region ---- Styling -----
 
