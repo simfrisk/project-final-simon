@@ -3,62 +3,59 @@
 import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { PlayPauseButton } from './components/PlayPauseBtn';
-import { formatTime } from './utils/formatTime'
+import { formatTime } from './utils/formatTime';
 import { unFormatTime } from './utils/unFormatTime';
-import { useTogglePlay } from './utils/togglePlay';
-import { useChangeVolume } from './utils/changeVolume'
-import { getHandleTimelineClick } from './utils/handleTimelineClick'
-import { useGoToTime } from './utils/goToTime'
-import { useVideoProgress } from './utils/useVideoProgress';
 import { commentStore } from '../../../../store/commentStore';
 import type { MessageType } from '../../../../store/commentStore';
 import { useTimecode } from '../../../../store/timeCodeStore';
 import { useProjectStore } from '../../../../store/projectStore';
-import { useVideoStore } from '../../../../store/videoStore';  
+import { useVideoStore } from '../../../../store/videoStore';
 import { useTabStore } from '../../../../store/tabStore';
 
 //#endregion
 
-//#region ---- Functions -----
-
 export const VideoSection = () => {
   const activeTab = useTabStore((state) => state.activeTab);
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = useState(1);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
-  // Zustand store values
-  const storedTime = useVideoStore((state) => state.currentTime);
-  const setTimeCode = useVideoStore((state) => state.setTimeCode);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  //This is for when clicking on comments to get the time here
+  // Zustand: Get video store state/actions
+  const {
+    isPlaying,
+    togglePlay,
+    videoRef: videoEl,
+    setVideoRef,
+    setTimeCode,
+    currentTime,
+  } = useVideoStore();
+
   const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
   const selectedTimecode = unFormatTime(selectedTimeStamp ?? "00:00");
 
- 
   const messages: MessageType[] = commentStore((state) =>
     activeTab === "private" ? state.privateComments : state.projectComments
   );
 
-  //Controls the playback
-  const { progress, isPlaying } = useVideoProgress(videoRef);
-
-  //Controls
-  const togglePlay = useTogglePlay(videoRef);
-  const changeVolume = useChangeVolume(videoRef, setVolume);
-  const handleTimelineClick = getHandleTimelineClick(videoRef, timelineRef);
-  const goToTime = useGoToTime(videoRef);
-
-  const currentTime = useTimecode((state) => state.timecode);
   const setTimecode = useTimecode((state) => state.setTimecode);
-  const duration = formatTime(videoRef.current?.duration || 0);
+  const formattedTime = useTimecode((state) => state.timecode);
 
   const projectVideo = useProjectStore((state) => state.project?.video);
 
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const duration = formatTime(videoEl?.duration || 0);
 
+  // Sync local videoRef with Zustand store
+  useEffect(() => {
+    if (videoRef.current) {
+      setVideoRef(videoRef.current);
+    }
+  }, [setVideoRef]);
+
+  // Set video URL on project load
   useEffect(() => {
     if (!projectVideo) {
       setVideoUrl(null);
@@ -70,98 +67,81 @@ export const VideoSection = () => {
     } else if (projectVideo instanceof File) {
       const url = URL.createObjectURL(projectVideo);
       setVideoUrl(url);
-
-      return () => {
-        URL.revokeObjectURL(url);
-      };
+      return () => URL.revokeObjectURL(url);
     }
   }, [projectVideo]);
 
+  // Loaded metadata
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const handleLoadedMetadata = () => {
       setVideoLoaded(true);
-
-      if (storedTime && !isNaN(storedTime)) {
-        goToTime(storedTime);
+      if (currentTime && !isNaN(currentTime)) {
+        video.currentTime = currentTime;
         video.pause();
       }
     };
 
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+    return () => video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+  }, [currentTime]);
 
-    return () => {
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    };
-  }, [goToTime, storedTime]);
-
+  // Update current time and formatted time on play
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const handleTimeUpdate = () => {
       setTimeCode(video.currentTime);
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-    };
-  }, [setTimeCode]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const handleTimeUpdate = () => {
       setTimecode(formatTime(video.currentTime));
     };
 
-    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+  }, [setTimeCode, setTimecode]);
 
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-    };
-  }, [setTimecode]);
-
+  // Handle comment jump
   const lastSeekedTime = useRef<number | null>(null);
-
   useEffect(() => {
-    if (
-      selectedTimecode !== null &&
-      selectedTimecode !== lastSeekedTime.current
-    ) {
-      goToTime(selectedTimecode);
-
+    if (selectedTimecode !== null && selectedTimecode !== lastSeekedTime.current) {
       if (videoRef.current) {
+        videoRef.current.currentTime = selectedTimecode;
         videoRef.current.pause();
       }
-
-      lastSeekedTime.current = selectedTimecode; 
+      lastSeekedTime.current = selectedTimecode;
     }
-  }, [selectedTimecode, goToTime]);
+  }, [selectedTimecode]);
 
-  useEffect(() => {
+  // Volume
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+    }
+  };
+
+  // Seek via timeline
+  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const timeline = timelineRef.current;
     const video = videoRef.current;
-    if (!video) return;
+    if (!timeline || !video || !video.duration) return;
 
-    const handleLoadedMetadata = () => {
-      setVideoLoaded(true);
-    };
+    const rect = timeline.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percent = clickX / rect.width;
+    const newTime = percent * video.duration;
+    video.currentTime = newTime;
+  };
 
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-
-    return () => {
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    };
-  }, []);
+  const progress =
+    videoRef.current && videoRef.current.duration
+      ? (videoRef.current.currentTime / videoRef.current.duration) * 100
+      : 0;
 
   //#endregion
-
-  //#region ---- Return -----
 
   return (
     <Container>
@@ -184,36 +164,39 @@ export const VideoSection = () => {
           />
         </VolumeControl>
         <TimeDisplay>
-          {currentTime} / {duration}
+          {formattedTime} / {duration}
         </TimeDisplay>
       </Controls>
 
       <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
         <Progress style={{ width: `${progress}%` }} />
+        {videoLoaded &&
+          messages.map(({ _id, timeStamp, content }) => {
+            const timeInSeconds = unFormatTime(timeStamp);
+            const percent = videoEl?.duration
+              ? (timeInSeconds / videoEl.duration) * 100
+              : 0;
 
-        {videoLoaded && messages.map(({ _id, timeStamp, content }) => {
-          const timeInSeconds = unFormatTime(timeStamp);
-          const percent = videoRef.current?.duration
-            ? (timeInSeconds / videoRef.current.duration) * 100
-            : 0;
+            return (
+              <MarkerWrapper
+                key={_id}
+                style={{ left: `${percent}%` }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = timeInSeconds;
+                    videoRef.current.pause();
+                  }
 
-          return (
-            <MarkerWrapper
-              key={_id}
-              style={{ left: `${percent}%` }}
-              onClick={(e) => {
-                e.stopPropagation();
-                goToTime(timeInSeconds);
-
-              commentStore.getState().setSelectedCommentId(_id);
-              commentStore.getState().setSelectedTimeStamp(timeStamp);
-            }}
-          >
-              <Marker />
-              <MarkerMessage>{content}</MarkerMessage>
-            </MarkerWrapper>
-          );
-        })}
+                  commentStore.getState().setSelectedCommentId(_id);
+                  commentStore.getState().setSelectedTimeStamp(timeStamp);
+                }}
+              >
+                <Marker />
+                <MarkerMessage>{content}</MarkerMessage>
+              </MarkerWrapper>
+            );
+          })}
       </PlayBar>
     </Container>
   );

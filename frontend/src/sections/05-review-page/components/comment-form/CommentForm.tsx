@@ -15,6 +15,7 @@ export const CommentForm = () => {
   const [text, setText] = useState('');
   const addMessage = commentStore((state) => state.addMessage);
   const timecode = useTimecode((state) => state.timecode);
+  const stopVideo = useVideoStore((state) => state.stopVideo)
 
   const project = useProjectStore((state) => state.project);
   const projectId = project?._id; 
@@ -41,6 +42,7 @@ export const CommentForm = () => {
         placeholder="Leave your comment here..."
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onClick={stopVideo}
       />
 
       <Footer>
