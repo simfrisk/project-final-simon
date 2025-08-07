@@ -9,6 +9,8 @@ export interface UserType extends Document {
   role: string
   profileImage: string
   accessToken: string
+  likedComments: Types.ObjectId[];
+
 }
 
 const UserSchema = new Schema<UserType>({
@@ -37,7 +39,8 @@ const UserSchema = new Schema<UserType>({
   accessToken: {
     type: String,
     default: () => crypto.randomBytes(128).toString("hex")
-  }
+  },
+  likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment" }]
 })
 
 export const UserModel = model<UserType>("User", UserSchema);

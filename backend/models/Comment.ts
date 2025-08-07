@@ -10,7 +10,8 @@ export interface CommentType {
   isChecked: boolean;
   replies: Types.ObjectId[];
   commentCreatedBy: Types.ObjectId;
-  commentType: CommentCategory
+  commentType: CommentCategory;
+  likes: Types.ObjectId[];
 }
 
 const CommentSchema = new Schema<CommentType>({
@@ -25,7 +26,8 @@ const CommentSchema = new Schema<CommentType>({
     type: String,
     enum: ["question", "public", "private"],
     required: true,
-  }
+  },
+  likes: [{ type: Schema.Types.ObjectId, ref: "User" }]
 });
 
 export const CommentModel = model<CommentType>("Comment", CommentSchema);

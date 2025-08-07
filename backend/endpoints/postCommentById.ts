@@ -41,6 +41,7 @@ export const postCommentById = async (
       commentCreatedBy: req.user?._id,
       commentType,
       replies: [],
+      likes: [],
     });
 
     // Save the comment
