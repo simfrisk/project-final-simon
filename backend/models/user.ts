@@ -10,6 +10,7 @@ export interface UserType extends Document {
   profileImage: string
   accessToken: string
   likedComments: Types.ObjectId[];
+  likedReplies: Types.ObjectId[];
 
 }
 
@@ -40,7 +41,8 @@ const UserSchema = new Schema<UserType>({
     type: String,
     default: () => crypto.randomBytes(128).toString("hex")
   },
-  likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }]
+  likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
+  likedReplies: [{ type: Schema.Types.ObjectId, ref: "Reply", default: [] }],
 })
 
 export const UserModel = model<UserType>("User", UserSchema);

@@ -27,6 +27,7 @@ const postReplyById = async (req, res) => {
             commentId: comment._id,
             isChecked: false,
             replyCreatedBy: req.user?._id,
+            replyLikes: [],
         });
         await newReply.save();
         await newReply.populate("replyCreatedBy", "name profileImage role");

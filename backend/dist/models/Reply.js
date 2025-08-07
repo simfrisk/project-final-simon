@@ -7,6 +7,7 @@ const ReplySchema = new mongoose_1.Schema({
     commentId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Comment", required: true },
     createdAt: { type: Date, default: Date.now },
     isChecked: { type: Boolean, required: true },
-    replyCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true }
+    replyCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    replyLikes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }]
 });
 exports.Reply = (0, mongoose_1.model)("Reply", ReplySchema);

@@ -31,6 +31,7 @@ export const postReplyById = async (req: Request, res: Response): Promise<Respon
       commentId: comment._id,
       isChecked: false,
       replyCreatedBy: req.user?._id,
+      replyLikes: [],
 
     });
 
