@@ -389,6 +389,7 @@ margin: 0;
 
 const ActionButtonIcon = styled.button`
   display: flex;
+  color: ${({ theme }) => theme.colors.primary};
   column-gap: 10px;
   transition: ease 0.3s;
   background: none;
