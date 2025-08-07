@@ -11,7 +11,7 @@ export interface ReplyType {
     _id: string;
     name: string;
     profileImage: string;
-    role?: 'teacher' | 'student' | string;
+    role?: "teacher" | "student" | string;
   };
 }
 
@@ -26,10 +26,11 @@ export interface MessageType {
     _id: string;
     name: string;
     profileImage: string;
-    role?: 'teacher' | 'student' | string;
+    role?: "teacher" | "student" | string;
   };
   commentType: string;
   replies?: ReplyType[];
+  likesCount?: number;
 }
 
 interface UpdateCommentInput {
@@ -49,13 +50,14 @@ interface MessageStore {
   projectComments: MessageType[];
   privateComments: MessageType[];
   selectedTimeStamp: string | null;
-  setSelectedTimeStamp: (stamp: string) => void;
   selectedCommentId: string | null;
+  setSelectedTimeStamp: (stamp: string) => void;
   setSelectedCommentId: (id: string | null) => void;
   addMessage: (msg: NewMessageType) => Promise<void>;
   addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>;
   clearMessages: () => void;
   toggleCheck: (commentId: string) => Promise<void>;
+  toggleLike: (commentId: string) => Promise<void>;
   updateComment: (update: UpdateCommentInput) => Promise<void>;
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
@@ -78,6 +80,7 @@ const mapComment = (item: any): MessageType => ({
     role: item.commentCreatedBy.role,
   },
   commentType: item.commentType,
+  likesCount: item.likes?.length || 0,
   replies: (item.replies || []).map((reply: any) => ({
     _id: reply._id,
     content: reply.content,
@@ -214,9 +217,7 @@ export const commentStore = create<MessageStore>()(
           if (!response.ok) throw new Error("Failed to toggle isChecked");
 
           const data = await response.json();
-          if (!data.success || !data.response) {
-            throw new Error("No updated comment returned");
-          }
+          if (!data.success || !data.response) throw new Error("No updated comment returned");
 
           const updatedComment = mapComment(data.response);
 
@@ -232,6 +233,48 @@ export const commentStore = create<MessageStore>()(
           }));
         } catch (err: any) {
           console.error("Toggle check failed:", err.message);
+        }
+      },
+
+      toggleLike: async (commentId) => {
+        try {
+          const token = getToken();
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/comments/${commentId}/likes`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: token } : {}),
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to toggle like");
+
+          const data = await response.json();
+
+          if (!data.success) throw new Error("Like toggle failed");
+
+          set((state) => {
+            const updateComments = (comments: MessageType[]) =>
+              comments.map((msg) =>
+                msg._id === commentId
+                  ? {
+                    ...msg,
+                    likesCount: data.totalLikes,
+                  }
+                  : msg
+              );
+
+            return {
+              projectComments: updateComments(state.projectComments),
+              allComments: updateComments(state.allComments),
+              privateComments: updateComments(state.privateComments),
+            };
+          });
+        } catch (err: any) {
+          console.error("Like toggle failed:", err.message);
         }
       },
 

@@ -14,6 +14,7 @@ import { TeachersPage } from './sections/06-teachers-page/TeachersPage';
 import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryPage';
 import { ChooseClassMessage } from './sections/04-video-library-page/components/ChooseClassMessage';  // You’ll create this
 import { ProjectsList } from './sections/04-video-library-page/components/ProjectsList';       // And this
+import "./utils/moment-config"
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);

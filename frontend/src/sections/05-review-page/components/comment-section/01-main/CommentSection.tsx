@@ -38,6 +38,7 @@ export const CommentSection = () => {
   );
 
   const toggleCheck = commentStore((state) => state.toggleCheck);
+  const toggleLike = commentStore((state) => state.toggleLike)
   const deleteComment = commentStore((state) => state.deleteComment);
   const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp);
 
@@ -81,10 +82,11 @@ export const CommentSection = () => {
     setEditingCommentId(null);
     setEditedContent('');
   };
+  
 
   return (
     <CommentListContainer>
-      {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy }) => (
+      {messages.map(({ _id, content, createdAt, timeStamp, replies, isChecked, commentCreatedBy, likesCount }) => (
         <Card
           key={_id}
           $role={commentCreatedBy?.role}
@@ -158,8 +160,9 @@ export const CommentSection = () => {
           <CardFooter>
             <ReactionGroup>
               <ActionButton onClick={() => setReplyToCommentId(_id)}>Reply</ActionButton>
-              <ActionButtonIcon>
+              <ActionButtonIcon onClick={() => toggleLike(_id)}>
                 <img src="/icons/like.svg" alt="Like button" />
+                <LikeCount count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
               </ActionButtonIcon>
             </ReactionGroup>
             {(user?.role === 'teacher' || user?.userId === commentCreatedBy?._id) && (
@@ -378,7 +381,15 @@ const ActionButton = styled.button`
   }
 `;
 
+const LikeCount = styled.p<{ count: number }>`
+visibility: ${({ count }) => (count > 0 ? 'inline-block' : 'hidden')};
+font-size: 20px;
+margin: 0;
+`;
+
 const ActionButtonIcon = styled.button`
+  display: flex;
+  column-gap: 10px;
   transition: ease 0.3s;
   background: none;
   border: none;
