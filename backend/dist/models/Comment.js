@@ -15,6 +15,6 @@ const CommentSchema = new mongoose_1.Schema({
         enum: ["question", "public", "private"],
         required: true,
     },
-    likes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User" }]
+    likes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }]
 });
 exports.CommentModel = (0, mongoose_1.model)("Comment", CommentSchema);

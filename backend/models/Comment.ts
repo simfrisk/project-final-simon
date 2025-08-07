@@ -27,7 +27,7 @@ const CommentSchema = new Schema<CommentType>({
     enum: ["question", "public", "private"],
     required: true,
   },
-  likes: [{ type: Schema.Types.ObjectId, ref: "User" }]
+  likes: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }]
 });
 
 export const CommentModel = model<CommentType>("Comment", CommentSchema);

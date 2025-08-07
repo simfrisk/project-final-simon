@@ -33,6 +33,6 @@ const UserSchema = new mongoose_1.Schema({
         type: String,
         default: () => crypto_1.default.randomBytes(128).toString("hex")
     },
-    likedComments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment" }]
+    likedComments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment", default: [] }]
 });
 exports.UserModel = (0, mongoose_1.model)("User", UserSchema);

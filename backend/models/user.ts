@@ -40,7 +40,7 @@ const UserSchema = new Schema<UserType>({
     type: String,
     default: () => crypto.randomBytes(128).toString("hex")
   },
-  likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment" }]
+  likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }]
 })
 
 export const UserModel = model<UserType>("User", UserSchema);
