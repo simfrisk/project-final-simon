@@ -264,6 +264,8 @@ const ActionButton = styled.button`
 `;
 
 const ActionButtonIcon = styled.button`
+  display: flex;
+  column-gap: 15px;
   background: none;
   border: none;
   padding: 0;
