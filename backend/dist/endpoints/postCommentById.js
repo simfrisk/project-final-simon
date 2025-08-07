@@ -34,6 +34,7 @@ const postCommentById = async (req, res) => {
             commentCreatedBy: req.user?._id,
             commentType,
             replies: [],
+            likes: [],
         });
         // Save the comment
         await newComment.save();

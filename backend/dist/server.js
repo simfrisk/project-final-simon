@@ -36,6 +36,7 @@ const getPrivateComments_1 = require("./endpoints/getPrivateComments");
 const deleteClass_1 = require("./endpoints/deleteClass");
 const getClasses_1 = require("./endpoints/getClasses");
 const getClassById_1 = require("./endpoints/getClassById");
+const postLike_1 = require("./endpoints/postLike");
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
@@ -87,6 +88,7 @@ app.post("/classes/:classId/projects", uploadVideo_1.uploadVideo.single("video")
 app.post("/projects/:projectId/comments", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
 app.post("/comments/:commentId/replies", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
 app.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
+app.post("/comments/:commentId/likes", authenticateUser_1.authenticateUser, postLike_1.postLike);
 app.post("/session", postSession_1.postSession);
 // Patch
 app.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1.patchReply);
