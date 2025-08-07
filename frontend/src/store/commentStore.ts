@@ -13,6 +13,7 @@ export interface ReplyType {
     profileImage: string;
     role?: "teacher" | "student" | string;
   };
+  likesCount?: number;
 }
 
 export interface MessageType {

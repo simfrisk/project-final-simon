@@ -35,6 +35,7 @@ import { deleteClass } from "./endpoints/deleteClass";
 import { getClasses } from "./endpoints/getClasses";
 import { getClassById } from "./endpoints/getClassById";
 import { postLike } from "./endpoints/postLike";
+import { postReplyLike } from "./endpoints/postReplyLike";
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose.connect(mongoUrl);
@@ -96,6 +97,7 @@ app.post("/projects/:projectId/comments", authenticateUser, postCommentById);
 app.post("/comments/:commentId/replies", authenticateUser, postReplyById);
 app.post("/user", uploadImage.single("image"), postUser);
 app.post("/comments/:commentId/likes", authenticateUser, postLike);
+app.post("/replies/:replyId/likes", authenticateUser, postReplyLike);
 app.post("/session", postSession);
 
 // Patch

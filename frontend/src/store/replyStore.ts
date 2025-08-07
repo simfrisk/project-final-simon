@@ -1,11 +1,15 @@
 import { create } from "zustand";
-import type { ReplyType } from "./commentStore";
+import type { ReplyType as BaseReplyType } from "./commentStore";
 import { getToken } from "../utils/token";
+
+export interface ReplyType extends BaseReplyType {
+  likesCount?: number; // Added to track likes on replies
+}
 
 interface ReplyInput {
   content: string;
   commentId: string;
-  projectId: string;
+  projectId?: string;
 }
 
 interface UpdateReplyInput {
@@ -16,6 +20,7 @@ interface UpdateReplyInput {
 interface ReplyStore {
   replies: ReplyType[];
   addReply: (reply: ReplyInput) => Promise<void>;
+  toggleLike: (replyId: string) => Promise<void>;
   updateReply: (update: UpdateReplyInput) => Promise<void>;
 }
 
@@ -54,6 +59,7 @@ export const replyStore = create<ReplyStore>((set) => ({
             profileImage: data.response.replyCreatedBy?.profileImage,
             role: data.response.replyCreatedBy?.role,
           },
+          likesCount: data.response.likes?.length || 0,
         };
 
         set((state) => ({
@@ -64,6 +70,39 @@ export const replyStore = create<ReplyStore>((set) => ({
       }
     } catch (err: any) {
       console.error("Error posting reply:", err.message || "Unknown error");
+    }
+  },
+
+  toggleLike: async (replyId) => {
+    try {
+      const token = getToken();
+
+      const response = await fetch(
+        `https://project-final-simon.onrender.com/replies/${replyId}/likes`, // Corrected endpoint for reply likes
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: token } : {}),
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to toggle like");
+
+      const data = await response.json();
+
+      if (!data.success) throw new Error("Like toggle failed");
+
+      set((state) => ({
+        replies: state.replies.map((reply) =>
+          reply._id === replyId
+            ? { ...reply, likesCount: data.totalLikes }
+            : reply
+        ),
+      }));
+    } catch (err: any) {
+      console.error("Like toggle failed:", err.message);
     }
   },
 

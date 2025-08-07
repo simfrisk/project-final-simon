@@ -14,6 +14,7 @@ type ReplyCardProps = {
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
   const { deleteReply } = commentStore();
   const { updateReply } = replyStore();
+  const toggleLike = replyStore((state) => state.toggleLike)
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(reply.content);
@@ -83,8 +84,11 @@ export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
       <CardFooter>
         <React>
           <ActionButton onClick={() => setReplyToCommentId(reply.commentId)}>Reply</ActionButton>
-          <ActionButtonIcon>
+          <ActionButtonIcon onClick={() => toggleLike(reply._id)}>
             <img src="/icons/like.svg" alt="Like button" />
+            <LikeCount count={reply.likesCount ?? 0}>
+              {reply.likesCount ?? 0}
+            </LikeCount>
           </ActionButtonIcon>
         </React>
         <Edit>
@@ -269,4 +273,10 @@ const ActionButtonIcon = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const LikeCount = styled.p<{ count: number }>`
+visibility: ${({ count }) => (count > 0 ? 'inline-block' : 'hiddenblock')};
+font-size: 20px;
+margin: 0;
 `;
