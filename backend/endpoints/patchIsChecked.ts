@@ -23,10 +23,16 @@ export const patchIsChecked = async (req: Request, res: Response): Promise<Respo
     await comment.save();
 
     // Re-fetch the updated comment to ensure population
-    const updatedComment = await CommentModel.findById(commentId).populate(
-      "commentCreatedBy",
-      "name profileImage role"
-    );
+    const updatedComment = await CommentModel.findById(commentId)
+      .populate({
+        path: "replies",
+        select: "replyCreatedBy replyLikes content createdAt",
+        populate: {
+          path: "replyCreatedBy",
+          select: "name profileImage role"
+        }
+      })
+      .populate("commentCreatedBy", "name profileImage role");
 
     return res.status(200).json({
       success: true,

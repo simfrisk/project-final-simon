@@ -279,7 +279,7 @@ const ActionButtonIcon = styled.button`
 `;
 
 const LikeCount = styled.p<{ count: number }>`
-visibility: ${({ count }) => (count > 0 ? 'inline-block' : 'hiddenblock')};
+visibility: ${({ count }) => (count > 0 ? 'inline-block' : 'hidden')};
 font-size: 20px;
 margin: 0;
 `;
