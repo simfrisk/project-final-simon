@@ -17,6 +17,10 @@ declare module 'styled-components' {
       textHover: string;
       textActive: string;
 
+      textAlternative: string;
+      textAlternativeHover: string;
+      textAlternativeActive: string;
+
       primary: string;
       primaryHover: string;
       primaryActive: string;
@@ -28,6 +32,8 @@ declare module 'styled-components' {
       border: string;
       borderHover: string;
       borderActive: string;
+
+      boxShadow: string
     };
   }
 }
@@ -40,17 +46,18 @@ export const lightTheme = {
     backgroundActive: '#eaeaea',
 
     offBackground: '#f5f5f5',
-    offBackgroundHover: 'rgb(210, 210, 210)',
+    offBackgroundHover: '#eeeeee',
     offBackgroundActive: 'rgb(195, 195, 195)',
 
     text: '#111111',
     textHover: "rgb(31, 31, 31)",
     textActive: '#333333',
 
-    primary: "rgb(45, 126, 255)",
-    // primary: "rgb(63, 143, 212)",
-    // primary: "rgb(52, 144, 220)",
+    textAlternative: '#656565',
+    textAlternativeHover: '#575757ff',
+    textAlternativeActive: '#525252ff',
 
+    primary: "rgb(45, 126, 255)",
     primaryHover: "rgb(43, 115, 232)",
     primaryActive: '#1c6bff',
 
@@ -61,6 +68,8 @@ export const lightTheme = {
     border: '#e0e0e0',
     borderHover: '#cfcfcf',
     borderActive: '#bfbfbf',
+
+    boxShadow: 'rgba(0, 0, 0, 0.14',
   },
 };
 
@@ -72,12 +81,16 @@ export const darkTheme = {
     backgroundActive: 'rgb(33, 38, 45)',
 
     offBackground: 'rgb(28, 34, 45)',
-    offBackgroundHover: 'rgb(100, 100, 100)',
+    offBackgroundHover: 'rgba(53, 53, 53, 1)',
     offBackgroundActive: 'rgb(120, 120, 120)',
 
     text: '#ffffff',
     textHover: '#e5e5e5',
     textActive: '#cccccc',
+
+    textAlternative: '#a3a1a1ff',
+    textAlternativeHover: '#969595ff',
+    textAlternativeActive: '#807e7eff',
 
     primary: "rgb(28, 62, 129)",
     primaryHover: "rgb(20, 43, 90)",
@@ -90,5 +103,7 @@ export const darkTheme = {
     border: '#333333',
     borderHover: '#444444',
     borderActive: '#555555',
+
+    boxShadow: 'rgba(78, 78, 78, 0.51)',
   },
 };

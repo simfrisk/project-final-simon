@@ -123,7 +123,7 @@ const CardWrapper = styled.div`
   max-width: 1000px;
   margin-bottom: 20px;
   border-radius: 15px;
-  background-color: #f6f6f6;
+  background-color: ${({theme}) => theme.colors.offBackground};
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   color: inherit;
   text-decoration: none;
@@ -164,7 +164,7 @@ const CardInner = styled.article`
   transition: transform 0.3s ease;
 
   p {
-    color: #656565;
+    color: ${({theme}) => theme.colors.textAlternative}
   }
 
   &:hover {
@@ -177,7 +177,7 @@ const CardThumbnail = styled.div`
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
   overflow: hidden;
-  border: 4px solid #f6f6f6;
+  border: 4px solid ${({theme}) => theme.colors.offBackground};
   border-radius: 15px;
   margin-right: 20px; 
 
@@ -207,6 +207,14 @@ const CardHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  h3 {
+    color: ${({theme}) => theme.colors.text}
+  }
+
+  p {
+    color: ${({theme}) => theme.colors.textAlternative}
+  }
 `;
 
 const CommentList = styled.div`
@@ -220,7 +228,7 @@ const CommentItem = styled.div`
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background-color: #eeeeee;
+    background-color: ${({theme}) => theme.colors.offBackgroundHover};
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   }
 `;
