@@ -121,7 +121,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/projects/${msg.projectId}/comments`,
+            `${baseUrl}/projects/${msg.projectId}/comments`,
             {
               method: "POST",
               headers: {
@@ -161,7 +161,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
+            `${baseUrl}/comments/${reply.commentId}/replies`,
             {
               method: "POST",
               headers: {
@@ -214,7 +214,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/${commentId}/toggle-check`,
+            `${baseUrl}/comments/${commentId}/toggle-check`,
             {
               method: "PATCH",
               headers: {
@@ -250,7 +250,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/${commentId}/likes`,
+            `${baseUrl}/comments/${commentId}/likes`,
             {
               method: "POST",
               headers: {
@@ -292,7 +292,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/replies/${replyId}/likes`,
+            `${baseUrl}/replies/${replyId}/likes`,
             {
               method: "POST",
               headers: {
@@ -334,7 +334,7 @@ export const commentStore = create<MessageStore>()(
           const token = getToken();
 
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/${commentId}`,
+            `${baseUrl}/comments/${commentId}`,
             {
               method: "PATCH",
               headers: {
@@ -375,7 +375,7 @@ export const commentStore = create<MessageStore>()(
           const token = getToken();
 
           const response = await fetch(
-            `https://project-final-simon.onrender.com/replies/${replyId}`, // assuming this is the reply ID
+            `${baseUrl}/replies/${replyId}`, // assuming this is the reply ID
             {
               method: "PATCH",
               headers: {
@@ -420,7 +420,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/${commentId}`,
+            `${baseUrl}/comments/${commentId}`,
             {
               method: "DELETE",
               headers: {
@@ -448,7 +448,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/replies/${replyId}`,
+            `${baseUrl}/replies/${replyId}`,
             {
               method: "DELETE",
               headers: {
@@ -510,7 +510,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/comments/all`,
+            `${baseUrl}/comments/all`,
             {
               method: "GET",
               headers: {
@@ -534,7 +534,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/projects/${projectId}/comments/private`,
+            `${baseUrl}/projects/${projectId}/comments/private`,
             {
               method: "GET",
               headers: {
