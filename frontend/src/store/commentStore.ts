@@ -100,7 +100,7 @@ const mapComment = (item: any): MessageType => ({
       profileImage: reply.replyCreatedBy?.profileImage,
       role: reply.replyCreatedBy?.role,
     },
-    likesCount: reply.likes?.length || 0,
+    likesCount: reply.replyLikes?.length || 0,
   })),
 });
 

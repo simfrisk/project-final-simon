@@ -8,7 +8,6 @@ const getComments = async (req, res) => {
         const comments = await Comment_1.CommentModel.find({ projectId, commentType: "question" })
             .populate({
             path: "replies",
-            select: "replyCreatedBy replyLikes content createdAt",
             populate: {
                 path: "replyCreatedBy",
                 select: "name profileImage role"

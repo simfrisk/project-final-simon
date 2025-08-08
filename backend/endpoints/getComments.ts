@@ -9,7 +9,6 @@ export const getComments = async (req: Request, res: Response): Promise<Response
 
       .populate({
         path: "replies",
-        select: "replyCreatedBy replyLikes content createdAt",
         populate: {
           path: "replyCreatedBy",
           select: "name profileImage role"
