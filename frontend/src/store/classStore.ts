@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getToken } from "../utils/token";
+import { baseUrl } from "../config/api";
 
 export interface ClassType {
   _id: string;
@@ -33,7 +34,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes`, {
+      const response = await fetch(`${baseUrl}/classes`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -57,7 +58,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}`, {
+      const response = await fetch(`${baseUrl}/classes/${classId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -81,7 +82,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const res = await fetch(`https://project-final-simon.onrender.com/classes`, {
+      const res = await fetch(`${baseUrl}/classes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +112,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}`, {
+      const response = await fetch(`${baseUrl}/classes/${classId}`, {
         method: "DELETE",
         headers: {
           Authorization: token,

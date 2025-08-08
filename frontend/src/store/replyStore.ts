@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { ReplyType as BaseReplyType } from "./commentStore";
 import { getToken } from "../utils/token";
+import { baseUrl } from "../config/api";
 
 export interface ReplyType extends BaseReplyType {
   likesCount?: number; // Added to track likes on replies
@@ -33,7 +34,7 @@ export const replyStore = create<ReplyStore>((set) => ({
       console.log(reply.commentId)
 
       const response = await fetch(
-        `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
+        `${baseUrl}/comments/${reply.commentId}/replies`,
         {
           method: "POST",
           headers: {
@@ -79,7 +80,7 @@ export const replyStore = create<ReplyStore>((set) => ({
       const token = getToken();
 
       const response = await fetch(
-        `https://project-final-simon.onrender.com/replies/${replyId}`,
+        `${baseUrl}/replies/${replyId}`,
         {
           method: "PATCH",
           headers: {

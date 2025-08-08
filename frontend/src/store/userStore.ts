@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { baseUrl } from "../config/api";
 
 interface AuthUser {
   email: string;
@@ -48,7 +49,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
   login: async (email, password) => {
     try {
-      const res = await fetch("https://project-final-simon.onrender.com/session", {
+      const res = await fetch(`${baseUrl}/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -98,7 +99,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
   createUser: async (formData: FormData) => {
     try {
-      const res = await fetch("https://project-final-simon.onrender.com/user", {
+      const res = await fetch(`${baseUrl}/user`, {
         method: "POST",
         body: formData, // No need to set headers manually for FormData
       });

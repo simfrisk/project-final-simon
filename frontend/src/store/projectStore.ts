@@ -1,6 +1,6 @@
-// store/projectStore.ts
 import { create } from "zustand";
 import { getToken } from "../utils/token";
+import { baseUrl } from "../config/api";
 
 export interface ProjectType {
   _id?: string;
@@ -38,7 +38,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects`, {
+      const response = await fetch(`${baseUrl}/classes/${classId}/projects`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -78,7 +78,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/classes/projects/with-comments`, {
+      const response = await fetch(`${baseUrl}/classes/projects/with-comments`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -118,7 +118,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
+      const response = await fetch(`${baseUrl}/projects/${projectId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -166,7 +166,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
         formData.append("video", newProject.video);
       }
 
-      const res = await fetch(`https://project-final-simon.onrender.com/classes/${classId}/projects`, {
+      const res = await fetch(`${baseUrl}/classes/${classId}/projects`, {
         method: "POST",
         headers: {
           Authorization: token,
@@ -199,7 +199,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const token = getToken();
       if (!token) throw new Error("Missing access token");
 
-      const response = await fetch(`https://project-final-simon.onrender.com/projects/${projectId}`, {
+      const response = await fetch(`${baseUrl}/projects/${projectId}`, {
         method: "DELETE",
         headers: {
           Authorization: token,
