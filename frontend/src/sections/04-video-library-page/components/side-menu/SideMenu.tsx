@@ -106,7 +106,7 @@ const ProjectWrapper = styled.div`
 `;
 
 const Class = styled(Link)<{ $active: boolean }>`
-  color: black;
+  color: ${({theme}) => theme.colors.text};
   text-decoration: none;
   transition: ease 0.2s;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};

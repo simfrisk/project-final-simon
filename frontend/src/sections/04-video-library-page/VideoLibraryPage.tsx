@@ -90,7 +90,7 @@ const ClassSelect = styled.select`
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primaryHover};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}55;
+    box-shadow: rgba(0, 0, 0, 0.14);
   }
 
   option {

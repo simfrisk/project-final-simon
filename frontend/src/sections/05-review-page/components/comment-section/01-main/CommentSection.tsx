@@ -270,24 +270,32 @@ const ReactionGroup = styled.div`
 const Card = styled.div<{ $role?: string }>`
   display: flex;
   flex-direction: column;
-  background-color: white;
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
   transition: 0.3s ease;
   align-items: center;
   cursor: pointer;
-  background-color: ${({ $role }) => ($role === 'teacher' ? ' #deeafb' : 'none')};
+  background-color: ${({ $role, theme }) =>
+    $role === 'teacher'
+      ? theme.colors.lightBlue
+      : theme.colors.background};
 
 
   &:hover {
     transform: scale(0.98);
-    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
+      background-color: ${({ $role, theme }) =>
+      $role === 'teacher'
+        ? theme.colors.lightBlueHover
+        : theme.colors.backgroundHover};
   }
 
   &:focus {
     transform: scale(0.98);
-    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
+    background-color: ${({ $role, theme }) =>
+      $role === 'teacher'
+      ? theme.colors.lightBlueActive
+      : theme.colors.backgroundActive};
     border-left: solid #007bff 3px;
     transition: ease 0.2s;
   }
@@ -306,7 +314,6 @@ const Card = styled.div<{ $role?: string }>`
 
    &.active-comment {
     border-left: solid #007bff 3px;
-    /* background-color: #e6f0ff; */
     transform: scale(0.98);
   }
 `
@@ -335,7 +342,7 @@ const CardHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #555555;
+  color: ${({theme}) => theme.colors.textAlternative};
 `;
 
 const Dot = styled.span``;
@@ -344,7 +351,7 @@ const CardMain = styled.p`
   text-align: left;
   width: 100%;
   margin: 8px 0;
-  color: #333333;
+  color: ${({theme}) => theme.colors.textAlternative};
 
    button {
     padding: 8px 14px;

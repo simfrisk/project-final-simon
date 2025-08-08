@@ -167,7 +167,10 @@ const Card = styled.div<{ $role?: string }>`
   margin: 12px auto;
   display: flex;
   flex-direction: column;
-  background-color: ${({ $role }) => ($role === 'teacher' ? '#deeafb' : '#ffffff')};
+  background-color: ${({ $role, theme }) =>
+    $role === 'teacher'
+      ? theme.colors.lightBlue
+      : theme.colors.background};
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
@@ -178,7 +181,10 @@ const Card = styled.div<{ $role?: string }>`
 
   &:hover {
     transform: scale(0.98);
-    background-color: ${({ $role }) => ($role === 'teacher' ? '#d4e3f8' : '#fafafa')};
+    background-color: ${({ $role, theme }) =>
+    $role === 'teacher'
+      ? theme.colors.lightBlueHover
+      : theme.colors.backgroundHover};
   }
 
   &:hover ${Edit} {
@@ -226,7 +232,7 @@ const CardHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #555555;
+  color: ${({theme}) => theme.colors.textAlternative};
 `;
 
 const Dot = styled.span``;
@@ -235,7 +241,7 @@ const CardMain = styled.div`
   text-align: left;
   width: 100%;
   margin: 8px 0;
-  color: #333333;
+  color: ${({theme}) => theme.colors.textAlternative};
 
     button {
     padding: 8px 14px;

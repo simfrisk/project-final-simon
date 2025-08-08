@@ -65,7 +65,7 @@ width: 100%;
 border-radius: 10px;
 transition: ease .3s;
 overflow: hidden;
-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.14);
+box-shadow: 0 4px 5px ${({theme}) => theme.colors.boxShadow};
 
 &:hover {
   transform: scale(.98);

@@ -33,6 +33,10 @@ declare module 'styled-components' {
       borderHover: string;
       borderActive: string;
 
+      lightBlue: string;
+      lightBlueHover: string;
+      lightBlueActive: string;
+
       boxShadow: string
     };
   }
@@ -69,7 +73,11 @@ export const lightTheme = {
     borderHover: '#cfcfcf',
     borderActive: '#bfbfbf',
 
-    boxShadow: 'rgba(0, 0, 0, 0.14',
+    lightBlue: '#deeafb',
+    lightBlueHover: '#d7e7fdff',
+    lightBlueActive: '#bcd6f9ff',
+
+    boxShadow: 'rgba(0, 0, 0, 0.14)',
   },
 };
 
@@ -103,6 +111,10 @@ export const darkTheme = {
     border: '#333333',
     borderHover: '#444444',
     borderActive: '#555555',
+
+    lightBlue: '#113364ff',
+    lightBlueHover: '#133a71ff',
+    lightBlueActive: '#16427fff',
 
     boxShadow: 'rgba(78, 78, 78, 0.51)',
   },
