@@ -3,7 +3,6 @@ import { CircleCheckboxLabel, HiddenCheckbox, StyledCircle } from '../../../../.
 import type { ReplyType } from '../../../../../store/commentStore';
 import moment from 'moment';
 import { commentStore } from '../../../../../store/commentStore';
-import { replyStore } from '../../../../../store/replyStore'; // import your replyStore
 import { useState } from 'react';
 
 type ReplyCardProps = {
@@ -12,9 +11,7 @@ type ReplyCardProps = {
 };
 
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
-  const { deleteReply } = commentStore();
-  const { updateReply } = replyStore();
-  const toggleLike = replyStore((state) => state.toggleLike)
+  const { deleteReply, updateReply, toggleReplyLike } = commentStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(reply.content);
@@ -30,10 +27,12 @@ export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
     setIsEditing(false);
   };
 
+
+
   return (
     <Card $role={reply.replyCreatedBy?.role}>
       <TopSection>
-        <ImageContainer>
+        <ImageContainer onClick={() => console.log(reply._id)}>
           <img
             src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
             alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
@@ -84,7 +83,7 @@ export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
       <CardFooter>
         <React>
           <ActionButton onClick={() => setReplyToCommentId(reply.commentId)}>Reply</ActionButton>
-          <ActionButtonIcon onClick={() => toggleLike(reply._id)}>
+          <ActionButtonIcon onClick={() => toggleReplyLike(reply._id)}>
             <img src="/icons/like.svg" alt="Like button" />
             <LikeCount count={reply.likesCount ?? 0}>
               {reply.likesCount ?? 0}

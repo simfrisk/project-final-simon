@@ -39,6 +39,11 @@ interface UpdateCommentInput {
   content: string;
 }
 
+interface UpdateReplyInput {
+  replyId: string;
+  content: string;
+}
+
 export interface NewMessageType {
   content: string;
   projectId?: string;
@@ -59,7 +64,9 @@ interface MessageStore {
   clearMessages: () => void;
   toggleCheck: (commentId: string) => Promise<void>;
   toggleLike: (commentId: string) => Promise<void>;
+  toggleReplyLike: (replyId: string) => Promise<void>;
   updateComment: (update: UpdateCommentInput) => Promise<void>;
+  updateReply: (update: UpdateReplyInput) => Promise<void>;
   deleteReply: (replyId: string, commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   fetchComments: (projectId: string) => Promise<void>;
@@ -93,6 +100,7 @@ const mapComment = (item: any): MessageType => ({
       profileImage: reply.replyCreatedBy?.profileImage,
       role: reply.replyCreatedBy?.role,
     },
+    likesCount: reply.likes?.length || 0,
   })),
 });
 
@@ -279,6 +287,47 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      toggleReplyLike: async (replyId) => {
+        try {
+          const token = getToken();
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/replies/${replyId}/likes`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: token } : {}),
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to toggle reply like");
+
+          const data = await response.json();
+          if (!data.success) throw new Error("Reply like toggle failed");
+
+          set((state) => {
+            const updateReplies = (comments: MessageType[]) =>
+              comments.map((comment) => ({
+                ...comment,
+                replies: (comment.replies || []).map((reply) =>
+                  reply._id === replyId
+                    ? { ...reply, likesCount: data.totalLikes }
+                    : reply
+                ),
+              }));
+
+            return {
+              projectComments: updateReplies(state.projectComments),
+              allComments: updateReplies(state.allComments),
+              privateComments: updateReplies(state.privateComments),
+            };
+          });
+        } catch (err: any) {
+          console.error("Reply like toggle failed:", err.message);
+        }
+      },
+
       updateComment: async ({ commentId, content }) => {
         try {
           const token = getToken();
@@ -317,6 +366,52 @@ export const commentStore = create<MessageStore>()(
           }
         } catch (err: any) {
           console.error("Error updating comment:", err.message || "Unknown error");
+        }
+      },
+
+      updateReply: async ({ replyId, content }) => {
+        try {
+          const token = getToken();
+
+          const response = await fetch(
+            `https://project-final-simon.onrender.com/replies/${replyId}`, // assuming this is the reply ID
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: token } : {}),
+              },
+              body: JSON.stringify({ newContent: content }),
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to update reply");
+
+          const data = await response.json();
+
+          if (data.success && data.response) {
+            const updatedReply = data.response;
+
+            const updateReplies = (comments: MessageType[]) =>
+              comments.map((comment) => ({
+                ...comment,
+                replies: (comment.replies || []).map((reply) =>
+                  reply._id === updatedReply._id
+                    ? { ...reply, content: updatedReply.content }
+                    : reply
+                ),
+              }));
+
+            set((state) => ({
+              projectComments: updateReplies(state.projectComments),
+              allComments: updateReplies(state.allComments),
+              privateComments: updateReplies(state.privateComments),
+            }));
+          } else {
+            console.error("Update failed:", data.message || "No reply returned");
+          }
+        } catch (err: any) {
+          console.error("Error updating reply:", err.message || "Unknown error");
         }
       },
 
@@ -458,9 +553,12 @@ export const commentStore = create<MessageStore>()(
         }
       },
     }),
+
+
     {
       name: "comment-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
+

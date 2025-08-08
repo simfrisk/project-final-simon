@@ -20,7 +20,6 @@ interface UpdateReplyInput {
 interface ReplyStore {
   replies: ReplyType[];
   addReply: (reply: ReplyInput) => Promise<void>;
-  toggleLike: (replyId: string) => Promise<void>;
   updateReply: (update: UpdateReplyInput) => Promise<void>;
 }
 
@@ -30,6 +29,8 @@ export const replyStore = create<ReplyStore>((set) => ({
   addReply: async (reply) => {
     try {
       const token = getToken();
+
+      console.log(reply.commentId)
 
       const response = await fetch(
         `https://project-final-simon.onrender.com/comments/${reply.commentId}/replies`,
@@ -70,39 +71,6 @@ export const replyStore = create<ReplyStore>((set) => ({
       }
     } catch (err: any) {
       console.error("Error posting reply:", err.message || "Unknown error");
-    }
-  },
-
-  toggleLike: async (replyId) => {
-    try {
-      const token = getToken();
-
-      const response = await fetch(
-        `https://project-final-simon.onrender.com/replies/${replyId}/likes`, // Corrected endpoint for reply likes
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: token } : {}),
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to toggle like");
-
-      const data = await response.json();
-
-      if (!data.success) throw new Error("Like toggle failed");
-
-      set((state) => ({
-        replies: state.replies.map((reply) =>
-          reply._id === replyId
-            ? { ...reply, likesCount: data.totalLikes }
-            : reply
-        ),
-      }));
-    } catch (err: any) {
-      console.error("Like toggle failed:", err.message);
     }
   },
 
