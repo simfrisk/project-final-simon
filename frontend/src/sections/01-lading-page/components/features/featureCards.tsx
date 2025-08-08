@@ -19,7 +19,6 @@ export const FeatureCards = () => {
   return (
     <Container>
 
-      {/* @ts-expect-error TypeScript does not see the Dependency for some resson */}
       <Carousel
         selectedItem={currentSlide}
         onChange={setCurrentSlide}
