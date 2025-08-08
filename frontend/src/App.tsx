@@ -15,9 +15,14 @@ import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryP
 import { ChooseClassMessage } from './sections/04-video-library-page/components/ChooseClassMessage';  // You’ll create this
 import { ProjectsList } from './sections/04-video-library-page/components/ProjectsList';       // And this
 import "./utils/moment-config"
+import { useEffect } from 'react';
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);
+
+   useEffect(() => {
+    console.log('Base URL:', import.meta.env.VITE_API_BASE_URL);
+  }, []);
 
   return (
     <ThemeProvider theme={themeMode === 'light' ? lightTheme : darkTheme}>

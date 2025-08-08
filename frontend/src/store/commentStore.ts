@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { getToken } from "../utils/token";
+import { baseUrl } from "../config/api";
 
 export interface ReplyType {
   _id: string;
@@ -485,7 +486,7 @@ export const commentStore = create<MessageStore>()(
         try {
           const token = getToken();
           const response = await fetch(
-            `https://project-final-simon.onrender.com/projects/${projectId}/comments`,
+            `${baseUrl}/projects/${projectId}/comments`,
             {
               method: "GET",
               headers: {
