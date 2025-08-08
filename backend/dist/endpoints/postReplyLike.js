@@ -28,7 +28,7 @@ const postReplyLike = async (req, res) => {
         else {
             // Like
             reply.replyLikes.push(user._id);
-            user.likedReplies.push(reply._id); // ✅ FIXED
+            user.likedReplies.push(reply._id);
         }
         await reply.save();
         await user.save();

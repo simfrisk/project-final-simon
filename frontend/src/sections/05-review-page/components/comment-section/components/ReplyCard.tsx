@@ -11,7 +11,9 @@ type ReplyCardProps = {
 };
 
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
-  const { deleteReply, updateReply, toggleReplyLike } = commentStore();
+  const deleteReply = commentStore((state) => state.deleteReply);
+  const updateReply = commentStore((state) => state.updateReply);
+  const toggleReplyLike = commentStore((state) => state.toggleReplyLike);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(reply.content);

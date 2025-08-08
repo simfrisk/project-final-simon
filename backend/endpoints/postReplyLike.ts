@@ -32,7 +32,7 @@ export const postReplyLike = async (req: Request, res: Response): Promise<Respon
     } else {
       // Like
       reply.replyLikes.push(user._id as Types.ObjectId);
-      user.likedReplies.push(reply._id as Types.ObjectId); // ✅ FIXED
+      user.likedReplies.push(reply._id as Types.ObjectId);
     }
 
     await reply.save();
