@@ -32,7 +32,6 @@ export const VideoSection = () => {
     markerTriggerCount,
   } = useVideoStore();
 
-  const selectedTimeStamp = commentStore((state) => state.selectedTimeStamp);
   const messages: MessageType[] = commentStore((state) =>
     activeTab === "private" ? state.privateComments : state.projectComments
   );
