@@ -68,6 +68,7 @@ const Sections = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
+
 `;
 
 const Wrapper = styled.div`

@@ -41,7 +41,7 @@ const MainStyledButton = styled.button`
 
 const SmallStyledButton = styled.button`
   background-color: ${({ theme }) => theme.colors.background};
-  color: black;
+  color: ${({ theme }) => theme.colors.text};
   padding: 10px 15px;
   border-radius: 35px;
   font-size: 0.9rem;

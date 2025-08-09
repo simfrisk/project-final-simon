@@ -37,6 +37,8 @@ declare module 'styled-components' {
       lightBlueHover: string;
       lightBlueActive: string;
 
+      specialblue: string
+
       boxShadow: string
     };
   }
@@ -77,6 +79,8 @@ export const lightTheme = {
     lightBlueHover: '#d7e7fdff',
     lightBlueActive: '#bcd6f9ff',
 
+    specialblue: 'rgb(167, 187, 209)',
+
     boxShadow: 'rgba(0, 0, 0, 0.14)',
   },
 };
@@ -115,6 +119,8 @@ export const darkTheme = {
     lightBlue: '#113364ff',
     lightBlueHover: '#133a71ff',
     lightBlueActive: '#16427fff',
+
+    specialblue: 'rgba(53, 65, 79, 1)',
 
     boxShadow: 'rgba(78, 78, 78, 0.51)',
   },

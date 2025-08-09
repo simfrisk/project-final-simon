@@ -73,7 +73,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 12px;
   border-radius: 12px;
-  background-color:  rgb(167, 187, 209);
+  background-color:  ${({theme}) => theme.colors.specialblue};
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -86,7 +86,8 @@ const TextInput = styled.input`
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background-color: white;
+  background-color: ${({theme}) => theme.colors.background};
+  color: ${({theme}) => theme.colors.text};
 
   &:focus {
     outline: none;
@@ -109,7 +110,7 @@ const TimeTag = styled.div`
 
   p {
     font-size: 14px;
-    color: #333;
+    color: ${({theme}) => theme.colors.textAlternative};
     margin: 0;
   }
 
@@ -123,7 +124,8 @@ const Select = styled.select`
   padding: 6px 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  background-color: white;
+  background-color: ${({theme}) => theme.colors.background};
+  color: ${({theme}) => theme.colors.text};
   font-size: 14px;
   cursor: pointer;
 
