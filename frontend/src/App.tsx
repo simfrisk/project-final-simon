@@ -1,3 +1,4 @@
+//#region ----- IMPORTS -----
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { useThemeStore } from './store/themeStore';
@@ -10,12 +11,13 @@ import { SignUpPage } from './sections/03-sign-up-page/SignUpPage';
 import { RequireAuthentication } from './utils/RequireAuthentication';
 import { PageNotFound } from './global-components/PageNotFound';
 import { TeachersPage } from './sections/06-teachers-page/TeachersPage';
-
 import { VideoLibraryPage } from './sections/04-video-library-page/VideoLibraryPage';
 import { ChooseClassMessage } from './sections/04-video-library-page/components/ChooseClassMessage';  // You’ll create this
 import { ProjectsList } from './sections/04-video-library-page/components/ProjectsList';       // And this
 import "./utils/moment-config"
 import { useEffect } from 'react';
+
+//#endregion ----- UPDATE REPLY -----
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode);

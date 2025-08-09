@@ -1,6 +1,10 @@
+//#region ----- IMPORTS -----
 import { create } from "zustand";
 import { baseUrl } from "../config/api";
 
+//#endregion
+
+//#region ----- INTERFACES -----
 interface AuthUser {
   email: string;
   name: string;
@@ -18,7 +22,9 @@ interface UserStore {
   createUser: (formData: FormData) => Promise<boolean>;
 }
 
-// Rehydrate user info from localStorage if available
+//#endregion
+
+//#region ----- GET USER FROM LOCAL STORAGE  -----
 const savedEmail = localStorage.getItem("email");
 const savedUserId = localStorage.getItem("userId");
 const savedToken = localStorage.getItem("accessToken");
@@ -26,6 +32,9 @@ const savedRole = localStorage.getItem("role");
 const savedName = localStorage.getItem("name");
 const savedProfileImage = localStorage.getItem("profileImage");
 
+//#endregion
+
+//#region ----- INITIAL USER -----
 const initialUser: AuthUser | null =
   savedEmail &&
     savedUserId &&
@@ -43,10 +52,16 @@ const initialUser: AuthUser | null =
     }
     : null;
 
+//#endregion
+
+//#region ----- ZUSTAND USER STORE -----
 export const useUserStore = create<UserStore>((set) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
 
+  //#endregion
+
+  //#region ----- LOGIN -----
   login: async (email, password) => {
     try {
       const res = await fetch(`${baseUrl}/session`, {
@@ -87,6 +102,9 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- LOGOUT -----
   logout: () => {
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
@@ -97,6 +115,9 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ user: null, isLoggedIn: false });
   },
 
+  //#endregion
+
+  //#region ----- CREATE USER -----
   createUser: async (formData: FormData) => {
     try {
       const res = await fetch(`${baseUrl}/user`, {
@@ -134,4 +155,6 @@ export const useUserStore = create<UserStore>((set) => ({
       return false;
     }
   },
+
+  //#endregion
 }));

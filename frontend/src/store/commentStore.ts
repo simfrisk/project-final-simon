@@ -1,7 +1,12 @@
+//#region ----- IMPORTS -----
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { getToken } from "../utils/token";
 import { baseUrl } from "../config/api";
+
+//#endregion
+
+//#region ----- Interfaces -----
 
 export interface ReplyType {
   _id: string;
@@ -75,6 +80,10 @@ interface MessageStore {
   fetchPrivateComments: (projectId: string) => Promise<void>;
 }
 
+//#endregion
+
+//#region ----- Zustand varibles -----
+
 const mapComment = (item: any): MessageType => ({
   _id: item._id,
   content: item.content,
@@ -105,6 +114,9 @@ const mapComment = (item: any): MessageType => ({
   })),
 });
 
+//#endregion
+
+//#region ----- Zustand Comment Store -----
 export const commentStore = create<MessageStore>()(
   persist(
     (set) => ({
@@ -117,6 +129,9 @@ export const commentStore = create<MessageStore>()(
       setSelectedTimeStamp: (stamp) => set({ selectedTimeStamp: stamp }),
       setSelectedCommentId: (id) => set({ selectedCommentId: id }),
 
+      //#endregion
+
+      //#region ----- ADD COMMENTS  -----
       addMessage: async (msg) => {
         try {
           const token = getToken();
@@ -157,6 +172,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- ADD REPLY -----
       addReply: async (reply) => {
         try {
           const token = getToken();
@@ -207,9 +225,15 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- CLEAR MESSAGES -----
       clearMessages: () =>
         set({ projectComments: [], allComments: [], privateComments: [] }),
 
+      //#endregion 
+
+      //#region ----- TOGGLE CHECK -----
       toggleCheck: async (commentId) => {
         try {
           const token = getToken();
@@ -246,6 +270,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- TOGGLE COMMENT LIKE -----
       toggleLike: async (commentId) => {
         try {
           const token = getToken();
@@ -288,6 +315,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- TOGGLE REPLY LIKE -----
       toggleReplyLike: async (replyId) => {
         try {
           const token = getToken();
@@ -328,7 +358,9 @@ export const commentStore = create<MessageStore>()(
           console.error("Reply like toggle failed:", err.message);
         }
       },
+      //#endregion
 
+      //#region ----- UPDATE COMMENT  -----
       updateComment: async ({ commentId, content }) => {
         try {
           const token = getToken();
@@ -370,6 +402,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- UPDATE REPLY -----
       updateReply: async ({ replyId, content }) => {
         try {
           const token = getToken();
@@ -416,6 +451,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- DELETE COMMENTS -----
       deleteComment: async (commentId) => {
         try {
           const token = getToken();
@@ -444,6 +482,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- DELETE REPLY -----
       deleteReply: async (replyId, commentId) => {
         try {
           const token = getToken();
@@ -482,6 +523,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- FETCH COMMENTS -----
       fetchComments: async (projectId) => {
         try {
           const token = getToken();
@@ -506,6 +550,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- FETCH ALL COMMENTS -----
       fetchAllComments: async () => {
         try {
           const token = getToken();
@@ -530,6 +577,9 @@ export const commentStore = create<MessageStore>()(
         }
       },
 
+      //#endregion
+
+      //#region ----- FETCH ALL COMMENTS -----
       fetchPrivateComments: async (projectId) => {
         try {
           const token = getToken();
@@ -555,11 +605,15 @@ export const commentStore = create<MessageStore>()(
       },
     }),
 
+    //#endregion
 
+    //#region ----- COMMENT STORAGE -----
     {
       name: "comment-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
+
+//#endregion
 

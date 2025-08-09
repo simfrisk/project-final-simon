@@ -1,6 +1,6 @@
-// styled.d.ts
 import 'styled-components';
 
+//#region ----- INTERFACE -----
 declare module 'styled-components' {
   export interface DefaultTheme {
     name: string;
@@ -44,6 +44,9 @@ declare module 'styled-components' {
   }
 }
 
+//#endregion
+
+//#region ----- LIGHT THEME -----
 export const lightTheme = {
   name: 'light',
   colors: {
@@ -85,6 +88,9 @@ export const lightTheme = {
   },
 };
 
+//#endregion
+
+//#region ----- DARK THEME -----
 export const darkTheme = {
   name: 'dark',
   colors: {
@@ -125,3 +131,5 @@ export const darkTheme = {
     boxShadow: 'rgba(78, 78, 78, 0.51)',
   },
 };
+
+//#endregion

@@ -1,8 +1,12 @@
+//#region ----- IMPORTS -----
 import { create } from "zustand";
 import type { ReplyType as BaseReplyType } from "./commentStore";
 import { getToken } from "../utils/token";
 import { baseUrl } from "../config/api";
 
+//#endregion ----- UPDATE REPLY -----
+
+//#region ----- INTERFACES -----
 export interface ReplyType extends BaseReplyType {
   likesCount?: number; // Added to track likes on replies
 }
@@ -24,9 +28,15 @@ interface ReplyStore {
   updateReply: (update: UpdateReplyInput) => Promise<void>;
 }
 
+//#endregion 
+
+//#region ----- ZUSTAND REPLY STORE -----
 export const replyStore = create<ReplyStore>((set) => ({
   replies: [],
 
+  //#endregion 
+
+  //#region ----- ADD REPLY -----
   addReply: async (reply) => {
     try {
       const token = getToken();
@@ -75,6 +85,9 @@ export const replyStore = create<ReplyStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- UPDATE REPLY -----
   updateReply: async ({ replyId, content }) => {
     try {
       const token = getToken();
@@ -110,4 +123,6 @@ export const replyStore = create<ReplyStore>((set) => ({
       console.error("Error updating reply:", err.message || "Unknown error");
     }
   },
+
+  //#endregion
 }));

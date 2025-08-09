@@ -1,7 +1,11 @@
+//#region ----- IMPORTS -----
 import { create } from "zustand";
 import { getToken } from "../utils/token";
 import { baseUrl } from "../config/api";
 
+//#endregion
+
+//#region ----- INTERFACES -----
 export interface ClassType {
   _id: string;
   classTitle: string;
@@ -21,6 +25,9 @@ interface ClassesStore {
   deleteClass: (classId: string) => Promise<void>;
 }
 
+//#endregion
+
+//#region ----- ZUSTAND CLASS STORE -----
 export const useClassStore = create<ClassesStore>((set) => ({
   classes: [],
   class: null,
@@ -52,6 +59,9 @@ export const useClassStore = create<ClassesStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- FETCH CLASS BY ID -----
   fetchClassById: async (classId: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -75,7 +85,9 @@ export const useClassStore = create<ClassesStore>((set) => ({
       set({ loading: false, error: err.message || "Unknown error" });
     }
   },
+  //#endregion
 
+  //#region ----- ADD CLASS -----
   addClass: async (classTitle: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -106,6 +118,9 @@ export const useClassStore = create<ClassesStore>((set) => ({
     }
   },
 
+  //#endregion 
+
+  //#region ----- DELETE CLASS -----
   deleteClass: async (classId: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -133,4 +148,6 @@ export const useClassStore = create<ClassesStore>((set) => ({
       set({ loading: false, error: err.message || "Unknown error" });
     }
   },
+
+  //#endregion
 }));

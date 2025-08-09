@@ -1,7 +1,11 @@
+//#region ----- IMPORTS -----
 import { create } from "zustand";
 import { getToken } from "../utils/token";
 import { baseUrl } from "../config/api";
 
+//#endregion
+
+//#region ----- INTERFACES -----
 export interface ProjectType {
   _id?: string;
   projectName: string;
@@ -25,6 +29,9 @@ interface ProjectsStore {
   deleteProject: (projectId: string) => Promise<void>;
 }
 
+//#endregion
+
+//#region ----- ZUSTAND PROJECT STORE -----
 export const useProjectStore = create<ProjectsStore>((set) => ({
   projects: [],
   project: null,
@@ -32,6 +39,9 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   error: null,
   message: null,
 
+  //#endregion
+
+  //#region ----- FETCH PROJECTS -----
   fetchProjects: async (classId: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -72,6 +82,9 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- FETCH PROJECT WITH COMMETNS -----
   fetchProjectsWithComments: async () => {
     set({ loading: true, error: null, message: null });
     try {
@@ -112,6 +125,9 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- FETCH PROJECT BY ID -----
   fetchProjectById: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -152,6 +168,9 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- ADD PROJECT -----
   addProject: async (classId: string, newProject: ProjectType) => {
     set({ loading: true, error: null, message: null });
 
@@ -193,6 +212,9 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
     }
   },
 
+  //#endregion 
+
+  //#region ----- DELETE PROJECT -----
   deleteProject: async (projectId: string) => {
     set({ loading: true, error: null, message: null });
     try {
@@ -232,4 +254,6 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       });
     }
   },
+
+  //#endregion 
 }));
