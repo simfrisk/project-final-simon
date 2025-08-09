@@ -21,7 +21,7 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
   setEditingCommentId,
 }) => {
   return (
-    <CardMain>
+    <Container>
       {editingCommentId === _id ? (
         <>
           <textarea
@@ -49,11 +49,11 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
       ) : (
         content
       )}
-    </CardMain>
+    </Container>
   )
 };
 
-const CardMain = styled.p`
+const Container = styled.p`
   text-align: left;
   width: 100%;
   margin: 8px 0;
