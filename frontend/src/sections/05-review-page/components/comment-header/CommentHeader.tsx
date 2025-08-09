@@ -66,7 +66,8 @@ const ButtonGroup = styled.div`
 `;
 
 const TabButton = styled.button<{ $active?: boolean }>`
-  background-color: ${({ $active }) => ($active ? "#007bff" : "transparent")};
+  background-color: ${({ $active, theme }) =>
+    $active ? theme.colors.primary : "transparent"};
   color: ${({ $active }) => ($active ? "white" : "#007bff")};
   border: 2px solid #007bff;
   padding: 8px 20px;

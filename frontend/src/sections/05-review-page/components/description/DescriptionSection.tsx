@@ -22,6 +22,6 @@ const CommentListContainer = styled.div`
   flex-direction: column;
   padding: 0 16px;
   width: 100%;
-  background-color: #f5f5f5;
+  background-color: ${({theme}) => theme.colors.offBackground};
 `;
 

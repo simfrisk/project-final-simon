@@ -116,9 +116,9 @@ export const darkTheme = {
     borderHover: '#444444',
     borderActive: '#555555',
 
-    lightBlue: '#113364ff',
-    lightBlueHover: '#133a71ff',
-    lightBlueActive: '#16427fff',
+    lightBlue: '#1c254eff',
+    lightBlueHover: '#222c5bff',
+    lightBlueActive: '#263269ff',
 
     specialblue: 'rgba(53, 65, 79, 1)',
 
