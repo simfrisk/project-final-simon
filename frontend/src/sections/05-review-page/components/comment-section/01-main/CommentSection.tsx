@@ -10,6 +10,7 @@ import { useTabStore } from '../../../../../store/tabStore';
 import { useVideoStore } from '../../../../../store/videoStore';
 import { CommentCardHeader } from '../components/CommentCardHeader';
 import { CheckBtn } from '../components/CommentCardHeader';
+import { CommentCardMain } from '../components/CommentCardMain';
 
 export const CommentSection = () => {
   const activeTab = useTabStore((state) => state.activeTab);
@@ -105,35 +106,15 @@ export const CommentSection = () => {
             handleToggleCheck={handleToggleCheck}
           />
 
-          <CardMain>
-            {editingCommentId === _id ? (
-              <>
-                <textarea
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  rows={3}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    fontSize: "14px",
-                    borderRadius: "8px",
-                    border: "1px solid lightgray",
-                  }}
-                />
-                <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
-                  <button onClick={() => handleSaveEdit(_id)}>Save</button>
-                  <button onClick={() => {
-                    setEditingCommentId(null);
-                    setEditedContent(content);
-                  }}>
-                    Cancel
-                  </button>
-                </div>
-              </>
-            ) : (
-              content
-            )}
-          </CardMain>
+          <CommentCardMain 
+            _id={_id}
+            content={content}
+            handleSaveEdit={handleSaveEdit}
+            setEditedContent={setEditedContent}
+            editedContent={editedContent}
+            editingCommentId={editingCommentId}
+            setEditingCommentId={setEditingCommentId}
+          />
 
           <CardFooter>
             <ReactionGroup>
@@ -273,32 +254,6 @@ const Card = styled.div<{ $role?: string }>`
     transform: scale(0.98);
   }
 `
-
-
-
-
-
-const CardMain = styled.p`
-  text-align: left;
-  width: 100%;
-  margin: 8px 0;
-  color: ${({theme}) => theme.colors.textAlternative};
-
-   button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 15px;
-    margin: 8px 2px;
-    color: white;
-    background-color: #007bff;
-    transition: ease .3s;
-  }
-
-  button:hover {
-    background-color: #1988fe;
-    transform: scale(.97);
-  }
-`;
 
 const CardFooter = styled.div`
   display: flex;
