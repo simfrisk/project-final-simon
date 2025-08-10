@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { MessageType } from '../../../../../store/commentStore';
 import styled from 'styled-components';
 import { commentStore } from '../../../../../store/commentStore';
-import { ReplyCard } from '../components/ReplyCard';
+import { ReplyCard } from '../components/reply-card/ReplyCard';
 import { MediaQueries } from '../../../../../themes/mediaQueries';
 import { unFormatTime } from '../../video-section/utils/unFormatTime';
 import { useUserStore } from '../../../../../store/userStore';
