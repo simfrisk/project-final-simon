@@ -23,6 +23,16 @@ export const CommentSection = () => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState('');
 
+  //Replie toggle
+ const [openReplies, setOpenReplies] = useState<{ [key: string]: boolean }>({});
+
+ const toggleReplies = (id: string) => {
+  setOpenReplies((prev) => ({
+  ...prev,
+  [id]: !prev[id],
+}));
+ }
+
   const selectedCommentId = commentStore((state) => state.selectedCommentId);
   const addReply = commentStore((state) => state.addReply);
   const updateComment = commentStore((state) => state.updateComment);
@@ -65,6 +75,10 @@ export const CommentSection = () => {
 
       setReply('');
       setReplyToCommentId(null);
+      setOpenReplies((prev) => ({
+      ...prev,
+      [replyToCommentId]: true,
+    }));
     } catch (err) {
       console.error('Failed to add reply:', err);
     }
@@ -145,11 +159,33 @@ export const CommentSection = () => {
             </AddReplyForm>
           )}
 
-          <ReplyCardContainer>
-            {(replies || []).map((reply) => (
-              <ReplyCard key={reply._id} reply={reply} setReplyToCommentId={setReplyToCommentId} />
-            ))}
-          </ReplyCardContainer>
+          {(replies?.length || 0) > 0 && (
+          <>
+          
+            <ShowReplies
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleReplies(_id);
+              }}
+            >
+                <ArrowIcon isOpen={!!openReplies[_id]} />
+                {`${replies?.length ?? 0} ${replies?.length === 1 ? 'Reply' : 'Replies'}`}
+            </ShowReplies>
+
+            {openReplies[_id] && (
+              <ReplyCardContainer>
+                {replies?.map((reply) => (
+                  <ReplyCard
+                    key={reply._id}
+                    reply={reply}
+                    setReplyToCommentId={setReplyToCommentId}
+                  />
+                ))}
+              </ReplyCardContainer>
+            )}
+          </>
+        )}
         </Card>
       ))}
     </CommentListContainer>
@@ -243,3 +279,34 @@ const AddReplyForm = styled.form `
       background-color: #007bff;
     }
 `
+
+const ShowReplies = styled.button`
+  display: flex;
+  justify-content: flex-start;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;  
+  font-weight: bold;
+
+  &:hover {
+    transform: scale(0.96);
+    background-color: #1961b431;
+  }
+`;
+
+const ArrowIcon = styled.span<{ isOpen: boolean }>`
+justify-content: center;
+  display: inline-block;
+  border-style: solid;
+  border-width: 6px 6px 0 6px;
+  border-color: ${({ theme }) => theme.colors.text} transparent transparent transparent;
+  transform: ${({ isOpen }) => (isOpen ? 'rotate(0)' : 'rotate(-90deg)')};
+  transition: transform 0.3s ease;
+  width: 0;
+  height: 0;
+`;

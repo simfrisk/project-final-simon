@@ -16,7 +16,6 @@ export const DescriptionSection = () => {
   );
 };
 
-
 const CommentListContainer = styled.div`
   display: flex;
   flex-direction: column;
