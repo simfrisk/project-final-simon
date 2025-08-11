@@ -3,7 +3,12 @@ import { useInView } from "framer-motion";
 import styled from "styled-components";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 
-export const ExplainerCard = ({title, text}) => {
+type ExplainerCardProps = {
+  title: string;
+  text: string;
+};
+
+export const ExplainerCard = ({title, text}: ExplainerCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.5 });
