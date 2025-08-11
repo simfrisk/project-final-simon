@@ -187,8 +187,8 @@ const HamburgerWrapper = styled.div<MenuProps>`
 
 const ImageContainer = styled.div`
   flex-shrink: 0;
-  height: 32px;
-  width: 32px;
+  height: 30px;
+  width: 30px;
   border-radius: 50px;
   overflow: hidden;
 
