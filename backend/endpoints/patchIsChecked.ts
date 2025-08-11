@@ -1,6 +1,66 @@
 import { Request, Response } from "express";
 import { CommentModel } from "../models/Comment";
 
+/**
+ * @swagger
+ * /comments/{commentId}/isChecked:
+ *   patch:
+ *     summary: Toggle the isChecked status of a comment by ID
+ *     parameters:
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the comment to toggle isChecked
+ *     responses:
+ *       200:
+ *         description: Comment isChecked status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   description: Updated comment object with populated replies and creator info
+ *                 message:
+ *                   type: string
+ *                   example: Comment check status toggled successfully
+ *       404:
+ *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Comment not found
+ *       500:
+ *         description: Server error toggling comment check status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Failed to toggle comment check status
+ */
 export const patchIsChecked = async (req: Request, res: Response): Promise<Response> => {
   const { commentId } = req.params;
 

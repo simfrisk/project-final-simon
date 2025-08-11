@@ -8,6 +8,7 @@ dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const swagger_1 = require("./swager/swagger");
 const authenticateUser_1 = require("./middleware/authenticateUser");
 const resetDatabase_1 = require("./setup/resetDatabase");
 const uploadVideo_1 = require("./middleware/uploadVideo");
@@ -102,6 +103,7 @@ app.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteClass
 app.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
+(0, swagger_1.setupSwagger)(app);
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

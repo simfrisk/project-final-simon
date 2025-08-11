@@ -2,6 +2,78 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patchComment = void 0;
 const Comment_1 = require("../models/Comment");
+/**
+ * @swagger
+ * /comments/{commentId}:
+ *   patch:
+ *     summary: Update a comment's content by ID
+ *     parameters:
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the comment to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newContent
+ *             properties:
+ *               newContent:
+ *                 type: string
+ *                 example: Updated comment content here
+ *     responses:
+ *       200:
+ *         description: Comment updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   $ref: '#/components/schemas/Comment'  # Assuming you have a Comment schema defined
+ *                 message:
+ *                   type: string
+ *                   example: The comment was successfully changed
+ *       404:
+ *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: The comment was not found
+ *       500:
+ *         description: Server error updating comment
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: string
+ *                   example: Could not change comment in the database
+ *                 message:
+ *                   type: string
+ *                   example: Could not change comment in the database
+ */
 const patchComment = async (req, res) => {
     const { commentId } = req.params;
     const { newContent } = req.body;

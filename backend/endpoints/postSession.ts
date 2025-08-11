@@ -2,6 +2,75 @@ import { UserModel } from "../models/user";
 import bcrypt from "bcrypt";
 import { Response, Request } from "express";
 
+/**
+ * @swagger
+ * /session:
+ *   post:
+ *     summary: User login and create session
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: yourPassword123
+ *     responses:
+ *       200:
+ *         description: User authenticated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   example: 64da2f62f2a4a0a123456789
+ *                 name:
+ *                   type: string
+ *                   example: John Doe
+ *                 role:
+ *                   type: string
+ *                   example: teacher
+ *                 profileImage:
+ *                   type: string
+ *                   example: /uploads/profile123.jpg
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       401:
+ *         description: Unauthorized - invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notFound:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export const postSession = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await UserModel.findOne({ email: req.body.email });

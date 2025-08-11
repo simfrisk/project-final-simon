@@ -1,6 +1,97 @@
 import { Request, Response } from "express";
 import { Project } from "../models/Projects";
 
+/**
+ * @swagger
+ * /classes/{classId}/projects:
+ *   post:
+ *     summary: Create a new project within a class
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the class to add the project to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - projectName
+ *             properties:
+ *               projectName:
+ *                 type: string
+ *                 example: "My Awesome Project"
+ *               projectDescription:
+ *                 type: string
+ *                 example: "A detailed description of the project."
+ *               video:
+ *                 type: string
+ *                 format: binary
+ *                 description: Video file upload
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     classId:
+ *                       type: string
+ *                     projectName:
+ *                       type: string
+ *                     projectDescription:
+ *                       type: string
+ *                     video:
+ *                       type: string
+ *                     thumbnail:
+ *                       type: string
+ *                 message:
+ *                   type: string
+ *                   example: "Project created"
+ *       400:
+ *         description: Bad request, missing projectName
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Project name is required"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Unknown server error"
+ */
 const generateThumbnailUrl = (videoUrl: string): string => {
   if (!videoUrl) return "";
   return videoUrl

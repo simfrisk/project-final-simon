@@ -1,6 +1,65 @@
 import { Request, Response } from "express";
 import { Project } from "../models/Projects";
 
+/**
+ * @swagger
+ * /classes/projects/with-comments:
+ *   get:
+ *     summary: Get all projects with comments of type 'question'
+ *     description: Returns a list of projects populated with comments where commentType is 'question', including the commenter’s name, profile image, and role.
+ *     responses:
+ *       200:
+ *         description: A list of projects with filtered comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       projectName:
+ *                         type: string
+ *                       projectDescription:
+ *                         type: string
+ *                       video:
+ *                         type: string
+ *                         nullable: true
+ *                       thumbnail:
+ *                         type: string
+ *                         nullable: true
+ *                       comments:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             commentText:
+ *                               type: string
+ *                             commentType:
+ *                               type: string
+ *                             commentCreatedBy:
+ *                               type: object
+ *                               properties:
+ *                                 name:
+ *                                   type: string
+ *                                 profileImage:
+ *                                   type: string
+ *                                   nullable: true
+ *                                 role:
+ *                                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Server error
+ */
 export const getProjectsWithComments = async (req: Request, res: Response): Promise<Response> => {
   try {
 

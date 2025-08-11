@@ -4,6 +4,96 @@ exports.deleteComment = void 0;
 const Comment_1 = require("../models/Comment");
 const Reply_1 = require("../models/Reply");
 const Projects_1 = require("../models/Projects");
+/**
+ * @swagger
+ * /comments/{commentId}:
+ *   delete:
+ *     summary: Delete a comment and its replies
+ *     description: |
+ *       Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
+ *     parameters:
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the comment to delete
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Comment and its replies were deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   description: The deleted comment object
+ *                 message:
+ *                   type: string
+ *                   example: Comment and its replies were deleted
+ *       401:
+ *         description: Unauthorized (user not logged in)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: You must be logged in to delete a comment.
+ *       403:
+ *         description: Forbidden (user not owner or teacher)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: You are not authorized to delete this comment
+ *       404:
+ *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Comment could not be found
+ *       500:
+ *         description: Server error deleting comment
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: object
+ *                 message:
+ *                   type: string
+ *                   example: Could not delete comment
+ */
 const deleteComment = async (req, res) => {
     const { commentId } = req.params;
     try {

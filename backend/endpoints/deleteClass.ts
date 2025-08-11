@@ -4,6 +4,67 @@ import { Reply } from "../models/Reply";
 import { Project } from "../models/Projects";
 import { ClassModel } from "../models/Class";
 
+/**
+ * @swagger
+ * /classes/{classId}:
+ *   delete:
+ *     summary: Delete a class and all related projects, comments, and replies
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the class to delete
+ *     responses:
+ *       200:
+ *         description: Class and related data deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   description: The deleted class object
+ *                 message:
+ *                   type: string
+ *                   example: Class, its projects, comments, and replies were deleted
+ *       404:
+ *         description: Class not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Class could not be found
+ *       500:
+ *         description: Server error deleting class
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: object
+ *                   description: Error object or message
+ *                 message:
+ *                   type: string
+ *                   example: Could not delete class
+ */
 export const deleteClass = async (req: Request, res: Response) => {
   const { classId } = req.params;
 

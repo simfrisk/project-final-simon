@@ -5,6 +5,67 @@ const Comment_1 = require("../models/Comment");
 const Reply_1 = require("../models/Reply");
 const Projects_1 = require("../models/Projects");
 const Class_1 = require("../models/Class");
+/**
+ * @swagger
+ * /classes/{classId}:
+ *   delete:
+ *     summary: Delete a class and all related projects, comments, and replies
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the class to delete
+ *     responses:
+ *       200:
+ *         description: Class and related data deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   description: The deleted class object
+ *                 message:
+ *                   type: string
+ *                   example: Class, its projects, comments, and replies were deleted
+ *       404:
+ *         description: Class not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Class could not be found
+ *       500:
+ *         description: Server error deleting class
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: object
+ *                   description: Error object or message
+ *                 message:
+ *                   type: string
+ *                   example: Could not delete class
+ */
 const deleteClass = async (req, res) => {
     const { classId } = req.params;
     try {

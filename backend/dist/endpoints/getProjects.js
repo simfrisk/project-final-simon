@@ -2,6 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProjects = void 0;
 const Projects_1 = require("../models/Projects");
+/**
+ * @swagger
+ * /classes/{classId}/projects:
+ *   get:
+ *     summary: Get projects for a class
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The class ID
+ *     responses:
+ *       200:
+ *         description: A list of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ */
 const getProjects = async (req, res) => {
     try {
         const { classId } = req.params;

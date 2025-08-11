@@ -3,6 +3,137 @@ import { Types } from "mongoose";
 import { Project } from "../models/Projects";
 import { CommentModel } from "../models/Comment";
 
+/**
+ * @swagger
+ * /projects/{projectId}/comments:
+ *   post:
+ *     summary: Add a new comment to a project
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the project to add a comment to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *               - timeStamp
+ *               - commentType
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: "This is a comment on the project."
+ *               timeStamp:
+ *                 type: number
+ *                 description: Time in seconds or milliseconds referring to the video timestamp
+ *                 example: 45
+ *               commentType:
+ *                 type: string
+ *                 description: Type of comment (e.g., question, private)
+ *                 example: "question"
+ *     responses:
+ *       201:
+ *         description: Comment added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     projectId:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     timeStamp:
+ *                       type: number
+ *                     isChecked:
+ *                       type: boolean
+ *                     commentCreatedBy:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         profileImage:
+ *                           type: string
+ *                         role:
+ *                           type: string
+ *                     commentType:
+ *                       type: string
+ *                     replies:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     likes:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                 message:
+ *                   type: string
+ *                   example: "Comment added to project"
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Comment text, timestamp, and comment type are required"
+ *       404:
+ *         description: Project not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Project not found"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Could not add comment"
+ */
 export const postCommentById = async (
   req: Request,
   res: Response

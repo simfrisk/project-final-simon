@@ -4,6 +4,7 @@ dotenv.config();
 import express, { Application } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import { setupSwagger } from "./swager/swagger";
 
 import { authenticateUser } from "./middleware/authenticateUser";
 import { resetDatabase } from "./setup/resetDatabase";
@@ -112,6 +113,8 @@ app.delete("/classes/:classId", authenticateUser, deleteClass);
 app.delete("/projects/:projectId", authenticateUser, deleteProject);
 app.delete("/comments/:commentId", authenticateUser, deleteComment);
 app.delete("/replies/:replyId", authenticateUser, deleteReply);
+
+setupSwagger(app);
 
 // Start the server
 app.listen(port, (): void => {

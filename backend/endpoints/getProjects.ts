@@ -1,6 +1,35 @@
 import { Request, Response } from "express";
 import { Project } from "../models/Projects";
 
+/**
+ * @swagger
+ * /classes/{classId}/projects:
+ *   get:
+ *     summary: Get projects for a class
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The class ID
+ *     responses:
+ *       200:
+ *         description: A list of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ */
 export const getProjects = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { classId } = req.params;

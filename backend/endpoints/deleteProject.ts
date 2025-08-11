@@ -3,6 +3,67 @@ import { CommentModel } from "../models/Comment";
 import { Reply } from "../models/Reply";
 import { Project } from "../models/Projects";
 
+/**
+ * @swagger
+ * /projects/{projectId}:
+ *   delete:
+ *     summary: Delete a project along with its comments and replies
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the project to delete
+ *     responses:
+ *       200:
+ *         description: Project and related comments and replies deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   description: The deleted project object
+ *                 message:
+ *                   type: string
+ *                   example: Project, its comments, and replies were deleted
+ *       404:
+ *         description: Project not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: Project could not be found
+ *       500:
+ *         description: Server error deleting project
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   type: object
+ *                   description: Error object or message
+ *                 message:
+ *                   type: string
+ *                   example: Could not delete project
+ */
 export const deleteProject = async (req: Request, res: Response) => {
   const { projectId } = req.params;
 
