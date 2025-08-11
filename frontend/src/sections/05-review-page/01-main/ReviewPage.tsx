@@ -71,7 +71,7 @@ const Container = styled.div`
   width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
-    grid-template-columns: 1fr 400px;
+    grid-template-columns: minmax(auto, calc(80dvh * 16 / 9)) ;
     grid-template-areas:
       "video right"
       "form right";
@@ -81,6 +81,7 @@ const Container = styled.div`
 
 const StyledVideoSection = styled(VideoSection)`
   grid-area: video;
+  
 `;
 
 const StyledCommentForm = styled(CommentForm)`
