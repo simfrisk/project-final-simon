@@ -42,6 +42,7 @@ const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
 const app = (0, express_1.default)();
+app.use(express_1.default.static("public"));
 const allowedOrigins = [
     "http://localhost:5173", // your local dev
     "https://class-review.netlify.app" // your deployed frontend
