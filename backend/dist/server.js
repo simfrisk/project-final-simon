@@ -72,7 +72,7 @@ app.options("*", (0, cors_1.default)());
 (0, resetDatabase_1.resetDatabase)();
 // API Home Route
 // Home + Projects
-app.get("/", (0, getHome_1.getHome)(app));
+app.get("/alt/doc", (0, getHome_1.getHome)(app));
 app.get("/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
 app.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);
 app.get("/classes/:classId/projects", authenticateUser_1.authenticateUser, getProjects_1.getProjects);
@@ -103,6 +103,8 @@ app.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteClass
 app.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
 app.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
 app.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
+//This is a documentation helper
+// /api-docs/ for a endpoint
 (0, swagger_1.setupSwagger)(app);
 // Start the server
 app.listen(port, () => {

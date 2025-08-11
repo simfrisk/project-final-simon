@@ -6,13 +6,13 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Class Review API",
+      title: "Classymc API",
       version: "1.0.0",
-      description: "API documentation for your Class Review project",
+      description: "API documentation for your Classync",
     },
     servers: [
       {
-        url: "http://localhost:8080",
+        url: process.env.API_URL || "http://localhost:8080",
       },
     ],
     components: {
@@ -121,5 +121,5 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 export function setupSwagger(app: Application) {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }

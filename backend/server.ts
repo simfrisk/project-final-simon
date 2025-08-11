@@ -77,7 +77,7 @@ resetDatabase();
 
 // API Home Route
 // Home + Projects
-app.get("/", getHome(app));
+app.get("/alt/doc", getHome(app));
 app.get("/classes", authenticateUser, getClasses);
 app.get("/classes/:classId", authenticateUser, getClassById);
 app.get("/classes/:classId/projects", authenticateUser, getProjects);
@@ -114,6 +114,8 @@ app.delete("/projects/:projectId", authenticateUser, deleteProject);
 app.delete("/comments/:commentId", authenticateUser, deleteComment);
 app.delete("/replies/:replyId", authenticateUser, deleteReply);
 
+//This is a documentation helper
+// /api-docs/ for a endpoint
 setupSwagger(app);
 
 // Start the server
