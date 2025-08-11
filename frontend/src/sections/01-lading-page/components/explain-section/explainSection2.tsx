@@ -36,12 +36,12 @@ margin: 20px;
 const CardWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 60px;
+  gap: 35px;
   justify-content: center;
   margin: 60px 0px;
 
   @media ${MediaQueries.biggerSizes} {
     grid-template-columns: repeat(3, 1fr);
-    justify-content: start; /* optional */
+    gap: 60px;
   }
 `;

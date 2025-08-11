@@ -64,10 +64,13 @@ const Container = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  row-gap: 10px;
   border-radius: 15px;
   width: 100%;
   max-width: 500px ;
+  padding: 15px;
   margin: 0 auto;
+  background-color: #1F2A36;
 
 `;
 

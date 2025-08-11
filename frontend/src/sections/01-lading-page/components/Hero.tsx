@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { MainButton } from "../../../global-components/buttons";
-import { Section, Container } from "../../../global-components/Section";
+import { Section } from "../../../global-components/Section";
+import { Container as BaseContainer } from "../../../global-components/Section";
+import { MediaQueries } from "../../../themes/mediaQueries";
+
 
 export const Hero = () => {
   return (
@@ -23,6 +26,14 @@ export const Hero = () => {
     </Section>
   );
 };
+
+const Container = styled(BaseContainer)`
+
+@media ${MediaQueries.biggerSizes} {
+  aspect-ratio: 40 / 19;  
+  align-content: center;
+  }
+`;
 
 const Content = styled.div`
   display: flex;

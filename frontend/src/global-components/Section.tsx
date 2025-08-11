@@ -10,13 +10,13 @@ interface SectionProps {
 
 export const Section = styled.section<SectionProps>`
   background-color: ${(props) => {
-    if (props.thirdSection) return "#e8e8e8"; // Light gray background
+    if (props.thirdSection) return "#141A20"; 
     if (props.secondarySection) return props.theme.colors.primary;
     return props.theme.colors.background;
   }};
 
   color: ${(props) => {
-    if (props.thirdSection) return props.theme.colors.text; // or customize if needed
+    if (props.thirdSection) return "white"; 
     if (props.secondarySection) return "white";
     return props.theme.colors.text;
   }};
