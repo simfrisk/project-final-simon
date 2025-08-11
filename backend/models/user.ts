@@ -31,11 +31,11 @@ const UserSchema = new Schema<UserType>({
   },
   role: {
     type: String,
-    required: true
+    required: true,
   },
   profileImage: {
     type: String,
-    default: "/SImon.png"
+    default: "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png"
   },
   accessToken: {
     type: String,

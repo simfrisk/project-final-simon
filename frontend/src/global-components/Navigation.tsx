@@ -45,6 +45,9 @@ export const Navigation = () => {
         {isLoggedIn ? (
            <>
               <StyledNavLink to="/library">Library</StyledNavLink>
+                <ImageContainer>
+                  <img src={user?.profileImage} />
+                </ImageContainer>
               <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
             </>
         ) : (
@@ -53,8 +56,12 @@ export const Navigation = () => {
       </DesktopMenu>
 
       <HamburgerWrapper $isOpen={isMenuOpen} onClick={toggleMenu}>
-        <p>Profile</p>
-        <HamburgerMenu />
+        {isLoggedIn &&(
+          <ImageContainer>
+            <img src={user?.profileImage} />
+          </ImageContainer>
+          )}
+          <HamburgerMenu />
       </HamburgerWrapper>
 
       <MobileMenu $isOpen={isMenuOpen}>
@@ -175,6 +182,20 @@ const HamburgerWrapper = styled.div<MenuProps>`
 
   @media ${MediaQueries.biggerSizes} {
     display: none;
+  }
+`;
+
+const ImageContainer = styled.div`
+  flex-shrink: 0;
+  height: 32px;
+  width: 32px;
+  border-radius: 50px;
+  overflow: hidden;
+
+  img { 
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `;
 
