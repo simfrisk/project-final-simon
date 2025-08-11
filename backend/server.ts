@@ -43,6 +43,8 @@ mongoose.connect(mongoUrl);
 const port: number = parseInt(process.env.PORT || "8080");
 const app: Application = express();
 
+app.use(express.static("public"));
+
 const allowedOrigins = [
   "http://localhost:5173",           // your local dev
   "https://class-review.netlify.app" // your deployed frontend
