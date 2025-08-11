@@ -5,7 +5,7 @@ const BASE_URL = "https://project-final-simon.onrender.com";
 
 const endpointDocs: Record<string, { description: string; authRequired: boolean }> = {
   "/": { description: "API Home", authRequired: false },
-  "/classes": { description: "List all classes", authRequired: true },
+  "/classes": { description: "These are like school cources", authRequired: true },
   "/classes/:classId": { description: "Get details for a specific class", authRequired: false },
   "/classes/:classId/projects": { description: "Get projects in a class", authRequired: false },
   "/classes/projects/with-comments": { description: "Projects with comments included", authRequired: false },
@@ -59,19 +59,21 @@ export const getHome = (app: Application) => (req: Request, res: Response): void
     <body>
       <h1>Welcome to the Classymc API</h1>
       <p>Below are the available endpoints and their HTTP methods:</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Path</th>
-            <th>Methods</th>
-            <th>Description</th>
-            <th>Requires Authentication</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${tableRows}
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>Methods</th>
+              <th>Description</th>
+              <th>Requires Authentication</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </div>
     </body>
     </html>
   `;

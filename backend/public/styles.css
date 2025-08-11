@@ -88,3 +88,14 @@ a:hover {
   font-style: italic;
   color: #bbbbbb;
 }
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* smooth scrolling on iOS */
+}
+
+.table-container table {
+  width: 100%;
+  min-width: 600px;
+}
