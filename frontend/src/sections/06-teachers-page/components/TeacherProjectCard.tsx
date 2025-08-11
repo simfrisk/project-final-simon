@@ -204,16 +204,37 @@ const CardContentWrapper = styled.div`
 
 const CardHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; 
+  align-items: flex-start;
   width: 100%;
+  gap: 4px;
 
   h3 {
-    color: ${({theme}) => theme.colors.text}
+    color: ${({ theme }) => theme.colors.text};
+    white-space: normal; /* allow wrapping on small screens */
   }
 
   p {
-    color: ${({theme}) => theme.colors.textAlternative}
+    color: ${({ theme }) => theme.colors.textAlternative};
+  }
+
+
+  @media ${MediaQueries.biggerSizes} {
+    flex-direction: row; /* side by side */
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      white-space: nowrap; /* prevent wrapping */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    p {
+      flex-shrink: 0;
+    }
   }
 `;
 
