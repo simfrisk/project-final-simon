@@ -2,7 +2,6 @@ import { Section } from "../../../../global-components/Section";
 import { FeatureTitle } from "./featureTitle";
 import { Container } from "../../../../global-components/Section";
 import { FeatureCards } from "./featureCards";
-// Z
 import styled from "styled-components";
 
 export const FeatureScetion = () => {
