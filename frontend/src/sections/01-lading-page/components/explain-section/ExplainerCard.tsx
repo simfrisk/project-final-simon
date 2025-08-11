@@ -75,7 +75,7 @@ const Container = styled.article`
 `;
 
 const StyledVideo = styled.video`
-  border-radius: 15px;
+  border-radius: 5px;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   width: 100%;
