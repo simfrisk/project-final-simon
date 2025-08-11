@@ -71,7 +71,7 @@ const Container = styled.div`
   width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
-    grid-template-columns: minmax(auto, calc(80dvh * 16 / 9)) ;
+    grid-template-columns: minmax(auto, calc(80dvh * 16 / 9)) minmax(400px, 1fr);
     grid-template-areas:
       "video right"
       "form right";
