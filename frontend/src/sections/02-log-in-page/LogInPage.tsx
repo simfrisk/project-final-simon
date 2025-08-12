@@ -60,7 +60,7 @@ useEffect(() => {
         <CardContainer>
           <Card>
             <LogoContainer>
-              <Logo src="/logo2.png" alt="Classync logo" />
+              <Logo src="/logo2.webp" alt="Classync logo" />
             </LogoContainer>
 
             <WelcomeMessage>
@@ -104,8 +104,6 @@ useEffect(() => {
     </>
   );
 };
-
-// -------------------- Styled Components --------------------
 
 const Container = styled.div`
   display: flex;

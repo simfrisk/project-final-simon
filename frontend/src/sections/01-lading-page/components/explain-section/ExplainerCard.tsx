@@ -6,11 +6,12 @@ import { MediaQueries } from "../../../../themes/mediaQueries";
 type ExplainerCardProps = {
   title: string;
   text: string;
+  video?: string;
 };
 
-export const ExplainerCard = ({title, text}: ExplainerCardProps) => {
+export const ExplainerCard = ({title, text, video}: ExplainerCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(containerRef, { amount: 0.5 });
 
   const [isMobile, setIsMobile] = useState(false);
@@ -57,7 +58,7 @@ export const ExplainerCard = ({title, text}: ExplainerCardProps) => {
       playsInline
       onMouseEnter={handleMouseEnter}
     >
-      <source src="/Explainer3.mp4" type="video/mp4" />
+      <source src={video || "/Explainer3.mp4"} type="video/mp4" />
     </StyledVideo>
       <strong>{title}</strong>
       <p>{text}</p>

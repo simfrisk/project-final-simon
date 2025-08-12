@@ -10,7 +10,7 @@ export const Hero = () => {
     <Section secondarySection>
       <Container>
         <Content>
-          <img src="/Hero.png" alt="Image of some scribble" />
+          <img src="/Hero.webp" alt="Image of some scribble" />
           <MainTitle>
             Collaborative Video Review, Reimagined for Learning
           </MainTitle>
