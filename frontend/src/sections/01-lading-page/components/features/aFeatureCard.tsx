@@ -25,7 +25,7 @@ background-color: ${({ theme }) => theme.colors.background};
 word-wrap: normal;
 width: 99%;
 height: 150px;
-padding: 0 150zpx;
+padding: 0 30px;
 overflow: hidden; 
 cursor: pointer;
 `
