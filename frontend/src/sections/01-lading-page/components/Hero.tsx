@@ -4,15 +4,14 @@ import { Section } from "../../../global-components/Section";
 import { Container as BaseContainer } from "../../../global-components/Section";
 import { MediaQueries } from "../../../themes/mediaQueries";
 
-
 export const Hero = () => {
   return (
     <Section secondarySection>
       <Container>
         <Content>
-          <img src="/Hero.webp" alt="Image of some scribble" />
+          <Logo src="/Hero.webp" alt="Image of some scribble" />
           <MainTitle>
-            Collaborative Video Review, Reimagined for Learning
+            Video Notes for the Modern Classroom
           </MainTitle>
           <SubTitle>
             Time-stamped feedback tools built for classrooms, courses, and content creators.
@@ -22,16 +21,25 @@ export const Hero = () => {
             <MainButton text="Login" url="/login" />
           </MainButtonWrapper>
         </Content>
+        <StyledImage src="./class.jpg" alt="Classroom image" />
       </Container>
     </Section>
   );
 };
 
 const Container = styled(BaseContainer)`
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 20 / 6;
+  gap: 24px;
 
-@media ${MediaQueries.biggerSizes} {
-  aspect-ratio: 40 / 19;  
-  align-content: center;
+  @media ${MediaQueries.biggerSizes} {
+    flex-direction: row;  
+
+    align-items: center;
+    column-gap: 24px;
   }
 `;
 
@@ -40,22 +48,53 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 0px;
+  max-width: 650px;
+  min-width: 300px;
 
-  img {
-    height: 200px;
+  @media ${MediaQueries.biggerSizes} {
+    align-items: flex-start;
+  }
+
+`;
+
+const Logo = styled.img`
+  height: 200px;
+  display: block;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+    height: 250px; 
   }
 `;
 
 const MainTitle = styled.h1`
-  text-align: center;
+  text-align: left;
+  margin: 10px 0;
 `;
 
 const SubTitle = styled.p`
-  text-align: center;
+  text-align: left;
+  margin: 10px 0;
 `;
 
 const MainButtonWrapper = styled.div`
   display: flex;
+  margin: 20px 0;
   gap: 20px;
+`;
+
+const StyledImage = styled.img`
+  width: 90%;
+  border-radius: 15px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: none;
+
+  @media ${MediaQueries.biggerSizes} {
+  display: block;
+  max-height: 400px;
+  max-width: 600px;
+  width: clamp(160px, 30vw, 600px);
+  }
 `;

@@ -8,7 +8,7 @@ import { setupSwagger } from "./swagger/swagger";
 
 import { resetDatabase } from "./src/setup/resetDatabase";
 
-import router from "./src/routes/routes";
+import router from "./src/classesRoutes.ts/routes";
 
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
