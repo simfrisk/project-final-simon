@@ -51,9 +51,12 @@ const Content = styled.div`
   gap: 0px;
   max-width: 650px;
   min-width: 300px;
+  text-align: center;
 
   @media ${MediaQueries.biggerSizes} {
     align-items: flex-start;
+    text-align: left;
+    
   }
 
 `;
@@ -69,12 +72,10 @@ const Logo = styled.img`
 `;
 
 const MainTitle = styled.h1`
-  text-align: left;
   margin: 10px 0;
 `;
 
 const SubTitle = styled.p`
-  text-align: left;
   margin: 10px 0;
 `;
 

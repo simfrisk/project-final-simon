@@ -27,6 +27,7 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
+text-align: center;
 `
 
 const Schools= styled.div `

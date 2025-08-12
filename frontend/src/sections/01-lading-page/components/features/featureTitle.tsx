@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { MediaQueries } from "../../../../themes/mediaQueries";
 
 export const FeatureTitle = () => {
   return (
@@ -13,5 +14,10 @@ const Container = styled.div `
 
   h2 {
     margin: 15px 0; 
+    text-align: center;
+
+    @media ${MediaQueries.biggerSizes} {
+      text-align: left;
+    }
   }
 `
