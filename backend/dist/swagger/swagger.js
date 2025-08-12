@@ -114,7 +114,7 @@ const options = {
             },
         },
     },
-    apis: ["./endpoints/*.ts"],
+    apis: ["./src/controllers/*.ts"],
 };
 const swaggerSpec = (0, swagger_jsdoc_1.default)(options);
 function setupSwagger(app) {

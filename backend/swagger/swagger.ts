@@ -115,7 +115,7 @@ const options = {
       },
     },
   },
-  apis: ["./endpoints/*.ts"],
+  apis: ["./src/controllers/*.ts"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

@@ -1,0 +1,63 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getClasses = void 0;
+const Class_1 = require("../models/Class");
+/**
+ * @swagger
+ * /classes:
+ *   get:
+ *     summary: Retrieve all classes
+ *     description: Retrieve a list of classes with their titles.
+ *     responses:
+ *       200:
+ *         description: A list of classes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       classTitle:
+ *                         type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Server error fetching classes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ */
+const getClasses = async (req, res) => {
+    try {
+        const result = await Class_1.ClassModel.find().select("classTitle");
+        return res.status(200).json({
+            success: true,
+            response: result,
+            message: "Classes fetched successfully"
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            response: null,
+            message: "Failed to fetch classes."
+        });
+    }
+};
+exports.getClasses = getClasses;
