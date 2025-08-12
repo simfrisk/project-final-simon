@@ -10,7 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const swagger_1 = require("./swagger/swagger");
 const resetDatabase_1 = require("./src/setup/resetDatabase");
-const routes_1 = __importDefault(require("./src/routes/routes"));
+const routes_1 = __importDefault(require("./src/classesRoutes.ts/routes"));
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project";
 mongoose_1.default.connect(mongoUrl);
 const port = parseInt(process.env.PORT || "8080");
