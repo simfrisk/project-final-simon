@@ -1,7 +1,7 @@
 // FeatureSection.tsx
 import { Section, Container } from "../../../../global-components/Section";
-import { FeatureTitle } from "./FeatureTitle";
-import { FeatureCards } from "./FeatureCards";
+import { FeatureTitle } from "./featureTitle";
+import { FeatureCards } from "./featureCards";
 import styled from "styled-components";
 import { MediaQueries } from "../../../../themes/mediaQueries";
 import { spacing } from "../../../../themes/spacing";
