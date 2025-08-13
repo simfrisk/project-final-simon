@@ -148,13 +148,12 @@ export const CommentSection = () => {
 
           {replyToCommentId === _id && (
             <AddReplyForm onSubmit={handleSubmit}>
-              <input
-                type="text"
-                value={reply}
-                onChange={(e) => setReply(e.target.value)}
-                placeholder="Write a reply..."
-                aria-label="Write a reply for the comment"
-              />
+              <textarea
+  value={reply}
+  onChange={(e) => setReply(e.target.value)}
+  placeholder="Write a reply..."
+  aria-label="Write a reply for the comment"
+/>
               <button type="submit" aria-label='Subimt the reply '>Add</button>
             </AddReplyForm>
           )}
@@ -214,7 +213,7 @@ const Card = styled.div<{ $role?: string }>`
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
   transition: 0.3s ease;
-  align-items: center;
+  align-items: stretch;
   cursor: pointer;
   background-color: ${({ $role, theme }) =>
     $role === 'teacher'
@@ -263,18 +262,24 @@ const ReplyCardContainer = styled.div`
 `;
 
 const AddReplyForm = styled.form `
-  input {
-      padding: 6px 12px;
-      border: solid 1px black;
-      border-radius: 6px;
-      margin: 8px 6px;
+  textarea {
+    background-color: ${({ theme }) => 
+    theme.name === 'dark' ? '#242e3e' : '#fff'};
+    color: ${({theme}) => theme.colors.text};
+    padding: 10px 12px;
+    border: 1px solid ${({ theme }) => theme.colors.textAlternative};
+    border-radius: 6px;
+    margin: 10px 0px 2px 0;
+    width: 100%;
+    min-height: 80px;
     }
 
     button {
+      width: 100%;
       padding: 8px 14px;
       border: none;
       border-radius: 15px;
-      margin: 8px 6px;
+      margin: 8px 0px 10px 0;
       color: white;
       background-color: #007bff;
     }
@@ -282,7 +287,7 @@ const AddReplyForm = styled.form `
 
 const ShowReplies = styled.button`
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   color: ${({theme}) => theme.colors.text};
   border: none;
   padding: 6px 10px;
@@ -293,6 +298,7 @@ const ShowReplies = styled.button`
   align-items: center;
   gap: 6px;  
   font-weight: bold;
+  transition: ease .3s;
   
 
   &:hover {
@@ -302,8 +308,7 @@ const ShowReplies = styled.button`
 `;
 
 const ArrowIcon = styled.span<{ isOpen: boolean }>`
-
-justify-content: center;
+  justify-content: center;
   display: inline-block;
   border-style: solid;
   border-width: 6px 6px 0 6px;

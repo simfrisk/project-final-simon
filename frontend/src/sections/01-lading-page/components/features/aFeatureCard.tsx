@@ -16,6 +16,7 @@ export const AFeatureCard = ({ title }: AFeatureCardProps) => {
 };
 
 const ButtonContainer = styled.button `
+color: ${({theme}) => theme.colors.text};
 border: none;
 border-radius: 10px;
 border-left: solid 10px ${({ theme }) => theme.colors.primary};
@@ -28,4 +29,8 @@ height: 150px;
 padding: 0 30px;
 overflow: hidden; 
 cursor: pointer;
+
+  p {
+    color: ${({theme}) => theme.colors.textAlternative};
+  }
 `

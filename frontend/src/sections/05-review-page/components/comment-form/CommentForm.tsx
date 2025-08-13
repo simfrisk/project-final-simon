@@ -82,7 +82,7 @@ const Container = styled.div`
 
 const TextInput = styled.input`
   height: 48px;
-  padding: 10px;
+  padding: 10px 18px;
   font-size: 16px;
   border: none;
   border-radius: 8px;
