@@ -10,7 +10,7 @@ export const lightTheme: DefaultTheme = {
     backgroundActive: '#eaeaea',
     offBackground: '#f5f5f5',
     offBackgroundHover: '#eeeeee',
-    offBackgroundActive: 'rgb(195, 195, 195)',
+    offBackgroundActive: 'rgba(221, 221, 221, 1)',
     text: '#111111',
     textHover: 'rgb(31, 31, 31)',
     textActive: '#333333',

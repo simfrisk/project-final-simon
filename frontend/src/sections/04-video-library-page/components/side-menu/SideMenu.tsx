@@ -53,6 +53,7 @@ export const SideMenu = () => {
               return (
                 <Class to={to} key={cls._id} $active={isActive}>
                   {cls.classTitle}
+                  <MoreInfo>&#8942;</MoreInfo>
                 </Class>
               );
             })}
@@ -84,6 +85,7 @@ const Container = styled.section`
   margin-top: 60px;
   display: none;
 
+
   h3 {
     margin-bottom: 24px;
   }
@@ -111,23 +113,47 @@ const ProjectWrapper = styled.div`
   padding: 10px;
 `;
 
+const MoreInfo = styled.p `
+  visibility: hidden;
+  margin: 0;
+  padding: 0 4px;
+  transform: scale(1.2);
+  color: ${({theme}) => theme.colors.textAlternative};
+  transition: ease .3s;
+
+  &:hover {
+    font-weight: bolder;
+    transform: scale(1.4);
+    color: ${({theme}) => theme.colors.text};
+  }
+;
+`
+
 const Class = styled(Link)<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   color: ${({theme}) => theme.colors.text};
   text-decoration: none;
   transition: ease 0.2s;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  background-color: ${({ $active, theme }) => ($active ? theme.colors.offBackground : "none")};
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.offBackgroundActive : "none")};
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
 
   &:hover {
     transform: scale(0.97);
+     background-color: ${({ theme }) => theme.colors.offBackgroundHover};
+  }
+
+  &:hover ${MoreInfo} {
+    visibility: visible;
   }
 `;
 
 const BottomSection = styled.div`
-width: 50%;
+width: 100%;
 `;
 
 const StyledButton = styled.button`
@@ -141,7 +167,8 @@ const StyledButton = styled.button`
   font-size: 16px;
   cursor: pointer;
   height: 40px;
-  margin: 10px 0;
+  width: 80%;
+  margin: 10px auto;
   text-align: center;
   transition: ease 0.3s;
 
@@ -157,6 +184,7 @@ const FormContainer = styled.div`
   justify-content: center;
   width: 100%;
   border-radius: 10px;
+  background-color: geen;
 
   @media ${MediaQueries.biggerSizes} {
     width: 100%;

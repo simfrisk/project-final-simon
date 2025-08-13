@@ -125,9 +125,10 @@ const Container = styled.div`
   flex-grow: 1;
   flex-direction: column;
   gap: 24px;
-  padding: 0 20px;
+  padding: 72px 20px;
   box-sizing: border-box;
   overflow-x: hidden;
+  
 `;
 
 const ProjectWrapper = styled.div`

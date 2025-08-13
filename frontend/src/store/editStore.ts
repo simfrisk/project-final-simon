@@ -18,7 +18,7 @@ export const useEditingStore = create<EditingState>((set) => ({
   isEditingClass: false,
   isRemovingClass: false,
   isEditingProject: false,
-  isRemovingProject: true,
+  isRemovingProject: false,
   removingProjectId: null,
   setIsEditingClass: (value) => set({ isEditingClass: value }),
   setIsRemovingClass: (value) => set({ isRemovingClass: value }),
