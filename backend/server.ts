@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 import { setupSwagger } from "./swagger/swagger";
 
 import { resetDatabase } from "./src/setup/resetDatabase";
-
 import router from "./src/classesRoutes.ts/routes";
 
 

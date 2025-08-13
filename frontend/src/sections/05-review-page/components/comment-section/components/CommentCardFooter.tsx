@@ -33,7 +33,7 @@ export const CommentCardFooter = ({
         <ActionButton onClick={() => setReplyToCommentId(_id)}>Reply</ActionButton>
         <ActionButtonIcon onClick={() => toggleLike(_id)}>
           <img src="/icons/like.svg" alt="Like button" />
-          <LikeCount count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
+          <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
         </ActionButtonIcon>
       </ReactionGroup>
 
@@ -84,8 +84,8 @@ const ActionButton = styled.button`
   }
 `;
 
-const LikeCount = styled.p<{ count: number }>`
-  visibility: ${({ count }) => (count > 0 ? 'inline-block' : 'hidden')};
+const LikeCount = styled.p<{ $count: number }>`
+  visibility: ${({ $count }) => ($count > 0 ? 'inline-block' : 'hidden')};
   font-size: 20px;
   margin: 0;
 `;

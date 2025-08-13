@@ -579,7 +579,7 @@ export const commentStore = create<MessageStore>()(
 
       //#endregion
 
-      //#region ----- FETCH ALL COMMENTS -----
+      //#region ----- FETCH PRIVATE COMMENTS -----
       fetchPrivateComments: async (projectId) => {
         try {
           const token = getToken();
