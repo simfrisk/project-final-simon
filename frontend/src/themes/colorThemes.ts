@@ -41,6 +41,9 @@ declare module 'styled-components' {
 
       boxShadow: string
     };
+    filter: {
+      inverted: string
+    };
   }
 }
 
@@ -86,6 +89,9 @@ export const lightTheme = {
 
     boxShadow: 'rgba(0, 0, 0, 0.14)',
   },
+  filter: {
+    inverted: 'invert(0) brightness(1)'
+  }
 };
 
 //#endregion
@@ -130,6 +136,9 @@ export const darkTheme = {
 
     boxShadow: 'rgba(78, 78, 78, 0.51)',
   },
+  filter: {
+    inverted: 'invert(1) brightness(.6)'
+  }
 };
 
 //#endregion

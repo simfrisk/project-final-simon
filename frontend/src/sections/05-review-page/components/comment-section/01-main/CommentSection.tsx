@@ -283,6 +283,7 @@ const AddReplyForm = styled.form `
 const ShowReplies = styled.button`
   display: flex;
   justify-content: flex-start;
+  color: ${({theme}) => theme.colors.text};
   border: none;
   padding: 6px 10px;
   border-radius: 15px;
@@ -292,6 +293,7 @@ const ShowReplies = styled.button`
   align-items: center;
   gap: 6px;  
   font-weight: bold;
+  
 
   &:hover {
     transform: scale(0.96);
@@ -300,6 +302,7 @@ const ShowReplies = styled.button`
 `;
 
 const ArrowIcon = styled.span<{ isOpen: boolean }>`
+
 justify-content: center;
   display: inline-block;
   border-style: solid;

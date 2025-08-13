@@ -77,6 +77,7 @@ const ActionButton = styled.button`
   padding: 0;
   cursor: pointer;
   transition: ease 0.3s;
+  color: ${({theme}) => theme.colors.textAlternative};
 
   &:hover {
     text-decoration: underline;
@@ -101,6 +102,10 @@ const ActionButtonIcon = styled.button`
   transform: scale(0.7);
   cursor: pointer;
 
+  img {
+    filter: ${({ theme }) => theme.filter.inverted};
+    }
+
   img:hover {
     transform: scale(0.9);
   }
@@ -118,6 +123,10 @@ export const Edit = styled.div`
   cursor: pointer;
   transform: translateY(30%);
   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+  img {
+  filter: ${({ theme }) => theme.filter.inverted};
+  }
 
   img:hover {
     transition: ease 0.3s;

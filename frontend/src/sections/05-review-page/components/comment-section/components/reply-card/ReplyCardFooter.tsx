@@ -60,6 +60,7 @@ const Container = styled.div`
 `;
 
 const ActionButton = styled.button`
+  color: ${({theme}) => theme.colors.textAlternative};
   background: none;
   border: none;
   padding: 0;
@@ -79,8 +80,12 @@ const ActionButtonIcon = styled.button`
   transform: scale(0.70);
   cursor: pointer;
 
-  &:hover {
-    text-decoration: underline;
+  img {
+    filter: ${({ theme }) => theme.filter.inverted};
+    }
+
+  img:hover {
+    transform: scale(0.9);
   }
 `;
 
@@ -107,6 +112,11 @@ export const Edit = styled.div`
     transform 0.3s ease;
 
   img {
-    transform: scale(0.80);
+    filter: ${({ theme }) => theme.filter.inverted};
+    }
+
+  img:hover {
+    transition: ease 0.3s;
+    transform: scale(0.9);
   }
 `;
