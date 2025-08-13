@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useEditingStore } from "../../../../store/editStore";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserStore } from "../../../../store/userStore";
+import { ClassOptions } from "./ClassOptions";
 
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes);
@@ -14,10 +15,12 @@ export const SideMenu = () => {
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
+  const isRemovingClass = useEditingStore((set) => set.isRemovingClass)
+  const seRremovingClassId = useEditingStore((set) => set.setRemovingClassId)
 
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
-
 
   useEffect(() => {
     fetchClasses();
@@ -40,40 +43,53 @@ export const SideMenu = () => {
     setIsEditingProject(true)
   };
 
-  return (
-    <>
-      <Container>
-        <TopSection>
-          <h3>Classes</h3>
-          <ProjectWrapper>
-            {classes.map((cls) => {
-              const to = `/library/classes/${cls._id}/projects`;
-              const isActive = location.pathname === to;
+  const handelMoreInfo = (e: React.MouseEvent<HTMLParagraphElement>, classId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRemovingClass(true);
+    seRremovingClassId(classId); 
+  };
 
-              return (
-                <Class to={to} key={cls._id} $active={isActive}>
-                  {cls.classTitle}
-                  <MoreInfo>&#8942;</MoreInfo>
-                </Class>
-              );
-            })}
-          </ProjectWrapper>
-        </TopSection>
-        {userRole === 'teacher' && (
+  return (
+    <Container>
+      <TopSection>
+        <h3>Classes</h3>
+        <ProjectWrapper>
+          {classes.map((cls) => {
+            const to = `/library/classes/${cls._id}/projects`;
+            const isActive = location.pathname === to;
+
+            return (
+              <Class to={to} key={cls._id} $active={isActive}>
+                {cls.classTitle}
+                <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>&#8942;</MoreInfo>
+              </Class>
+            );
+          })}
+        </ProjectWrapper>
+      </TopSection>
+
+        {isRemovingClass && (
+      <ClassOptions />
+    )}
+
+      {userRole === 'teacher' && (
         <BottomSection>
           <FormContainer>
-            <StyledButton type="submit" onClick={handleEditClass}>
+            <StyledButton type="button" onClick={handleEditClass}>
               + Class
             </StyledButton>
-            <StyledButton type="submit" onClick={handleEditProject}>
+            <StyledButton type="button" onClick={handleEditProject}>
               + Project
             </StyledButton>
           </FormContainer>
-        </BottomSection>)}
-      </Container>
-    </>
+        </BottomSection>
+      )}
+    </Container>
   );
 };
+
+// Styled Components
 
 const Container = styled.section`
   display: flex;
@@ -85,7 +101,6 @@ const Container = styled.section`
   margin-top: 60px;
   display: none;
 
-
   h3 {
     margin-bottom: 24px;
   }
@@ -96,11 +111,11 @@ const Container = styled.section`
 `;
 
 const TopSection = styled.div`
-width: 100%;
+  width: 100%;
 
-h3 {
-  padding: 0 35px;
-}
+  h3 {
+    padding: 0 35px;
+  }
 `;
 
 const ProjectWrapper = styled.div`
@@ -113,27 +128,27 @@ const ProjectWrapper = styled.div`
   padding: 10px;
 `;
 
-const MoreInfo = styled.p `
+const MoreInfo = styled.p`
   visibility: hidden;
+  position: relative;
   margin: 0;
   padding: 0 4px;
   transform: scale(1.2);
-  color: ${({theme}) => theme.colors.textAlternative};
-  transition: ease .3s;
+  color: ${({ theme }) => theme.colors.textAlternative};
+  transition: ease 0.3s;
 
   &:hover {
     font-weight: bolder;
     transform: scale(1.4);
-    color: ${({theme}) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.text};
   }
-;
-`
+`;
 
 const Class = styled(Link)<{ $active: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: ${({theme}) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
   transition: ease 0.2s;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
@@ -141,10 +156,11 @@ const Class = styled(Link)<{ $active: boolean }>`
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
+  position: relative; // IMPORTANT for ClassOptions dropdown
 
   &:hover {
     transform: scale(0.97);
-     background-color: ${({ theme }) => theme.colors.offBackgroundHover};
+    background-color: ${({ theme }) => theme.colors.offBackgroundHover};
   }
 
   &:hover ${MoreInfo} {
@@ -153,7 +169,7 @@ const Class = styled(Link)<{ $active: boolean }>`
 `;
 
 const BottomSection = styled.div`
-width: 100%;
+  width: 100%;
 `;
 
 const StyledButton = styled.button`
@@ -184,7 +200,6 @@ const FormContainer = styled.div`
   justify-content: center;
   width: 100%;
   border-radius: 10px;
-  background-color: geen;
 
   @media ${MediaQueries.biggerSizes} {
     width: 100%;
