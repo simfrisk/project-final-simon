@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useProjectStore } from "../../../store/projectStore";
 import type { ProjectType } from "../../../store/projectStore";
+import { useEditingStore } from "../../../store/editStore";
 
 interface ProjectProps extends Pick<ProjectType, "_id" | "projectName" | "projectDescription" | "thumbnail"> {
   projectId: string;
@@ -9,7 +9,15 @@ interface ProjectProps extends Pick<ProjectType, "_id" | "projectName" | "projec
 
 export const Project = ({ projectId, projectName, projectDescription, thumbnail }: ProjectProps) => {
 
-const deleteProject = useProjectStore((state) => state.deleteProject);
+const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
+const setRemovingProjectId = useEditingStore((state) => state.setRemovingProjectId);
+
+
+const hadelShowDelete = (e: React.MouseEvent<HTMLImageElement>) => {
+  e.preventDefault();
+  setIsRemovingProject(true);
+  setRemovingProjectId(projectId)
+}
 
   return (
     <StyledLink to={`/review/${projectId}`}>
@@ -23,12 +31,11 @@ const deleteProject = useProjectStore((state) => state.deleteProject);
           <p>Professor Daniels</p>     
           <Edit>    
           <img src="/icons/edit.svg" alt="Edit Icon" />
-          <img src="/icons/delete.svg" alt="Delete Icon"
-            onClick={(e) => {
-              e.stopPropagation(); 
-              e.preventDefault(); 
-              deleteProject(projectId);
-            }}
+          <img
+            src="/icons/delete.svg"
+            alt="Delete Icon"
+            onClick={hadelShowDelete}
+             
           />
           </Edit>
           <p>Duration: 12:23</p>

@@ -12,6 +12,7 @@ import { CreateProject } from './CreateProject';
 import { CreateClass } from './CreateClass';
 import { Loader } from '../../../global-components/loader';
 import { MediaQueries } from '../../../themes/mediaQueries';
+import { ComfirmBox } from '../../../global-components/ComfirmBox';
 
 type Class = {
   _id: string;
@@ -38,8 +39,11 @@ export const ProjectsList = () => {
 
   const isEditingClass = useEditingStore((state) => state.isEditingClass);
   const isEditingProject = useEditingStore((state) => state.isEditingProject);
+  const isRemovingProject = useEditingStore((state) => state.isRemovingProject);
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
+  const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
+
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
   const currentClass = useClassStore((state) => state.class);
@@ -54,6 +58,7 @@ export const ProjectsList = () => {
   const handleTransparentBackground = () => {
     setIsEditingClass(false);
     setIsEditingProject(false);
+    setIsRemovingProject(false);
   };
 
   const handleEditClass = () => setIsEditingClass(true);
@@ -98,14 +103,16 @@ export const ProjectsList = () => {
         ))}
       </ProjectWrapper>
 
-      {(isEditingClass || isEditingProject) && (
+      {(isEditingClass || isEditingProject || isRemovingProject) && (
         <TransparentBackground onClick={handleTransparentBackground}>
           <CreateWrapper onClick={(e) => e.stopPropagation()}>
             {userRole === 'teacher' && isEditingClass && <CreateClass />}
             {userRole === 'teacher' && isEditingProject && <CreateProject />}
+            {userRole === 'teacher' && isRemovingProject && <ComfirmBox />}
           </CreateWrapper>
         </TransparentBackground>
       )}
+      
     </Container>
   );
 };
