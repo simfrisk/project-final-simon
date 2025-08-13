@@ -66,21 +66,15 @@ export const VideoSection = () => {
   }, [projectVideo]);
 
   // Loaded metadata
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video) return;
 
-    const handleLoadedMetadata = () => {
-      setVideoLoaded(true);
-      if (currentTime && !isNaN(currentTime)) {
-        video.currentTime = currentTime;
-        video.pause();
-      }
-    };
+  const handleCanPlayThrough = () => setVideoLoaded(true);
 
-    video.addEventListener("loadedmetadata", handleLoadedMetadata);
-    return () => video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-  }, [currentTime]);
+  video.addEventListener("canplaythrough", handleCanPlayThrough);
+  return () => video.removeEventListener("canplaythrough", handleCanPlayThrough);
+}, []);
 
   // Update current time and formatted time on play
   useEffect(() => {
