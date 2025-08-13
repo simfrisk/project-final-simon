@@ -93,7 +93,13 @@ const Container = styled.section`
   }
 `;
 
-const TopSection = styled.div``;
+const TopSection = styled.div`
+width: 100%;
+
+h3 {
+  padding: 0 35px;
+}
+`;
 
 const ProjectWrapper = styled.div`
   display: flex;
@@ -110,6 +116,10 @@ const Class = styled(Link)<{ $active: boolean }>`
   text-decoration: none;
   transition: ease 0.2s;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.offBackground : "none")};
+  border-radius: 10px;
+  width: 100%;
+  padding: 10px 25px;
 
   &:hover {
     transform: scale(0.97);
