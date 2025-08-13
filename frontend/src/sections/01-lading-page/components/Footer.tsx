@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Container } from "../../../global-components/Section";
 import { MediaQueries } from "../../../themes/mediaQueries";
+import { spacing } from "../../../themes/spacing";
 
 
 export const Footer = () => {
@@ -34,8 +35,8 @@ export const Footer = () => {
 const SocialMedia = styled.div `
 display: flex;
 justify-content: center;
-gap: 20px;
-margin-top: 20px;
+gap: ${spacing.md};
+margin-top: ${spacing.md};
 
 a {
   color: white;

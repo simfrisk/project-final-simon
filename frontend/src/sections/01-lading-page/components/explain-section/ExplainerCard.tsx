@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useInView } from "framer-motion";
 import styled from "styled-components";
 import { MediaQueries } from "../../../../themes/mediaQueries";
+import { spacing } from "../../../../themes/spacing";
 
 type ExplainerCardProps = {
   title: string;
@@ -9,27 +10,21 @@ type ExplainerCardProps = {
   video?: string;
 };
 
-export const ExplainerCard = ({title, text, video}: ExplainerCardProps) => {
+export const ExplainerCard = ({ title, text, video }: ExplainerCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(containerRef, { amount: 0.5 });
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(MediaQueries.biggerSizes);
-
-    // Initial check
     setIsMobile(!mediaQuery.matches);
 
-    // Listener for viewport size changes
     const handler = (e: MediaQueryListEvent) => setIsMobile(!e.matches);
-
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  // Desktop: play once on hover (no loop)
   const handleMouseEnter = () => {
     if (!isMobile && videoRef.current) {
       videoRef.current.loop = false;
@@ -38,28 +33,19 @@ export const ExplainerCard = ({title, text, video}: ExplainerCardProps) => {
     }
   };
 
-  // Mobile: loop video when in view, pause otherwise
   useEffect(() => {
     if (isMobile && videoRef.current) {
       videoRef.current.loop = true;
-      if (isInView) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
-      }
+      if (isInView) videoRef.current.play();
+      else videoRef.current.pause();
     }
   }, [isInView, isMobile]);
 
   return (
     <Container ref={containerRef}>
-    <StyledVideo
-      ref={videoRef}
-      muted
-      playsInline
-      onMouseEnter={handleMouseEnter}
-    >
-      <source src={video || "/Explainer3.mp4"} type="video/mp4" />
-    </StyledVideo>
+      <StyledVideo ref={videoRef} muted playsInline onMouseEnter={handleMouseEnter}>
+        <source src={video || "/Explainer3.mp4"} type="video/mp4" />
+      </StyledVideo>
       <strong>{title}</strong>
       <p>{text}</p>
     </Container>
@@ -70,14 +56,13 @@ const Container = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  row-gap: 10px;
+  row-gap: ${spacing.sm};
   border-radius: 15px;
   width: 100%;
-  max-width: 500px ;
-  padding: 15px;
+  max-width: 500px;
+  padding: ${spacing.md};
   margin: 0 auto;
-  background-color: #1F2A36;
-
+  background-color: #1f2a36;
 `;
 
 const StyledVideo = styled.video`

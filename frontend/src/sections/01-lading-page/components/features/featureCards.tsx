@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
+import { spacing } from "../../../../themes/spacing";
 
 export const FeatureCards = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -58,11 +59,11 @@ export const FeatureCards = () => {
   );
 };
 
-const Container = styled.div `
-margin: 20px 0;
-display: flex;
-flex-direction: column;
-`
+const Container = styled.div`
+  margin: ${spacing.lg} 0;
+  display: flex;
+  flex-direction: column;
+`;
 
 const CardContainer = styled.div`
   display: flex;
@@ -78,11 +79,11 @@ const CardContainer = styled.div`
 const Controls = styled.div`
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
+  gap: ${spacing.sm};
+  margin-top: ${spacing.sm};
 
   button {
-    padding: 6px 12px;
+    padding: ${spacing.xs} ${spacing.sm};
     border-radius: 10px;
     background-color: ${({theme}) => theme.colors.primary};
     color: ${({theme}) => theme.colors.offBackground};

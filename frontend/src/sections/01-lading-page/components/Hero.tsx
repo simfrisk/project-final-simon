@@ -3,6 +3,7 @@ import { MainButton } from "../../../global-components/buttons";
 import { Section } from "../../../global-components/Section";
 import { Container as BaseContainer } from "../../../global-components/Section";
 import { MediaQueries } from "../../../themes/mediaQueries";
+import { spacing } from "../../../themes/spacing";
 
 export const Hero = () => {
   return (
@@ -33,13 +34,12 @@ const Container = styled(BaseContainer)`
   justify-content: center;
   align-items: center;
   aspect-ratio: 20 / 6;
-  gap: 24px;
+  gap: ${spacing.lg};
 
   @media ${MediaQueries.biggerSizes} {
     flex-direction: row;  
-
     align-items: center;
-    column-gap: 24px;
+    column-gap: ${spacing.lg};
   }
 `;
 
@@ -48,7 +48,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0px;
+  gap: ${spacing.xs};
   max-width: 650px;
   min-width: 300px;
   text-align: center;
@@ -56,9 +56,7 @@ const Content = styled.div`
   @media ${MediaQueries.biggerSizes} {
     align-items: flex-start;
     text-align: left;
-    
   }
-
 `;
 
 const Logo = styled.img`
@@ -72,17 +70,17 @@ const Logo = styled.img`
 `;
 
 const MainTitle = styled.h1`
-  margin: 10px 0;
+  margin: ${spacing.sm} 0;
 `;
 
 const SubTitle = styled.p`
-  margin: 10px 0;
+  margin: ${spacing.sm} 0;
 `;
 
 const MainButtonWrapper = styled.div`
   display: flex;
-  margin: 20px 0;
-  gap: 20px;
+  margin: ${spacing.lg} 0;
+  gap: ${spacing.lg};
 `;
 
 const StyledImage = styled.img`
@@ -93,9 +91,9 @@ const StyledImage = styled.img`
   display: none;
 
   @media ${MediaQueries.biggerSizes} {
-  display: block;
-  max-height: 400px;
-  max-width: 600px;
-  width: clamp(160px, 30vw, 600px);
+    display: block;
+    max-height: 400px;
+    max-width: 600px;
+    width: clamp(160px, 30vw, 600px);
   }
 `;
