@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useEditingStore } from "../../../../store/editStore";
 import { useClassStore } from "../../../../store/classStore";
+import { ConfirmBox } from "../../../../global-components/ComfirmBox";
 
 export const ClassOptions = () => {
 
@@ -8,24 +9,29 @@ const removingClassId = useEditingStore((state) => state.removingClassId);
 const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
 const deleteClass = useClassStore((state) => state.deleteClass);
 
-const handelEditClass = () => {
+const handelDeleteClass = () => {
   if (removingClassId) {
     deleteClass(removingClassId);
-    setIsRemovingClass(false); // closes the ClassOptions menu
+    setIsRemovingClass(false);
   }
 };
 
-const handleTransparentBackground = () => {
+const handleCancel = () => {
     setIsRemovingClass(false);
   };
 
   return (
     <>
-      <TransparentBackground onClick={handleTransparentBackground} />
+      <TransparentBackground onClick={handleCancel} />
        <Container>
         <StyledButton>Edit name</StyledButton>
-        <StyledButton danger onClick={handelEditClass}>Delete Class</StyledButton>
+        <StyledButton danger onClick={handelDeleteClass}>Delete Class</StyledButton>
       </Container>
+      <ConfirmBox      
+      message={"Are you sure you want to delete?"} 
+      onCancel={handleCancel} 
+      onConfirm={handelDeleteClass}  />
+      
     </>
   )
 };

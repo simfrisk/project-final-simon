@@ -48,6 +48,7 @@ export const CreateProject = () => {
     await addProject(classId, {
       projectName,
       projectDescription,
+      classId,
       video: videoFile,
     });
 
@@ -71,7 +72,7 @@ export const CreateProject = () => {
         onChange={(e) => setProjectDescription(e.target.value)}
       />
       <input type="file" accept="video/*" onChange={handleFileChange} />
-      <AddProjectBtn onClick={handleCreateProject}>+ Project</AddProjectBtn>
+      <AddProjectBtn onClick={handleCreateProject}>Add Project</AddProjectBtn>
     </FormContainer>
   );
 };
