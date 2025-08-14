@@ -7,11 +7,15 @@ import { SmallButton } from "../../global-components/buttons";
 import { TeacherProjectCard } from "./components/TeacherProjectCard";
 import { TeachersSideMenu } from "./components/TeachersSideMenu";
 import { useEditingStore } from "../../store/editStore";
+import { useClassStore } from "../../store/classStore";
+import { MediaQueries } from "../../themes/mediaQueries";
 
 export const TeachersPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments);
   const currentClassId = useEditingStore((state) => state.currentClassId);
+  const classes = useClassStore((state) => state.classes);
+  const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
 
   useEffect(() => {
     fetchProjectsWithComments();
@@ -26,6 +30,10 @@ export const TeachersPage = () => {
       )
     );
 
+      const handelClassFetch = (id: string) => {
+    setCurrentClassId(id);
+  };
+
   return (
     <>
       <Navigation />
@@ -35,9 +43,19 @@ export const TeachersPage = () => {
 
         <MainContent>
           <PageTitle>Teachers Dashboard</PageTitle>
-          <select name="testing" id="">
-            <option value="test">Class</option>
-          </select>
+         <ClassSelect
+            value={currentClassId || ""}
+            onChange={(e) => handelClassFetch(e.target.value)}
+          >
+            <option value="">Select a class</option>
+            {classes.map((cls) => (
+              <option key={cls._id} value={cls._id}>
+                {cls.classTitle}
+              </option>
+            ))}
+          </ClassSelect>
+
+      
 
           <ActionBar>
             <SmallButton text="Projects" />
@@ -76,6 +94,35 @@ const PageTitle = styled.h2`
   margin-top: 40px;
 `;
 
+const ClassSelect = styled.select`
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  width: 203px;
+  max-width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: rgba(0, 0, 0, 0.14);
+  }
+
+  option {
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+  }
+`;
+
 const DashboardLayout = styled.div`
   width: 100%;
   display: flex;
@@ -103,3 +150,4 @@ const ProjectsList = styled.div`
   max-width: 800px;
   margin-bottom: 20px;
 `;
+

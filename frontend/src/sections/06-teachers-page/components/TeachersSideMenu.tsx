@@ -24,7 +24,7 @@ export const TeachersSideMenu = () => {
         <ClassList>
           {classes.map((cls) => (
             <ClassItem onClick={() => handelClassFetch(cls._id)} key={cls._id}>
-              {cls.classTitle}
+              <p>{cls.classTitle}</p>
             </ClassItem>
           ))}
         </ClassList>
@@ -44,6 +44,7 @@ const Container = styled.section`
   margin-top: 84px;
   display: none;
   width: 20%;
+  display: none;
 
   h3 {
     margin-bottom: 24px;
@@ -51,6 +52,7 @@ const Container = styled.section`
 
   @media ${MediaQueries.biggerSizes} {
     display: flex;
+    display: block;
   }
 `;
 

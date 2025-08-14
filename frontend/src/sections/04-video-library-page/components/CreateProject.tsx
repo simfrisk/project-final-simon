@@ -24,7 +24,7 @@ export const CreateProject = () => {
 
     if (file.size > MAX_FILE_SIZE) {
       alert("Video file size exceeds 100MB. Please select a smaller file.");
-      e.target.value = ""; // reset input
+      e.target.value = ""; 
       setVideoFile(null);
       return;
     }
