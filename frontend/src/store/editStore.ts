@@ -7,6 +7,9 @@ type EditingState = {
   isRemovingProject: boolean
   removingProjectId: string | null;
   removingClassId: string | null;
+
+  currentClassId: string | null;
+
   setIsEditingClass: (value: boolean) => void
   setIsRemovingProject: (value: boolean) => void
   setIsEditingProject: (value: boolean) => void
@@ -14,6 +17,8 @@ type EditingState = {
 
   setRemovingProjectId: (id: string | null) => void;
   setRemovingClassId: (id: string | null) => void;
+
+  setCurrentClassId: (id: string | null) => void;
 }
 
 export const useEditingStore = create<EditingState>((set) => ({
@@ -23,6 +28,9 @@ export const useEditingStore = create<EditingState>((set) => ({
   isRemovingProject: false,
   removingProjectId: null,
   removingClassId: null,
+
+  currentClassId: null,
+
   setIsEditingClass: (value) => set({ isEditingClass: value }),
   setIsRemovingClass: (value) => set({ isRemovingClass: value }),
   setIsEditingProject: (value) => set({ isEditingProject: value }),
@@ -30,4 +38,6 @@ export const useEditingStore = create<EditingState>((set) => ({
 
   setRemovingProjectId: (id) => set({ removingProjectId: id }),
   setRemovingClassId: (id) => set({ removingClassId: id }),
+
+  setCurrentClassId: (id) => set({ currentClassId: id }),
 }))

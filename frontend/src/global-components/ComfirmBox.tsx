@@ -1,29 +1,25 @@
 import { MediaQueries } from "../themes/mediaQueries";
 import styled from "styled-components";
-import { useEditingStore } from "../store/editStore";
-import { useProjectStore } from "../store/projectStore";
 
-export const ComfirmBox = () => {
-
-  const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
-  const projectId = useEditingStore((state) => state.removingProjectId);
-  const deleteProject = useProjectStore((state) => state.deleteProject)
-
-  const handlCancel = () => setIsRemovingProject(false);
-
-const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.stopPropagation();
-  if (!projectId) return; // early exit if null
-  deleteProject(projectId);
-  setIsRemovingProject(false);
+// Props for the ConfirmBox
+type ConfirmBoxProps = {
+  message?: string;
+  onConfirm: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onCancel: () => void;
 };
+
+export const ConfirmBox = ({ 
+  message, 
+  onCancel, 
+  onConfirm
+}: ConfirmBoxProps) => {
 
  return (
     <FormContainer>
-      <h3>Are you sure you want to delete?</h3>
+      <h3>{message}</h3>
       <Wrapper>
-        <CancelBtn onClick={handlCancel}>Cancel</CancelBtn>
-        <RemoveBtn onClick={handelDelete}>Remove</RemoveBtn>
+        <CancelBtn onClick={onCancel}>Cancel</CancelBtn>
+        <RemoveBtn onClick={onConfirm}>Remove</RemoveBtn>
       </Wrapper>
     </FormContainer>
   );

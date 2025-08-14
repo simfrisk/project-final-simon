@@ -8,6 +8,7 @@ import { baseUrl } from "../config/api";
 //#region ----- INTERFACES -----
 export interface ProjectType {
   _id?: string;
+  classId: string;
   projectName: string;
   projectDescription: string;
   video: string | File | null;

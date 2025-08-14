@@ -12,7 +12,7 @@ import { CreateProject } from './CreateProject';
 import { CreateClass } from './CreateClass';
 import { Loader } from '../../../global-components/loader';
 import { MediaQueries } from '../../../themes/mediaQueries';
-import { ComfirmBox } from '../../../global-components/ComfirmBox';
+import { ConfirmBox } from '../../../global-components/ComfirmBox';
 
 type Class = {
   _id: string;
@@ -43,6 +43,8 @@ export const ProjectsList = () => {
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
   const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
+  const deleteProject = useProjectStore((state) => state.deleteProject)
+  const projectId = useEditingStore((state) => state.removingProjectId);
 
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
@@ -63,6 +65,15 @@ export const ProjectsList = () => {
 
   const handleEditClass = () => setIsEditingClass(true);
   const handleEditProject = () => setIsEditingProject(true);
+
+  const handlCancel = () => setIsRemovingProject(false);
+
+  const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!projectId) return; 
+    deleteProject(projectId);
+    setIsRemovingProject(false);
+  };
 
   if (loading) {
     return (
@@ -108,7 +119,16 @@ export const ProjectsList = () => {
           <CreateWrapper onClick={(e) => e.stopPropagation()}>
             {userRole === 'teacher' && isEditingClass && <CreateClass />}
             {userRole === 'teacher' && isEditingProject && <CreateProject />}
-            {userRole === 'teacher' && isRemovingProject && <ComfirmBox />}
+
+
+            {userRole === 'teacher' && isRemovingProject && 
+              <ConfirmBox
+                  message={"Are you sure you want to delete?"} // fixed prop name
+                  onCancel={handlCancel} 
+                  onConfirm={handelDelete} 
+                />}
+
+
           </CreateWrapper>
         </TransparentBackground>
       )}
@@ -125,9 +145,12 @@ const Container = styled.div`
   flex-grow: 1;
   flex-direction: column;
   gap: 24px;
-  padding: 72px 20px;
   box-sizing: border-box;
   overflow-x: hidden;
+
+  @media ${MediaQueries.biggerSizes} {
+  padding: 72px 20px;
+  }
   
 `;
 

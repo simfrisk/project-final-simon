@@ -5,76 +5,101 @@ import styled from "styled-components";
 
 import { SmallButton } from "../../global-components/buttons";
 import { TeacherProjectCard } from "./components/TeacherProjectCard";
+import { TeachersSideMenu } from "./components/TeachersSideMenu";
+import { useEditingStore } from "../../store/editStore";
 
 export const TeachersPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments);
+  const currentClassId = useEditingStore((state) => state.currentClassId);
 
   useEffect(() => {
-    console.log("Fetching projects with comments...");
     fetchProjectsWithComments();
   }, []);
+
+  const filteredProjects = projects
+    .filter(project => project.classId === currentClassId) 
+    .filter(project =>
+      Array.isArray(project.comments) &&
+      project.comments.some(
+        comment => comment.commentType === "question" && comment.isChecked === false
+      )
+    );
 
   return (
     <>
       <Navigation />
-      <Title>Teachers dashboard</Title>
 
-      <Sections>
-        <SmallButton text={"Projects"} />
-        <SmallButton text={"All comments"} />
-        <SmallButton text={"Messages"} />
-      </Sections>
+      <DashboardLayout>
+        <TeachersSideMenu />
 
-      <Wrapper>
-        {projects
-          .filter(project =>
-            Array.isArray(project.comments) &&
-            project.comments.some(
-              (comment: any) =>
-                comment.commentType === "question" && comment.isChecked === false
-            )
-          )
-          .map(({ _id, projectName, projectDescription, thumbnail, comments }) => {
-            const questionComments = (comments ?? []).filter(
-              (comment: any) =>
-                comment.commentType === "question" && comment.isChecked === false
-            );
+        <MainContent>
+          <PageTitle>Teachers Dashboard</PageTitle>
+          <select name="testing" id="">
+            <option value="test">Class</option>
+          </select>
 
-            return (
-              <TeacherProjectCard
-                key={_id}
-                projectId={_id ?? ""}
-                projectName={projectName}
-                projectDescription={projectDescription}
-                thumbnail={thumbnail}
-                comments={questionComments}
-              />
-            );
-          })}
-      </Wrapper>
+          <ActionBar>
+            <SmallButton text="Projects" />
+            <SmallButton text="All comments" />
+            <SmallButton text="Messages" />
+          </ActionBar>
+
+          <ProjectsList>
+            {filteredProjects.map(({ _id, projectName, projectDescription, thumbnail, comments }) => {
+              const questionComments = (comments ?? []).filter(
+                comment =>
+                  comment.commentType === "question" && comment.isChecked === false
+              );
+
+              return (
+                <TeacherProjectCard
+                  key={_id ?? ""}
+                  projectId={_id ?? ""}
+                  projectName={projectName}
+                  projectDescription={projectDescription}
+                  thumbnail={thumbnail}
+                  comments={questionComments}
+                />
+              );
+            })}
+          </ProjectsList>
+        </MainContent>
+      </DashboardLayout>
     </>
   );
 };
 
 // Styled Components
-
-const Title = styled.h2`
+const PageTitle = styled.h2`
   text-align: center;
   margin-top: 40px;
 `;
 
-const Sections = styled.div`
+const DashboardLayout = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+`;
+
+const ActionBar = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
-
 `;
 
-const Wrapper = styled.div`
+const ProjectsList = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center; 
+  width: 100%;
+  max-width: 800px;
   margin-bottom: 20px;
 `;
