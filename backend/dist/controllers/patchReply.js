@@ -9,6 +9,8 @@ const Reply_1 = require("../models/Reply");
  *     summary: Update a reply's content by ID
  *     tags:
  *       - Replies
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId

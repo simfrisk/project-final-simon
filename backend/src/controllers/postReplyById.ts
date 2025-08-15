@@ -10,6 +10,8 @@ import { Request, Response } from "express";
  *     summary: Add a reply to a specific comment
  *     tags:
  *       - Replies
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

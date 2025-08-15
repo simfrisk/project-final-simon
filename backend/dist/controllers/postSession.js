@@ -13,6 +13,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  *     summary: User login and create session
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

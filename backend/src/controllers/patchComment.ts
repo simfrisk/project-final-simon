@@ -8,6 +8,8 @@ import { CommentModel } from "../models/Comment";
  *     summary: Update a comment's content by ID
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

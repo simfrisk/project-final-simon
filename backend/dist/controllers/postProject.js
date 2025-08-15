@@ -9,6 +9,8 @@ const Projects_1 = require("../models/Projects");
  *     summary: Create a new project within a class
  *     tags:
  *       - Projects
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: classId

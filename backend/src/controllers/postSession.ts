@@ -9,6 +9,8 @@ import { Response, Request } from "express";
  *     summary: User login and create session
  *     tags:
  *       - Users
+ *     security:                   
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

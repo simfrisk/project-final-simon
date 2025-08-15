@@ -8,6 +8,8 @@ import { Request, Response } from "express";
  *     summary: Get a project by ID
  *     tags:
  *       - Projects
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

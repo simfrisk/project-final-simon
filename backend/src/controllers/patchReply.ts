@@ -8,6 +8,8 @@ import { Reply } from "../models/Reply";
  *     summary: Update a reply's content by ID
  *     tags:
  *       - Replies
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId

@@ -8,6 +8,8 @@ import { Project } from "../models/Projects";
  *     summary: Get projects for a class
  *     tags:
  *       - Projects
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: classId

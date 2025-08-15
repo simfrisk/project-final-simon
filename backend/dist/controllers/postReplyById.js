@@ -10,6 +10,8 @@ const Reply_1 = require("../models/Reply");
  *     summary: Add a reply to a specific comment
  *     tags:
  *       - Replies
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

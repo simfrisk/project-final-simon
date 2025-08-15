@@ -9,6 +9,8 @@ const Comment_1 = require("../models/Comment");
  *     summary: Get comments (type "question") for a project
  *     tags:
  *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

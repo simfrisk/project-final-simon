@@ -10,7 +10,7 @@ const Comment_1 = require("../models/Comment");
  *     tags:
  *       - Comments
  *     security:
- *       - bearerAuth: []   # if you use JWT or some token-based auth
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

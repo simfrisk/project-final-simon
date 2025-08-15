@@ -9,6 +9,8 @@ const Comment_1 = require("../models/Comment");
  *     summary: Toggle like on a comment by authenticated user
  *     tags:
  *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -16,8 +18,6 @@ const Comment_1 = require("../models/Comment");
  *         schema:
  *           type: string
  *         description: ID of the comment to like/unlike
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Like toggled successfully

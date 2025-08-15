@@ -9,8 +9,8 @@ import { Project } from "../models/Projects";
  *     tags:
  *       - Projects
  *     description: Allows an authenticated user to update the name and/or description of a project by its ID.
- *     security:
- *       - ApiKeyAuth: [] 
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

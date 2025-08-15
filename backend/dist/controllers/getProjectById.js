@@ -9,6 +9,8 @@ const Projects_1 = require("../models/Projects");
  *     summary: Get a project by ID
  *     tags:
  *       - Projects
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

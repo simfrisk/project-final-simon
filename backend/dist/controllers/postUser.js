@@ -13,6 +13,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  *     summary: Create a new user
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

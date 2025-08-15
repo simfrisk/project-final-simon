@@ -8,6 +8,8 @@ import { Request, Response } from "express";
  *     summary: Get a comment by its ID
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

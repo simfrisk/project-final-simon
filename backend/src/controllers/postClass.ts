@@ -8,6 +8,8 @@ import { ClassModel } from "../models/Class";
  *     summary: Create a new class
  *     tags:
  *       - Classes
+ *     security:                   
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

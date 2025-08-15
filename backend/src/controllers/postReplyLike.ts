@@ -9,15 +9,14 @@ import { Types } from "mongoose";
  *     summary: Toggle like on a reply by authenticated user
  *     tags:
  *       - Replies
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the reply to like/unlike
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Like toggled successfully

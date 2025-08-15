@@ -10,6 +10,8 @@ import { CommentModel } from "../models/Comment";
  *     summary: Add a new comment to a project
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

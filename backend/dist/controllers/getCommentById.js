@@ -9,6 +9,8 @@ const Comment_1 = require("../models/Comment");
  *     summary: Get a comment by its ID
  *     tags:
  *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

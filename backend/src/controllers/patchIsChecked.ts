@@ -8,6 +8,8 @@ import { CommentModel } from "../models/Comment";
  *     summary: Toggle the isChecked status of a comment by ID
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId
