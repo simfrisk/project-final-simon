@@ -30,6 +30,7 @@ import { getClasses } from "../controllers/getClasses";
 import { getClassById } from "../controllers/getClassById";
 import { postLike } from "../controllers/postLike";
 import { postReplyLike } from "../controllers/postReplyLike";
+import { patchProject } from "../controllers/patchProjects";
 
 const router = express.Router();
 
@@ -65,6 +66,7 @@ router.post("/replies/:replyId/likes", authenticateUser, postReplyLike);
 router.post("/session", postSession);
 
 // Patch
+router.patch("/projects/:projectId", authenticateUser, patchProject);
 router.patch("/replies/:replyId", authenticateUser, patchReply);
 router.patch("/comments/:commentId", authenticateUser, patchComment);
 router.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked);
