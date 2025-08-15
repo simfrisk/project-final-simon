@@ -13,6 +13,7 @@ import { getHome } from "../controllers/getHome";
 import { getProjectById } from "../controllers/getProjectById";
 import { getProjects } from "../controllers/getProjects";
 import { getReplies } from "../controllers/getReplies";
+import { patchProject } from "../controllers/patchProject";
 import { patchReply } from "../controllers/patchReply";
 import { patchComment } from "../controllers/patchComment";
 import { patchIsChecked } from "../controllers/patchIsChecked";
@@ -65,6 +66,7 @@ router.post("/replies/:replyId/likes", authenticateUser, postReplyLike);
 router.post("/session", postSession);
 
 // Patch
+router.patch("/projects/:projectId", authenticateUser, patchProject);
 router.patch("/replies/:replyId", authenticateUser, patchReply);
 router.patch("/comments/:commentId", authenticateUser, patchComment);
 router.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked);

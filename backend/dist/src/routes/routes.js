@@ -16,6 +16,7 @@ const getHome_1 = require("../controllers/getHome");
 const getProjectById_1 = require("../controllers/getProjectById");
 const getProjects_1 = require("../controllers/getProjects");
 const getReplies_1 = require("../controllers/getReplies");
+const patchProject_1 = require("../controllers/patchProject");
 const patchReply_1 = require("../controllers/patchReply");
 const patchComment_1 = require("../controllers/patchComment");
 const patchIsChecked_1 = require("../controllers/patchIsChecked");
@@ -60,6 +61,7 @@ router.post("/comments/:commentId/likes", authenticateUser_1.authenticateUser, p
 router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, postReplyLike_1.postReplyLike);
 router.post("/session", postSession_1.postSession);
 // Patch
+router.patch("/projects/:projectId", authenticateUser_1.authenticateUser, patchProject_1.patchProject);
 router.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1.patchReply);
 router.patch("/comments/:commentId", authenticateUser_1.authenticateUser, patchComment_1.patchComment);
 router.patch("/comments/:commentId/toggle-check", authenticateUser_1.authenticateUser, patchIsChecked_1.patchIsChecked);
