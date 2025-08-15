@@ -127,6 +127,10 @@ const DashboardLayout = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+
+  @media ${MediaQueries.biggerSizes} {
+    margin-top: 48px;
+  }
 `;
 
 const MainContent = styled.div`

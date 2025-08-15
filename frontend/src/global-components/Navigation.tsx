@@ -249,6 +249,10 @@ const ToggleThemeButton = styled.button`
   @media ${MediaQueries.biggerSizes} {
     position: static;
     margin: 0;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+    font-weight: normal;
     
   }
 `;

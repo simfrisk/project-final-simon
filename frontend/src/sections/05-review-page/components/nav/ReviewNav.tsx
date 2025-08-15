@@ -43,5 +43,6 @@ text-decoration: none;
 
 img {
   height: 20px;
+  filter: ${({ theme }) => theme.filter.inverted};
 }
 `

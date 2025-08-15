@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useClassStore } from "../../../store/classStore";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { useEditingStore } from "../../../store/editStore";
+import { useProjectStore } from "../../../store/projectStore";
 
 export const TeachersSideMenu = () => {
   const classes = useClassStore((state) => state.classes);
@@ -10,6 +11,16 @@ export const TeachersSideMenu = () => {
   
   const currentClassId = useEditingStore((state) => state.currentClassId);
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
+
+  const projects = useProjectStore((state) => state.projects);
+
+  //Handels the total comments per class
+  const commentsCountByClass = classes.reduce<Record<string, number>>((total, cls) => {
+  const classProjects = projects.filter(p => p.classId === cls._id);
+  const totalComments = classProjects.reduce((total, proj) => total + (proj.comments?.length || 0), 0);
+  total[cls._id] = totalComments;
+  return total;
+}, {});
 
   useEffect(() => {
     fetchClasses();
@@ -24,14 +35,16 @@ export const TeachersSideMenu = () => {
       <TopSection>
         <h3>Classes</h3>
         <ClassList>
-          {classes.map((cls) => (
-            <ClassItem 
-            onClick={() => handelClassFetch(cls._id)} 
-            key={cls._id}
-            $selected={currentClassId === cls._id}
-            >
-              <p>{cls.classTitle}</p>
-            </ClassItem>
+          {classes.map((cls) => 
+            commentsCountByClass[cls._id] > 0 && (
+              <ClassItem 
+                onClick={() => handelClassFetch(cls._id)} 
+                key={cls._id}
+                $selected={currentClassId === cls._id}
+              >
+                <p>{cls.classTitle}</p>
+                <p>({commentsCountByClass[cls._id] || 0})</p>
+              </ClassItem>
           ))}
         </ClassList>
       </TopSection>
@@ -49,7 +62,7 @@ const Container = styled.section`
   height: 85dvh;
   margin-top: 84px;
   display: none;
-  width: 20%;
+  width: 250px;
   display: none;
 
   h3 {
@@ -82,7 +95,7 @@ const ClassList = styled.div`
 const ClassItem = styled.div<{ $selected?: boolean }>`
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between  ;
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme, $selected }) =>
   $selected ? theme.colors.offBackgroundActive : theme.colors.background};
