@@ -32,11 +32,15 @@ const FormContainer = styled.div`
   justify-content: center;
   gap: 20px;
   width: 92vw;
-  background-color: ${({theme}) => theme.colors.offBackground};
+  background-color: ${({ theme }) => theme.colors.offBackground};
   border-radius: 10px;
   padding: 20px;
   text-align: center;
-   z-index: 200;
+  z-index: 200;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
