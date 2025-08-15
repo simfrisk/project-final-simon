@@ -6,8 +6,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { setupSwagger } from "./swagger/swagger";
 
-import { resetDatabase } from "./src/setup/resetDatabase";
-import router from "./src/Routes/routes";
+import { resetDatabase } from "./setup/resetDatabase";
+import router from "./Routes/routes";
 
 
 const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project";
