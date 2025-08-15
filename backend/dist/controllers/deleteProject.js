@@ -12,7 +12,7 @@ const Projects_1 = require("../models/Projects");
  *     tags:
  *       - Projects
  *     security:
- *       - ApiKeyAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

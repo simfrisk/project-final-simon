@@ -10,7 +10,7 @@ const Comment_1 = require("../models/Comment");
  *     tags:
  *       - Comments
  *     security:
- *       - ApiKeyAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: All comments fetched successfully

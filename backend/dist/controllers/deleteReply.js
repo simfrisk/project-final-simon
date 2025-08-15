@@ -11,7 +11,7 @@ const Reply_1 = require("../models/Reply");
  *     tags:
  *       - Replies
  *     security:
- *       - ApiKeyAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId

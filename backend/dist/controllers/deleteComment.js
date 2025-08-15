@@ -12,7 +12,7 @@ const Projects_1 = require("../models/Projects");
  *     tags:
  *       - Comments
  *     security:
- *       - ApiKeyAuth: []
+ *       - bearerAuth: []
  *     description: |
  *       Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
  *     parameters:

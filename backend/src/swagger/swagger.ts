@@ -113,13 +113,13 @@ const options = {
         bearerAuth: {
           type: "http",
           scheme: "bearer",
-          bearerFormat: "JWT", // optional, just for documentation
+          bearerFormat: "JWT",
         },
       },
     },
     security: [
       {
-        ApiKeyAuth: [],
+        bearerAuth: [],
       },
     ],
   },
