@@ -10,6 +10,8 @@ const Class_1 = require("../models/Class");
  *     description: Retrieve details of a specific class by its ID.
  *     tags:
  *       - Classes
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: classId

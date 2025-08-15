@@ -9,6 +9,8 @@ import { Reply } from "../models/Reply";
  *     description: Deletes a reply with the specified ID.
  *     tags:
  *       - Replies
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId

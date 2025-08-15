@@ -28,7 +28,6 @@ const options = {
             },
           },
         },
-
         Comment: {
           type: "object",
           required: ["content", "projectId", "commentCreatedBy", "commentType"],
@@ -54,7 +53,6 @@ const options = {
             },
           },
         },
-
         Project: {
           type: "object",
           required: ["classId", "projectName"],
@@ -70,7 +68,6 @@ const options = {
             },
           },
         },
-
         Reply: {
           type: "object",
           required: ["content", "commentId", "isChecked", "replyCreatedBy"],
@@ -86,7 +83,6 @@ const options = {
             },
           },
         },
-
         User: {
           type: "object",
           required: ["name", "email", "password", "role"],
@@ -113,7 +109,19 @@ const options = {
           },
         },
       },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT", // optional, just for documentation
+        },
+      },
     },
+    security: [
+      {
+        ApiKeyAuth: [],
+      },
+    ],
   },
   apis: ["./src/controllers/*.ts"],
 };

@@ -9,6 +9,8 @@ import { ClassModel } from "../models/Class";
  *     description: Retrieve a list of classes with their titles.
  *     tags:
  *       - Classes
+ *     security:                   
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of classes

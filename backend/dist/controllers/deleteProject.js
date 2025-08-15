@@ -11,6 +11,8 @@ const Projects_1 = require("../models/Projects");
  *     summary: Delete a project along with its comments and replies
  *     tags:
  *       - Projects
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

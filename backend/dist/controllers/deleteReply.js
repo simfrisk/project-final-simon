@@ -10,6 +10,8 @@ const Reply_1 = require("../models/Reply");
  *     description: Deletes a reply with the specified ID.
  *     tags:
  *       - Replies
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId

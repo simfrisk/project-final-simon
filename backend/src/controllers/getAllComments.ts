@@ -8,6 +8,8 @@ import { CommentModel } from "../models/Comment";
  *     summary: Get all comments
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: All comments fetched successfully

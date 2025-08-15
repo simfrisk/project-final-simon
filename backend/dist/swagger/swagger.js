@@ -112,7 +112,19 @@ const options = {
                     },
                 },
             },
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT", // optional, just for documentation
+                },
+            },
         },
+        security: [
+            {
+                ApiKeyAuth: [],
+            },
+        ],
     },
     apis: ["./src/controllers/*.ts"],
 };

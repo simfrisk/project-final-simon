@@ -8,6 +8,8 @@ import { Reply } from "../models/Reply";
  *     summary: Get all replies for a specific comment
  *     tags:
  *       - Replies
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId

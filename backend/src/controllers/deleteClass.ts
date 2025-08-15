@@ -11,6 +11,8 @@ import { ClassModel } from "../models/Class";
  *     summary: Delete a class and all related projects, comments, and replies
  *     tags:
  *       - Classes
+ *     security:                   
+ *       - bearerAuth: []  
  *     parameters:
  *       - in: path
  *         name: classId

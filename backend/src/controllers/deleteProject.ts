@@ -10,6 +10,8 @@ import { Project } from "../models/Projects";
  *     summary: Delete a project along with its comments and replies
  *     tags:
  *       - Projects
+ *     security:                   
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId

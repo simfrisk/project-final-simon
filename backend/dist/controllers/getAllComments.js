@@ -9,6 +9,8 @@ const Comment_1 = require("../models/Comment");
  *     summary: Get all comments
  *     tags:
  *       - Comments
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: All comments fetched successfully

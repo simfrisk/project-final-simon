@@ -10,6 +10,8 @@ import { Project } from "../models/Projects";
  *     summary: Delete a comment and its replies
  *     tags:
  *       - Comments
+ *     security:                   
+ *       - bearerAuth: []
  *     description: |
  *       Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
  *     parameters:
@@ -19,8 +21,6 @@ import { Project } from "../models/Projects";
  *         schema:
  *           type: string
  *         description: The ID of the comment to delete
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Comment and its replies were deleted successfully
