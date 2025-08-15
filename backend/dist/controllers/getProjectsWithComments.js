@@ -8,6 +8,8 @@ const Projects_1 = require("../models/Projects");
  *   get:
  *     summary: Get all projects with comments of type 'question'
  *     description: Returns a list of projects populated with comments where commentType is 'question', including the commenter’s name, profile image, and role. Also includes the classId for each project.
+ *     tags:
+ *       - Projects
  *     responses:
  *       200:
  *         description: A list of projects with filtered comments

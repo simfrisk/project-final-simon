@@ -6,6 +6,8 @@ import { CommentModel } from "../models/Comment";
  * /projects/{projectId}/comments/private:
  *   get:
  *     summary: Get private comments for a project by the authenticated user
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []   # if you use JWT or some token-based auth
  *     parameters:

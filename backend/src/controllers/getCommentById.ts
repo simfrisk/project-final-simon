@@ -6,6 +6,8 @@ import { Request, Response } from "express";
  * /comments/{commentId}:
  *   get:
  *     summary: Get a comment by its ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

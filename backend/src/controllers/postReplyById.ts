@@ -8,6 +8,8 @@ import { Request, Response } from "express";
  * /comments/{commentId}/replies:
  *   post:
  *     summary: Add a reply to a specific comment
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: commentId

@@ -6,6 +6,8 @@ import { Project } from "../models/Projects";
  * /classes/{classId}/projects:
  *   get:
  *     summary: Get projects for a class
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: classId

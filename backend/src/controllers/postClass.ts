@@ -6,6 +6,8 @@ import { ClassModel } from "../models/Class";
  * /classes:
  *   post:
  *     summary: Create a new class
+ *     tags:
+ *       - Classes
  *     requestBody:
  *       required: true
  *       content:

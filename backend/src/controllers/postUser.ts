@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
  * /users:
  *   post:
  *     summary: Create a new user
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:

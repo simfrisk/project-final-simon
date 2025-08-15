@@ -6,6 +6,8 @@ import { Request, Response } from "express";
  * /projects/{projectId}:
  *   get:
  *     summary: Get a project by ID
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: projectId

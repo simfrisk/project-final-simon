@@ -7,6 +7,8 @@ const Comment_1 = require("../models/Comment");
  * /comments/all:
  *   get:
  *     summary: Get all comments
+ *     tags:
+ *       - Comments
  *     responses:
  *       200:
  *         description: All comments fetched successfully

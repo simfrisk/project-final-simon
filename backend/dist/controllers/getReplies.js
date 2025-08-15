@@ -7,6 +7,8 @@ const Reply_1 = require("../models/Reply");
  * /comments/{commentId}/replies:
  *   get:
  *     summary: Get all replies for a specific comment
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: commentId

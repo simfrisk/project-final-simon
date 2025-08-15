@@ -7,6 +7,8 @@ const Comment_1 = require("../models/Comment");
  * /comments/{commentId}:
  *   get:
  *     summary: Get a comment by its ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

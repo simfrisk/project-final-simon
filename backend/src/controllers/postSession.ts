@@ -7,6 +7,8 @@ import { Response, Request } from "express";
  * /session:
  *   post:
  *     summary: User login and create session
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:

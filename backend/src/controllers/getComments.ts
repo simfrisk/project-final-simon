@@ -6,6 +6,8 @@ import { CommentModel } from "../models/Comment";
  * /projects/{projectId}/comments:
  *   get:
  *     summary: Get comments (type "question") for a project
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: projectId

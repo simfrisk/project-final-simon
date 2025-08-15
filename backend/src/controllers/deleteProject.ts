@@ -8,6 +8,8 @@ import { Project } from "../models/Projects";
  * /projects/{projectId}:
  *   delete:
  *     summary: Delete a project along with its comments and replies
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: projectId

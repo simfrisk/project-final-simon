@@ -7,6 +7,8 @@ const Reply_1 = require("../models/Reply");
  * /replies/{replyId}/like:
  *   post:
  *     summary: Toggle like on a reply by authenticated user
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: replyId

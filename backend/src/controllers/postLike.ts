@@ -7,6 +7,8 @@ import { Types } from "mongoose";
  * /comments/{commentId}/like:
  *   post:
  *     summary: Toggle like on a comment by authenticated user
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

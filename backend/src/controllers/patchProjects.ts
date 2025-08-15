@@ -6,9 +6,9 @@ import { Project } from "../models/Projects";
  * /projects/{projectId}:
  *   patch:
  *     summary: Update an existing project's name and/or description
- *     description: Allows an authenticated user to update the name and/or description of a project by its ID.
  *     tags:
  *       - Projects
+ *     description: Allows an authenticated user to update the name and/or description of a project by its ID.
  *     security:
  *       - bearerAuth: []
  *     parameters:

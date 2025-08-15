@@ -9,6 +9,8 @@ const Projects_1 = require("../models/Projects");
  * /comments/{commentId}:
  *   delete:
  *     summary: Delete a comment and its replies
+ *     tags:
+ *       - Comments
  *     description: |
  *       Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
  *     parameters:

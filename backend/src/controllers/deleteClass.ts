@@ -9,6 +9,8 @@ import { ClassModel } from "../models/Class";
  * /classes/{classId}:
  *   delete:
  *     summary: Delete a class and all related projects, comments, and replies
+ *     tags:
+ *       - Classes
  *     parameters:
  *       - in: path
  *         name: classId

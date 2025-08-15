@@ -7,6 +7,8 @@ import { ClassModel } from "../models/Class";
  *   get:
  *     summary: Retrieve all classes
  *     description: Retrieve a list of classes with their titles.
+ *     tags:
+ *       - Classes
  *     responses:
  *       200:
  *         description: A list of classes

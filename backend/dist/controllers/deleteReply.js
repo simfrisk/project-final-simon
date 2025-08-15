@@ -8,6 +8,8 @@ const Reply_1 = require("../models/Reply");
  *   delete:
  *     summary: Delete a reply by ID
  *     description: Deletes a reply with the specified ID.
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: replyId

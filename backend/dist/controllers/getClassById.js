@@ -8,6 +8,8 @@ const Class_1 = require("../models/Class");
  *   get:
  *     summary: Get a single class by ID
  *     description: Retrieve details of a specific class by its ID.
+ *     tags:
+ *       - Classes
  *     parameters:
  *       - in: path
  *         name: classId

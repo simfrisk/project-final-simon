@@ -6,6 +6,8 @@ import { Reply } from "../models/Reply";
  * /replies/{replyId}:
  *   patch:
  *     summary: Update a reply's content by ID
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: replyId

@@ -7,6 +7,8 @@ const Comment_1 = require("../models/Comment");
  * /comments/{commentId}/like:
  *   post:
  *     summary: Toggle like on a comment by authenticated user
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

@@ -7,6 +7,8 @@ const Comment_1 = require("../models/Comment");
  * /comments/{commentId}:
  *   patch:
  *     summary: Update a comment's content by ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId
