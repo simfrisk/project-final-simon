@@ -28,7 +28,7 @@ export const TeachersSideMenu = () => {
             <ClassItem 
             onClick={() => handelClassFetch(cls._id)} 
             key={cls._id}
-            selected={currentClassId === cls._id}
+            $selected={currentClassId === cls._id}
             >
               <p>{cls.classTitle}</p>
             </ClassItem>
@@ -79,12 +79,13 @@ const ClassList = styled.div`
   padding: 10px;
 `;
 
-const ClassItem = styled.div<{ selected?: boolean }>`
+const ClassItem = styled.div<{ $selected?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme, selected }) => selected ? theme.colors.offBackgroundActive : theme.colors.background};
+  background-color: ${({ theme, $selected }) =>
+  $selected ? theme.colors.offBackgroundActive : theme.colors.background};
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
@@ -93,6 +94,12 @@ const ClassItem = styled.div<{ selected?: boolean }>`
 
   &:hover {
     transform: scale(0.97);
-    background-color: ${({ theme }) => theme.colors.offBackgroundHover};
+    background-color: ${({ theme, $selected }) =>
+      $selected ? theme.colors.offBackgroundActive : theme.colors.offBackgroundHover};
+  }
+
+  p {
+    margin: 0;
+    font-weight: ${({ $selected }) => ($selected ? "bold" : "normal")};
   }
 `;

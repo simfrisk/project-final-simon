@@ -2,38 +2,51 @@ import styled from "styled-components";
 import { useEditingStore } from "../../../../store/editStore";
 import { useClassStore } from "../../../../store/classStore";
 import { ConfirmBox } from "../../../../global-components/ComfirmBox";
+import { useState } from "react";
 
 export const ClassOptions = () => {
+  const removingClassId = useEditingStore((state) => state.removingClassId);
+  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
+  const deleteClass = useClassStore((state) => state.deleteClass);
 
-const removingClassId = useEditingStore((state) => state.removingClassId);
-const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
-const deleteClass = useClassStore((state) => state.deleteClass);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-const handelDeleteClass = () => {
-  if (removingClassId) {
-    deleteClass(removingClassId);
+  const handleDeleteClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (removingClassId) {
+      deleteClass(removingClassId);
+    }
     setIsRemovingClass(false);
-  }
-};
+    setShowConfirm(false);
+  };
 
-const handleCancel = () => {
+  const handleCancel = () => {
     setIsRemovingClass(false);
+    setShowConfirm(false);
   };
 
   return (
     <>
       <TransparentBackground onClick={handleCancel} />
-       <Container>
+      <Container>
         <StyledButton>Edit name</StyledButton>
-        <StyledButton danger onClick={handelDeleteClass}>Delete Class</StyledButton>
+        <StyledButton danger onClick={handleDeleteClick}>
+          Delete Class
+        </StyledButton>
       </Container>
-      <ConfirmBox      
-      message={"Are you sure you want to delete?"} 
-      onCancel={handleCancel} 
-      onConfirm={handelDeleteClass}  />
-      
+
+      {showConfirm && (
+        <ConfirmBox
+          message="Are you sure you want to delete?"
+          onCancel={handleCancel}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </>
-  )
+  );
 };
 
 interface StyledButtonProps {
@@ -45,20 +58,21 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   background-color: #c7c7c7;
-  position: absolute;
+  position: absolute; /* You can make this fixed if you want it in the center */
   padding: 5px 10px;
   border-radius: 15px;
   border: none;
-  z-index: 10;
+  z-index: 11; /* above background */
 
   top: 25%;
   right: 79%;
-  `
+`;
 
 const StyledButton = styled.button<StyledButtonProps>`
   display: inline-block;
   padding: 10px 20px;
-  background-color: ${({ danger, theme }) => (danger ? "red" : theme.colors.primary)};
+  background-color: ${({ danger, theme }) =>
+    danger ? "red" : theme.colors.primary};
   color: white;
   text-decoration: none;
   border: none;
@@ -72,7 +86,8 @@ const StyledButton = styled.button<StyledButtonProps>`
   transition: ease 0.3s;
 
   &:hover {
-    background-color: ${({ danger, theme }) => (danger ? "#f1948a" : theme.colors.primaryHover)};
+    background-color: ${({ danger, theme }) =>
+      danger ? "#f1948a" : theme.colors.primaryHover};
     transform: scale(0.98);
   }
 `;

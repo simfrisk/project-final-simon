@@ -249,5 +249,6 @@ const ToggleThemeButton = styled.button`
   @media ${MediaQueries.biggerSizes} {
     position: static;
     margin: 0;
+    
   }
 `;

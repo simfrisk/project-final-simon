@@ -17,7 +17,7 @@ export const SideMenu = () => {
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
   const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
   const isRemovingClass = useEditingStore((set) => set.isRemovingClass)
-  const seRremovingClassId = useEditingStore((set) => set.setRemovingClassId)
+  const setRemovingClassId = useEditingStore((set) => set.setRemovingClassId)
 
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
@@ -47,7 +47,7 @@ export const SideMenu = () => {
     e.stopPropagation();
     e.preventDefault();
     setIsRemovingClass(true);
-    seRremovingClassId(classId); 
+    setRemovingClassId(classId); 
   };
 
   return (
@@ -156,7 +156,7 @@ const Class = styled(Link)<{ $active: boolean }>`
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
-  position: relative; // IMPORTANT for ClassOptions dropdown
+  position: relative;
 
   &:hover {
     transform: scale(0.97);

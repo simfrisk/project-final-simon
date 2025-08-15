@@ -36,6 +36,7 @@ const FormContainer = styled.div`
   border-radius: 10px;
   padding: 20px;
   text-align: center;
+   z-index: 200;
 
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
