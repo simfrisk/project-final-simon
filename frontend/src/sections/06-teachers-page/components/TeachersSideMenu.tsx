@@ -7,6 +7,8 @@ import { useEditingStore } from "../../../store/editStore";
 export const TeachersSideMenu = () => {
   const classes = useClassStore((state) => state.classes);
   const fetchClasses = useClassStore((state) => state.fetchClasses);
+  
+  const currentClassId = useEditingStore((state) => state.currentClassId);
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
 
   useEffect(() => {
@@ -23,7 +25,11 @@ export const TeachersSideMenu = () => {
         <h3>Classes</h3>
         <ClassList>
           {classes.map((cls) => (
-            <ClassItem onClick={() => handelClassFetch(cls._id)} key={cls._id}>
+            <ClassItem 
+            onClick={() => handelClassFetch(cls._id)} 
+            key={cls._id}
+            selected={currentClassId === cls._id}
+            >
               <p>{cls.classTitle}</p>
             </ClassItem>
           ))}
@@ -73,12 +79,12 @@ const ClassList = styled.div`
   padding: 10px;
 `;
 
-const ClassItem = styled.div`
+const ClassItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.offBackground};
+  background-color: ${({ theme, selected }) => selected ? theme.colors.offBackgroundActive : theme.colors.background};
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
