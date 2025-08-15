@@ -7,6 +7,11 @@ const Comment_1 = require("../models/Comment");
  * /comments/all:
  *   get:
  *     summary: Get all comments
+ *     description: Fetches all comments from the database.
+ *     tags:
+ *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: All comments fetched successfully
@@ -21,34 +26,10 @@ const Comment_1 = require("../models/Comment");
  *                 response:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: "64c1f2a3b9f1e1234567890c"
- *                       commentText:
- *                         type: string
- *                         example: "This is a comment."
- *                       commentType:
- *                         type: string
- *                         example: "question"
- *                       projectId:
- *                         type: string
- *                         example: "64c1f2a3b9f1e1234567890b"
- *                       commentCreatedBy:
- *                         type: string
- *                         example: "64c1f2a3b9f1e1234567890f"
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-08-10T14:48:00.000Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-08-10T14:48:00.000Z"
+ *                     $ref: '#/components/schemas/Comment'
  *                 message:
  *                   type: string
- *                   example: "All comments fetched successfully"
+ *                   example: All comments fetched successfully
  *       500:
  *         description: Failed to fetch comments
  *         content:
@@ -60,11 +41,11 @@ const Comment_1 = require("../models/Comment");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   nullable: true
+ *                   type: null
  *                   example: null
  *                 message:
  *                   type: string
- *                   example: "Failed to fetch comments"
+ *                   example: Failed to fetch comments
  */
 const getAllComments = async (req, res) => {
     try {

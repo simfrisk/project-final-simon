@@ -6,6 +6,8 @@ import { Project } from "../models/Projects";
  * /classes/{classId}/projects:
  *   post:
  *     summary: Create a new project within a class
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: classId

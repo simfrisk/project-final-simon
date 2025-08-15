@@ -11,6 +11,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  * /users:
  *   post:
  *     summary: Create a new user
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:

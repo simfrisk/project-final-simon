@@ -6,14 +6,17 @@ const Projects_1 = require("../models/Projects");
  * @swagger
  * /projects/{projectId}:
  *   get:
- *     summary: Get a project by ID
+ *     summary: Get a project by its ID
+ *     description: Retrieve details of a single project by providing its ID.
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: projectId
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the project
+ *         description: The unique ID of the project to fetch
  *     responses:
  *       200:
  *         description: Project found successfully
@@ -57,7 +60,6 @@ const Projects_1 = require("../models/Projects");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: object
  *                   nullable: true
  *                   example: null
  *                 message:

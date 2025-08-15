@@ -7,6 +7,8 @@ const Comment_1 = require("../models/Comment");
  * /comments/{commentId}/isChecked:
  *   patch:
  *     summary: Toggle the isChecked status of a comment by ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

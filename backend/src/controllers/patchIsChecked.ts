@@ -6,6 +6,8 @@ import { CommentModel } from "../models/Comment";
  * /comments/{commentId}/isChecked:
  *   patch:
  *     summary: Toggle the isChecked status of a comment by ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId

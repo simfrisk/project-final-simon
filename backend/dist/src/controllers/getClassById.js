@@ -8,6 +8,8 @@ const Class_1 = require("../models/Class");
  *   get:
  *     summary: Get a single class by ID
  *     description: Retrieve details of a specific class by its ID.
+ *     tags:
+ *       - Classes
  *     parameters:
  *       - in: path
  *         name: classId
@@ -15,6 +17,8 @@ const Class_1 = require("../models/Class");
  *         schema:
  *           type: string
  *         description: The ID of the class to retrieve
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Class found successfully
@@ -25,15 +29,12 @@ const Class_1 = require("../models/Class");
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
  *                 response:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
+ *                   $ref: '#/components/schemas/Class'
  *                 message:
  *                   type: string
+ *                   example: Class found
  *       404:
  *         description: Class not found
  *         content:
@@ -43,10 +44,13 @@ const Class_1 = require("../models/Class");
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
+ *                   example: Class was not found
  *       500:
  *         description: Server error when fetching class
  *         content:
@@ -56,10 +60,12 @@ const Class_1 = require("../models/Class");
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: false
  *                 response:
  *                   type: object
  *                 message:
  *                   type: string
+ *                   example: Class could not be found
  */
 const getClassById = async (req, res) => {
     const { classId } = req.params;

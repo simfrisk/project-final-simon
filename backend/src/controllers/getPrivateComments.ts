@@ -6,8 +6,11 @@ import { CommentModel } from "../models/Comment";
  * /projects/{projectId}/comments/private:
  *   get:
  *     summary: Get private comments for a project by the authenticated user
+ *     description: Retrieve all private comments for a project that belong to the authenticated user. Includes populated replies and user info.
+ *     tags:
+ *       - Comments
  *     security:
- *       - bearerAuth: []   # if you use JWT or some token-based auth
+ *       - bearerAuth: []  # JWT or token-based authentication
  *     parameters:
  *       - in: path
  *         name: projectId
@@ -33,8 +36,10 @@ import { CommentModel } from "../models/Comment";
  *                     properties:
  *                       _id:
  *                         type: string
+ *                         example: "64c1f2a3b9f1e1234567890c"
  *                       commentText:
  *                         type: string
+ *                         example: "This is a private comment."
  *                       commentType:
  *                         type: string
  *                         example: "private"
@@ -43,10 +48,13 @@ import { CommentModel } from "../models/Comment";
  *                         properties:
  *                           name:
  *                             type: string
+ *                             example: "Alice"
  *                           profileImage:
  *                             type: string
+ *                             example: "https://someurl.com/profile.jpg"
  *                           role:
  *                             type: string
+ *                             example: "student"
  *                       replies:
  *                         type: array
  *                         items:

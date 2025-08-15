@@ -4,31 +4,21 @@ exports.patchComment = void 0;
 const Comment_1 = require("../models/Comment");
 /**
  * @swagger
- * /comments/{commentId}:
+ * /comments/{commentId}/toggle-check:
  *   patch:
- *     summary: Update a comment's content by ID
+ *     summary: Toggle the isChecked status of a comment by ID
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the comment to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - newContent
- *             properties:
- *               newContent:
- *                 type: string
- *                 example: Updated comment content here
+ *         description: The ID of the comment to toggle isChecked
  *     responses:
  *       200:
- *         description: Comment updated successfully
+ *         description: Comment isChecked status toggled successfully
  *         content:
  *           application/json:
  *             schema:
@@ -38,10 +28,11 @@ const Comment_1 = require("../models/Comment");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   $ref: '#/components/schemas/Comment'  # Assuming you have a Comment schema defined
+ *                   type: object
+ *                   description: Updated comment object with populated replies and creator info
  *                 message:
  *                   type: string
- *                   example: The comment was successfully changed
+ *                   example: Comment check status toggled successfully
  *       404:
  *         description: Comment not found
  *         content:
@@ -56,9 +47,9 @@ const Comment_1 = require("../models/Comment");
  *                   type: null
  *                 message:
  *                   type: string
- *                   example: The comment was not found
+ *                   example: Comment not found
  *       500:
- *         description: Server error updating comment
+ *         description: Server error toggling comment check status
  *         content:
  *           application/json:
  *             schema:
@@ -68,11 +59,10 @@ const Comment_1 = require("../models/Comment");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: string
- *                   example: Could not change comment in the database
+ *                   type: null
  *                 message:
  *                   type: string
- *                   example: Could not change comment in the database
+ *                   example: Failed to toggle comment check status
  */
 const patchComment = async (req, res) => {
     const { commentId } = req.params;

@@ -9,6 +9,11 @@ const Projects_1 = require("../models/Projects");
  * /projects/{projectId}:
  *   delete:
  *     summary: Delete a project along with its comments and replies
+ *     description: Removes the specified project and cascades the deletion to all comments and replies associated with it.
+ *     tags:
+ *       - Projects
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: projectId
@@ -28,8 +33,7 @@ const Projects_1 = require("../models/Projects");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   description: The deleted project object
+ *                   $ref: '#/components/schemas/Project'
  *                 message:
  *                   type: string
  *                   example: Project, its comments, and replies were deleted
@@ -45,6 +49,7 @@ const Projects_1 = require("../models/Projects");
  *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
  *                   example: Project could not be found
@@ -59,8 +64,8 @@ const Projects_1 = require("../models/Projects");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: object
- *                   description: Error object or message
+ *                   type: string
+ *                   example: Could not delete project
  *                 message:
  *                   type: string
  *                   example: Could not delete project

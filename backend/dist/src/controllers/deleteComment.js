@@ -9,8 +9,11 @@ const Projects_1 = require("../models/Projects");
  * /comments/{commentId}:
  *   delete:
  *     summary: Delete a comment and its replies
- *     description: |
- *       Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
+ *     description: Deletes a comment by ID along with all its replies. Only the comment owner or a teacher can delete the comment.
+ *     tags:
+ *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -18,8 +21,6 @@ const Projects_1 = require("../models/Projects");
  *         schema:
  *           type: string
  *         description: The ID of the comment to delete
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Comment and its replies were deleted successfully
@@ -32,8 +33,7 @@ const Projects_1 = require("../models/Projects");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   description: The deleted comment object
+ *                   $ref: '#/components/schemas/Comment'
  *                 message:
  *                   type: string
  *                   example: Comment and its replies were deleted
@@ -75,6 +75,7 @@ const Projects_1 = require("../models/Projects");
  *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
  *                   example: Comment could not be found
@@ -89,7 +90,8 @@ const Projects_1 = require("../models/Projects");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: object
+ *                   type: string
+ *                   example: Could not delete comment
  *                 message:
  *                   type: string
  *                   example: Could not delete comment

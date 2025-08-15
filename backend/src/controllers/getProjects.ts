@@ -5,30 +5,70 @@ import { Project } from "../models/Projects";
  * @swagger
  * /classes/{classId}/projects:
  *   get:
- *     summary: Get projects for a class
+ *     summary: Get all projects for a specific class
+ *     description: Retrieve a list of projects that belong to a specific class by providing its ID.
+ *     tags:
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: classId
  *         required: true
  *         schema:
  *           type: string
- *         description: The class ID
+ *         description: The ID of the class
  *     responses:
  *       200:
- *         description: A list of projects
+ *         description: Projects fetched successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   title:
- *                     type: string
- *                   description:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64c1f2a3b9f1e1234567890a"
+ *                       projectName:
+ *                         type: string
+ *                         example: "My Cool Project"
+ *                       projectDescription:
+ *                         type: string
+ *                         example: "A project that does cool things"
+ *                       video:
+ *                         type: string
+ *                         example: "https://someurl.com/video.mp4"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "https://someurl.com/thumbnail.jpg"
+ *                       classId:
+ *                         type: string
+ *                         example: "64c1f2a3b9f1e1234567890b"
+ *                 message:
+ *                   type: string
+ *                   example: "Projects fetched successfully"
+ *       500:
+ *         description: Failed to fetch projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                   example: null
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to fetch projects."
  */
 export const getProjects = async (req: Request, res: Response): Promise<Response> => {
   try {

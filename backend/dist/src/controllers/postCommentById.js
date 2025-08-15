@@ -8,6 +8,8 @@ const Comment_1 = require("../models/Comment");
  * /projects/{projectId}/comments:
  *   post:
  *     summary: Add a new comment to a project
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: projectId

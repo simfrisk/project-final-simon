@@ -8,6 +8,10 @@ const Reply_1 = require("../models/Reply");
  *   delete:
  *     summary: Delete a reply by ID
  *     description: Deletes a reply with the specified ID.
+ *     tags:
+ *       - Replies
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: replyId
@@ -27,8 +31,7 @@ const Reply_1 = require("../models/Reply");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   description: The deleted reply object
+ *                   $ref: '#/components/schemas/Reply'
  *                 message:
  *                   type: string
  *                   example: The reply was deleted
@@ -44,6 +47,7 @@ const Reply_1 = require("../models/Reply");
  *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
  *                   example: Reply could not be found
@@ -58,7 +62,8 @@ const Reply_1 = require("../models/Reply");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: object
+ *                   type: string
+ *                   example: Could not delete reply
  *                 message:
  *                   type: string
  *                   example: Could not delete reply

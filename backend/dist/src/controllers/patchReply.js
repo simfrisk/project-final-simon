@@ -7,6 +7,8 @@ const Reply_1 = require("../models/Reply");
  * /replies/{replyId}:
  *   patch:
  *     summary: Update a reply's content by ID
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: replyId

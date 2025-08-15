@@ -10,6 +10,11 @@ const Class_1 = require("../models/Class");
  * /classes/{classId}:
  *   delete:
  *     summary: Delete a class and all related projects, comments, and replies
+ *     description: Removes the specified class and cascades the deletion to all projects, comments, and replies associated with it.
+ *     tags:
+ *       - Classes
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: classId
@@ -29,8 +34,7 @@ const Class_1 = require("../models/Class");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   description: The deleted class object
+ *                   $ref: '#/components/schemas/Class'
  *                 message:
  *                   type: string
  *                   example: Class, its projects, comments, and replies were deleted
@@ -46,6 +50,7 @@ const Class_1 = require("../models/Class");
  *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
  *                   example: Class could not be found
@@ -60,8 +65,8 @@ const Class_1 = require("../models/Class");
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: object
- *                   description: Error object or message
+ *                   type: string
+ *                   example: Could not delete class
  *                 message:
  *                   type: string
  *                   example: Could not delete class

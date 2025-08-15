@@ -11,6 +11,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  * /session:
  *   post:
  *     summary: User login and create session
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:

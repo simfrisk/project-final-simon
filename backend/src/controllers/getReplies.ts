@@ -6,6 +6,8 @@ import { Reply } from "../models/Reply";
  * /comments/{commentId}/replies:
  *   get:
  *     summary: Get all replies for a specific comment
+ *     tags:
+ *       - Replies
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -31,12 +33,26 @@ import { Reply } from "../models/Reply";
  *                     properties:
  *                       _id:
  *                         type: string
+ *                         example: "64c1f2a3b9f1e1234567890d"
  *                       replyText:
  *                         type: string
+ *                         example: "This is a reply to the comment"
  *                       replyCreatedBy:
- *                         type: string
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                             example: "Bob"
+ *                           profileImage:
+ *                             type: string
+ *                             nullable: true
+ *                             example: "https://someurl.com/profile.jpg"
+ *                           role:
+ *                             type: string
+ *                             example: "student"
  *                       commentId:
  *                         type: string
+ *                         example: "64c1f2a3b9f1e1234567890c"
  *                 message:
  *                   type: string
  *                   example: "Replies fetched successfully"

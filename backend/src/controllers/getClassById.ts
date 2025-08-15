@@ -7,6 +7,8 @@ import { Request, Response } from "express";
  *   get:
  *     summary: Get a single class by ID
  *     description: Retrieve details of a specific class by its ID.
+ *     tags:
+ *       - Classes
  *     parameters:
  *       - in: path
  *         name: classId
@@ -14,6 +16,8 @@ import { Request, Response } from "express";
  *         schema:
  *           type: string
  *         description: The ID of the class to retrieve
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Class found successfully
@@ -24,15 +28,12 @@ import { Request, Response } from "express";
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
  *                 response:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
+ *                   $ref: '#/components/schemas/Class'
  *                 message:
  *                   type: string
+ *                   example: Class found
  *       404:
  *         description: Class not found
  *         content:
@@ -42,10 +43,13 @@ import { Request, Response } from "express";
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: false
  *                 response:
  *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
+ *                   example: Class was not found
  *       500:
  *         description: Server error when fetching class
  *         content:
@@ -55,10 +59,12 @@ import { Request, Response } from "express";
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: false
  *                 response:
  *                   type: object
  *                 message:
  *                   type: string
+ *                   example: Class could not be found
  */
 export const getClassById = async (req: Request, res: Response): Promise<Response> => {
   const { classId } = req.params;

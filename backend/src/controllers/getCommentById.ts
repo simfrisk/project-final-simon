@@ -5,7 +5,10 @@ import { Request, Response } from "express";
  * @swagger
  * /comments/{commentId}:
  *   get:
- *     summary: Get a comment by its ID
+ *     summary: Get a comment by its ID (question type only)
+ *     description: Retrieve a comment with the specified ID if it is of type "question".
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -15,7 +18,7 @@ import { Request, Response } from "express";
  *         description: The ID of the comment to retrieve
  *     responses:
  *       200:
- *         description: Comment found
+ *         description: Comment found successfully
  *         content:
  *           application/json:
  *             schema:
@@ -64,13 +67,12 @@ import { Request, Response } from "express";
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   nullable: true
- *                   example: null
+ *                   type: null
  *                 message:
  *                   type: string
  *                   example: "Comment was not found"
  *       500:
- *         description: Comment could not be fetched
+ *         description: Server error while fetching comment
  *         content:
  *           application/json:
  *             schema:
@@ -80,8 +82,7 @@ import { Request, Response } from "express";
  *                   type: boolean
  *                   example: false
  *                 response:
- *                   type: string
- *                   example: "Error details here"
+ *                   type: object
  *                 message:
  *                   type: string
  *                   example: "Comment could not be fetched"
@@ -90,7 +91,8 @@ export const getCommentById = async (req: Request, res: Response): Promise<Respo
   const { commentId } = req.params;
 
   try {
-    const comment = await CommentModel.findById({ commentId, commentType: "question" });
+    const comment = await CommentModel.findOne({ _id: commentId, commentType: "question" });
+
     if (!comment) {
       return res.status(404).json({
         success: false,

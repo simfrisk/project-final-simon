@@ -5,7 +5,10 @@ import { CommentModel } from "../models/Comment";
  * @swagger
  * /projects/{projectId}/comments:
  *   get:
- *     summary: Get comments (type "question") for a project
+ *     summary: Get comments of type "question" for a specific project
+ *     description: Retrieve all comments for a project where the commentType is "question". Includes populated replies and user info.
+ *     tags:
+ *       - Comments
  *     parameters:
  *       - in: path
  *         name: projectId
