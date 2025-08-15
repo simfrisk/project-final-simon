@@ -10,8 +10,8 @@
     "resolveJsonModule": true
   },
   "include": [
-    "**/*.ts",
-    "src/Routes"
+    "server.ts",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

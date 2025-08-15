@@ -50,5 +50,3 @@ app.use("/", routes_1.default);
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
-
-// A comment
