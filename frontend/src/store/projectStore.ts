@@ -28,6 +28,7 @@ interface ProjectsStore {
   fetchProjectById: (projectId: string) => Promise<void>;
   addProject: (classId: string, newProject: ProjectType) => Promise<void>;
   deleteProject: (projectId: string) => Promise<void>;
+  updateProject: (projectId: string, updates: { newName?: string; newDescription?: string }) => Promise<void>;
 }
 
 //#endregion
@@ -257,4 +258,52 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   },
 
   //#endregion 
+
+  //#region ----- UPDATE PROJECT -----
+  updateProject: async (projectId: string, updates: { newName?: string; newDescription?: string }) => {
+    set({ loading: true, error: null, message: null });
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
+
+      const response = await fetch(`${baseUrl}/projects/${projectId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) throw new Error("Failed to update project");
+
+      const data = await response.json();
+
+      if (data.success && data.response) {
+        const updatedProject = data.response;
+
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p._id === projectId ? { ...p, ...updatedProject } : p
+          ),
+          project: state.project && state.project._id === projectId
+            ? { ...state.project, ...updatedProject }
+            : state.project,
+          loading: false,
+          error: null,
+          message: data.message || "Project updated successfully",
+        }));
+      } else {
+        set({ loading: false, error: data.message || "Update failed", message: null });
+      }
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Unknown error",
+        message: null,
+      });
+    }
+  },
+  //#endregion
+
 }));

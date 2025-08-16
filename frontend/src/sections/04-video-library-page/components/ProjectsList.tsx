@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useProjectStore } from '../../../store/projectStore';
@@ -45,7 +45,6 @@ export const ProjectsList = () => {
   const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
   const deleteProject = useProjectStore((state) => state.deleteProject)
   const projectId = useEditingStore((state) => state.removingProjectId);
-
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
   const currentClass = useClassStore((state) => state.class);
