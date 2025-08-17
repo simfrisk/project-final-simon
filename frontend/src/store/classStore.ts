@@ -9,7 +9,6 @@ import { baseUrl } from "../config/api";
 export interface ClassType {
   _id: string;
   classTitle: string;
-  classDescription: string;
 }
 
 interface ClassesStore {
@@ -23,6 +22,7 @@ interface ClassesStore {
   fetchClassById: (classId: string) => Promise<void>;
   addClass: (classTitle: string) => Promise<void>;
   deleteClass: (classId: string) => Promise<void>;
+  updateClass: (classId: string, updates: { newTitle?: string }) => Promise<void>;
 }
 
 //#endregion
@@ -150,4 +150,56 @@ export const useClassStore = create<ClassesStore>((set) => ({
   },
 
   //#endregion
+
+  //#region ----- UPDATE CLASS -----
+
+  updateClass: async (classId: string, updates: { newTitle?: string }) => {
+    set({ loading: true, error: null, message: null });
+
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Missing access token");
+
+      const response = await fetch(`${baseUrl}/classes/${classId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(updates), // { newTitle: "..." }
+      });
+
+      if (!response.ok) throw new Error("Failed to update class");
+
+      const data = await response.json();
+
+      if (data.success && data.response) {
+        const updatedClass = data.response;
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c._id === classId ? { ...c, ...updatedClass } : c
+          ),
+          class: state.class && state.class._id === classId
+            ? { ...state.class, ...updatedClass }
+            : state.class,
+          loading: false,
+          error: null,
+          message: data.message || "Class updated successfully",
+        }));
+      } else {
+        set({ loading: false, error: data.message || "Update failed", message: null });
+      }
+
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Unknown error",
+        message: null,
+      });
+    }
+  }
+
+  //#endregion
+
 }));

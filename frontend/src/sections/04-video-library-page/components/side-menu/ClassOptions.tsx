@@ -4,10 +4,16 @@ import { useClassStore } from "../../../../store/classStore";
 import { ConfirmBox } from "../../../../global-components/ComfirmBox";
 import { useState } from "react";
 
-export const ClassOptions = () => {
+
+interface ClassOptionsProps {
+  classId: string;
+}
+
+export const ClassOptions = ({ classId }: ClassOptionsProps) => {
   const removingClassId = useEditingStore((state) => state.removingClassId);
   const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
   const deleteClass = useClassStore((state) => state.deleteClass);
+  const updateClass = useClassStore((state) => state.updateClass)
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showOptions, setshowOptions] = useState(true);
@@ -30,14 +36,34 @@ export const ClassOptions = () => {
     setShowConfirm(false);
   };
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
+
+  const handleUpdating = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); 
+    setIsEditing(true)
+    setshowOptions(false)
+  };
+
+  const handleSubmitUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!classId) return;
+    await updateClass(classId, { newTitle: newName });
+    setIsEditing(false)
+  };
+
+  console.log(classId)
+
+
   return (
     <>
       <TransparentBackground onClick={handleCancel} />
 
       {showOptions && (
       <Container>
-        <StyledButton>Edit name</StyledButton>
-        <StyledButton danger onClick={handleDeleteClick}>
+        <StyledButton onClick={handleUpdating}>Edit name</StyledButton>
+        <StyledButton $danger onClick={handleDeleteClick}>
           Delete Class
         </StyledButton>
       </Container>
@@ -50,12 +76,29 @@ export const ClassOptions = () => {
           onConfirm={handleConfirmDelete}
         />
       )}
+
+     {isEditing && (
+        <CreateWrapper onClick={(e) => e.stopPropagation()}>
+          <form onSubmit={handleSubmitUpdate}>
+            <label htmlFor="newName">New Name</label>
+            <input
+              id="newName"
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <button type="submit">Update Project</button>
+          </form>
+        </CreateWrapper>
+
+        )}
+
     </>
   );
 };
 
 interface StyledButtonProps {
-  danger?: boolean;
+  $danger?: boolean;
 }
 
 const Container = styled.div`
@@ -76,8 +119,8 @@ const Container = styled.div`
 const StyledButton = styled.button<StyledButtonProps>`
   display: inline-block;
   padding: 10px 20px;
-  background-color: ${({ danger, theme }) =>
-    danger ? "red" : theme.colors.primary};
+  background-color: ${({ $danger, theme }) =>
+    $danger ? "red" : theme.colors.primary};
   color: white;
   text-decoration: none;
   border: none;
@@ -91,8 +134,8 @@ const StyledButton = styled.button<StyledButtonProps>`
   transition: ease 0.3s;
 
   &:hover {
-    background-color: ${({ danger, theme }) =>
-      danger ? "#f1948a" : theme.colors.primaryHover};
+    background-color: ${({ $danger, theme }) =>
+      $danger ? "#f1948a" : theme.colors.primaryHover};
     transform: scale(0.98);
   }
 `;
@@ -105,4 +148,45 @@ const TransparentBackground = styled.div`
   height: 100vh;
   background-color: rgba(2, 2, 2, 0.621);
   z-index: 10;
+`;
+
+const CreateWrapper = styled.div`
+  position: fixed;
+  width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: ${({theme}) => theme.colors.background};
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px ${({theme}) => theme.colors.boxShadow};
+  z-index: 1000;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+  }
+
+  input {
+    height: 32px;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  textarea {
+    height: 100px;
+    padding: 10px 10px;
+    border-radius: 5px;
+  }
+
+  button {
+    padding: 5px 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    height: 32px;
+    border: none;
+    background-color: ${({theme}) => theme.colors.primary};
+    color: ${({theme}) => theme.colors.background};
+  }
 `;

@@ -70,9 +70,7 @@ export const SideMenu = () => {
         </ProjectWrapper>
       </TopSection>
 
-        {isRemovingClass && (
-      <ClassOptions />
-    )}
+      {isRemovingClass && <ClassOptions classId={classId || ""} />}
 
       {userRole === 'teacher' && (
         <BottomSection>
