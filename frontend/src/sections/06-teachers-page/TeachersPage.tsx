@@ -8,14 +8,11 @@ import { TeacherProjectCard } from "./components/TeacherProjectCard";
 import { TeachersSideMenu } from "./components/TeachersSideMenu";
 import { useEditingStore } from "../../store/editStore";
 import { useClassStore } from "../../store/classStore";
-import { commentStore } from "../../store/commentStore";
 import { MediaQueries } from "../../themes/mediaQueries";
 
 export const TeachersPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments);
-  
-  const allComments = commentStore((state) => state.allComments);
   
   const currentClassId = useEditingStore((state) => state.currentClassId);
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
@@ -24,11 +21,18 @@ export const TeachersPage = () => {
   const fetchClasses = useClassStore((state) => state.fetchClasses);
 
   // Fetch on page load
-  useEffect(() => {
-    fetchClasses();
-    fetchProjectsWithComments();
-    
-  }, []);
+useEffect(() => {
+  fetchClasses();
+  fetchProjectsWithComments();
+}, []);
+
+// useEffect(() => {
+//   console.log("Classes in store:", classes);
+// }, [classes]);
+
+// useEffect(() => {
+//   console.log("Projects in store:", projects);
+// }, [projects]);
 
   const filteredProjects = projects
     .filter(project => project.classId === currentClassId) 
@@ -39,6 +43,15 @@ export const TeachersPage = () => {
       )
     );
 
+ const classesWithUncheckedComments = classes.filter(cls => {
+  const projectsInClass = projects.filter(project => project.classId === cls._id);
+  const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
+    const unchecked = (project.comments ?? []).filter(comment => !comment.isChecked);
+    return count + unchecked.length;
+  }, 0);
+  return uncheckedCommentsCount > 0;
+});
+
   const handleClassFetch = (id: string) => setCurrentClassId(id);
 
   return (
@@ -46,13 +59,7 @@ export const TeachersPage = () => {
       <Navigation />
 
       <DashboardLayout>
-        <TeachersSideMenu
-          classes={classes}
-          currentClassId={currentClassId}
-          setCurrentClassId={setCurrentClassId}
-          projects={projects}
-          allComments={allComments}
-        />
+       <TeachersSideMenu classesCount={classesWithUncheckedComments} />
 
         <MainContent>
           <PageTitle>Teachers Dashboard</PageTitle>

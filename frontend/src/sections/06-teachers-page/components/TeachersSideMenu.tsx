@@ -1,30 +1,14 @@
 import styled from "styled-components";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import type { ClassType } from "../../../store/classStore";
-import type { ProjectType } from "../../../store/projectStore";
-import type { MessageType } from "../../../store/commentStore";
-import { useProjectStore } from "../../../store/projectStore";
-import { commentStore } from "../../../store/commentStore";
+import { useEditingStore } from "../../../store/editStore";
 
-
-type TeachersSideMenuProps = {
+interface TeachersSideMenuProps {
   classes: ClassType[];
-  currentClassId: string | null;
-  setCurrentClassId: (id: string) => void;
-  projects: ProjectType[];
-  allComments: MessageType[];
-};
-
-export const TeachersSideMenu = ({ classes, currentClassId, setCurrentClassId }: TeachersSideMenuProps) => {
-  const projects = useProjectStore(state => state.projects);
-  const allComments = commentStore(state => state.allComments);
-
-  const commentsCountByClass = classes.reduce<Record<string, number>>((total, cls) => {
-    const classProjects = projects.filter(p => p.classId === cls._id).map(p => p._id);
-    const totalComments = allComments.filter(c => classProjects.includes(c.projectId || "") && !c.isChecked).length;
-    total[cls._id] = totalComments;
-    return total;
-  }, {});
+}
+export const TeachersSideMenu = ({ classes }: TeachersSideMenuProps) => { 
+  const currentClassId = useEditingStore((state) => state.currentClassId);
+  const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
 
   const handleClassFetch = (id: string) => setCurrentClassId(id);
 
@@ -34,20 +18,20 @@ export const TeachersSideMenu = ({ classes, currentClassId, setCurrentClassId }:
         <h3>Classes</h3>
         <ClassList>
           {classes.map(cls => 
-            commentsCountByClass[cls._id] > 0 && (
-              <ClassItem 
-                onClick={() => handleClassFetch(cls._id)} 
-                key={cls._id}
-                $selected={currentClassId === cls._id}
-              >
-                <p>{cls.classTitle}</p>
-              </ClassItem>
-          ))}
+            <ClassItem 
+               onClick={() => handleClassFetch(cls._id)}
+               key={cls._id}
+               $selected={currentClassId === cls._id}
+            >
+              <p>{cls.classTitle}</p>
+            </ClassItem>
+          )}
         </ClassList>
       </TopSection>
     </Container>
   );
 };
+
 
 // Styled Components
 const Container = styled.section`
