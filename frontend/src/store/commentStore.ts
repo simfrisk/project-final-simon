@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { getToken } from "../utils/token";
 import { baseUrl } from "../config/api";
+import { useProjectStore } from "./projectStore";
 
 //#endregion
 
@@ -265,6 +266,11 @@ export const commentStore = create<MessageStore>()(
             allComments: updateComments(state.allComments),
             privateComments: updateComments(state.privateComments),
           }));
+
+          //This updates the comments on the project with comments
+          const fetchProjectsWithComments = useProjectStore.getState().fetchProjectsWithComments;
+          await fetchProjectsWithComments();
+
         } catch (err: any) {
           console.error("Toggle check failed:", err.message);
         }

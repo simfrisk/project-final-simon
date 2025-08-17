@@ -27,6 +27,7 @@ export const TeachersPage = () => {
   useEffect(() => {
     fetchClasses();
     fetchProjectsWithComments();
+    
   }, []);
 
   const filteredProjects = projects
