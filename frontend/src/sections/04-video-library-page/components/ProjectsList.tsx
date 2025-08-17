@@ -156,6 +156,7 @@ const Container = styled.div`
 const ProjectWrapper = styled.div`
   display: grid;
   width: 100%;
+  padding: 0 15px;
   gap: 25px;
   justify-content: center;
   box-sizing: border-box;
