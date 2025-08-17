@@ -8,16 +8,24 @@ import { TeacherProjectCard } from "./components/TeacherProjectCard";
 import { TeachersSideMenu } from "./components/TeachersSideMenu";
 import { useEditingStore } from "../../store/editStore";
 import { useClassStore } from "../../store/classStore";
+import { commentStore } from "../../store/commentStore";
 import { MediaQueries } from "../../themes/mediaQueries";
 
 export const TeachersPage = () => {
   const projects = useProjectStore((state) => state.projects);
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments);
+  
+  const allComments = commentStore((state) => state.allComments);
+  
   const currentClassId = useEditingStore((state) => state.currentClassId);
-  const classes = useClassStore((state) => state.classes);
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
+  
+  const classes = useClassStore((state) => state.classes);
+  const fetchClasses = useClassStore((state) => state.fetchClasses);
 
+  // Fetch on page load
   useEffect(() => {
+    fetchClasses();
     fetchProjectsWithComments();
   }, []);
 
@@ -30,22 +38,27 @@ export const TeachersPage = () => {
       )
     );
 
-      const handelClassFetch = (id: string) => {
-    setCurrentClassId(id);
-  };
+  const handleClassFetch = (id: string) => setCurrentClassId(id);
 
   return (
     <>
       <Navigation />
 
       <DashboardLayout>
-        <TeachersSideMenu />
+        <TeachersSideMenu
+          classes={classes}
+          currentClassId={currentClassId}
+          setCurrentClassId={setCurrentClassId}
+          projects={projects}
+          allComments={allComments}
+        />
 
         <MainContent>
           <PageTitle>Teachers Dashboard</PageTitle>
-         <ClassSelect
+
+          <ClassSelect
             value={currentClassId || ""}
-            onChange={(e) => handelClassFetch(e.target.value)}
+            onChange={(e) => handleClassFetch(e.target.value)}
           >
             <option value="">Select a class</option>
             {classes.map((cls) => (
@@ -54,8 +67,6 @@ export const TeachersPage = () => {
               </option>
             ))}
           </ClassSelect>
-
-      
 
           <ActionBar>
             <SmallButton text="Projects" />
@@ -66,8 +77,7 @@ export const TeachersPage = () => {
           <ProjectsList>
             {filteredProjects.map(({ _id, projectName, projectDescription, thumbnail, comments }) => {
               const questionComments = (comments ?? []).filter(
-                comment =>
-                  comment.commentType === "question" && comment.isChecked === false
+                comment => comment.commentType === "question" && !comment.isChecked
               );
 
               return (
@@ -154,4 +164,3 @@ const ProjectsList = styled.div`
   max-width: 800px;
   margin-bottom: 20px;
 `;
-

@@ -9,23 +9,14 @@ import { useVideoStore } from "../../../store/videoStore";
 import { unFormatTime } from "../../05-review-page/components/video-section/utils/unFormatTime";
 import { commentStore } from "../../../store/commentStore";
 
+import type { MessageType } from "../../../store/commentStore";
+
 interface TeacherProjectCardProps {
   projectId: string;
   projectName: string;
   projectDescription: string;
   thumbnail?: string;
-  comments?: Array<{
-    _id: string;
-    content: string;
-    createdAt: string;
-    timeStamp: string;
-    isChecked: boolean;
-    likes?: number;
-    commentCreatedBy: {
-      name: string;
-      profileImage: string;
-    };
-  }>;
+  comments?: MessageType[]
 }
 
 export const TeacherProjectCard = ({
