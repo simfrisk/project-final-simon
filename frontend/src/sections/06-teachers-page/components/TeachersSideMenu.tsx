@@ -3,6 +3,8 @@ import { MediaQueries } from "../../../themes/mediaQueries";
 import type { ClassType } from "../../../store/classStore";
 import type { ProjectType } from "../../../store/projectStore";
 import type { MessageType } from "../../../store/commentStore";
+import { useProjectStore } from "../../../store/projectStore";
+import { commentStore } from "../../../store/commentStore";
 
 
 type TeachersSideMenuProps = {
@@ -13,15 +15,10 @@ type TeachersSideMenuProps = {
   allComments: MessageType[];
 };
 
-export const TeachersSideMenu = ({
-  classes,
-  currentClassId,
-  setCurrentClassId,
-  projects,
-  allComments
-}: TeachersSideMenuProps) => {
+export const TeachersSideMenu = ({ classes, currentClassId, setCurrentClassId }: TeachersSideMenuProps) => {
+  const projects = useProjectStore(state => state.projects);
+  const allComments = commentStore(state => state.allComments);
 
-  // Count unchecked comments per class
   const commentsCountByClass = classes.reduce<Record<string, number>>((total, cls) => {
     const classProjects = projects.filter(p => p.classId === cls._id).map(p => p._id);
     const totalComments = allComments.filter(c => classProjects.includes(c.projectId || "") && !c.isChecked).length;
