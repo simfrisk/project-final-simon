@@ -4,9 +4,9 @@ import type { ClassType } from "../../../store/classStore";
 import { useEditingStore } from "../../../store/editStore";
 
 interface TeachersSideMenuProps {
-  classes: ClassType[];
+  classesCount: ClassType[];
 }
-export const TeachersSideMenu = ({ classes }: TeachersSideMenuProps) => { 
+export const TeachersSideMenu = ({ classesCount }: TeachersSideMenuProps) => { 
   const currentClassId = useEditingStore((state) => state.currentClassId);
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
 
@@ -17,7 +17,7 @@ export const TeachersSideMenu = ({ classes }: TeachersSideMenuProps) => {
       <TopSection>
         <h3>Classes</h3>
         <ClassList>
-          {classes?.map(cls => 
+          {classesCount?.map(cls => 
             <ClassItem 
                onClick={() => handleClassFetch(cls._id)}
                key={cls._id}
