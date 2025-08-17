@@ -4,6 +4,7 @@ import { useClassStore } from "../../../store/classStore";
 import { MediaQueries } from "../../../themes/mediaQueries";
 import { useEditingStore } from "../../../store/editStore";
 import { useProjectStore } from "../../../store/projectStore";
+import { commentStore } from "../../../store/commentStore";
 
 export const TeachersSideMenu = () => {
   const classes = useClassStore((state) => state.classes);
@@ -13,14 +14,21 @@ export const TeachersSideMenu = () => {
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId);
 
   const projects = useProjectStore((state) => state.projects);
+  const allComments = commentStore((state) => state.allComments);
 
-  //Handels the total comments per class
+   // count unchecked comments per class
   const commentsCountByClass = classes.reduce<Record<string, number>>((total, cls) => {
-  const classProjects = projects.filter(p => p.classId === cls._id);
-  const totalComments = classProjects.reduce((total, proj) => total + (proj.comments?.length || 0), 0);
-  total[cls._id] = totalComments;
-  return total;
-}, {});
+    // find project IDs belonging to this class
+    const classProjects = projects.filter((p) => p.classId === cls._id).map((p) => p._id);
+
+    // count comments in those projects that are unchecked
+    const totalComments = allComments.filter(
+      (c) => classProjects.includes(c.projectId || "") && c.isChecked === false
+    ).length;
+
+    total[cls._id] = totalComments;
+    return total;
+  }, {});
 
   useEffect(() => {
     fetchClasses();
@@ -43,7 +51,6 @@ export const TeachersSideMenu = () => {
                 $selected={currentClassId === cls._id}
               >
                 <p>{cls.classTitle}</p>
-                <p>({commentsCountByClass[cls._id] || 0})</p>
               </ClassItem>
           ))}
         </ClassList>
