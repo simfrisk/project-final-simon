@@ -10,9 +10,11 @@ export const ClassOptions = () => {
   const deleteClass = useClassStore((state) => state.deleteClass);
 
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showOptions, setshowOptions] = useState(true);
 
   const handleDeleteClick = () => {
     setShowConfirm(true);
+    setshowOptions(false)
   };
 
   const handleConfirmDelete = () => {
@@ -31,12 +33,15 @@ export const ClassOptions = () => {
   return (
     <>
       <TransparentBackground onClick={handleCancel} />
+
+      {showOptions && (
       <Container>
         <StyledButton>Edit name</StyledButton>
         <StyledButton danger onClick={handleDeleteClick}>
           Delete Class
         </StyledButton>
       </Container>
+      )}
 
       {showConfirm && (
         <ConfirmBox

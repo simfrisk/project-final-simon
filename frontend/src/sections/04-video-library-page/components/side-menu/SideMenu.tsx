@@ -49,6 +49,7 @@ export const SideMenu = () => {
     setIsRemovingClass(true);
     setRemovingClassId(classId); 
   };
+  
 
   return (
     <Container>

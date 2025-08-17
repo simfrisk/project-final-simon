@@ -43,7 +43,8 @@ useEffect(() => {
       )
     );
 
- const classesWithUncheckedComments = classes.filter(cls => {
+    //A propp that counts the notChecked Comments for each class so if > 0 it does not show.
+  const classesWithUncheckedComments = classes.filter(cls => {
   const projectsInClass = projects.filter(project => project.classId === cls._id);
   const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
     const unchecked = (project.comments ?? []).filter(comment => !comment.isChecked);
