@@ -18,6 +18,7 @@ export const SideMenu = () => {
   const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
   const isRemovingClass = useEditingStore((set) => set.isRemovingClass)
   const setRemovingClassId = useEditingStore((set) => set.setRemovingClassId)
+  const removingClassId = useEditingStore((state) => state.removingClassId);
 
   const user = useUserStore((state) => state.user);
   const userRole = user?.role;
@@ -70,7 +71,7 @@ export const SideMenu = () => {
         </ProjectWrapper>
       </TopSection>
 
-      {isRemovingClass && <ClassOptions classId={classId || ""} />}
+      {isRemovingClass && <ClassOptions classId={removingClassId || ""} />}
 
       {userRole === 'teacher' && (
         <BottomSection>
