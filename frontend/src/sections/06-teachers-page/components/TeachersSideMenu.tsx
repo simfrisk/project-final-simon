@@ -17,7 +17,7 @@ export const TeachersSideMenu = ({ classes }: TeachersSideMenuProps) => {
       <TopSection>
         <h3>Classes</h3>
         <ClassList>
-          {classes.map(cls => 
+          {classes?.map(cls => 
             <ClassItem 
                onClick={() => handleClassFetch(cls._id)}
                key={cls._id}
