@@ -34,6 +34,7 @@ const getClassById_1 = require("../controllers/getClassById");
 const postLike_1 = require("../controllers/postLike");
 const postReplyLike_1 = require("../controllers/postReplyLike");
 const patchProjects_1 = require("../controllers/patchProjects");
+const patchClass_1 = require("../controllers/patchClass");
 const router = express_1.default.Router();
 // Home
 router.get("/alt/doc", getHome_1.getHome);
@@ -61,6 +62,7 @@ router.post("/comments/:commentId/likes", authenticateUser_1.authenticateUser, p
 router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, postReplyLike_1.postReplyLike);
 router.post("/session", postSession_1.postSession);
 // Patch
+router.patch("/classes/:classId", authenticateUser_1.authenticateUser, patchClass_1.patchClass);
 router.patch("/projects/:projectId", authenticateUser_1.authenticateUser, patchProjects_1.patchProject);
 router.patch("/replies/:replyId", authenticateUser_1.authenticateUser, patchReply_1.patchReply);
 router.patch("/comments/:commentId", authenticateUser_1.authenticateUser, patchComment_1.patchComment);
