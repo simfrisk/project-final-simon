@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { useProjectStore } from '../../../store/projectStore';
