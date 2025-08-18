@@ -8,7 +8,7 @@ const ProjectSchema = new mongoose_1.Schema({
     projectDescription: String,
     video: String,
     thumbnail: String,
-    commentCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    projectCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     comments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment" }],
 });
 exports.Project = (0, mongoose_1.model)("Project", ProjectSchema);
