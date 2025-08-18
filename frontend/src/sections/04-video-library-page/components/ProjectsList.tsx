@@ -311,7 +311,7 @@ const StyledButton = styled.button<StyledButtonProps>`
   transition: ease 0.3s;
 
   &:hover {
-    background-color: ${({ theme, $add, $delete }) => ($add ? '#ff4d4d' : $delete ? '#ff4d4d' : theme.colors.primaryHover)};
+    background-color: ${({ theme, $add, $delete }) => ($add ? '#28b521' : $delete ? '#fa5e5e' : theme.colors.primaryHover)};
     transform: scale(0.98);
   }
 `;
