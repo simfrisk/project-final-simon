@@ -26,14 +26,6 @@ useEffect(() => {
   fetchProjectsWithComments();
 }, []);
 
-// useEffect(() => {
-//   console.log("Classes in store:", classes);
-// }, [classes]);
-
-// useEffect(() => {
-//   console.log("Projects in store:", projects);
-// }, [projects]);
-
   const filteredProjects = projects
     .filter(project => project.classId === currentClassId) 
     .filter(project =>
@@ -43,15 +35,25 @@ useEffect(() => {
       )
     );
 
-    //A propp that counts the notChecked Comments for each class so if > 0 it does not show.
+  //A propp that counts the notChecked Comments for each class so if > 0 it does not show.
   const classesWithUncheckedComments = classes.filter(cls => {
-  const projectsInClass = projects.filter(project => project.classId === cls._id);
-  const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
-    const unchecked = (project.comments ?? []).filter(comment => !comment.isChecked);
-    return count + unchecked.length;
-  }, 0);
-  return uncheckedCommentsCount > 0;
-});
+    const projectsInClass = projects.filter(project => project.classId === cls._id);
+    const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
+      const unchecked = (project.comments ?? []).filter(comment => !comment.isChecked);
+      return count + unchecked.length;
+    }, 0);
+    return uncheckedCommentsCount > 0;
+  });
+
+//selects the fist class in the list
+  useEffect(() => {
+    if (
+      classesWithUncheckedComments.length > 0 && 
+      !currentClassId 
+    ) {
+      setCurrentClassId(classesWithUncheckedComments[0]._id);
+    }
+  }, [classesWithUncheckedComments, currentClassId, setCurrentClassId]);
 
   const handleClassFetch = (id: string) => setCurrentClassId(id);
 
@@ -60,6 +62,7 @@ useEffect(() => {
       <Navigation />
 
       <DashboardLayout>
+        
        <TeachersSideMenu classesCount={classesWithUncheckedComments} />
 
         <MainContent>
@@ -69,8 +72,7 @@ useEffect(() => {
             value={currentClassId || ""}
             onChange={(e) => handleClassFetch(e.target.value)}
           >
-            <option value="">Select a class</option>
-            {classes.map((cls) => (
+            {classesWithUncheckedComments.map((cls) => (
               <option key={cls._id} value={cls._id}>
                 {cls.classTitle}
               </option>

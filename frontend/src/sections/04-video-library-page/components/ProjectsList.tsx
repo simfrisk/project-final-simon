@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useProjectStore } from '../../../store/projectStore';
@@ -14,20 +14,10 @@ import { Loader } from '../../../global-components/loader';
 import { MediaQueries } from '../../../themes/mediaQueries';
 import { ConfirmBox } from '../../../global-components/ComfirmBox';
 
-type Class = {
-  _id: string;
-  classTitle: string;
-};
-
-type OutletContextType = {
-  classId?: string;
-  classes: Class[];
-  handleClassChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-};
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const ProjectsList = () => {
-  const { classId } =
-    useOutletContext<OutletContextType>();
+ const { classId } = useParams();
 
   const fetchProjects = useProjectStore((state) => state.fetchProjects);
   const projects = useProjectStore((state) => state.projects);
@@ -48,6 +38,26 @@ export const ProjectsList = () => {
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
   const currentClass = useClassStore((state) => state.class);
+
+
+  //Class selector
+ 
+  const navigate = useNavigate();
+
+  const fetchClasses = useClassStore((state) => state.fetchClasses);
+    const classes = useClassStore((state) => state.classes);
+  
+    useEffect(() => {
+      fetchClasses();
+    }, [fetchClasses]);
+  
+    const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedClassId = e.target.value;
+      navigate(`/library/classes/${selectedClassId}/projects`);
+    };
+
+  //Hide and show option buttons
+  const [showOptions, setShowOptions] = useState<boolean>(false)
 
   useEffect(() => {
     if (classId) {
@@ -74,6 +84,7 @@ export const ProjectsList = () => {
     setIsRemovingProject(false);
   };
 
+
   if (loading) {
     return (
       <LoadingContainer>
@@ -88,16 +99,46 @@ export const ProjectsList = () => {
   return (
     <Container>
       <HeaderWrapper>
-        <ClassTitle>{currentClass?.classTitle ?? 'Loading class title...'}</ClassTitle>
+          <ClassTitle>{currentClass?.classTitle ?? 'Loading class title...'}</ClassTitle>
+          
+          <TopBar>
+            <ClassSelect value={classId} onChange={handleClassChange}>
+              {classes.map((cls) => (
+                <option key={cls._id} value={cls._id}>
+                  {cls.classTitle}
+                </option>
+              ))}
+            </ClassSelect>
+        </TopBar>
+
+          <StyledButton onClick={() => setShowOptions(prev => !prev)} >{showOptions ? "Hide" : "Show options"}</StyledButton>
+
 
         {userRole === 'teacher' && (
         <ButtonContainer>
-          <StyledButton type="button" onClick={handleEditClass}>
-            + Class
-          </StyledButton>
-          <StyledButton type="button" onClick={handleEditProject}>
-            + Project
-          </StyledButton>
+          
+    
+
+          {showOptions && (
+          <div>
+            <div>
+            <StyledButton type="button" onClick={handleEditClass}>
+              Add class
+            </StyledButton>
+            <StyledButton type="button" onClick={handleEditProject}>
+              Add project
+            </StyledButton>
+            </div>
+            <div>
+            <StyledButton type="button" onClick={handleEditClass}>
+              Delete class
+            </StyledButton>
+            <StyledButton type="button" onClick={handleEditProject}>
+              Delete project
+            </StyledButton>
+            </div>
+          </div>
+          )}
         </ButtonContainer>)}
       </HeaderWrapper>
 
@@ -199,6 +240,41 @@ display: none;
   display: block;
 }
 `
+
+const TopBar = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+
+    @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }
+`;
+
+const ClassSelect = styled.select`
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 24px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  width: 203px;
+  max-width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: rgba(0, 0, 0, 0.14);
+  }
+
+  option {
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+  }
+`;
 
 const ButtonContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {

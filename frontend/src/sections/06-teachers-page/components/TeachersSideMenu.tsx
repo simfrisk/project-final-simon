@@ -32,7 +32,6 @@ export const TeachersSideMenu = ({ classesCount }: TeachersSideMenuProps) => {
   );
 };
 
-
 // Styled Components
 const Container = styled.section`
   display: flex;
@@ -43,6 +42,7 @@ const Container = styled.section`
   height: 85dvh;
   margin-top: 84px;
   width: 250px;
+  display: none;
 
   h3 {
     margin-bottom: 24px;
