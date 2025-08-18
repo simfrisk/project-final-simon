@@ -1,4 +1,3 @@
-import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -34,10 +33,14 @@ export const ProjectsList = () => {
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
   const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject);
   const deleteProject = useProjectStore((state) => state.deleteProject)
+  const deleteClass = useClassStore((state) => state.deleteClass)
   const projectId = useEditingStore((state) => state.removingProjectId);
 
   const fetchClassById = useClassStore((state) => state.fetchClassById);
   const currentClass = useClassStore((state) => state.class);
+
+  //delete project or class selector
+  const [deleteSelect, setDeleteSelect ] = useState<string>("")
 
 
   //Class selector
@@ -77,12 +80,20 @@ export const ProjectsList = () => {
 
   const handlCancel = () => setIsRemovingProject(false);
 
-  const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (!projectId) return; 
-    deleteProject(projectId);
-    setIsRemovingProject(false);
-  };
+ const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.stopPropagation();
+
+  if (deleteSelect === "classSelect") {
+    if (!classId) return;
+      deleteClass(classId);
+      setDeleteSelect("")
+  } else {
+    if (!projectId) return;
+      deleteProject(projectId);
+  }
+
+  setIsRemovingProject(false);
+};
 
 
   if (loading) {
@@ -109,38 +120,34 @@ export const ProjectsList = () => {
                 </option>
               ))}
             </ClassSelect>
+            <StyledButton onClick={() => setShowOptions(prev => !prev)} >{showOptions ? "Hide" : "Show options"}</StyledButton>
         </TopBar>
-
-          <StyledButton onClick={() => setShowOptions(prev => !prev)} >{showOptions ? "Hide" : "Show options"}</StyledButton>
-
 
         {userRole === 'teacher' && (
         <ButtonContainer>
-          
-    
-
           {showOptions && (
           <div>
             <div>
-            <StyledButton type="button" onClick={handleEditClass}>
+            <StyledButton $add type="button" onClick={handleEditClass}>
               Add class
             </StyledButton>
-            <StyledButton type="button" onClick={handleEditProject}>
+            <StyledButton $add type="button" onClick={handleEditProject}>
               Add project
             </StyledButton>
             </div>
             <div>
-            <StyledButton type="button" onClick={handleEditClass}>
+            <StyledButton $delete type="button" onClick={() => {
+                setDeleteSelect("classSelect");
+                setIsRemovingProject(true);
+              }}>
               Delete class
-            </StyledButton>
-            <StyledButton type="button" onClick={handleEditProject}>
-              Delete project
             </StyledButton>
             </div>
           </div>
           )}
         </ButtonContainer>)}
       </HeaderWrapper>
+      
 
       <ProjectWrapper>
         {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
@@ -163,7 +170,7 @@ export const ProjectsList = () => {
 
             {userRole === 'teacher' && isRemovingProject && 
               <ConfirmBox
-                  message={"Are you sure you want to delete?"} // fixed prop name
+                  message={"Are you sure you want to delete?"} 
                   onCancel={handlCancel} 
                   onConfirm={handelDelete} 
                 />}
@@ -178,6 +185,11 @@ export const ProjectsList = () => {
 };
 
 // STYLED COMPONENTS
+
+interface StyledButtonProps {
+  $add?: boolean;
+  $delete?: boolean;
+}
 
 const Container = styled.div`
   position: relative;
@@ -243,6 +255,7 @@ display: none;
 
 const TopBar = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   padding: 16px;
 
@@ -281,12 +294,12 @@ const ButtonContainer = styled.div`
     display: none;
   }`;
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<StyledButtonProps>`
   display: inline-block;
   padding: 10px 20px;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme, $add, $delete }) => 
+  $add ? 'green' : $delete ? 'red' : theme.colors.primary};
   color: white;
-  text-decoration: none;
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -297,7 +310,7 @@ const StyledButton = styled.button`
   transition: ease 0.3s;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryHover};
+    background-color: ${({ theme, $add, $delete }) => ($add ? '#ff4d4d' : $delete ? '#ff4d4d' : theme.colors.primaryHover)};
     transform: scale(0.98);
   }
 `;
