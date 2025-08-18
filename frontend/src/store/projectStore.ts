@@ -6,6 +6,13 @@ import { baseUrl } from "../config/api";
 //#endregion
 
 //#region ----- INTERFACES -----
+export interface UserType {
+  _id: string;
+  name: string;
+  email: string;
+  profileImage?: string | null;
+}
+
 export interface ProjectType {
   _id?: string;
   classId: string;
@@ -13,6 +20,7 @@ export interface ProjectType {
   projectDescription: string;
   video: string | File | null;
   thumbnail?: string;
+  projectCreatedBy?: UserType;
   comments?: any[];
 }
 

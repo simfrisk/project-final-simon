@@ -150,13 +150,14 @@ export const ProjectsList = () => {
       
 
       <ProjectWrapper>
-        {projects.map(({ _id, projectName, projectDescription, thumbnail }) => (
+        {projects.map(({ _id, projectName, projectDescription, thumbnail, projectCreatedBy }) => (
           <Project
             key={_id}
             projectId={_id ?? ''}
             projectName={projectName}
             projectDescription={projectDescription}
             thumbnail={thumbnail}
+            projectCreatedBy={projectCreatedBy}
           />
         ))}
       </ProjectWrapper>

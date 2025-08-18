@@ -7,9 +7,14 @@ import { useState } from "react";
 
 interface ProjectProps extends Pick<ProjectType, "_id" | "projectName" | "projectDescription" | "thumbnail"> {
   projectId: string;
+  projectCreatedBy?: {
+  _id: string;
+  name: string;
+  email?: string;
+} | null
 }
 
-export const Project = ({ projectId, projectName, projectDescription, thumbnail }: ProjectProps) => {
+export const Project = ({ projectId, projectName, projectDescription, thumbnail, projectCreatedBy}: ProjectProps) => {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -49,7 +54,7 @@ export const Project = ({ projectId, projectName, projectDescription, thumbnail 
       </TextContainer>
 
       <CardFooter>
-        <p>Professor Daniels</p>
+        <p>{projectCreatedBy?.name || "Unknown"}</p>
 
         <Edit>
           <img src="/icons/edit.svg" alt="Edit Icon" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}/>
