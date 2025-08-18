@@ -85,13 +85,14 @@ const options = {
         },
         User: {
           type: "object",
-          required: ["name", "email", "password", "role"],
+          required: ["name", "email", "password", "role", "projectCreatedBy"],
           properties: {
             _id: { type: "string", format: "ObjectId", example: "64d0b2bde5d8f25a1e8d9f67" },
             name: { type: "string", example: "John Doe" },
             email: { type: "string", format: "email", example: "john@example.com" },
             password: { type: "string", example: "hashedpassword123" },
             role: { type: "string", example: "teacher" },
+            projectCreatedBy: { type: "string", format: "ObjectId", description: "User ID" },
             profileImage: {
               type: "string",
               example:

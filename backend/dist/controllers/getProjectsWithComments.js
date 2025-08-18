@@ -7,7 +7,7 @@ const Projects_1 = require("../models/Projects");
  * /classes/projects/with-comments:
  *   get:
  *     summary: Get all projects with comments of type 'question'
- *     description: Returns a list of projects populated with comments where commentType is 'question', including the commenter’s name, profile image, and role. Also includes the classId for each project.
+ *     description: Returns a list of projects populated with comments where commentType is 'question', including the commenter’s name, profile image, and role. Also includes the classId and project creator details for each project.
  *     tags:
  *       - Projects
  *     security:
@@ -43,6 +43,16 @@ const Projects_1 = require("../models/Projects");
  *                       thumbnail:
  *                         type: string
  *                         nullable: true
+ *                       projectCreatedBy:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
+ *                             nullable: true
  *                       comments:
  *                         type: array
  *                         items:
@@ -80,7 +90,8 @@ const getProjectsWithComments = async (req, res) => {
                 select: "name profileImage role",
             },
         })
-            .select("classId projectName projectDescription video thumbnail comments");
+            .select("projectName projectDescription video classId projectCreatedBy")
+            .populate("projectCreatedBy", "name email profileImage");
         return res.status(200).json({
             success: true,
             response: result,

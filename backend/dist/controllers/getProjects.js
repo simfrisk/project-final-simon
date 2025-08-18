@@ -24,22 +24,51 @@ const Projects_1 = require("../models/Projects");
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   title:
- *                     type: string
- *                   description:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       projectName:
+ *                         type: string
+ *                       projectDescription:
+ *                         type: string
+ *                         nullable: true
+ *                       video:
+ *                         type: string
+ *                         nullable: true
+ *                       thumbnail:
+ *                         type: string
+ *                         nullable: true
+ *                       classId:
+ *                         type: string
+ *                       projectCreatedBy:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
+ *                             nullable: true
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Server error
  */
 const getProjects = async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await Projects_1.Project.find({ classId })
-            .select("projectName projectDescription video thumbnail classId");
+            .select("projectName projectDescription video thumbnail classId projectCreatedBy")
+            .populate("projectCreatedBy", "name email profileImage");
         return res.status(200).json({
             success: true,
             response: result,

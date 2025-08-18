@@ -6,7 +6,7 @@ export interface Project {
   projectDescription?: string;
   video?: string;
   thumbnail?: string
-  commentCreatedBy: Types.ObjectId;
+  projectCreatedBy: Types.ObjectId;
   comments: Types.ObjectId[];
 }
 
@@ -16,7 +16,7 @@ const ProjectSchema = new Schema<Project>({
   projectDescription: String,
   video: String,
   thumbnail: String,
-  commentCreatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  projectCreatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 

@@ -46,6 +46,19 @@ import { Request, Response } from "express";
  *                     classId:
  *                       type: string
  *                       example: "64c1f2a3b9f1e1234567890b"
+ *                     projectCreatedBy:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "John Doe"
+ *                         email:
+ *                           type: string
+ *                           example: "john@example.com"
+ *                         profileImage:
+ *                           type: string
+ *                           nullable: true
+ *                           example: "https://someurl.com/profile.jpg"
  *                 message:
  *                   type: string
  *                   example: "Project found"
@@ -88,7 +101,9 @@ export const getProjectById = async (req: Request, res: Response): Promise<Respo
   const { projectId } = req.params
 
   try {
-    const project = await Project.findById(projectId).select("projectName projectDescription video");
+    const project = await Project.findById(projectId)
+      .select("projectName projectDescription video classId projectCreatedBy")
+      .populate("projectCreatedBy", "name email profileImage");
     if (!project) {
       return res.status(404).json({
         success: false,

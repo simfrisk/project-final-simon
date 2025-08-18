@@ -63,6 +63,18 @@ const Projects_1 = require("../models/Projects");
  *                       type: string
  *                     thumbnail:
  *                       type: string
+ *                     projectCreatedBy:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         profileImage:
+ *                           type: string
+ *                           nullable: true
  *                 message:
  *                   type: string
  *                   example: "Project created"
@@ -125,6 +137,7 @@ const postProject = async (req, res) => {
             projectDescription,
             video: videoUrl,
             thumbnail: thumbnailUrl,
+            projectCreatedBy: req.user?._id,
         });
         const savedNewProject = await newProject.save();
         return res.status(201).json({

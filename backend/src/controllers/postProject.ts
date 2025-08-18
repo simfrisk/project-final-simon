@@ -62,6 +62,18 @@ import { Project } from "../models/Projects";
  *                       type: string
  *                     thumbnail:
  *                       type: string
+ *                     projectCreatedBy:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         profileImage:
+ *                           type: string
+ *                           nullable: true
  *                 message:
  *                   type: string
  *                   example: "Project created"
@@ -128,6 +140,7 @@ export const postProject = async (req: Request, res: Response): Promise<Response
       projectDescription,
       video: videoUrl,
       thumbnail: thumbnailUrl,
+      projectCreatedBy: req.user?._id,
     });
 
     const savedNewProject = await newProject.save();

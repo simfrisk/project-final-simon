@@ -47,6 +47,19 @@ const Projects_1 = require("../models/Projects");
  *                     classId:
  *                       type: string
  *                       example: "64c1f2a3b9f1e1234567890b"
+ *                     projectCreatedBy:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "John Doe"
+ *                         email:
+ *                           type: string
+ *                           example: "john@example.com"
+ *                         profileImage:
+ *                           type: string
+ *                           nullable: true
+ *                           example: "https://someurl.com/profile.jpg"
  *                 message:
  *                   type: string
  *                   example: "Project found"
@@ -87,7 +100,9 @@ const Projects_1 = require("../models/Projects");
 const getProjectById = async (req, res) => {
     const { projectId } = req.params;
     try {
-        const project = await Projects_1.Project.findById(projectId).select("projectName projectDescription video");
+        const project = await Projects_1.Project.findById(projectId)
+            .select("projectName projectDescription video classId projectCreatedBy")
+            .populate("projectCreatedBy", "name email profileImage");
         if (!project) {
             return res.status(404).json({
                 success: false,
