@@ -101,9 +101,13 @@ const Edit = styled.div`
   transform: translatey(30%);
   transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
 
+  img{
+    filter: ${({ theme }) => theme.filter.inverted};
+  }
+
   img:hover {
     transition: ease .3s;
-    transform: scale(0.9);
+    transform: scale(0.8);
   }
 `;
 
