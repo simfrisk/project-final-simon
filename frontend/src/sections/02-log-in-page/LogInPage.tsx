@@ -21,6 +21,12 @@ export const LogInPage: React.FC = () => {
     password: "",
   })
 
+  const [showPassword, setShowPassword] = useState(false)
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev)
+  }
+  const [error, setError] = useState<string | null>(null)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -38,9 +44,10 @@ export const LogInPage: React.FC = () => {
     const success = await login(formData.email, formData.password)
 
     if (success) {
+      setError(null) // clear any previous errors
       navigate("/library/")
     } else {
-      alert("Login failed. Please check your credentials.")
+      setError("Login failed. Please check your credentials.")
     }
   }
 
@@ -86,10 +93,10 @@ export const LogInPage: React.FC = () => {
                   required
                 />
               </label>
-              <label>
+              <label style={{ position: "relative", display: "block" }}>
                 <span>Password</span>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Enter Password"
                   value={formData.password}
@@ -97,7 +104,24 @@ export const LogInPage: React.FC = () => {
                   required
                   minLength={3}
                 />
+                <PasswordToggleButton
+                  onClick={togglePasswordVisibility}
+                  type="button"
+                >
+                  <img
+                    src={
+                      showPassword
+                        ? "/icons/visibility_off.svg"
+                        : "/icons/visibility_on.svg"
+                    }
+                    alt={showPassword ? "Hide password" : "Show password"}
+                    width={20}
+                    height={20}
+                  />
+                </PasswordToggleButton>
               </label>
+
+              {error && <ErrorMessage>{error}</ErrorMessage>}
               <ButtonWrapper>
                 <StyledButton type="submit">Login</StyledButton>
               </ButtonWrapper>
@@ -219,4 +243,22 @@ const StyledLink = styled(Link)`
   &:active {
     color: ${({ theme }) => theme.colors.textActive};
   }
+`
+
+const ErrorMessage = styled.div`
+  color: red;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
+`
+
+const PasswordToggleButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 65%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 `

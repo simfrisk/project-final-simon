@@ -58,7 +58,7 @@ router.post("/classes", postClass_1.postClass);
 router.post("/classes/:classId/projects", uploadVideo_1.uploadVideo.single("video"), authenticateUser_1.authenticateUser, postProject_1.postProject);
 router.post("/projects/:projectId/comments", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
 router.post("/comments/:commentId/replies", authenticateUser_1.authenticateUser, postReplyById_1.postReplyById);
-router.post("/user", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
+router.post("/users", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
 router.post("/comments/:commentId/likes", authenticateUser_1.authenticateUser, postLike_1.postLike);
 router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, postReplyLike_1.postReplyLike);
 router.post("/session", postSession_1.postSession);
@@ -73,5 +73,5 @@ router.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteCl
 router.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
 router.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
 router.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
-router.delete("/user/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
+router.delete("/users/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
 exports.default = router;

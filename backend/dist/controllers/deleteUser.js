@@ -63,11 +63,8 @@ const deleteUser = async (req, res) => {
             message: "Invalid user ID",
         });
     }
-    const PLACEHOLDER_USER = {
-        _id: null,
-        name: "Deleted User",
-        role: "student",
-    };
+    // <-- Use the actual placeholder user ID from your DB
+    const PLACEHOLDER_USER_ID = new mongoose_1.default.Types.ObjectId("68a45fbaca5d5d29fe782190");
     const session = await mongoose_1.default.startSession();
     session.startTransaction();
     try {
@@ -81,9 +78,9 @@ const deleteUser = async (req, res) => {
             });
         }
         // Reassign comments
-        await Comment_1.CommentModel.updateMany({ commentCreatedBy: user._id }, { $set: { commentCreatedBy: PLACEHOLDER_USER } }).session(session);
+        await Comment_1.CommentModel.updateMany({ commentCreatedBy: user._id }, { $set: { commentCreatedBy: PLACEHOLDER_USER_ID } }).session(session);
         // Reassign replies
-        await Reply_1.Reply.updateMany({ replyCreatedBy: user._id }, { $set: { replyCreatedBy: PLACEHOLDER_USER } }).session(session);
+        await Reply_1.Reply.updateMany({ replyCreatedBy: user._id }, { $set: { replyCreatedBy: PLACEHOLDER_USER_ID } }).session(session);
         // Delete the user
         await user_1.UserModel.findByIdAndDelete(user._id).session(session);
         await session.commitTransaction();
@@ -100,7 +97,7 @@ const deleteUser = async (req, res) => {
         res.status(400).json({
             success: false,
             message: "Could not delete user",
-            errors: error,
+            errors: error instanceof Error ? error.message : error,
         });
     }
 };
