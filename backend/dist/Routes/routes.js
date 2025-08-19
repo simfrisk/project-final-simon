@@ -35,6 +35,7 @@ const postLike_1 = require("../controllers/postLike");
 const postReplyLike_1 = require("../controllers/postReplyLike");
 const patchProjects_1 = require("../controllers/patchProjects");
 const patchClass_1 = require("../controllers/patchClass");
+const deleteUser_1 = require("../controllers/deleteUser");
 const router = express_1.default.Router();
 // Home
 router.get("/alt/doc", getHome_1.getHome);
@@ -72,4 +73,5 @@ router.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteCl
 router.delete("/projects/:projectId", authenticateUser_1.authenticateUser, deleteProject_1.deleteProject);
 router.delete("/comments/:commentId", authenticateUser_1.authenticateUser, deleteComment_1.deleteComment);
 router.delete("/replies/:replyId", authenticateUser_1.authenticateUser, deleteReply_1.deleteReply);
+router.delete("/user/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
 exports.default = router;

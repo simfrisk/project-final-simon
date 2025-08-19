@@ -31,6 +31,7 @@ import { postLike } from "../controllers/postLike"
 import { postReplyLike } from "../controllers/postReplyLike"
 import { patchProject } from "../controllers/patchProjects"
 import { patchClass } from "../controllers/patchClass"
+import { deleteUser } from "../controllers/deleteUser"
 
 const router = express.Router()
 
@@ -94,5 +95,6 @@ router.delete("/classes/:classId", authenticateUser, deleteClass)
 router.delete("/projects/:projectId", authenticateUser, deleteProject)
 router.delete("/comments/:commentId", authenticateUser, deleteComment)
 router.delete("/replies/:replyId", authenticateUser, deleteReply)
+router.delete("/user/:userId", authenticateUser, deleteUser)
 
 export default router

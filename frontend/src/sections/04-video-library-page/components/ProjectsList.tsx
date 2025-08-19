@@ -43,13 +43,11 @@ export const ProjectsList = () => {
   const fetchClassById = useClassStore((state) => state.fetchClassById)
   const currentClass = useClassStore((state) => state.class)
 
-  //delete project or class selector
+  // delete project or class selector
   const [deleteSelect, setDeleteSelect] = useState<string>("")
 
-  //Class selector
-
+  // class selector
   const navigate = useNavigate()
-
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const classes = useClassStore((state) => state.classes)
 
@@ -62,7 +60,7 @@ export const ProjectsList = () => {
     navigate(`/library/classes/${selectedClassId}/projects`)
   }
 
-  //Hide and show option buttons
+  // hide and show option buttons
   const [showOptions, setShowOptions] = useState<boolean>(false)
 
   useEffect(() => {
@@ -80,7 +78,6 @@ export const ProjectsList = () => {
 
   const handleEditClass = () => setIsEditingClass(true)
   const handleEditProject = () => setIsEditingProject(true)
-
   const handlCancel = () => setIsRemovingProject(false)
 
   const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -109,25 +106,6 @@ export const ProjectsList = () => {
 
   if (error) return <p>Error: {error}</p>
 
-  //If there are not projects
-  if (!loading && projects.length === 0) {
-    return (
-      <Container>
-        <HeaderWrapper>
-          <ClassTitle>
-            {currentClass?.classTitle ?? "Loading class title..."}
-          </ClassTitle>
-        </HeaderWrapper>
-        <NoProjectsContainer>
-          <NoProjectsMessage>
-            You have no projects in this class...
-          </NoProjectsMessage>
-        </NoProjectsContainer>
-      </Container>
-    )
-  }
-
-  //Main return
   return (
     <Container>
       <HeaderWrapper>
@@ -157,71 +135,74 @@ export const ProjectsList = () => {
           )}
         </TopBar>
 
-        {userRole === "teacher" && (
+        {userRole === "teacher" && showOptions && (
           <ButtonContainer>
-            {showOptions && (
-              <div>
-                <div>
-                  <StyledButton
-                    $add
-                    type="button"
-                    onClick={handleEditClass}
-                  >
-                    Add class
-                  </StyledButton>
-                  <StyledButton
-                    $add
-                    type="button"
-                    onClick={handleEditProject}
-                  >
-                    Add project
-                  </StyledButton>
-                </div>
-                <div>
-                  <StyledButton
-                    $delete
-                    type="button"
-                    onClick={() => {
-                      setDeleteSelect("classSelect")
-                      setIsRemovingProject(true)
-                    }}
-                  >
-                    Delete class
-                  </StyledButton>
-                </div>
-              </div>
-            )}
+            <div>
+              <StyledButton
+                $add
+                type="button"
+                onClick={handleEditClass}
+              >
+                Add class
+              </StyledButton>
+              <StyledButton
+                $add
+                type="button"
+                onClick={handleEditProject}
+              >
+                Add project
+              </StyledButton>
+            </div>
+            <div>
+              <StyledButton
+                $delete
+                type="button"
+                onClick={() => {
+                  setDeleteSelect("classSelect")
+                  setIsRemovingProject(true)
+                }}
+              >
+                Delete class
+              </StyledButton>
+            </div>
           </ButtonContainer>
         )}
       </HeaderWrapper>
 
-      <ProjectWrapper>
-        {projects.map(
-          ({
-            _id,
-            projectName,
-            projectDescription,
-            thumbnail,
-            projectCreatedBy,
-          }) => (
-            <Project
-              key={_id}
-              projectId={_id ?? ""}
-              projectName={projectName}
-              projectDescription={projectDescription}
-              thumbnail={thumbnail}
-              projectCreatedBy={projectCreatedBy}
-            />
-          )
-        )}
-      </ProjectWrapper>
+      {projects.length === 0 ? (
+        <NoProjectsContainer>
+          <NoProjectsMessage>
+            You have no projects in this class...
+          </NoProjectsMessage>
+        </NoProjectsContainer>
+      ) : (
+        <ProjectWrapper>
+          {projects.map(
+            ({
+              _id,
+              projectName,
+              projectDescription,
+              thumbnail,
+              projectCreatedBy,
+            }) => (
+              <Project
+                key={_id}
+                projectId={_id ?? ""}
+                projectName={projectName}
+                projectDescription={projectDescription}
+                thumbnail={thumbnail}
+                projectCreatedBy={projectCreatedBy}
+              />
+            )
+          )}
+        </ProjectWrapper>
+      )}
 
       {(isEditingClass || isEditingProject || isRemovingProject) && (
         <TransparentBackground onClick={handleTransparentBackground}>
           <CreateWrapper onClick={(e) => e.stopPropagation()}>
             {userRole === "teacher" && isEditingClass && <CreateClass />}
             {userRole === "teacher" && isEditingProject && <CreateProject />}
-
             {userRole === "teacher" && isRemovingProject && (
               <ConfirmBox
                 message={"Are you sure you want to delete?"}
