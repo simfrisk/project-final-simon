@@ -140,6 +140,8 @@ const postProject = async (req, res) => {
             projectCreatedBy: req.user?._id,
         });
         const savedNewProject = await newProject.save();
+        // Populate the 'projectCreatedBy' field
+        await savedNewProject.populate("projectCreatedBy", "_id name email profileImage");
         return res.status(201).json({
             success: true,
             response: savedNewProject,

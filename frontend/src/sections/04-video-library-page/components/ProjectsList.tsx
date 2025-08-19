@@ -130,9 +130,12 @@ export const ProjectsList = () => {
               </option>
             ))}
           </ClassSelect>
-          <StyledButton onClick={() => setShowOptions((prev) => !prev)}>
-            {showOptions ? "Hide" : "Show options"}
-          </StyledButton>
+
+          {userRole === "teacher" && (
+            <StyledButton onClick={() => setShowOptions((prev) => !prev)}>
+              {showOptions ? "Hide" : "Show options"}
+            </StyledButton>
+          )}
         </TopBar>
 
         {userRole === "teacher" && (
