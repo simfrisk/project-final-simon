@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom"
 import { SideMenu } from "./components/side-menu/SideMenu"
 import styled from "styled-components"
-import { Navigation } from "../../global-components/Navigation"
+import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
 
 export const VideoLibraryPage = () => {

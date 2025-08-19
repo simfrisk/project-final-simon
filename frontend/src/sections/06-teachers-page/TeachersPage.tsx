@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Navigation } from "../../global-components/Navigation"
+import { Navigation } from "../../global-components/navigation/Navigation"
 import { useProjectStore } from "../../store/projectStore"
 import styled from "styled-components"
 

@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import styled from "styled-components"
 import { Link, useNavigate } from "react-router-dom"
 import { useUserStore } from "../../store/userStore"
-import { Navigation } from "../../global-components/Navigation"
+import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
 import { useEffect } from "react"
 

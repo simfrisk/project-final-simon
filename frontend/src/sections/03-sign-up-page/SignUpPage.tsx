@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { Link, useNavigate } from "react-router-dom"
 import { MediaQueries } from "../../themes/mediaQueries"
-import { Navigation } from "../../global-components/Navigation"
+import { Navigation } from "../../global-components/navigation/Navigation"
 import { useUserStore } from "../../store/userStore"
 import { useState } from "react"
 
