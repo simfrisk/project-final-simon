@@ -6,7 +6,7 @@ import { useState } from "react"
 import { MediaQueries } from "../themes/mediaQueries"
 import { useThemeStore } from "../store/themeStore"
 
-interface MenuProps {
+interface NavProps {
   $isOpen: boolean
 }
 
@@ -29,136 +29,232 @@ export const Navigation = () => {
   }
 
   return (
-    <Container>
-      <StyledLink to="/">
-        <h3>Classync</h3>
-        <p>Beta</p>
-      </StyledLink>
-
-      <DesktopMenu>
-        <ToggleThemeButton onClick={toggleTheme}>
-          Toggle Theme
-        </ToggleThemeButton>
-
-        {user?.role === "teacher" && (
-          <StyledNavLink to="/teachersPage">Teachers Dashboard</StyledNavLink>
-        )}
-
-        {isLoggedIn ? (
-          <>
-            <StyledNavLink to="/library">Library</StyledNavLink>
-            <ImageContainer>
-              <img src={user?.profileImage} />
-            </ImageContainer>
-            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-          </>
-        ) : (
-          <StyledNavLink
-            to="/login"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </StyledNavLink>
-        )}
-      </DesktopMenu>
-
-      <HamburgerWrapper
-        $isOpen={isMenuOpen}
-        onClick={toggleMenu}
+    <NavHeader>
+      <LogoLink
+        to="/"
+        aria-label="Classync Home"
       >
-        {isLoggedIn && (
-          <ImageContainer>
-            <img src={user?.profileImage} />
-          </ImageContainer>
-        )}
-        <HamburgerMenu />
-      </HamburgerWrapper>
+        <h1>Classync</h1>
+        <span>Beta</span>
+      </LogoLink>
 
-      <MobileMenu $isOpen={isMenuOpen}>
-        <StyledNavLink
-          to="/"
-          onClick={() => setIsMenuOpen(false)}
+      <DesktopNavigation aria-label="Desktop Main Navigation">
+        <ThemeToggleButton
+          onClick={toggleTheme}
+          aria-label="Toggle Theme"
         >
-          Home
-        </StyledNavLink>
-
-        {user?.role === "teacher" && (
-          <StyledNavLink
-            to="/teachersPage"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Teacher Dashboard
-          </StyledNavLink>
-        )}
-
-        {isLoggedIn ? (
-          <>
-            <StyledNavLink to="/library">Library</StyledNavLink>
-            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-          </>
-        ) : (
-          <StyledNavLink
-            to="/login"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </StyledNavLink>
-        )}
-
-        <ToggleThemeButton onClick={toggleTheme}>
           Toggle Theme
-        </ToggleThemeButton>
-      </MobileMenu>
-    </Container>
+        </ThemeToggleButton>
+
+        <NavMenu>
+          {user?.role === "teacher" && (
+            <NavMenuItem>
+              <NavLinkItem to="/teachersPage">Teachers Dashboard</NavLinkItem>
+            </NavMenuItem>
+          )}
+
+          {isLoggedIn ? (
+            <>
+              <NavMenuItem>
+                <NavLinkItem to="/library">Library</NavLinkItem>
+              </NavMenuItem>
+              <UserProfile aria-label="User Profile">
+                <img
+                  src={user?.profileImage}
+                  alt={`${user?.name || "User"} profile`}
+                />
+              </UserProfile>
+              <NavMenuItem>
+                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+              </NavMenuItem>
+            </>
+          ) : (
+            <NavMenuItem>
+              <NavLinkItem
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </NavLinkItem>
+            </NavMenuItem>
+          )}
+        </NavMenu>
+      </DesktopNavigation>
+
+      <MobileMenuToggle $isOpen={isMenuOpen}>
+        {isLoggedIn && (
+          <UserProfile aria-label="User Profile">
+            <img
+              src={user?.profileImage}
+              alt={`${user?.name || "User"} profile`}
+            />
+          </UserProfile>
+        )}
+        <HamburgerMenu
+          isOpen={isMenuOpen}
+          onToggle={toggleMenu}
+        />
+      </MobileMenuToggle>
+
+      <MobileNavigation
+        $isOpen={isMenuOpen}
+        aria-label="Mobile Main Navigation"
+      >
+        <NavMenu>
+          <NavMenuItem>
+            <NavLinkItem
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </NavLinkItem>
+          </NavMenuItem>
+
+          {user?.role === "teacher" && (
+            <NavMenuItem>
+              <NavLinkItem
+                to="/teachersPage"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Teacher Dashboard
+              </NavLinkItem>
+            </NavMenuItem>
+          )}
+
+          {isLoggedIn ? (
+            <>
+              <NavMenuItem>
+                <NavLinkItem
+                  to="/library"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Library
+                </NavLinkItem>
+              </NavMenuItem>
+              <NavMenuItem>
+                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+              </NavMenuItem>
+            </>
+          ) : (
+            <NavMenuItem>
+              <NavLinkItem
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </NavLinkItem>
+            </NavMenuItem>
+          )}
+
+          <NavMenuItem>
+            <ThemeToggleButton
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+            >
+              Toggle Theme
+            </ThemeToggleButton>
+          </NavMenuItem>
+        </NavMenu>
+      </MobileNavigation>
+    </NavHeader>
   )
 }
 
-const Container = styled.nav`
+/* Styled Components */
+const NavHeader = styled.header`
   background-color: ${({ theme }) => theme.colors.primary};
   color: white;
-  height: 8vh;
-  width: 100%;
   display: flex;
   justify-content: space-between;
-  align-content: center;
   align-items: center;
-  padding: 30px 30px;
+  padding: 30px;
   position: relative;
   z-index: 1000;
+  height: 8vh;
 
   @media ${MediaQueries.biggerSizes} {
     height: 60px;
   }
 `
 
-const StyledLink = styled(Link)`
+const LogoLink = styled(Link)`
   display: flex;
   column-gap: 7px;
   color: white;
   text-decoration: none;
-  transition: ease 0.3s;
-  z-index: 2000;
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  span {
+    font-size: 12px;
+    transform: translateY(2px);
+  }
 
   &:hover {
     transform: scale(0.94);
   }
+`
 
-  p {
-    font-size: 12px;
-    transform: translateY(2px);
+const DesktopNavigation = styled.nav`
+  display: none;
+  align-items: center;
+  gap: 20px;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: flex;
   }
 `
 
-const StyledNavLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
+const MobileNavigation = styled.nav<NavProps>`
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 8dvh;
+  right: 0;
+  width: 100dvw;
+  height: 92dvh;
+  background-color: ${({ theme }) => theme.colors.primary};
+  padding-top: 50px;
+  padding-left: 30px;
+  align-items: flex-start;
+  z-index: 10;
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.5s ease;
+  transform: ${({ $isOpen }) =>
+    $isOpen ? "translateY(0)" : "translateY(-100%)"};
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
+
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }
+`
+
+const NavMenu = styled.ul`
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+
+  @media ${MediaQueries.biggerSizes} {
+    flex-direction: row;
+    align-items: center;
+  }
+`
+
+const NavMenuItem = styled.li``
+
+const NavLinkItem = styled(Link)`
   color: white;
   text-decoration: none;
-  transition: ease 0.3s;
-  padding: 0; /* remove any default padding */
-  border: none; /* just in case */
-  background: none;
   font-size: 18px;
+  transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(0.94);
@@ -170,33 +266,19 @@ const StyledNavLink = styled(Link)`
 `
 
 const LogoutButton = styled.button`
-  display: inline-flex;
-  align-items: center;
   font-size: 18px;
   color: white;
   background: none;
   border: none;
   cursor: pointer;
-  transition: ease 0.3s;
-  padding: 0;
-  font-family: inherit; /* to match link font */
+  font-family: inherit;
 
   &:hover {
     transform: scale(0.94);
   }
 `
 
-const DesktopMenu = styled.div`
-  display: none;
-  align-items: center;
-  gap: 20px;
-
-  @media ${MediaQueries.biggerSizes} {
-    display: flex;
-  }
-`
-
-const HamburgerWrapper = styled.div<MenuProps>`
+const MobileMenuToggle = styled.div<NavProps>`
   display: flex;
   align-items: center;
   column-gap: 20px;
@@ -207,11 +289,11 @@ const HamburgerWrapper = styled.div<MenuProps>`
   }
 `
 
-const ImageContainer = styled.div`
+const UserProfile = styled.div`
   flex-shrink: 0;
-  height: 30px;
   width: 30px;
-  border-radius: 50px;
+  height: 30px;
+  border-radius: 50%;
   overflow: hidden;
 
   img {
@@ -221,63 +303,23 @@ const ImageContainer = styled.div`
   }
 `
 
-const MobileMenu = styled.div<MenuProps>`
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 8dvh;
-  right: 0;
-  width: 100dvw;
-  height: 92dvh;
-  background-color: ${({ theme }) => theme.colors.primary};
-  align-items: flex-start;
-  padding-top: 50px;
-  padding-left: 30px;
-  z-index: 10;
-
-  transition:
-    transform 0.3s ease,
-    opacity 0.5s ease;
-  overflow: hidden;
-
-  transform: ${({ $isOpen }) =>
-    $isOpen ? "translateY(0)" : "translateY(-100%)"};
-  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
-  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
-
-  @media ${MediaQueries.biggerSizes} {
-    display: none;
-  }
-
-  a,
-  button {
-    margin-bottom: 10px;
-  }
-`
-
-const ToggleThemeButton = styled.button`
-  position: fixed;
-  left: 10px;
-  bottom: 10px;
-  margin: 20px;
+const ThemeToggleButton = styled.button`
   padding: 10px 16px;
-  color: #000000;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
   font-weight: bold;
-  transition: ease 0.3s;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(0.97);
   }
 
   @media ${MediaQueries.biggerSizes} {
-    position: static;
-    margin: 0;
-    background-color: transparent;
+    background: transparent;
     color: white;
-    font-size: 18px;
     font-weight: normal;
+    font-size: 18px;
+    padding: 0;
   }
 `

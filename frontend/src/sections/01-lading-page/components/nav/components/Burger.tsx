@@ -1,20 +1,37 @@
 import styled from "styled-components"
-import { useState } from "react"
 
-export const HamburgerMenu = () => {
-  const [open, setOpen] = useState(false)
+interface HamburgerMenuProps {
+  isOpen: boolean
+  onToggle: () => void
+}
 
+export const HamburgerMenu = ({ isOpen, onToggle }: HamburgerMenuProps) => {
   return (
-    <Hamburger onClick={() => setOpen(!open)}>
-      <Bar open={open} />
-      <Bar open={open} />
-      <Bar open={open} />
+    <Hamburger
+      onClick={onToggle}
+      aria-label={isOpen ? "Close menu" : "Open menu"}
+      aria-expanded={isOpen}
+      role="button"
+    >
+      <Bar
+        open={isOpen}
+        index={1}
+      />
+      <Bar
+        open={isOpen}
+        index={2}
+      />
+      <Bar
+        open={isOpen}
+        index={3}
+      />
     </Hamburger>
   )
 }
 
 interface BarProps {
   open: boolean
+  index: number
 }
 
 const Hamburger = styled.div`
@@ -23,7 +40,9 @@ const Hamburger = styled.div`
   position: relative;
   cursor: pointer;
   z-index: 1000;
-  transition: ease 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   &:hover {
     transform: scale(0.92);
@@ -31,28 +50,18 @@ const Hamburger = styled.div`
 `
 
 const Bar = styled.span<BarProps>`
-  position: absolute;
-  left: 0;
+  display: block;
   width: 100%;
   height: 3px;
   background-color: white;
   border-radius: 2px;
   transition: 0.3s ease;
+  transform-origin: ${({ index }) =>
+    index === 1 ? "top left" : index === 3 ? "bottom left" : "center"};
 
-  &:nth-child(1) {
-    top: 0;
-    transform-origin: top left;
-    transform: ${({ open }) => (open ? "rotate(45deg)" : "none")};
-  }
-
-  &:nth-child(2) {
-    top: 9.5px;
-    opacity: ${({ open }) => (open ? 0 : 1)};
-  }
-
-  &:nth-child(3) {
-    bottom: 0;
-    transform-origin: bottom left;
-    transform: ${({ open }) => (open ? "rotate(-45deg)" : "none")};
-  }
+  ${({ open, index }) => {
+    if (index === 1) return `transform: ${open ? "rotate(45deg)" : "none"};`
+    if (index === 2) return `opacity: ${open ? 0 : 1};`
+    if (index === 3) return `transform: ${open ? "rotate(-45deg)" : "none"};`
+  }}
 `
