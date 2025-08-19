@@ -95,6 +95,14 @@ const postUser = async (req, res) => {
                 message: `Invalid role. Allowed roles: ${allowedRoles.join(", ")}`,
             });
         }
+        // Check for existing email
+        const existingUser = await user_1.UserModel.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Email is already registered",
+            });
+        }
         const salt = bcrypt_1.default.genSaltSync();
         const hashedPassword = bcrypt_1.default.hashSync(password, salt);
         const user = new user_1.UserModel({

@@ -93,6 +93,15 @@ export const postUser = async (req: Request, res: Response) => {
       })
     }
 
+    // Check for existing email
+    const existingUser = await UserModel.findOne({ email })
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already registered",
+      })
+    }
+
     const salt = bcrypt.genSaltSync()
     const hashedPassword = bcrypt.hashSync(password, salt)
 
@@ -115,7 +124,6 @@ export const postUser = async (req: Request, res: Response) => {
     })
   } catch (error) {
     console.error("❌ Error creating user:", error)
-
     res.status(400).json({
       success: false,
       message: "Could not create user",
