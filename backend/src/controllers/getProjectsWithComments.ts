@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Project } from "../models/Projects";
+import { Request, Response } from "express"
+import { Project } from "../models/Projects"
 
 /**
  * @swagger
@@ -9,7 +9,7 @@ import { Project } from "../models/Projects";
  *     description: Returns a list of projects populated with comments where commentType is 'question', including the commenter’s name, profile image, and role. Also includes the classId and project creator details for each project.
  *     tags:
  *       - Projects
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
@@ -78,7 +78,10 @@ import { Project } from "../models/Projects";
  *       500:
  *         description: Server error
  */
-export const getProjectsWithComments = async (req: Request, res: Response): Promise<Response> => {
+export const getProjectsWithComments = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const result = await Project.find()
       .populate({
@@ -89,20 +92,21 @@ export const getProjectsWithComments = async (req: Request, res: Response): Prom
           select: "name profileImage role",
         },
       })
-      .select("projectName projectDescription video classId projectCreatedBy")
-      .populate("projectCreatedBy", "name email profileImage");
-
+      .select(
+        "projectName projectDescription video thumbnail classId projectCreatedBy"
+      )
+      .populate("projectCreatedBy", "name email profileImage")
 
     return res.status(200).json({
       success: true,
       response: result,
       message: "Projects fetched successfully",
-    });
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
       message: "Failed to fetch projects.",
-    });
+    })
   }
-};
+}

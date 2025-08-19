@@ -90,7 +90,7 @@ const getProjectsWithComments = async (req, res) => {
                 select: "name profileImage role",
             },
         })
-            .select("projectName projectDescription video classId projectCreatedBy")
+            .select("projectName projectDescription video thumbnail classId projectCreatedBy")
             .populate("projectCreatedBy", "name email profileImage");
         return res.status(200).json({
             success: true,
