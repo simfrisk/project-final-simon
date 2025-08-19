@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { CommentModel } from "../models/Comment";
+import { Request, Response } from "express"
+import { CommentModel } from "../models/Comment"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { CommentModel } from "../models/Comment";
  *     summary: Get all comments
  *     tags:
  *       - Comments
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
@@ -69,21 +69,24 @@ import { CommentModel } from "../models/Comment";
  *                   type: string
  *                   example: "Failed to fetch comments"
  */
-export const getAllComments = async (req: Request, res: Response): Promise<Response> => {
+export const getAllComments = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
-    const comments = await CommentModel.find();
+    const comments = await CommentModel.find()
 
     return res.status(200).json({
       success: true,
       response: comments,
       message: "All comments fetched successfully",
-    });
+    })
   } catch (error) {
-    console.error("❌ Error fetching all comments:", error);
+    console.error("❌ Error fetching all comments:", error)
     return res.status(500).json({
       success: false,
       response: null,
       message: "Failed to fetch comments",
-    });
+    })
   }
-};
+}

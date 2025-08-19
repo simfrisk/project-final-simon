@@ -1,56 +1,56 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { useUserStore } from "../../store/userStore";
-import { Navigation } from "../../global-components/Navigation";
-import { MediaQueries } from "../../themes/mediaQueries";
-import { useEffect } from "react";
+import React, { useState } from "react"
+import styled from "styled-components"
+import { Link, useNavigate } from "react-router-dom"
+import { useUserStore } from "../../store/userStore"
+import { Navigation } from "../../global-components/Navigation"
+import { MediaQueries } from "../../themes/mediaQueries"
+import { useEffect } from "react"
 
 // Types
 type LoginFormElements = HTMLFormElement & {
-  email: HTMLInputElement;
-  password: HTMLInputElement;
-};
+  email: HTMLInputElement
+  password: HTMLInputElement
+}
 
 export const LogInPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { login } = useUserStore();
+  const navigate = useNavigate()
+  const { login } = useUserStore()
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  });
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.target as LoginFormElements;
+    e.preventDefault()
+    const form = e.target as LoginFormElements
 
     if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
+      form.reportValidity()
+      return
     }
 
-    const success = await login(formData.email, formData.password);
+    const success = await login(formData.email, formData.password)
 
     if (success) {
-      navigate("/library/");
+      navigate("/library/")
     } else {
-      alert("Login failed. Please check your credentials.");
+      alert("Login failed. Please check your credentials.")
     }
-  };
+  }
 
   const isLoggedIn = useUserStore((state) => state.isLoggedIn)
 
-useEffect(() => {
-  if (isLoggedIn) {
-    navigate("/library");
-  }
-}, [isLoggedIn, navigate]);
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/library")
+    }
+  }, [isLoggedIn, navigate])
 
   return (
     <>
@@ -60,7 +60,10 @@ useEffect(() => {
         <CardContainer>
           <Card>
             <LogoContainer>
-              <Logo src="/logo2.webp" alt="Classync logo" />
+              <Logo
+                src="/logo2.webp"
+                alt="Classync logo"
+              />
             </LogoContainer>
 
             <WelcomeMessage>
@@ -68,7 +71,10 @@ useEffect(() => {
               <p>Nice to have you back.</p>
             </WelcomeMessage>
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+            >
               <label>
                 <span>Email Address</span>
                 <input
@@ -102,14 +108,14 @@ useEffect(() => {
         </CardContainer>
       </Container>
     </>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
   height: 94dvh;
-`;
+`
 
 const SideContainer = styled.section`
   display: none;
@@ -118,12 +124,12 @@ const SideContainer = styled.section`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: ${({theme}) => theme.colors.secondary};
+  background-color: ${({ theme }) => theme.colors.secondary};
 
   @media ${MediaQueries.biggerSizes} {
     display: block;
   }
-`;
+`
 
 const CardContainer = styled.div`
   display: flex;
@@ -133,7 +139,7 @@ const CardContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {
     max-width: 2000px;
   }
-`;
+`
 
 const Card = styled.section`
   display: flex;
@@ -157,29 +163,29 @@ const Card = styled.section`
     width: 100%;
     padding: 10px 10px;
   }
-`;
+`
 
 const LogoContainer = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 const Logo = styled.img`
   height: 150px;
   width: 150px;
   border-radius: 20px;
   margin-left: 15px;
-`;
+`
 
 const WelcomeMessage = styled.div`
   text-align: center;
   margin: 10px 0 30px 0;
-`;
+`
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 const StyledButton = styled.button`
   padding: 10px 20px;
@@ -197,7 +203,7 @@ const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(0.98);
   }
-`;
+`
 
 const StyledLink = styled(Link)`
   color: ${({ theme }) => theme.colors.text};
@@ -213,4 +219,4 @@ const StyledLink = styled(Link)`
   &:active {
     color: ${({ theme }) => theme.colors.textActive};
   }
-`;
+`

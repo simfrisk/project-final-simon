@@ -1,6 +1,6 @@
-import swaggerUi from "swagger-ui-express";
-import swaggerJsdoc from "swagger-jsdoc";
-import { Application } from "express";
+import swaggerUi from "swagger-ui-express"
+import swaggerJsdoc from "swagger-jsdoc"
+import { Application } from "express"
 
 const options = {
   definition: {
@@ -24,7 +24,11 @@ const options = {
             classTitle: { type: "string", example: "Math 101" },
             projects: {
               type: "array",
-              items: { type: "string", format: "ObjectId", description: "Project ID" },
+              items: {
+                type: "string",
+                format: "ObjectId",
+                description: "Project ID",
+              },
             },
           },
         },
@@ -33,15 +37,31 @@ const options = {
           required: ["content", "projectId", "commentCreatedBy", "commentType"],
           properties: {
             content: { type: "string", example: "This is a comment." },
-            projectId: { type: "string", format: "ObjectId", description: "Project ID" },
-            createdAt: { type: "string", format: "date-time", example: "2023-01-01T12:00:00Z" },
+            projectId: {
+              type: "string",
+              format: "ObjectId",
+              description: "Project ID",
+            },
+            createdAt: {
+              type: "string",
+              format: "date-time",
+              example: "2023-01-01T12:00:00Z",
+            },
             timeStamp: { type: "string", nullable: true },
             isChecked: { type: "boolean", example: false },
             replies: {
               type: "array",
-              items: { type: "string", format: "ObjectId", description: "Reply ID" },
+              items: {
+                type: "string",
+                format: "ObjectId",
+                description: "Reply ID",
+              },
             },
-            commentCreatedBy: { type: "string", format: "ObjectId", description: "User ID" },
+            commentCreatedBy: {
+              type: "string",
+              format: "ObjectId",
+              description: "User ID",
+            },
             commentType: {
               type: "string",
               enum: ["question", "public", "private"],
@@ -49,7 +69,11 @@ const options = {
             },
             likes: {
               type: "array",
-              items: { type: "string", format: "ObjectId", description: "User ID" },
+              items: {
+                type: "string",
+                format: "ObjectId",
+                description: "User ID",
+              },
             },
           },
         },
@@ -57,14 +81,22 @@ const options = {
           type: "object",
           required: ["classId", "projectName"],
           properties: {
-            classId: { type: "string", format: "ObjectId", description: "Class ID" },
+            classId: {
+              type: "string",
+              format: "ObjectId",
+              description: "Class ID",
+            },
             projectName: { type: "string", example: "Final Presentation" },
             projectDescription: { type: "string", nullable: true },
             video: { type: "string", nullable: true },
             thumbnail: { type: "string", nullable: true },
             comments: {
               type: "array",
-              items: { type: "string", format: "ObjectId", description: "Comment ID" },
+              items: {
+                type: "string",
+                format: "ObjectId",
+                description: "Comment ID",
+              },
             },
           },
         },
@@ -73,13 +105,29 @@ const options = {
           required: ["content", "commentId", "isChecked", "replyCreatedBy"],
           properties: {
             content: { type: "string", example: "Nice reply!" },
-            commentId: { type: "string", format: "ObjectId", description: "Comment ID" },
-            createdAt: { type: "string", format: "date-time", example: "2023-01-01T12:00:00Z" },
+            commentId: {
+              type: "string",
+              format: "ObjectId",
+              description: "Comment ID",
+            },
+            createdAt: {
+              type: "string",
+              format: "date-time",
+              example: "2023-01-01T12:00:00Z",
+            },
             isChecked: { type: "boolean", example: false },
-            replyCreatedBy: { type: "string", format: "ObjectId", description: "User ID" },
+            replyCreatedBy: {
+              type: "string",
+              format: "ObjectId",
+              description: "User ID",
+            },
             replyLikes: {
               type: "array",
-              items: { type: "string", format: "ObjectId", description: "User ID" },
+              items: {
+                type: "string",
+                format: "ObjectId",
+                description: "User ID",
+              },
             },
           },
         },
@@ -87,12 +135,24 @@ const options = {
           type: "object",
           required: ["name", "email", "password", "role", "projectCreatedBy"],
           properties: {
-            _id: { type: "string", format: "ObjectId", example: "64d0b2bde5d8f25a1e8d9f67" },
+            _id: {
+              type: "string",
+              format: "ObjectId",
+              example: "64d0b2bde5d8f25a1e8d9f67",
+            },
             name: { type: "string", example: "John Doe" },
-            email: { type: "string", format: "email", example: "john@example.com" },
+            email: {
+              type: "string",
+              format: "email",
+              example: "john@example.com",
+            },
             password: { type: "string", example: "hashedpassword123" },
             role: { type: "string", example: "teacher" },
-            projectCreatedBy: { type: "string", format: "ObjectId", description: "User ID" },
+            projectCreatedBy: {
+              type: "string",
+              format: "ObjectId",
+              description: "User ID",
+            },
             profileImage: {
               type: "string",
               example:
@@ -125,10 +185,10 @@ const options = {
     ],
   },
   apis: ["./src/controllers/*.ts"],
-};
+}
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(options)
 
 export function setupSwagger(app: Application) {
-  app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 }

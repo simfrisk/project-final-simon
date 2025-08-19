@@ -1,24 +1,29 @@
-import styled from 'styled-components';
+import styled from "styled-components"
 
 type PlayPauseButtonProps = {
-  isPlaying: boolean;
-  onClick: () => void;
-};
+  isPlaying: boolean
+  onClick: () => void
+}
 
-export const PlayPauseButton = ({ isPlaying, onClick }: PlayPauseButtonProps) => {
+export const PlayPauseButton = ({
+  isPlaying,
+  onClick,
+}: PlayPauseButtonProps) => {
   return (
-    <Button onClick={onClick} className={isPlaying ? 'button--active' : ''}>
+    <Button
+      onClick={onClick}
+      className={isPlaying ? "button--active" : ""}
+    >
       <div className="button__shape button__shape--one" />
       <div className="button__shape button__shape--two" />
     </Button>
-  );
-};
-
+  )
+}
 
 // Styled Components
 const Button = styled.div`
-  width: 40px;   /* was 80px */
-  height: 40px;  /* was 80px */
+  width: 40px; /* was 80px */
+  height: 40px; /* was 80px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,8 +32,8 @@ const Button = styled.div`
   transition: border-color 0.3s ease;
 
   .button__shape {
-    width: 9px;    /* was 18px */
-    height: 25px;  /* was 50px */
+    width: 9px; /* was 18px */
+    height: 25px; /* was 50px */
     background: white;
     transition: 0.3s ease-in-out;
 
@@ -56,4 +61,4 @@ const Button = styled.div`
       }
     }
   }
-`;
+`

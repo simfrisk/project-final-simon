@@ -1,22 +1,20 @@
-import styled from "styled-components";
-import { useState } from "react";
-import { MediaQueries } from "../../../themes/mediaQueries";
-import { useClassStore } from "../../../store/classStore";
-import { useEditingStore } from "../../../store/editStore";
-
+import styled from "styled-components"
+import { useState } from "react"
+import { MediaQueries } from "../../../themes/mediaQueries"
+import { useClassStore } from "../../../store/classStore"
+import { useEditingStore } from "../../../store/editStore"
 
 export const CreateClass = () => {
+  const addClass = useClassStore((state) => state.addClass)
+  const [classTitle, setClassTitle] = useState("")
+  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
 
-   const addClass = useClassStore((state) => state.addClass);
-   const [classTitle, setClassTitle] = useState("");
-    const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
-
-    const handleCreateProject = async () => {
-    if (!classTitle.trim()) return;
-    await addClass(classTitle);
-    setClassTitle("");
+  const handleCreateProject = async () => {
+    if (!classTitle.trim()) return
+    await addClass(classTitle)
+    setClassTitle("")
     setIsEditingClass(false)
-  };
+  }
 
   return (
     <FormContainer>
@@ -27,8 +25,8 @@ export const CreateClass = () => {
       />
       <AddProjectBtn onClick={handleCreateProject}>+ Project</AddProjectBtn>
     </FormContainer>
-  );
-};
+  )
+}
 
 // Styles
 const FormContainer = styled.div`
@@ -44,14 +42,14 @@ const FormContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
   }
-`;
+`
 
 const ProjectNameInput = styled.textarea`
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   width: 100%;
-`;
+`
 
 const AddProjectBtn = styled.button`
   height: 40px;
@@ -65,4 +63,4 @@ const AddProjectBtn = styled.button`
     transform: scale(0.96);
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
-`;
+`

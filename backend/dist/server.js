@@ -18,7 +18,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.static("public"));
 const allowedOrigins = [
     "http://localhost:5173", // your local dev
-    "https://class-review.netlify.app" // your deployed frontend
+    "https://class-review.netlify.app", // your deployed frontend
 ];
 // First, parse incoming request bodies
 app.use(express_1.default.json());

@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { CommentModel } from "../models/Comment";
+import { Request, Response } from "express"
+import { CommentModel } from "../models/Comment"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { CommentModel } from "../models/Comment";
  *     summary: Update a comment's content by ID
  *     tags:
  *       - Comments
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -78,34 +78,33 @@ import { CommentModel } from "../models/Comment";
  *                   example: Could not change comment in the database
  */
 export const patchComment = async (req: Request, res: Response) => {
-  const { commentId } = req.params;
-  const { newContent } = req.body;
+  const { commentId } = req.params
+  const { newContent } = req.body
 
   try {
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
 
     if (!comment) {
       return res.status(404).json({
         success: false,
         response: null,
-        message: "The comment was not found"
-      });
+        message: "The comment was not found",
+      })
     }
 
-    comment.content = newContent;
-    const updatedComment = await comment.save();
+    comment.content = newContent
+    const updatedComment = await comment.save()
 
     res.status(200).json({
       success: true,
       response: updatedComment,
-      message: "The comment was successfully changed"
-    });
-
+      message: "The comment was successfully changed",
+    })
   } catch (error) {
     res.status(500).json({
       success: false,
       response: error instanceof Error ? error.message : "Unknown error",
-      message: "Could not change comment in the database"
-    });
+      message: "Could not change comment in the database",
+    })
   }
-};
+}

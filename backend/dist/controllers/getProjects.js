@@ -72,14 +72,14 @@ const getProjects = async (req, res) => {
         return res.status(200).json({
             success: true,
             response: result,
-            message: "Projects fetched successfully"
+            message: "Projects fetched successfully",
         });
     }
     catch (error) {
         return res.status(500).json({
             success: false,
             response: null,
-            message: "Failed to fetch projects."
+            message: "Failed to fetch projects.",
         });
     }
 };

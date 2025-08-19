@@ -1,56 +1,62 @@
-import styled from "styled-components";
-import { useEffect } from "react";
-import { useClassStore } from "../../../../store/classStore";
-import { MediaQueries } from "../../../../themes/mediaQueries";
-import { Link, useLocation } from "react-router-dom";
-import { useEditingStore } from "../../../../store/editStore";
-import { useNavigate, useParams } from 'react-router-dom';
-import { useUserStore } from "../../../../store/userStore";
-import { ClassOptions } from "./ClassOptions";
+import styled from "styled-components"
+import { useEffect } from "react"
+import { useClassStore } from "../../../../store/classStore"
+import { MediaQueries } from "../../../../themes/mediaQueries"
+import { Link, useLocation } from "react-router-dom"
+import { useEditingStore } from "../../../../store/editStore"
+import { useNavigate, useParams } from "react-router-dom"
+import { useUserStore } from "../../../../store/userStore"
+import { ClassOptions } from "./ClassOptions"
 
 export const SideMenu = () => {
-  const classes = useClassStore((state) => state.classes);
-  const fetchClasses = useClassStore((state) => state.fetchClasses);
-  const location = useLocation();
+  const classes = useClassStore((state) => state.classes)
+  const fetchClasses = useClassStore((state) => state.fetchClasses)
+  const location = useLocation()
 
-  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass);
-  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject);
-  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
+  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
+  const setIsEditingProject = useEditingStore(
+    (state) => state.setIsEditingProject
+  )
+  const setIsRemovingClass = useEditingStore(
+    (state) => state.setIsRemovingClass
+  )
   const isRemovingClass = useEditingStore((set) => set.isRemovingClass)
   const setRemovingClassId = useEditingStore((set) => set.setRemovingClassId)
-  const removingClassId = useEditingStore((state) => state.removingClassId);
+  const removingClassId = useEditingStore((state) => state.removingClassId)
 
-  const user = useUserStore((state) => state.user);
-  const userRole = user?.role;
+  const user = useUserStore((state) => state.user)
+  const userRole = user?.role
 
   useEffect(() => {
-    fetchClasses();
-  }, [fetchClasses]);
+    fetchClasses()
+  }, [fetchClasses])
 
-  const { classId } = useParams();
-  const navigate = useNavigate();
+  const { classId } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!classId && classes.length > 0) {
-      navigate(`/library/classes/${classes[0]._id}/projects`, { replace: true });
+      navigate(`/library/classes/${classes[0]._id}/projects`, { replace: true })
     }
-  }, [classId, classes, navigate]);
+  }, [classId, classes, navigate])
 
   const handleEditClass = async () => {
     setIsEditingClass(true)
-  };
+  }
 
   const handleEditProject = async () => {
     setIsEditingProject(true)
-  };
+  }
 
-  const handelMoreInfo = (e: React.MouseEvent<HTMLParagraphElement>, classId: string) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsRemovingClass(true);
-    setRemovingClassId(classId); 
-  };
-  
+  const handelMoreInfo = (
+    e: React.MouseEvent<HTMLParagraphElement>,
+    classId: string
+  ) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setIsRemovingClass(true)
+    setRemovingClassId(classId)
+  }
 
   return (
     <Container>
@@ -58,36 +64,48 @@ export const SideMenu = () => {
         <h3>Classes</h3>
         <ProjectWrapper>
           {classes.map((cls) => {
-            const to = `/library/classes/${cls._id}/projects`;
-            const isActive = location.pathname === to;
+            const to = `/library/classes/${cls._id}/projects`
+            const isActive = location.pathname === to
 
             return (
-              <Class to={to} key={cls._id} $active={isActive}>
+              <Class
+                to={to}
+                key={cls._id}
+                $active={isActive}
+              >
                 {cls.classTitle}
-                <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>&#8942;</MoreInfo>
+                <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>
+                  &#8942;
+                </MoreInfo>
               </Class>
-            );
+            )
           })}
         </ProjectWrapper>
       </TopSection>
 
       {isRemovingClass && <ClassOptions classId={removingClassId || ""} />}
 
-      {userRole === 'teacher' && (
+      {userRole === "teacher" && (
         <BottomSection>
           <FormContainer>
-            <StyledButton type="button" onClick={handleEditClass}>
+            <StyledButton
+              type="button"
+              onClick={handleEditClass}
+            >
               + Class
             </StyledButton>
-            <StyledButton type="button" onClick={handleEditProject}>
+            <StyledButton
+              type="button"
+              onClick={handleEditProject}
+            >
               + Project
             </StyledButton>
           </FormContainer>
         </BottomSection>
       )}
     </Container>
-  );
-};
+  )
+}
 
 // Styled Components
 
@@ -108,7 +126,7 @@ const Container = styled.section`
   @media ${MediaQueries.biggerSizes} {
     display: flex;
   }
-`;
+`
 
 const TopSection = styled.div`
   width: 100%;
@@ -116,7 +134,7 @@ const TopSection = styled.div`
   h3 {
     padding: 0 35px;
   }
-`;
+`
 
 const ProjectWrapper = styled.div`
   display: flex;
@@ -126,7 +144,7 @@ const ProjectWrapper = styled.div`
   width: 100%;
   border-radius: 10px;
   padding: 10px;
-`;
+`
 
 const MoreInfo = styled.p`
   visibility: hidden;
@@ -142,7 +160,7 @@ const MoreInfo = styled.p`
     transform: scale(1.4);
     color: ${({ theme }) => theme.colors.text};
   }
-`;
+`
 
 const Class = styled(Link)<{ $active: boolean }>`
   display: flex;
@@ -152,7 +170,8 @@ const Class = styled(Link)<{ $active: boolean }>`
   text-decoration: none;
   transition: ease 0.2s;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  background-color: ${({ $active, theme }) => ($active ? theme.colors.offBackgroundActive : "none")};
+  background-color: ${({ $active, theme }) =>
+    $active ? theme.colors.offBackgroundActive : "none"};
   border-radius: 10px;
   width: 100%;
   padding: 10px 25px;
@@ -166,11 +185,11 @@ const Class = styled(Link)<{ $active: boolean }>`
   &:hover ${MoreInfo} {
     visibility: visible;
   }
-`;
+`
 
 const BottomSection = styled.div`
   width: 100%;
-`;
+`
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -192,7 +211,7 @@ const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(0.98);
   }
-`;
+`
 
 const FormContainer = styled.div`
   display: flex;
@@ -204,4 +223,4 @@ const FormContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {
     width: 100%;
   }
-`;
+`

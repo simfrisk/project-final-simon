@@ -1,72 +1,75 @@
-import styled from "styled-components";
-import { useEditingStore } from "../../../../store/editStore";
-import { useClassStore } from "../../../../store/classStore";
-import { ConfirmBox } from "../../../../global-components/ComfirmBox";
-import { useState } from "react";
-
+import styled from "styled-components"
+import { useEditingStore } from "../../../../store/editStore"
+import { useClassStore } from "../../../../store/classStore"
+import { ConfirmBox } from "../../../../global-components/ComfirmBox"
+import { useState } from "react"
 
 interface ClassOptionsProps {
-  classId: string;
+  classId: string
 }
 
 export const ClassOptions = ({ classId }: ClassOptionsProps) => {
-  const removingClassId = useEditingStore((state) => state.removingClassId);
-  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass);
-  const deleteClass = useClassStore((state) => state.deleteClass);
+  const removingClassId = useEditingStore((state) => state.removingClassId)
+  const setIsRemovingClass = useEditingStore(
+    (state) => state.setIsRemovingClass
+  )
+  const deleteClass = useClassStore((state) => state.deleteClass)
   const updateClass = useClassStore((state) => state.updateClass)
 
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showOptions, setshowOptions] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [showOptions, setshowOptions] = useState(true)
 
   const handleDeleteClick = () => {
-    setShowConfirm(true);
+    setShowConfirm(true)
     setshowOptions(false)
-  };
+  }
 
   const handleConfirmDelete = () => {
     if (removingClassId) {
-      deleteClass(removingClassId);
+      deleteClass(removingClassId)
     }
-    setIsRemovingClass(false);
-    setShowConfirm(false);
-  };
+    setIsRemovingClass(false)
+    setShowConfirm(false)
+  }
 
   const handleCancel = () => {
-    setIsRemovingClass(false);
-    setShowConfirm(false);
-  };
+    setIsRemovingClass(false)
+    setShowConfirm(false)
+  }
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState("");
+  const [isEditing, setIsEditing] = useState(false)
+  const [newName, setNewName] = useState("")
 
   const handleUpdating = async (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation(); 
+    e.preventDefault()
+    e.stopPropagation()
     setIsEditing(true)
     setshowOptions(false)
-  };
+  }
 
   const handleSubmitUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!classId) return;
-    await updateClass(classId, { newTitle: newName });
+    e.preventDefault()
+    if (!classId) return
+    await updateClass(classId, { newTitle: newName })
     setIsEditing(false)
-  };
+  }
 
   console.log(classId)
-
 
   return (
     <>
       <TransparentBackground onClick={handleCancel} />
 
       {showOptions && (
-      <Container>
-        <StyledButton onClick={handleUpdating}>Edit name</StyledButton>
-        <StyledButton $danger onClick={handleDeleteClick}>
-          Delete Class
-        </StyledButton>
-      </Container>
+        <Container>
+          <StyledButton onClick={handleUpdating}>Edit name</StyledButton>
+          <StyledButton
+            $danger
+            onClick={handleDeleteClick}
+          >
+            Delete Class
+          </StyledButton>
+        </Container>
       )}
 
       {showConfirm && (
@@ -77,7 +80,7 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
         />
       )}
 
-     {isEditing && (
+      {isEditing && (
         <CreateWrapper onClick={(e) => e.stopPropagation()}>
           <form onSubmit={handleSubmitUpdate}>
             <label htmlFor="newName">New Name</label>
@@ -90,15 +93,13 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
             <button type="submit">Update Project</button>
           </form>
         </CreateWrapper>
-
-        )}
-
+      )}
     </>
-  );
-};
+  )
+}
 
 interface StyledButtonProps {
-  $danger?: boolean;
+  $danger?: boolean
 }
 
 const Container = styled.div`
@@ -114,7 +115,7 @@ const Container = styled.div`
 
   top: 25%;
   right: 79%;
-`;
+`
 
 const StyledButton = styled.button<StyledButtonProps>`
   display: inline-block;
@@ -138,7 +139,7 @@ const StyledButton = styled.button<StyledButtonProps>`
       $danger ? "#f1948a" : theme.colors.primaryHover};
     transform: scale(0.98);
   }
-`;
+`
 
 const TransparentBackground = styled.div`
   position: fixed;
@@ -148,7 +149,7 @@ const TransparentBackground = styled.div`
   height: 100vh;
   background-color: rgba(2, 2, 2, 0.621);
   z-index: 10;
-`;
+`
 
 const CreateWrapper = styled.div`
   position: fixed;
@@ -156,10 +157,10 @@ const CreateWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: ${({theme}) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px ${({theme}) => theme.colors.boxShadow};
+  box-shadow: 0 4px 20px ${({ theme }) => theme.colors.boxShadow};
   z-index: 1000;
 
   form {
@@ -186,7 +187,7 @@ const CreateWrapper = styled.div`
     border-radius: 10px;
     height: 32px;
     border: none;
-    background-color: ${({theme}) => theme.colors.primary};
-    color: ${({theme}) => theme.colors.background};
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.background};
   }
-`;
+`

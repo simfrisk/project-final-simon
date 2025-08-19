@@ -90,7 +90,7 @@ const patchProject = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 response: null,
-                message: "The project was not found"
+                message: "The project was not found",
             });
         }
         if (newName)
@@ -101,14 +101,14 @@ const patchProject = async (req, res) => {
         res.status(200).json({
             success: true,
             response: updatedProject,
-            message: "The project was successfully updated"
+            message: "The project was successfully updated",
         });
     }
     catch (error) {
         res.status(500).json({
             success: false,
             response: error instanceof Error ? error.message : "Unknown error",
-            message: "Could not change project in the database"
+            message: "Could not change project in the database",
         });
     }
 };

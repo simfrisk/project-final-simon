@@ -1,16 +1,16 @@
-import { create } from 'zustand';
+import { create } from "zustand"
 
 interface VideoStore {
-  markerTriggerCount: number;
-  currentTime: number;
-  incrementMarkerTrigger: () => void;
-  setTimeCode: (time: number) => void;
+  markerTriggerCount: number
+  currentTime: number
+  incrementMarkerTrigger: () => void
+  setTimeCode: (time: number) => void
 
-  videoRef: HTMLVideoElement | null;
-  setVideoRef: (ref: HTMLVideoElement) => void;
-  isPlaying: boolean;
-  togglePlay: () => void;
-  stopVideo: () => void;
+  videoRef: HTMLVideoElement | null
+  setVideoRef: (ref: HTMLVideoElement) => void
+  isPlaying: boolean
+  togglePlay: () => void
+  stopVideo: () => void
 }
 
 export const useVideoStore = create<VideoStore>((set, get) => ({
@@ -27,23 +27,23 @@ export const useVideoStore = create<VideoStore>((set, get) => ({
   isPlaying: false,
 
   togglePlay: () => {
-    const video = get().videoRef;
-    if (!video) return;
+    const video = get().videoRef
+    if (!video) return
 
     if (video.paused) {
-      video.play();
-      set({ isPlaying: true });
+      video.play()
+      set({ isPlaying: true })
     } else {
-      video.pause();
-      set({ isPlaying: false });
+      video.pause()
+      set({ isPlaying: false })
     }
   },
 
   stopVideo: () => {
-    const video = get().videoRef;
-    if (!video) return;
+    const video = get().videoRef
+    if (!video) return
 
-    video.pause();
-    set({ isPlaying: false });
+    video.pause()
+    set({ isPlaying: false })
   },
-}));
+}))

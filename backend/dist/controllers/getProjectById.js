@@ -121,7 +121,7 @@ const getProjectById = async (req, res) => {
         return res.status(500).json({
             success: false,
             response: error,
-            message: "Project could not be found"
+            message: "Project could not be found",
         });
     }
 };

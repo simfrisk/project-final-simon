@@ -1,28 +1,31 @@
 //#region ----- IMPORTS -----
-import { create } from "zustand";
-import { getToken } from "../utils/token";
-import { baseUrl } from "../config/api";
+import { create } from "zustand"
+import { getToken } from "../utils/token"
+import { baseUrl } from "../config/api"
 
 //#endregion
 
 //#region ----- INTERFACES -----
 export interface ClassType {
-  _id: string;
-  classTitle: string;
+  _id: string
+  classTitle: string
 }
 
 interface ClassesStore {
-  classes: ClassType[];
-  class: ClassType | null;
-  loading: boolean;
-  error: string | null;
-  message: string | null;
+  classes: ClassType[]
+  class: ClassType | null
+  loading: boolean
+  error: string | null
+  message: string | null
 
-  fetchClasses: () => Promise<void>;
-  fetchClassById: (classId: string) => Promise<void>;
-  addClass: (classTitle: string) => Promise<void>;
-  deleteClass: (classId: string) => Promise<void>;
-  updateClass: (classId: string, updates: { newTitle?: string }) => Promise<void>;
+  fetchClasses: () => Promise<void>
+  fetchClassById: (classId: string) => Promise<void>
+  addClass: (classTitle: string) => Promise<void>
+  deleteClass: (classId: string) => Promise<void>
+  updateClass: (
+    classId: string,
+    updates: { newTitle?: string }
+  ) => Promise<void>
 }
 
 //#endregion
@@ -36,26 +39,30 @@ export const useClassStore = create<ClassesStore>((set) => ({
   message: null,
 
   fetchClasses: async () => {
-    set({ loading: true, error: null, message: null });
+    set({ loading: true, error: null, message: null })
     try {
-      const token = getToken();
-      if (!token) throw new Error("Missing access token");
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
 
       const response = await fetch(`${baseUrl}/classes`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
-      });
+      })
 
-      const json = await response.json();
+      const json = await response.json()
       if (response.ok && json.success) {
-        set({ classes: json.response, loading: false, message: json.message || null });
+        set({
+          classes: json.response,
+          loading: false,
+          message: json.message || null,
+        })
       } else {
-        throw new Error(json.message || "Failed to fetch classes");
+        throw new Error(json.message || "Failed to fetch classes")
       }
     } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" });
+      set({ loading: false, error: err.message || "Unknown error" })
     }
   },
 
@@ -63,36 +70,40 @@ export const useClassStore = create<ClassesStore>((set) => ({
 
   //#region ----- FETCH CLASS BY ID -----
   fetchClassById: async (classId: string) => {
-    set({ loading: true, error: null, message: null });
+    set({ loading: true, error: null, message: null })
     try {
-      const token = getToken();
-      if (!token) throw new Error("Missing access token");
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
 
       const response = await fetch(`${baseUrl}/classes/${classId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
-      });
+      })
 
-      const json = await response.json();
+      const json = await response.json()
       if (response.ok && json.success) {
-        set({ class: json.response, loading: false, message: json.message || null });
+        set({
+          class: json.response,
+          loading: false,
+          message: json.message || null,
+        })
       } else {
-        throw new Error(json.message || "Failed to fetch class");
+        throw new Error(json.message || "Failed to fetch class")
       }
     } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" });
+      set({ loading: false, error: err.message || "Unknown error" })
     }
   },
   //#endregion
 
   //#region ----- ADD CLASS -----
   addClass: async (classTitle: string) => {
-    set({ loading: true, error: null, message: null });
+    set({ loading: true, error: null, message: null })
     try {
-      const token = getToken();
-      if (!token) throw new Error("Missing access token");
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
 
       const res = await fetch(`${baseUrl}/classes`, {
         method: "POST",
@@ -101,51 +112,51 @@ export const useClassStore = create<ClassesStore>((set) => ({
           Authorization: token,
         },
         body: JSON.stringify({ classTitle }),
-      });
+      })
 
-      const json = await res.json();
+      const json = await res.json()
       if (res.ok && json.success) {
         set((state) => ({
           classes: [...state.classes, json.response],
           loading: false,
           message: json.message || null,
-        }));
+        }))
       } else {
-        throw new Error(json.message || "Failed to add class");
+        throw new Error(json.message || "Failed to add class")
       }
     } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" });
+      set({ loading: false, error: err.message || "Unknown error" })
     }
   },
 
-  //#endregion 
+  //#endregion
 
   //#region ----- DELETE CLASS -----
   deleteClass: async (classId: string) => {
-    set({ loading: true, error: null, message: null });
+    set({ loading: true, error: null, message: null })
     try {
-      const token = getToken();
-      if (!token) throw new Error("Missing access token");
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
 
       const response = await fetch(`${baseUrl}/classes/${classId}`, {
         method: "DELETE",
         headers: {
           Authorization: token,
         },
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
       if (response.ok && data.success) {
         set((state) => ({
           classes: state.classes.filter((cls) => cls._id !== classId),
           loading: false,
           message: data.message || null,
-        }));
+        }))
       } else {
-        throw new Error(data.message || "Failed to delete class");
+        throw new Error(data.message || "Failed to delete class")
       }
     } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" });
+      set({ loading: false, error: err.message || "Unknown error" })
     }
   },
 
@@ -154,11 +165,11 @@ export const useClassStore = create<ClassesStore>((set) => ({
   //#region ----- UPDATE CLASS -----
 
   updateClass: async (classId: string, updates: { newTitle?: string }) => {
-    set({ loading: true, error: null, message: null });
+    set({ loading: true, error: null, message: null })
 
     try {
-      const token = getToken();
-      if (!token) throw new Error("Missing access token");
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
 
       const response = await fetch(`${baseUrl}/classes/${classId}`, {
         method: "PATCH",
@@ -167,39 +178,42 @@ export const useClassStore = create<ClassesStore>((set) => ({
           Authorization: token,
         },
         body: JSON.stringify(updates), // { newTitle: "..." }
-      });
+      })
 
-      if (!response.ok) throw new Error("Failed to update class");
+      if (!response.ok) throw new Error("Failed to update class")
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success && data.response) {
-        const updatedClass = data.response;
+        const updatedClass = data.response
 
         set((state) => ({
           classes: state.classes.map((c) =>
             c._id === classId ? { ...c, ...updatedClass } : c
           ),
-          class: state.class && state.class._id === classId
-            ? { ...state.class, ...updatedClass }
-            : state.class,
+          class:
+            state.class && state.class._id === classId
+              ? { ...state.class, ...updatedClass }
+              : state.class,
           loading: false,
           error: null,
           message: data.message || "Class updated successfully",
-        }));
+        }))
       } else {
-        set({ loading: false, error: data.message || "Update failed", message: null });
+        set({
+          loading: false,
+          error: data.message || "Update failed",
+          message: null,
+        })
       }
-
     } catch (err: any) {
       set({
         loading: false,
         error: err.message || "Unknown error",
         message: null,
-      });
+      })
     }
-  }
+  },
 
   //#endregion
-
-}));
+}))

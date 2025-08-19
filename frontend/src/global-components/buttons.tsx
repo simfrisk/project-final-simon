@@ -1,23 +1,23 @@
-import { Link } from "react-router";
-import styled from "styled-components";
-import { MediaQueries } from "../themes/mediaQueries";
+import { Link } from "react-router"
+import styled from "styled-components"
+import { MediaQueries } from "../themes/mediaQueries"
 
 interface MainButtonProps {
-  text: string;
-  url?: string;
+  text: string
+  url?: string
 }
 
 // MainButton component
 export const MainButton: React.FC<MainButtonProps> = ({ text, url }) => {
-  const button = <MainStyledButton>{text}</MainStyledButton>;
-  return url ? <Link to={url}>{button}</Link> : button;
-};
+  const button = <MainStyledButton>{text}</MainStyledButton>
+  return url ? <Link to={url}>{button}</Link> : button
+}
 
 // SmallButton component
 export const SmallButton: React.FC<MainButtonProps> = ({ text, url }) => {
-  const button = <SmallStyledButton>{text}</SmallStyledButton>;
-  return url ? <Link to={url}>{button}</Link> : button;
-};
+  const button = <SmallStyledButton>{text}</SmallStyledButton>
+  return url ? <Link to={url}>{button}</Link> : button
+}
 
 // Styled components
 const MainStyledButton = styled.button`
@@ -37,7 +37,7 @@ const MainStyledButton = styled.button`
     scale: 0.95;
     background-color: ${({ theme }) => theme.colors.secondaryHover};
   }
-`;
+`
 
 const SmallStyledButton = styled.button`
   background-color: ${({ theme }) => theme.colors.background};
@@ -56,4 +56,4 @@ const SmallStyledButton = styled.button`
     scale: 0.95;
     background-color: ${({ theme }) => theme.colors.primary};
   }
-`;
+`

@@ -83,7 +83,7 @@ const deleteProject = async (req, res) => {
         // Step 1: Find all comments for this project
         const comments = await Comment_1.CommentModel.find({ projectId });
         // Step 2: Extract comment IDs to delete associated replies
-        const commentIds = comments.map(comment => comment._id);
+        const commentIds = comments.map((comment) => comment._id);
         await Reply_1.Reply.deleteMany({ commentId: { $in: commentIds } });
         // Step 3: Delete comments
         await Comment_1.CommentModel.deleteMany({ projectId });

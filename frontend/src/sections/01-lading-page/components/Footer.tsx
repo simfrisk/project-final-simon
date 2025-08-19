@@ -1,8 +1,7 @@
-import styled from "styled-components";
-import { Container } from "../../../global-components/Section";
-import { MediaQueries } from "../../../themes/mediaQueries";
-import { spacing } from "../../../themes/spacing";
-
+import styled from "styled-components"
+import { Container } from "../../../global-components/Section"
+import { MediaQueries } from "../../../themes/mediaQueries"
+import { spacing } from "../../../themes/spacing"
 
 export const Footer = () => {
   return (
@@ -11,16 +10,25 @@ export const Footer = () => {
         <p>This is a school project created by Simon Frisk</p>
 
         <SocialMedia>
-        <a href=""><img src="/icons/Ic-Github.svg" alt="Github link" /></a>
-        <a href=""><img src="/icons/Linked-In.svg" alt="" /></a>
+          <a href="">
+            <img
+              src="/icons/Ic-Github.svg"
+              alt="Github link"
+            />
+          </a>
+          <a href="">
+            <img
+              src="/icons/Linked-In.svg"
+              alt=""
+            />
+          </a>
         </SocialMedia>
-
       </Container>
     </Section>
   )
-};
+}
 
- const Section = styled.section`
+const Section = styled.section`
   background-color: black;
   color: white;
   width: 100%;
@@ -30,21 +38,20 @@ export const Footer = () => {
   @media ${MediaQueries.biggerSizes} {
     padding: 128px 0;
   }
-`;
-
-const SocialMedia = styled.div `
-display: flex;
-justify-content: center;
-gap: ${spacing.md};
-margin-top: ${spacing.md};
-
-a {
-  color: white;
-  text-decoration: none;
-}
-
-img {
-  height: 30px;
-}
 `
 
+const SocialMedia = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${spacing.md};
+  margin-top: ${spacing.md};
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+
+  img {
+    height: 30px;
+  }
+`

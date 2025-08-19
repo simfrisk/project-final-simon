@@ -1,14 +1,14 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components"
 
 export const Loader = () => {
-  return <LoaderWheel />;
-};
+  return <LoaderWheel />
+}
 
 const rotate = keyframes`
   100% {
     transform: rotate(360deg);
   }
-`;
+`
 
 const prixClipFix = keyframes`
   0%   { clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0); }
@@ -16,7 +16,7 @@ const prixClipFix = keyframes`
   50%  { clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%); }
   75%  { clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%); }
   100% { clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0); }
-`;
+`
 
 const LoaderWheel = styled.span`
   width: 48px;
@@ -35,4 +35,4 @@ const LoaderWheel = styled.span`
     border: 5px solid #0f77e6;
     animation: ${prixClipFix} 2s linear infinite;
   }
-`;
+`

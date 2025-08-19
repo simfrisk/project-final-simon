@@ -98,8 +98,8 @@ const postReplyLike = async (req, res) => {
         const hasLiked = reply.replyLikes.includes(user._id);
         if (hasLiked) {
             // Unlike
-            reply.replyLikes = reply.replyLikes.filter(id => id.toString() !== user._id.toString());
-            user.likedReplies = user.likedReplies.filter(id => id.toString() !== reply._id.toString());
+            reply.replyLikes = reply.replyLikes.filter((id) => id.toString() !== user._id.toString());
+            user.likedReplies = user.likedReplies.filter((id) => id.toString() !== reply._id.toString());
         }
         else {
             // Like

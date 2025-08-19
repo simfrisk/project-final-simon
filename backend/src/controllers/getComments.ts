@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { CommentModel } from "../models/Comment";
+import { Request, Response } from "express"
+import { CommentModel } from "../models/Comment"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { CommentModel } from "../models/Comment";
  *     summary: Get comments (type "question") for a project
  *     tags:
  *       - Comments
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -97,30 +97,36 @@ import { CommentModel } from "../models/Comment";
  *                   type: string
  *                   example: "Failed to fetch comments"
  */
-export const getComments = async (req: Request, res: Response): Promise<Response> => {
-  const { projectId } = req.params;
+export const getComments = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { projectId } = req.params
 
   try {
-    const comments = await CommentModel.find({ projectId, commentType: "question" })
+    const comments = await CommentModel.find({
+      projectId,
+      commentType: "question",
+    })
 
       .populate({
         path: "replies",
         populate: {
           path: "replyCreatedBy",
-          select: "name profileImage role"
-        }
+          select: "name profileImage role",
+        },
       })
-      .populate("commentCreatedBy", "name profileImage role");
+      .populate("commentCreatedBy", "name profileImage role")
     return res.status(200).json({
       success: true,
       response: comments,
       message: "Comments fetched successfully",
-    });
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
       message: "Failed to fetch comments",
-    });
+    })
   }
-};
+}

@@ -9,7 +9,7 @@ const postProject = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 response: null,
-                message: "Project name is required"
+                message: "Project name is required",
             });
         }
         const newProject = new Projects_1.Project({ projectName, projectDescription });
@@ -17,14 +17,14 @@ const postProject = async (req, res) => {
         return res.status(201).json({
             success: true,
             response: savedNewProject,
-            message: "Project created"
+            message: "Project created",
         });
     }
     catch (error) {
         return res.status(500).json({
             success: false,
             response: error,
-            message: "Could not post project"
+            message: "Could not post project",
         });
     }
 };

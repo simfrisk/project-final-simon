@@ -1,20 +1,21 @@
 // FeatureTitle.tsx
-import styled from "styled-components";
-import { MediaQueries } from "../../../../themes/mediaQueries";
-import { spacing } from "../../../../themes/spacing";
+import styled from "styled-components"
+import { MediaQueries } from "../../../../themes/mediaQueries"
+import { spacing } from "../../../../themes/spacing"
 
 export const FeatureTitle = () => {
   return (
     <Container>
       <h2>Classync 101</h2>
       <p>
-        Take control of your comments with timestamps to keep everything organized and easy to
-        find and remember. Whether you’re reviewing lessons or giving feedback, it’s all clear,
-        trackable, and right where you need it.
+        Take control of your comments with timestamps to keep everything
+        organized and easy to find and remember. Whether you’re reviewing
+        lessons or giving feedback, it’s all clear, trackable, and right where
+        you need it.
       </p>
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   h2 {
@@ -35,4 +36,4 @@ const Container = styled.div`
       text-align: left;
     }
   }
-`;
+`

@@ -5,4 +5,4 @@ export const MediaQueries = {
   smallerSizes: "(max-width: 900px)",
   biggerSizes: "(min-width: 900px)",
   widescreen: "(min-width: 1500px)",
-};
+}

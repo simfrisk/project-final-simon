@@ -1,53 +1,53 @@
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { MediaQueries } from "../../themes/mediaQueries";
-import { Navigation } from "../../global-components/Navigation";
-import { useUserStore } from "../../store/userStore";
-import { useState } from "react";
+import styled from "styled-components"
+import { Link, useNavigate } from "react-router-dom"
+import { MediaQueries } from "../../themes/mediaQueries"
+import { Navigation } from "../../global-components/Navigation"
+import { useUserStore } from "../../store/userStore"
+import { useState } from "react"
 
 // Define the expected form fields
 type SignUpFormElements = HTMLFormElement & {
-  email: HTMLInputElement;
-  name: HTMLInputElement;
-  password: HTMLInputElement;
-  role: RadioNodeList;
-  image: HTMLInputElement;
-};
+  email: HTMLInputElement
+  name: HTMLInputElement
+  password: HTMLInputElement
+  role: RadioNodeList
+  image: HTMLInputElement
+}
 
 export const SignUpPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { createUser } = useUserStore();
+  const navigate = useNavigate()
+  const { createUser } = useUserStore()
 
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.target as SignUpFormElements;
+    e.preventDefault()
+    const form = e.target as SignUpFormElements
 
-    const formData = new FormData();
-    formData.append("name", form.name.value);
-    formData.append("email", form.email.value);
-    formData.append("password", form.password.value);
-    formData.append("role", form.role.value);
+    const formData = new FormData()
+    formData.append("name", form.name.value)
+    formData.append("email", form.email.value)
+    formData.append("password", form.password.value)
+    formData.append("role", form.role.value)
     if (form.image.files?.[0]) {
-      formData.append("image", form.image.files[0]);
+      formData.append("image", form.image.files[0])
     }
 
-    const success = await createUser(formData);
+    const success = await createUser(formData)
 
     if (success) {
-      navigate("/library/");
+      navigate("/library/")
     } else {
-      alert("Sign up failed. Please check your credentials.");
+      alert("Sign up failed. Please check your credentials.")
     }
-  };
+  }
 
   const handlePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      setPreview(URL.createObjectURL(file));
+      setPreview(URL.createObjectURL(file))
     }
-  };
+  }
 
   return (
     <>
@@ -57,13 +57,19 @@ export const SignUpPage: React.FC = () => {
         <CardContainer>
           <Card>
             <LogoContainer>
-              <Logo src="/logo2.png" alt="Classync logo" />
+              <Logo
+                src="/logo2.png"
+                alt="Classync logo"
+              />
             </LogoContainer>
             <WelcomeMessage>
               <h3>Sign up to get started</h3>
             </WelcomeMessage>
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+            >
               <label>
                 <span>Full name</span>
                 <input
@@ -96,7 +102,10 @@ export const SignUpPage: React.FC = () => {
               </label>
 
               <RoleGroup>
-                <RoleLabel htmlFor="role-teacher" selected={false}>
+                <RoleLabel
+                  htmlFor="role-teacher"
+                  selected={false}
+                >
                   <input
                     id="role-teacher"
                     type="radio"
@@ -107,7 +116,10 @@ export const SignUpPage: React.FC = () => {
                   Teacher
                 </RoleLabel>
 
-                <RoleLabel htmlFor="role-student" selected={false}>
+                <RoleLabel
+                  htmlFor="role-student"
+                  selected={false}
+                >
                   <input
                     id="role-student"
                     type="radio"
@@ -129,7 +141,14 @@ export const SignUpPage: React.FC = () => {
                 />
               </label>
 
-              {preview && <img src={preview} alt="Preview" height={80} style={{ marginTop: "10px", borderRadius: "10px" }} />}
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  height={80}
+                  style={{ marginTop: "10px", borderRadius: "10px" }}
+                />
+              )}
 
               <ButtonWrapper>
                 <StyledButton type="submit">Sign up</StyledButton>
@@ -144,8 +163,8 @@ export const SignUpPage: React.FC = () => {
         </CardContainer>
       </Container>
     </>
-  );
-};
+  )
+}
 
 // STYLED COMPONENTS
 
@@ -154,7 +173,7 @@ const Container = styled.div`
   justify-content: center;
   height: 94dvh;
   margin-bottom: 40px;
-`;
+`
 
 const SideContainer = styled.section`
   display: none;
@@ -168,7 +187,7 @@ const SideContainer = styled.section`
   @media ${MediaQueries.biggerSizes} {
     display: block;
   }
-`;
+`
 
 const CardContainer = styled.div`
   display: flex;
@@ -178,7 +197,7 @@ const CardContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {
     max-width: 2000px;
   }
-`;
+`
 
 const Card = styled.section`
   display: flex;
@@ -202,29 +221,29 @@ const Card = styled.section`
     width: 100%;
     padding: 10px 10px;
   }
-`;
+`
 
 const LogoContainer = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 const Logo = styled.img`
   height: 150px;
   width: 150px;
   border-radius: 20px;
   margin-left: 15px;
-`;
+`
 
 const WelcomeMessage = styled.div`
   text-align: center;
   margin: 10px 0 30px 0;
-`;
+`
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 const StyledButton = styled.button`
   display: inline-block;
@@ -245,7 +264,7 @@ const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(0.98);
   }
-`;
+`
 
 const StyledLink = styled(Link)`
   color: ${({ theme }) => theme.colors.text};
@@ -261,21 +280,21 @@ const StyledLink = styled(Link)`
   &:active {
     color: ${({ theme }) => theme.colors.textActive};
   }
-`;
+`
 
 const LinkContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
-`;
+`
 
 const RoleGroup = styled.div`
   display: flex;
   justify-content: center;
   gap: 16px;
   margin-top: 16px;
-`;
+`
 
 const RoleLabel = styled.label<{ selected: boolean }>`
   display: flex;
@@ -308,4 +327,4 @@ const RoleLabel = styled.label<{ selected: boolean }>`
     top: 1px;
     left: 1px;
   }
-`;
+`

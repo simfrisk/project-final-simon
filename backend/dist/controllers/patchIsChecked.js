@@ -87,8 +87,8 @@ const patchIsChecked = async (req, res) => {
             select: "replyCreatedBy replyLikes content createdAt",
             populate: {
                 path: "replyCreatedBy",
-                select: "name profileImage role"
-            }
+                select: "name profileImage role",
+            },
         })
             .populate("commentCreatedBy", "name profileImage role");
         return res.status(200).json({

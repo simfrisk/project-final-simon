@@ -1,24 +1,24 @@
 // Section.tsx
-import styled from "styled-components";
-import { MediaQueries } from "../themes/mediaQueries";
+import styled from "styled-components"
+import { MediaQueries } from "../themes/mediaQueries"
 
 interface SectionProps {
-  secondarySection?: boolean;
-  thirdSection?: boolean;
-  children?: React.ReactNode;
+  secondarySection?: boolean
+  thirdSection?: boolean
+  children?: React.ReactNode
 }
 
 export const Section = styled.section<SectionProps>`
   background-color: ${(props) => {
-    if (props.thirdSection) return "#141A20"; 
-    if (props.secondarySection) return props.theme.colors.primary;
-    return props.theme.colors.background;
+    if (props.thirdSection) return "#141A20"
+    if (props.secondarySection) return props.theme.colors.primary
+    return props.theme.colors.background
   }};
 
   color: ${(props) => {
-    if (props.thirdSection) return "white"; 
-    if (props.secondarySection) return "white";
-    return props.theme.colors.text;
+    if (props.thirdSection) return "white"
+    if (props.secondarySection) return "white"
+    return props.theme.colors.text
   }};
 
   width: 100%;
@@ -27,7 +27,7 @@ export const Section = styled.section<SectionProps>`
   @media ${MediaQueries.biggerSizes} {
     padding: 84px 0;
   }
-`;
+`
 
 export const Container = styled.div`
   max-width: 1500px;
@@ -38,4 +38,4 @@ export const Container = styled.div`
   @media ${MediaQueries.biggerSizes} {
     padding: 0 40px;
   }
-`;
+`

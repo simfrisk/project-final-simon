@@ -1,25 +1,25 @@
-import { AFeatureCard } from "./aFeatureCard";
-import { useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import styled from 'styled-components';
-import { spacing } from "../../../../themes/spacing";
+import { AFeatureCard } from "./aFeatureCard"
+import { useState } from "react"
+import { Carousel } from "react-responsive-carousel"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
+import styled from "styled-components"
+import { spacing } from "../../../../themes/spacing"
 
 export const FeatureCards = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0)
 
   const slides = [
     <AFeatureCard title="Time Stamps" />,
     <AFeatureCard title="Teachers Page" />,
     <AFeatureCard title="Personal Comments" />,
-  ];
+  ]
 
-  const next = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-  const prev = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const next = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
+  const prev = () =>
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
     <Container>
-
       <Carousel
         selectedItem={currentSlide}
         onChange={setCurrentSlide}
@@ -32,9 +32,10 @@ export const FeatureCards = () => {
         emulateTouch={true}
         dynamicHeight={false}
         renderIndicator={(
-          onClickHandler: React.MouseEventHandler<HTMLLIElement>, 
+          onClickHandler: React.MouseEventHandler<HTMLLIElement>,
           isSelected: boolean,
-          index: number) => (
+          index: number
+        ) => (
           <Dot
             key={index}
             onClick={onClickHandler}
@@ -45,9 +46,7 @@ export const FeatureCards = () => {
         )}
       >
         {slides.map((slide, index) => (
-          <CardContainer key={index}>
-            {slide}
-          </CardContainer>
+          <CardContainer key={index}>{slide}</CardContainer>
         ))}
       </Carousel>
 
@@ -56,14 +55,14 @@ export const FeatureCards = () => {
         <button onClick={next}>Next</button>
       </Controls>
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   margin: ${spacing.lg} 0;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardContainer = styled.div`
   display: flex;
@@ -73,8 +72,7 @@ const CardContainer = styled.div`
   overflow: hidden;
   border-radius: 15px;
   margin: 15px 0 30px 0;
-
-`;
+`
 
 const Controls = styled.div`
   display: flex;
@@ -85,12 +83,12 @@ const Controls = styled.div`
   button {
     padding: ${spacing.xs} ${spacing.sm};
     border-radius: 10px;
-    background-color: ${({theme}) => theme.colors.primary};
-    color: ${({theme}) => theme.colors.offBackground};
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.offBackground};
     border: none;
     cursor: pointer;
   }
-`;
+`
 
 const Dot = styled.li<{ $active: boolean }>`
   width: 10px;
@@ -99,7 +97,7 @@ const Dot = styled.li<{ $active: boolean }>`
   margin: 0 6px;
   transform: translateY(5px);
   background-color: ${({ $active, theme }) =>
-    $active ? theme.colors.primary : '#ccc'};
+    $active ? theme.colors.primary : "#ccc"};
   display: inline-block;
   cursor: pointer;
-`;
+`

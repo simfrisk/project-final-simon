@@ -1,15 +1,15 @@
-import { create } from 'zustand';
+import { create } from "zustand"
 
-type ThemeMode = 'light' | 'dark';
+type ThemeMode = "light" | "dark"
 
 interface ThemeStore {
-  themeMode: ThemeMode;
-  setThemeMode: (mode: ThemeMode) => void;
-  toggleTheme: () => void;
+  themeMode: ThemeMode
+  setThemeMode: (mode: ThemeMode) => void
+  toggleTheme: () => void
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
-  themeMode: localStorage.getItem("theme") as ThemeMode || "light",
+  themeMode: (localStorage.getItem("theme") as ThemeMode) || "light",
   setThemeMode: (mode) => {
     localStorage.setItem("theme", mode)
     set({ themeMode: mode })
@@ -20,6 +20,5 @@ export const useThemeStore = create<ThemeStore>((set) => ({
       localStorage.setItem("theme", newMode)
       return { themeMode: newMode }
     })
-  }
+  },
 }))
-

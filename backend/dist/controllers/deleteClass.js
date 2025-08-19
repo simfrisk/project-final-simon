@@ -84,7 +84,7 @@ const deleteClass = async (req, res) => {
         // Step 1: Find all comments for this class
         const comments = await Comment_1.CommentModel.find({ classId });
         // Step 2: Delete all replies related to the comments
-        const commentIds = comments.map(comment => comment._id);
+        const commentIds = comments.map((comment) => comment._id);
         await Reply_1.Reply.deleteMany({ commentId: { $in: commentIds } });
         // Step 3: Delete comments
         await Comment_1.CommentModel.deleteMany({ classId });

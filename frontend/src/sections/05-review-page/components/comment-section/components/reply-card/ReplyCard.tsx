@@ -1,41 +1,48 @@
-import styled from 'styled-components';
-import type { ReplyType } from '../../../../../../store/commentStore';
-import { commentStore } from '../../../../../../store/commentStore';
-import { useState } from 'react';
-import { ReplyCardHeader } from './ReplyCardHeader';
-import { Edit } from './ReplyCardFooter';
-import { ReplyCardMain } from './ReplyCardMain';
-import { ReplyCardFooter } from './ReplyCardFooter';
+import styled from "styled-components"
+import type { ReplyType } from "../../../../../../store/commentStore"
+import { commentStore } from "../../../../../../store/commentStore"
+import { useState } from "react"
+import { ReplyCardHeader } from "./ReplyCardHeader"
+import { Edit } from "./ReplyCardFooter"
+import { ReplyCardMain } from "./ReplyCardMain"
+import { ReplyCardFooter } from "./ReplyCardFooter"
 
 type ReplyCardProps = {
-  reply: ReplyType;
-  setReplyToCommentId: (id: string | null) => void;
-};
+  reply: ReplyType
+  setReplyToCommentId: (id: string | null) => void
+}
 
 export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
-  const deleteReply = commentStore((state) => state.deleteReply);
-  const updateReply = commentStore((state) => state.updateReply);
-  const toggleReplyLike = commentStore((state) => state.toggleReplyLike);
+  const deleteReply = commentStore((state) => state.deleteReply)
+  const updateReply = commentStore((state) => state.updateReply)
+  const toggleReplyLike = commentStore((state) => state.toggleReplyLike)
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(reply.content);
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedContent, setEditedContent] = useState(reply.content)
 
   const handleSaveEdit = async () => {
-    if (editedContent.trim() === '') return;
+    if (editedContent.trim() === "") return
 
     await updateReply({
       replyId: reply._id,
       content: editedContent.trim(),
-    });
+    })
 
-    setIsEditing(false);
-  };
+    setIsEditing(false)
+  }
 
   return (
     <Card $role={reply.replyCreatedBy?.role}>
       <ReplyCardHeader reply={reply} />
- 
-      <ReplyCardMain reply={reply} editedContent={editedContent} setEditedContent={setEditedContent} isEditing={isEditing} setIsEditing={setIsEditing} handleSaveEdit={handleSaveEdit}/>
+
+      <ReplyCardMain
+        reply={reply}
+        editedContent={editedContent}
+        setEditedContent={setEditedContent}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        handleSaveEdit={handleSaveEdit}
+      />
 
       <ReplyCardFooter
         reply={reply}
@@ -46,10 +53,8 @@ export const ReplyCard = ({ reply, setReplyToCommentId }: ReplyCardProps) => {
         deleteReply={deleteReply}
       />
     </Card>
-  );
-};
-
-
+  )
+}
 
 const Card = styled.div<{ $role?: string }>`
   width: 100%;
@@ -57,9 +62,7 @@ const Card = styled.div<{ $role?: string }>`
   display: flex;
   flex-direction: column;
   background-color: ${({ $role, theme }) =>
-    $role === 'teacher'
-      ? theme.colors.lightBlue
-      : theme.colors.background};
+    $role === "teacher" ? theme.colors.lightBlue : theme.colors.background};
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
@@ -71,9 +74,9 @@ const Card = styled.div<{ $role?: string }>`
   &:hover {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-    $role === 'teacher'
-      ? theme.colors.lightBlueHover
-      : theme.colors.backgroundHover};
+      $role === "teacher"
+        ? theme.colors.lightBlueHover
+        : theme.colors.backgroundHover};
   }
 
   &:hover ${Edit} {
@@ -85,5 +88,4 @@ const Card = styled.div<{ $role?: string }>`
       visibility 0s linear 0s,
       transform 0.4s ease;
   }
-
-`;
+`

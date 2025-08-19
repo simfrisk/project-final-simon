@@ -1,31 +1,30 @@
-import styled from "styled-components";
-import moment from "moment";
-import type { ReplyType } from "../../../../../../store/commentStore";
+import styled from "styled-components"
+import moment from "moment"
+import type { ReplyType } from "../../../../../../store/commentStore"
 
-type ReplyCardHeaderProps  = {
-  reply: ReplyType;
-};
+type ReplyCardHeaderProps = {
+  reply: ReplyType
+}
 
 export const ReplyCardHeader = ({ reply }: ReplyCardHeaderProps) => {
   return (
-  <Container>
-    <ImageContainer onClick={() => console.log(reply._id)}>
-      <img
-        src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
-        alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
-      />
-    </ImageContainer>
-    <Content>
-      <CardHeader>
-        <strong>{reply.replyCreatedBy?.name || "Anonymous"}</strong>
-        <Dot>&middot;</Dot>
-        <span>{moment(reply.createdAt).fromNow()}</span>
-      </CardHeader>
-    </Content>
-  </Container>
-
+    <Container>
+      <ImageContainer onClick={() => console.log(reply._id)}>
+        <img
+          src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
+          alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
+        />
+      </ImageContainer>
+      <Content>
+        <CardHeader>
+          <strong>{reply.replyCreatedBy?.name || "Anonymous"}</strong>
+          <Dot>&middot;</Dot>
+          <span>{moment(reply.createdAt).fromNow()}</span>
+        </CardHeader>
+      </Content>
+    </Container>
   )
-};
+}
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +33,7 @@ const Container = styled.div`
   width: 100%;
   gap: 15px;
   align-items: center;
-`;
+`
 
 const ImageContainer = styled.div`
   flex-shrink: 0;
@@ -48,22 +47,22 @@ const ImageContainer = styled.div`
     height: 100%;
     object-fit: cover;
   }
-`;
+`
 
 const Content = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const CardHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${({theme}) => theme.colors.textAlternative};
-`;
+  color: ${({ theme }) => theme.colors.textAlternative};
+`
 
-const Dot = styled.span``;
+const Dot = styled.span``
 
 export const CheckBtn = styled.div`
   opacity: 0;
@@ -79,4 +78,4 @@ export const CheckBtn = styled.div`
     opacity 0.3s ease,
     visibility 0s linear 0.3s,
     transform 0.3s ease;
-`;
+`

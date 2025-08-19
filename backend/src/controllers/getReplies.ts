@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Reply } from "../models/Reply";
+import { Request, Response } from "express"
+import { Reply } from "../models/Reply"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { Reply } from "../models/Reply";
  *     summary: Get all replies for a specific comment
  *     tags:
  *       - Replies
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -61,22 +61,25 @@ import { Reply } from "../models/Reply";
  *                   type: string
  *                   example: "Failed to fetch replies"
  */
-export const getReplies = async (req: Request, res: Response): Promise<Response> => {
-  const { commentId } = req.params;
+export const getReplies = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { commentId } = req.params
 
   try {
-    const replies = await Reply.find({ commentId }); // Find replies linked to this comment
+    const replies = await Reply.find({ commentId }) // Find replies linked to this comment
 
     return res.status(200).json({
       success: true,
       response: replies,
       message: "Replies fetched successfully",
-    });
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
       message: "Failed to fetch replies",
-    });
+    })
   }
-};
+}

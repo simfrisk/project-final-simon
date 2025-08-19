@@ -1,15 +1,14 @@
-import styled from "styled-components";
+import styled from "styled-components"
 
 interface CommentCardMainProps {
-  _id: string;
-  content: string;
-  handleSaveEdit: (id: string) => void;
-  setEditedContent: (content: string) => void;
-  editedContent: string;
-  editingCommentId: string | null;
-  setEditingCommentId: (id: string | null) => void;
+  _id: string
+  content: string
+  handleSaveEdit: (id: string) => void
+  setEditedContent: (content: string) => void
+  editedContent: string
+  editingCommentId: string | null
+  setEditingCommentId: (id: string | null) => void
 }
-
 
 export const CommentCardMain: React.FC<CommentCardMainProps> = ({
   _id,
@@ -38,10 +37,12 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
           />
           <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
             <button onClick={() => handleSaveEdit(_id)}>Save</button>
-            <button onClick={() => {
-              setEditingCommentId(null);
-              setEditedContent(content);
-            }}>
+            <button
+              onClick={() => {
+                setEditingCommentId(null)
+                setEditedContent(content)
+              }}
+            >
               Cancel
             </button>
           </div>
@@ -51,26 +52,26 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
       )}
     </Container>
   )
-};
+}
 
 const Container = styled.p`
   text-align: left;
   width: 100%;
   margin: 8px 0;
-  color: ${({theme}) => theme.colors.textAlternative};
+  color: ${({ theme }) => theme.colors.textAlternative};
 
-   button {
+  button {
     padding: 8px 14px;
     border: none;
     border-radius: 15px;
     margin: 8px 2px;
     color: white;
     background-color: #007bff;
-    transition: ease .3s;
+    transition: ease 0.3s;
   }
 
   button:hover {
     background-color: #1988fe;
-    transform: scale(.97);
+    transform: scale(0.97);
   }
-`;
+`

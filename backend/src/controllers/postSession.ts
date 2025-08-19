@@ -1,6 +1,6 @@
-import { UserModel } from "../models/user";
-import bcrypt from "bcrypt";
-import { Response, Request } from "express";
+import { UserModel } from "../models/user"
+import bcrypt from "bcrypt"
+import { Response, Request } from "express"
 
 /**
  * @swagger
@@ -9,7 +9,7 @@ import { Response, Request } from "express";
  *     summary: User login and create session
  *     tags:
  *       - Users
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
@@ -75,9 +75,12 @@ import { Response, Request } from "express";
  *                   type: string
  *                   example: Internal server error
  */
-export const postSession = async (req: Request, res: Response): Promise<void> => {
+export const postSession = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const user = await UserModel.findOne({ email: req.body.email });
+    const user = await UserModel.findOne({ email: req.body.email })
 
     if (user && bcrypt.compareSync(req.body.password, user.password)) {
       res.json({
@@ -86,12 +89,12 @@ export const postSession = async (req: Request, res: Response): Promise<void> =>
         role: user.role,
         profileImage: user.profileImage,
         accessToken: user.accessToken,
-      });
+      })
     } else {
-      res.status(401).json({ notFound: true }); // better to return a 401 for auth failure
+      res.status(401).json({ notFound: true }) // better to return a 401 for auth failure
     }
   } catch (error) {
-    console.error("❌ Error in postSession:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("❌ Error in postSession:", error)
+    res.status(500).json({ success: false, message: "Internal server error" })
   }
-};
+}

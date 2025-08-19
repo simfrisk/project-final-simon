@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { ClassModel } from "../models/Class";
+import { Request, Response } from "express"
+import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
@@ -9,7 +9,7 @@ import { ClassModel } from "../models/Class";
  *     tags:
  *       - Classes
  *     description: Allows an authenticated user to update the title of a class by its ID.
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -78,35 +78,34 @@ import { ClassModel } from "../models/Class";
  *                   example: Could not change class in the database
  */
 export const patchClass = async (req: Request, res: Response) => {
-  const { classId } = req.params;
-  const { newTitle } = req.body;
+  const { classId } = req.params
+  const { newTitle } = req.body
 
   try {
-    const classDoc = await ClassModel.findById(classId);
+    const classDoc = await ClassModel.findById(classId)
 
     if (!classDoc) {
       return res.status(404).json({
         success: false,
         response: null,
-        message: "The class was not found"
-      });
+        message: "The class was not found",
+      })
     }
 
-    if (newTitle) classDoc.classTitle = newTitle;
+    if (newTitle) classDoc.classTitle = newTitle
 
-    const updatedClass = await classDoc.save();
+    const updatedClass = await classDoc.save()
 
     res.status(200).json({
       success: true,
       response: updatedClass,
-      message: "The class was successfully updated"
-    });
-
+      message: "The class was successfully updated",
+    })
   } catch (error) {
     res.status(500).json({
       success: false,
       response: error instanceof Error ? error.message : "Unknown error",
-      message: "Could not change class in the database"
-    });
+      message: "Could not change class in the database",
+    })
   }
-};
+}

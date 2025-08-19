@@ -94,7 +94,10 @@ const Comment_1 = require("../models/Comment");
 const getCommentById = async (req, res) => {
     const { commentId } = req.params;
     try {
-        const comment = await Comment_1.CommentModel.findById({ commentId, commentType: "question" });
+        const comment = await Comment_1.CommentModel.findById({
+            commentId,
+            commentType: "question",
+        });
         if (!comment) {
             return res.status(404).json({
                 success: false,

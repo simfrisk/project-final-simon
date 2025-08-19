@@ -1,8 +1,8 @@
 // ExplainSection.tsx
-import styled from "styled-components";
-import { MediaQueries } from "../../../themes/mediaQueries";
-import { Section, Container } from "../../../global-components/Section";
-import { spacing } from "../../../themes/spacing";
+import styled from "styled-components"
+import { MediaQueries } from "../../../themes/mediaQueries"
+import { Section, Container } from "../../../global-components/Section"
+import { spacing } from "../../../themes/spacing"
 
 export const ExplainSection = () => {
   return (
@@ -10,15 +10,22 @@ export const ExplainSection = () => {
       <Container>
         <Content>
           <Title>How it works</Title>
-          <ExplainerVideo autoPlay muted loop>
-            <source src="/Explainer3.mp4" type="video/mp4" />
+          <ExplainerVideo
+            autoPlay
+            muted
+            loop
+          >
+            <source
+              src="/Explainer3.mp4"
+              type="video/mp4"
+            />
             Your browser does not support the video tag.
           </ExplainerVideo>
         </Content>
       </Container>
     </Section>
-  );
-};
+  )
+}
 
 const Content = styled.div`
   display: flex;
@@ -26,12 +33,12 @@ const Content = styled.div`
   align-items: center;
   text-align: center;
   gap: ${spacing.xl};
-`;
+`
 
 const Title = styled.h2`
   font-size: 2rem;
   margin: ${spacing.md} 0;
-`;
+`
 
 const ExplainerVideo = styled.video`
   width: 100%;
@@ -44,4 +51,4 @@ const ExplainerVideo = styled.video`
   @media ${MediaQueries.biggerSizes} {
     max-width: 1200px;
   }
-`;
+`

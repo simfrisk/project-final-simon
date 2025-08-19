@@ -1,42 +1,46 @@
-import styled from 'styled-components';
-import { useState } from 'react';
-import { commentStore } from '../../../../store/commentStore';
-import { useVideoStore } from '../../../../store/videoStore';
-import { useTimecode } from '../../../../store/timeCodeStore';
-import { useProjectStore } from '../../../../store/projectStore';
-import { useTabStore } from '../../../../store/tabStore';
+import styled from "styled-components"
+import { useState } from "react"
+import { commentStore } from "../../../../store/commentStore"
+import { useVideoStore } from "../../../../store/videoStore"
+import { useTimecode } from "../../../../store/timeCodeStore"
+import { useProjectStore } from "../../../../store/projectStore"
+import { useTabStore } from "../../../../store/tabStore"
 
 export const CommentForm = () => {
+  const activeTab = useTabStore((state) => state.activeTab)
+  const setActiveTab = useTabStore((state) => state.setActiveTab)
 
-  const activeTab = useTabStore((state) => state.activeTab);
-  const setActiveTab = useTabStore((state) => state.setActiveTab);
-
-  const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger);
-  const [text, setText] = useState('');
-  const addMessage = commentStore((state) => state.addMessage);
-  const timecode = useTimecode((state) => state.timecode);
+  const incrementMarkerTrigger = useVideoStore(
+    (state) => state.incrementMarkerTrigger
+  )
+  const [text, setText] = useState("")
+  const addMessage = commentStore((state) => state.addMessage)
+  const timecode = useTimecode((state) => state.timecode)
   const stopVideo = useVideoStore((state) => state.stopVideo)
 
-  const project = useProjectStore((state) => state.project);
-  const projectId = project?._id; 
+  const project = useProjectStore((state) => state.project)
+  const projectId = project?._id
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim()) return;
+    e.preventDefault()
+    if (!text.trim()) return
 
     addMessage({
       content: text,
       timeStamp: timecode,
       projectId: projectId,
-      commentType: activeTab
-    });
+      commentType: activeTab,
+    })
 
-    setText('');
-    incrementMarkerTrigger();
-  };
+    setText("")
+    incrementMarkerTrigger()
+  }
 
   return (
-    <Container as="form" onSubmit={handleSubmit}>
+    <Container
+      as="form"
+      onSubmit={handleSubmit}
+    >
       <TextInput
         type="text"
         placeholder="Leave your comment here..."
@@ -51,20 +55,29 @@ export const CommentForm = () => {
           <input type="checkbox" />
         </TimeTag>
 
-          {activeTab !== "private" && (
-        <Select
-          value={activeTab}
-          onChange={(e) => setActiveTab(e.target.value as 'description' | 'question' | 'private' | 'public')}>
-          <option value="1uestion">Question</option>
-          <option value="public">Public Comment</option>
-        </Select>
-         )}
+        {activeTab !== "private" && (
+          <Select
+            value={activeTab}
+            onChange={(e) =>
+              setActiveTab(
+                e.target.value as
+                  | "description"
+                  | "question"
+                  | "private"
+                  | "public"
+              )
+            }
+          >
+            <option value="1uestion">Question</option>
+            <option value="public">Public Comment</option>
+          </Select>
+        )}
 
         <SendButton type="submit">Send</SendButton>
       </Footer>
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   position: sticky;
@@ -73,12 +86,12 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 12px;
   border-radius: 12px;
-  background-color:  ${({theme}) => theme.colors.specialblue};
+  background-color: ${({ theme }) => theme.colors.specialblue};
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 10px;
-`;
+`
 
 const TextInput = styled.input`
   height: 48px;
@@ -86,14 +99,14 @@ const TextInput = styled.input`
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background-color: ${({theme}) => theme.colors.background};
-  color: ${({theme}) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
 
   &:focus {
     outline: none;
     border-color: #007bff;
   }
-`;
+`
 
 const Footer = styled.div`
   display: flex;
@@ -101,7 +114,7 @@ const Footer = styled.div`
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-`;
+`
 
 const TimeTag = styled.div`
   display: flex;
@@ -110,7 +123,7 @@ const TimeTag = styled.div`
 
   p {
     font-size: 14px;
-    color: ${({theme}) => theme.colors.textAlternative};
+    color: ${({ theme }) => theme.colors.textAlternative};
     margin: 0;
   }
 
@@ -118,14 +131,14 @@ const TimeTag = styled.div`
     width: 16px;
     height: 16px;
   }
-`;
+`
 
 const Select = styled.select`
   padding: 6px 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  background-color: ${({theme}) => theme.colors.background};
-  color: ${({theme}) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
   font-size: 14px;
   cursor: pointer;
 
@@ -133,11 +146,11 @@ const Select = styled.select`
     outline: none;
     border-color: #007bff;
   }
-`;
+`
 
 const SendButton = styled.button`
   padding: 8px 16px;
-  background-color: ${({theme}) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.primary};
   border: none;
   border-radius: 6px;
   color: white;
@@ -146,6 +159,6 @@ const SendButton = styled.button`
   transition: background-color 0.2s ease;
 
   &:hover {
-      background-color: ${({theme}) => theme.colors.primaryHover};
+    background-color: ${({ theme }) => theme.colors.primaryHover};
   }
-`;
+`

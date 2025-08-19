@@ -1,14 +1,14 @@
-import styled from "styled-components";
-import { useProjectStore } from "../../../../store/projectStore";
-import { MediaQueries } from "../../../../themes/mediaQueries";
-import { useTabStore } from "../../../../store/tabStore";
+import styled from "styled-components"
+import { useProjectStore } from "../../../../store/projectStore"
+import { MediaQueries } from "../../../../themes/mediaQueries"
+import { useTabStore } from "../../../../store/tabStore"
 
 export const CommentHeader = () => {
-  const project = useProjectStore((state) => state.project);
-  const activeTab = useTabStore((state) => state.activeTab);
-  const setActiveTab = useTabStore((state) => state.setActiveTab);
+  const project = useProjectStore((state) => state.project)
+  const activeTab = useTabStore((state) => state.activeTab)
+  const setActiveTab = useTabStore((state) => state.setActiveTab)
 
-  if (!project) return null;
+  if (!project) return null
 
   return (
     <Container>
@@ -34,8 +34,8 @@ export const CommentHeader = () => {
         </TabButton>
       </ButtonGroup>
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ const Container = styled.div`
   @media ${MediaQueries.biggerSizes} {
     padding: 0 0 10px 0;
   }
-`;
+`
 
 const Title = styled.h3`
   margin: 0 0 12px;
@@ -58,12 +58,12 @@ const Title = styled.h3`
   @media ${MediaQueries.biggerSizes} {
     margin: 25px 0;
   }
-`;
+`
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 16px;
-`;
+`
 
 const TabButton = styled.button<{ $active?: boolean }>`
   background-color: ${({ $active, theme }) =>
@@ -85,4 +85,4 @@ const TabButton = styled.button<{ $active?: boolean }>`
     outline: none;
     box-shadow: 0 0 0 3px rgb(0 123 255 / 0.5);
   }
-`;
+`

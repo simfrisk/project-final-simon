@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components"
 
 export const CarouselFix = createGlobalStyle`
   /* Target the individual slide elements */
@@ -11,4 +11,4 @@ export const CarouselFix = createGlobalStyle`
   .carousel .slide:focus {
     outline: none;
   }
-`;
+`

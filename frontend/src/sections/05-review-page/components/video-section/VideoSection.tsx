@@ -1,26 +1,26 @@
 //#region ---- Imports -----
-import { useRef, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { PlayPauseButton } from './components/PlayPauseBtn';
-import { formatTime } from './utils/formatTime';
-import { unFormatTime } from './utils/unFormatTime';
-import { commentStore } from '../../../../store/commentStore';
-import type { MessageType } from '../../../../store/commentStore';
-import { useTimecode } from '../../../../store/timeCodeStore';
-import { useProjectStore } from '../../../../store/projectStore';
-import { useVideoStore } from '../../../../store/videoStore';
-import { useTabStore } from '../../../../store/tabStore';
+import { useRef, useState, useEffect } from "react"
+import styled from "styled-components"
+import { PlayPauseButton } from "./components/PlayPauseBtn"
+import { formatTime } from "./utils/formatTime"
+import { unFormatTime } from "./utils/unFormatTime"
+import { commentStore } from "../../../../store/commentStore"
+import type { MessageType } from "../../../../store/commentStore"
+import { useTimecode } from "../../../../store/timeCodeStore"
+import { useProjectStore } from "../../../../store/projectStore"
+import { useVideoStore } from "../../../../store/videoStore"
+import { useTabStore } from "../../../../store/tabStore"
 //#endregion
 
 export const VideoSection = () => {
-  const activeTab = useTabStore((state) => state.activeTab);
+  const activeTab = useTabStore((state) => state.activeTab)
 
-  const timelineRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const timelineRef = useRef<HTMLDivElement | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
-  const [volume, setVolume] = useState(1);
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [volume, setVolume] = useState(1)
+  const [videoLoaded, setVideoLoaded] = useState(false)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
 
   const {
     isPlaying,
@@ -30,113 +30,126 @@ export const VideoSection = () => {
     setTimeCode,
     currentTime,
     markerTriggerCount,
-  } = useVideoStore();
+  } = useVideoStore()
 
   const messages: MessageType[] = commentStore((state) =>
     activeTab === "private" ? state.privateComments : state.projectComments
-  );
+  )
 
-  const setTimecode = useTimecode((state) => state.setTimecode);
-  const formattedTime = useTimecode((state) => state.timecode);
+  const setTimecode = useTimecode((state) => state.setTimecode)
+  const formattedTime = useTimecode((state) => state.timecode)
 
-  const projectVideo = useProjectStore((state) => state.project?.video);
-  const duration = formatTime(videoEl?.duration || 0);
+  const projectVideo = useProjectStore((state) => state.project?.video)
+  const duration = formatTime(videoEl?.duration || 0)
 
   // Sync local videoRef with Zustand store
   useEffect(() => {
     if (videoRef.current) {
-      setVideoRef(videoRef.current);
+      setVideoRef(videoRef.current)
     }
-  }, [setVideoRef]);
+  }, [setVideoRef])
 
   // Set video URL on project load
   useEffect(() => {
     if (!projectVideo) {
-      setVideoUrl(null);
-      return;
+      setVideoUrl(null)
+      return
     }
 
     if (typeof projectVideo === "string") {
-      setVideoUrl(projectVideo);
+      setVideoUrl(projectVideo)
     } else if (projectVideo instanceof File) {
-      const url = URL.createObjectURL(projectVideo);
-      setVideoUrl(url);
-      return () => URL.revokeObjectURL(url);
+      const url = URL.createObjectURL(projectVideo)
+      setVideoUrl(url)
+      return () => URL.revokeObjectURL(url)
     }
-  }, [projectVideo]);
+  }, [projectVideo])
 
   // Loaded metadata
-useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
 
-  const handleCanPlayThrough = () => setVideoLoaded(true);
+    const handleCanPlayThrough = () => setVideoLoaded(true)
 
-  video.addEventListener("canplaythrough", handleCanPlayThrough);
-  return () => video.removeEventListener("canplaythrough", handleCanPlayThrough);
-}, []);
+    video.addEventListener("canplaythrough", handleCanPlayThrough)
+    return () =>
+      video.removeEventListener("canplaythrough", handleCanPlayThrough)
+  }, [])
 
   // Update current time and formatted time on play
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const video = videoRef.current
+    if (!video) return
 
     const handleTimeUpdate = () => {
-      setTimeCode(video.currentTime);
-      setTimecode(formatTime(video.currentTime));
-    };
+      setTimeCode(video.currentTime)
+      setTimecode(formatTime(video.currentTime))
+    }
 
-    video.addEventListener("timeupdate", handleTimeUpdate);
-    return () => video.removeEventListener("timeupdate", handleTimeUpdate);
-  }, [setTimeCode, setTimecode]);
+    video.addEventListener("timeupdate", handleTimeUpdate)
+    return () => video.removeEventListener("timeupdate", handleTimeUpdate)
+  }, [setTimeCode, setTimecode])
 
   // ✅ Seek video when markerTriggerCount changes
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const video = videoRef.current
+    if (!video) return
 
-    video.currentTime = currentTime;
-    video.pause(); // Optional: remove this line to auto-play after seek
-  }, [markerTriggerCount]);
+    video.currentTime = currentTime
+    video.pause() // Optional: remove this line to auto-play after seek
+  }, [markerTriggerCount])
 
   // Volume
   const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
+    const newVolume = parseFloat(e.target.value)
+    setVolume(newVolume)
     if (videoRef.current) {
-      videoRef.current.volume = newVolume;
+      videoRef.current.volume = newVolume
     }
-  };
+  }
 
   // Seek via timeline
   const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const timeline = timelineRef.current;
-    const video = videoRef.current;
-    if (!timeline || !video || !video.duration) return;
+    const timeline = timelineRef.current
+    const video = videoRef.current
+    if (!timeline || !video || !video.duration) return
 
-    const rect = timeline.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const percent = clickX / rect.width;
-    const newTime = percent * video.duration;
-    video.currentTime = newTime;
-  };
+    const rect = timeline.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const percent = clickX / rect.width
+    const newTime = percent * video.duration
+    video.currentTime = newTime
+  }
 
   const progress =
     videoRef.current && videoRef.current.duration
       ? (videoRef.current.currentTime / videoRef.current.duration) * 100
-      : 0;
+      : 0
 
   //#endregion
 
   return (
     <Container>
-      <StyledVideo ref={videoRef} onClick={togglePlay} controls={false}>
-        {videoUrl && <source src={videoUrl} type="video/mp4" />}
+      <StyledVideo
+        ref={videoRef}
+        onClick={togglePlay}
+        controls={false}
+      >
+        {videoUrl && (
+          <source
+            src={videoUrl}
+            type="video/mp4"
+          />
+        )}
         Your browser does not support the video tag.
       </StyledVideo>
 
       <Controls>
-        <PlayPauseButton isPlaying={isPlaying} onClick={togglePlay} />
+        <PlayPauseButton
+          isPlaying={isPlaying}
+          onClick={togglePlay}
+        />
         <VolumeControl>
           <label>🔊</label>
           <input
@@ -153,38 +166,41 @@ useEffect(() => {
         </TimeDisplay>
       </Controls>
 
-      <PlayBar ref={timelineRef} onClick={handleTimelineClick}>
+      <PlayBar
+        ref={timelineRef}
+        onClick={handleTimelineClick}
+      >
         <Progress style={{ width: `${progress}%` }} />
         {videoLoaded &&
           messages.map(({ _id, timeStamp, content }) => {
-            const timeInSeconds = unFormatTime(timeStamp);
+            const timeInSeconds = unFormatTime(timeStamp)
             const percent = videoEl?.duration
               ? (timeInSeconds / videoEl.duration) * 100
-              : 0;
+              : 0
 
             return (
               <MarkerWrapper
                 key={_id}
                 style={{ left: `${percent}%` }}
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.stopPropagation()
 
-                  commentStore.getState().setSelectedCommentId(_id);
-                  commentStore.getState().setSelectedTimeStamp(timeStamp);
+                  commentStore.getState().setSelectedCommentId(_id)
+                  commentStore.getState().setSelectedTimeStamp(timeStamp)
 
-                  useVideoStore.getState().setTimeCode(timeInSeconds);
-                  useVideoStore.getState().incrementMarkerTrigger();
+                  useVideoStore.getState().setTimeCode(timeInSeconds)
+                  useVideoStore.getState().incrementMarkerTrigger()
                 }}
               >
                 <Marker />
                 <MarkerMessage>{content}</MarkerMessage>
               </MarkerWrapper>
-            );
+            )
           })}
       </PlayBar>
     </Container>
-  );
-};
+  )
+}
 
 //#region ---- Styling -----
 
@@ -194,13 +210,13 @@ const Container = styled.div`
   position: relative;
   background: white;
   overflow: hidden;
-`;
+`
 
 const StyledVideo = styled.video`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`;
+`
 
 const Controls = styled.div`
   position: absolute;
@@ -211,23 +227,23 @@ const Controls = styled.div`
   align-items: center;
   gap: 16px;
   z-index: 1;
-`;
+`
 
 const VolumeControl = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
 
-  input[type='range'] {
+  input[type="range"] {
     width: 80px;
   }
-`;
+`
 
 const TimeDisplay = styled.div`
   color: white;
   font-size: 14px;
   margin-left: auto;
-`;
+`
 
 const PlayBar = styled.div`
   position: absolute;
@@ -239,14 +255,14 @@ const PlayBar = styled.div`
   border-radius: 4px;
   cursor: pointer;
   z-index: 1;
-`;
+`
 
 const Progress = styled.div`
   height: 100%;
   background: #2196f3;
   border-radius: 4px;
   pointer-events: none;
-`;
+`
 
 const MarkerWrapper = styled.div`
   position: absolute;
@@ -258,7 +274,7 @@ const MarkerWrapper = styled.div`
   &:hover p {
     display: block;
   }
-`;
+`
 
 const Marker = styled.div`
   width: 10px;
@@ -267,7 +283,7 @@ const Marker = styled.div`
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.2s;
-`;
+`
 
 const MarkerMessage = styled.p`
   display: none;
@@ -282,9 +298,9 @@ const MarkerMessage = styled.p`
   border-radius: 10px;
   font-size: 14px;
   z-index: 3;
-  width: max-content; 
-  max-width: 300px; 
-  min-width: 100px; 
+  width: max-content;
+  max-width: 300px;
+  min-width: 100px;
   white-space: normal;
   word-wrap: break-word;
   text-align: center;
@@ -292,6 +308,6 @@ const MarkerMessage = styled.p`
   ${MarkerWrapper}:hover & {
     display: block;
   }
-`;
+`
 
 //#endregion

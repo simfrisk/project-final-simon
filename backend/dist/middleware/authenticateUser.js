@@ -14,14 +14,18 @@ const authenticateUser = async (req, res, next) => {
         }
         const user = await user_1.UserModel.findOne({ accessToken: token });
         if (!user) {
-            return res.status(401).json({ error: "Invalid or expired token", loggedOut: true });
+            return res
+                .status(401)
+                .json({ error: "Invalid or expired token", loggedOut: true });
         }
         req.user = user;
         next();
     }
     catch (err) {
         console.error("Authentication error:", err);
-        res.status(500).json({ error: "Internal server error during authentication" });
+        res
+            .status(500)
+            .json({ error: "Internal server error during authentication" });
     }
 };
 exports.authenticateUser = authenticateUser;

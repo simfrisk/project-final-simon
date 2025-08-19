@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Project } from "../models/Projects";
+import { Request, Response } from "express"
+import { Project } from "../models/Projects"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { Project } from "../models/Projects";
  *     summary: Get projects for a class
  *     tags:
  *       - Projects
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -62,24 +62,29 @@ import { Project } from "../models/Projects";
  *       500:
  *         description: Server error
  */
-export const getProjects = async (req: Request, res: Response): Promise<Response> => {
+export const getProjects = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
-    const { classId } = req.params;
+    const { classId } = req.params
 
     const result = await Project.find({ classId })
-      .select("projectName projectDescription video thumbnail classId projectCreatedBy")
+      .select(
+        "projectName projectDescription video thumbnail classId projectCreatedBy"
+      )
       .populate("projectCreatedBy", "name email profileImage")
 
     return res.status(200).json({
       success: true,
       response: result,
-      message: "Projects fetched successfully"
-    });
+      message: "Projects fetched successfully",
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
-      message: "Failed to fetch projects."
-    });
+      message: "Failed to fetch projects.",
+    })
   }
-};
+}

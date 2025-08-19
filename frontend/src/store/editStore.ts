@@ -1,24 +1,24 @@
-import { create } from 'zustand'
+import { create } from "zustand"
 
 type EditingState = {
   isEditingClass: boolean
   isEditingProject: boolean
   isRemovingClass: boolean
   isRemovingProject: boolean
-  removingProjectId: string | null;
-  removingClassId: string | null;
+  removingProjectId: string | null
+  removingClassId: string | null
 
-  currentClassId: string | null;
+  currentClassId: string | null
 
   setIsEditingClass: (value: boolean) => void
   setIsRemovingProject: (value: boolean) => void
   setIsEditingProject: (value: boolean) => void
   setIsRemovingClass: (value: boolean) => void
 
-  setRemovingProjectId: (id: string | null) => void;
-  setRemovingClassId: (id: string | null) => void;
+  setRemovingProjectId: (id: string | null) => void
+  setRemovingClassId: (id: string | null) => void
 
-  setCurrentClassId: (id: string | null) => void;
+  setCurrentClassId: (id: string | null) => void
 }
 
 export const useEditingStore = create<EditingState>((set) => ({

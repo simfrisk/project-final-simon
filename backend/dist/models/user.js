@@ -10,16 +10,16 @@ const UserSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     role: {
         type: String,
@@ -27,11 +27,11 @@ const UserSchema = new mongoose_1.Schema({
     },
     profileImage: {
         type: String,
-        default: "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png"
+        default: "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png",
     },
     accessToken: {
         type: String,
-        default: () => crypto_1.default.randomBytes(128).toString("hex")
+        default: () => crypto_1.default.randomBytes(128).toString("hex"),
     },
     likedComments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment", default: [] }],
     likedReplies: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Reply", default: [] }],

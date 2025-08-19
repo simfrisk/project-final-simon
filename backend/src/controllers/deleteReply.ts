@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Reply } from "../models/Reply";
+import { Request, Response } from "express"
+import { Reply } from "../models/Reply"
 
 /**
  * @swagger
@@ -9,7 +9,7 @@ import { Reply } from "../models/Reply";
  *     description: Deletes a reply with the specified ID.
  *     tags:
  *       - Replies
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -67,31 +67,31 @@ import { Reply } from "../models/Reply";
  *                   example: Could not delete reply
  */
 export const deleteReply = async (req: Request, res: Response) => {
-  const { replyId } = req.params;
+  const { replyId } = req.params
 
   try {
-    const reply = await Reply.findById(replyId);
+    const reply = await Reply.findById(replyId)
 
     if (!reply) {
       return res.status(404).json({
         success: false,
         response: null,
-        message: "Reply could not be found"
-      });
+        message: "Reply could not be found",
+      })
     }
 
-    await reply.deleteOne();
+    await reply.deleteOne()
 
     return res.status(200).json({
       success: true,
       response: reply,
-      message: "The reply was deleted"
-    });
+      message: "The reply was deleted",
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: error,
-      message: "Could not delete reply"
-    });
+      message: "Could not delete reply",
+    })
   }
-};
+}

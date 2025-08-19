@@ -1,17 +1,17 @@
-import styled from "styled-components";
+import styled from "styled-components"
 
 interface CommentCardFooterProps {
-  _id: string;
-  likesCount?: number;
-  user: { role?: string; userId?: string } | null;
-  commentCreatedBy?: { role?: string; _id?: string };
-  editingCommentId: string | null;
-  setEditingCommentId: (id: string | null) => void;
-  setEditedContent: (content: string) => void;
-  content: string;
-  deleteComment: (id: string) => void;
-  toggleLike: (id: string) => void;
-  setReplyToCommentId: (id: string) => void;
+  _id: string
+  likesCount?: number
+  user: { role?: string; userId?: string } | null
+  commentCreatedBy?: { role?: string; _id?: string }
+  editingCommentId: string | null
+  setEditingCommentId: (id: string | null) => void
+  setEditedContent: (content: string) => void
+  content: string
+  deleteComment: (id: string) => void
+  toggleLike: (id: string) => void
+  setReplyToCommentId: (id: string) => void
 }
 
 export const CommentCardFooter = ({
@@ -30,22 +30,27 @@ export const CommentCardFooter = ({
   return (
     <Container>
       <ReactionGroup>
-        <ActionButton onClick={() => setReplyToCommentId(_id)}>Reply</ActionButton>
+        <ActionButton onClick={() => setReplyToCommentId(_id)}>
+          Reply
+        </ActionButton>
         <ActionButtonIcon onClick={() => toggleLike(_id)}>
-          <img src="/icons/like.svg" alt="Like button" />
+          <img
+            src="/icons/like.svg"
+            alt="Like button"
+          />
           <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
         </ActionButtonIcon>
       </ReactionGroup>
 
-      {(user?.role === 'teacher' || user?.userId === commentCreatedBy?._id) && (
+      {(user?.role === "teacher" || user?.userId === commentCreatedBy?._id) && (
         <Edit>
           {editingCommentId !== _id && (
             <img
               src="/icons/edit.svg"
               alt="Edit Icon"
               onClick={() => {
-                setEditingCommentId(_id);
-                setEditedContent(content);
+                setEditingCommentId(_id)
+                setEditedContent(content)
               }}
             />
           )}
@@ -57,19 +62,19 @@ export const CommentCardFooter = ({
         </Edit>
       )}
     </Container>
-  );
-};
+  )
+}
 
 const ReactionGroup = styled.div`
   display: flex;
   column-gap: 10px;
-`;
+`
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-`;
+`
 
 const ActionButton = styled.button`
   background: none;
@@ -77,19 +82,19 @@ const ActionButton = styled.button`
   padding: 0;
   cursor: pointer;
   transition: ease 0.3s;
-  color: ${({theme}) => theme.colors.textAlternative};
+  color: ${({ theme }) => theme.colors.textAlternative};
 
   &:hover {
     text-decoration: underline;
     transform: scale(0.95);
   }
-`;
+`
 
 const LikeCount = styled.p<{ $count: number }>`
-  visibility: ${({ $count }) => ($count > 0 ? 'inline-block' : 'hidden')};
+  visibility: ${({ $count }) => ($count > 0 ? "inline-block" : "hidden")};
   font-size: 20px;
   margin: 0;
-`;
+`
 
 const ActionButtonIcon = styled.button`
   display: flex;
@@ -104,12 +109,12 @@ const ActionButtonIcon = styled.button`
 
   img {
     filter: ${({ theme }) => theme.filter.inverted};
-    }
+  }
 
   img:hover {
     transform: scale(0.9);
   }
-`;
+`
 
 export const Edit = styled.div`
   opacity: 0;
@@ -122,14 +127,17 @@ export const Edit = styled.div`
   margin: 0 20px 0 0;
   cursor: pointer;
   transform: translateY(30%);
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease;
 
   img {
-  filter: ${({ theme }) => theme.filter.inverted};
+    filter: ${({ theme }) => theme.filter.inverted};
   }
 
   img:hover {
     transition: ease 0.3s;
     transform: scale(0.9);
   }
-`;
+`

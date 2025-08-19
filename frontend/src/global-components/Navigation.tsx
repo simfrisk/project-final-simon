@@ -1,32 +1,32 @@
-import styled from "styled-components";
-import { HamburgerMenu } from "../sections/01-lading-page/components/nav/components/Burger";
-import { useUserStore } from "../store/userStore";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { MediaQueries } from "../themes/mediaQueries";
-import { useThemeStore } from "../store/themeStore";
+import styled from "styled-components"
+import { HamburgerMenu } from "../sections/01-lading-page/components/nav/components/Burger"
+import { useUserStore } from "../store/userStore"
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { MediaQueries } from "../themes/mediaQueries"
+import { useThemeStore } from "../store/themeStore"
 
 interface MenuProps {
-  $isOpen: boolean;
+  $isOpen: boolean
 }
 
 export const Navigation = () => {
-  const user = useUserStore((state) => state.user);
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-  const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const toggleTheme = useThemeStore((state) => state.toggleTheme);
-  const logout = useUserStore((state) => state.logout);
+  const user = useUserStore((state) => state.user)
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
+  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const logout = useUserStore((state) => state.logout)
 
   const handleLogout = (): void => {
-    logout();
-    navigate("/");
-    setIsMenuOpen(false);
-  };
+    logout()
+    navigate("/")
+    setIsMenuOpen(false)
+  }
 
   const toggleMenu = (): void => {
-    setIsMenuOpen((prev) => !prev);
-  };
+    setIsMenuOpen((prev) => !prev)
+  }
 
   return (
     <Container>
@@ -36,42 +36,59 @@ export const Navigation = () => {
       </StyledLink>
 
       <DesktopMenu>
-        <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
+        <ToggleThemeButton onClick={toggleTheme}>
+          Toggle Theme
+        </ToggleThemeButton>
 
         {user?.role === "teacher" && (
           <StyledNavLink to="/teachersPage">Teachers Dashboard</StyledNavLink>
         )}
 
         {isLoggedIn ? (
-           <>
-              <StyledNavLink to="/library">Library</StyledNavLink>
-                <ImageContainer>
-                  <img src={user?.profileImage} />
-                </ImageContainer>
-              <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-            </>
+          <>
+            <StyledNavLink to="/library">Library</StyledNavLink>
+            <ImageContainer>
+              <img src={user?.profileImage} />
+            </ImageContainer>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+          </>
         ) : (
-          <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
+          <StyledNavLink
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Login
+          </StyledNavLink>
         )}
       </DesktopMenu>
 
-      <HamburgerWrapper $isOpen={isMenuOpen} onClick={toggleMenu}>
-        {isLoggedIn &&(
+      <HamburgerWrapper
+        $isOpen={isMenuOpen}
+        onClick={toggleMenu}
+      >
+        {isLoggedIn && (
           <ImageContainer>
             <img src={user?.profileImage} />
           </ImageContainer>
-          )}
-          <HamburgerMenu />
+        )}
+        <HamburgerMenu />
       </HamburgerWrapper>
 
       <MobileMenu $isOpen={isMenuOpen}>
-        
-        <StyledNavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</StyledNavLink>
-
-       {user?.role === "teacher" && (
-        <StyledNavLink to="/teachersPage" onClick={() => setIsMenuOpen(false)}>
-          Teacher Dashboard
+        <StyledNavLink
+          to="/"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          Home
         </StyledNavLink>
+
+        {user?.role === "teacher" && (
+          <StyledNavLink
+            to="/teachersPage"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Teacher Dashboard
+          </StyledNavLink>
         )}
 
         {isLoggedIn ? (
@@ -79,17 +96,22 @@ export const Navigation = () => {
             <StyledNavLink to="/library">Library</StyledNavLink>
             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           </>
-        ) : ( 
-            <StyledNavLink to="/login" onClick={() => setIsMenuOpen(false)}>Login</StyledNavLink>
-         
+        ) : (
+          <StyledNavLink
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Login
+          </StyledNavLink>
         )}
 
-
-        <ToggleThemeButton onClick={toggleTheme}>Toggle Theme</ToggleThemeButton>
+        <ToggleThemeButton onClick={toggleTheme}>
+          Toggle Theme
+        </ToggleThemeButton>
       </MobileMenu>
     </Container>
-  );
-};
+  )
+}
 
 const Container = styled.nav`
   background-color: ${({ theme }) => theme.colors.primary};
@@ -107,7 +129,7 @@ const Container = styled.nav`
   @media ${MediaQueries.biggerSizes} {
     height: 60px;
   }
-`;
+`
 
 const StyledLink = styled(Link)`
   display: flex;
@@ -125,7 +147,7 @@ const StyledLink = styled(Link)`
     font-size: 12px;
     transform: translateY(2px);
   }
-`;
+`
 
 const StyledNavLink = styled(Link)`
   display: inline-flex;
@@ -145,7 +167,7 @@ const StyledNavLink = styled(Link)`
   @media ${MediaQueries.biggerSizes} {
     padding: 0 20px;
   }
-`;
+`
 
 const LogoutButton = styled.button`
   display: inline-flex;
@@ -158,11 +180,11 @@ const LogoutButton = styled.button`
   transition: ease 0.3s;
   padding: 0;
   font-family: inherit; /* to match link font */
-  
+
   &:hover {
     transform: scale(0.94);
   }
-`;
+`
 
 const DesktopMenu = styled.div`
   display: none;
@@ -172,7 +194,7 @@ const DesktopMenu = styled.div`
   @media ${MediaQueries.biggerSizes} {
     display: flex;
   }
-`;
+`
 
 const HamburgerWrapper = styled.div<MenuProps>`
   display: flex;
@@ -183,7 +205,7 @@ const HamburgerWrapper = styled.div<MenuProps>`
   @media ${MediaQueries.biggerSizes} {
     display: none;
   }
-`;
+`
 
 const ImageContainer = styled.div`
   flex-shrink: 0;
@@ -192,12 +214,12 @@ const ImageContainer = styled.div`
   border-radius: 50px;
   overflow: hidden;
 
-  img { 
+  img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-`;
+`
 
 const MobileMenu = styled.div<MenuProps>`
   display: flex;
@@ -213,10 +235,13 @@ const MobileMenu = styled.div<MenuProps>`
   padding-left: 30px;
   z-index: 10;
 
-  transition: transform 0.3s ease, opacity 0.5s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.5s ease;
   overflow: hidden;
 
-    transform: ${({ $isOpen }) => ($isOpen ? "translateY(0)" : "translateY(-100%)")};
+  transform: ${({ $isOpen }) =>
+    $isOpen ? "translateY(0)" : "translateY(-100%)"};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
 
@@ -224,10 +249,11 @@ const MobileMenu = styled.div<MenuProps>`
     display: none;
   }
 
-  a, button {
+  a,
+  button {
     margin-bottom: 10px;
   }
-`;
+`
 
 const ToggleThemeButton = styled.button`
   position: fixed;
@@ -253,6 +279,5 @@ const ToggleThemeButton = styled.button`
     color: white;
     font-size: 18px;
     font-weight: normal;
-    
   }
-`;
+`

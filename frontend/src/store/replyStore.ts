@@ -1,45 +1,45 @@
 //#region ----- IMPORTS -----
-import { create } from "zustand";
-import type { ReplyType as BaseReplyType } from "./commentStore";
-import { getToken } from "../utils/token";
-import { baseUrl } from "../config/api";
+import { create } from "zustand"
+import type { ReplyType as BaseReplyType } from "./commentStore"
+import { getToken } from "../utils/token"
+import { baseUrl } from "../config/api"
 
 //#endregion ----- UPDATE REPLY -----
 
 //#region ----- INTERFACES -----
 export interface ReplyType extends BaseReplyType {
-  likesCount?: number; // Added to track likes on replies
+  likesCount?: number // Added to track likes on replies
 }
 
 interface ReplyInput {
-  content: string;
-  commentId: string;
-  projectId?: string;
+  content: string
+  commentId: string
+  projectId?: string
 }
 
 interface UpdateReplyInput {
-  replyId: string;
-  content: string;
+  replyId: string
+  content: string
 }
 
 interface ReplyStore {
-  replies: ReplyType[];
-  addReply: (reply: ReplyInput) => Promise<void>;
-  updateReply: (update: UpdateReplyInput) => Promise<void>;
+  replies: ReplyType[]
+  addReply: (reply: ReplyInput) => Promise<void>
+  updateReply: (update: UpdateReplyInput) => Promise<void>
 }
 
-//#endregion 
+//#endregion
 
 //#region ----- ZUSTAND REPLY STORE -----
 export const replyStore = create<ReplyStore>((set) => ({
   replies: [],
 
-  //#endregion 
+  //#endregion
 
   //#region ----- ADD REPLY -----
   addReply: async (reply) => {
     try {
-      const token = getToken();
+      const token = getToken()
 
       console.log(reply.commentId)
 
@@ -53,11 +53,11 @@ export const replyStore = create<ReplyStore>((set) => ({
           },
           body: JSON.stringify({ content: reply.content }),
         }
-      );
+      )
 
-      if (!response.ok) throw new Error("Failed to post reply");
+      if (!response.ok) throw new Error("Failed to post reply")
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success && data.response) {
         const newReply: ReplyType = {
@@ -72,16 +72,16 @@ export const replyStore = create<ReplyStore>((set) => ({
             role: data.response.replyCreatedBy?.role,
           },
           likesCount: data.response.likes?.length || 0,
-        };
+        }
 
         set((state) => ({
           replies: [...state.replies, newReply],
-        }));
+        }))
       } else {
-        console.error("Post failed:", data.message || "No reply returned");
+        console.error("Post failed:", data.message || "No reply returned")
       }
     } catch (err: any) {
-      console.error("Error posting reply:", err.message || "Unknown error");
+      console.error("Error posting reply:", err.message || "Unknown error")
     }
   },
 
@@ -90,23 +90,20 @@ export const replyStore = create<ReplyStore>((set) => ({
   //#region ----- UPDATE REPLY -----
   updateReply: async ({ replyId, content }) => {
     try {
-      const token = getToken();
+      const token = getToken()
 
-      const response = await fetch(
-        `${baseUrl}/replies/${replyId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: token } : {}),
-          },
-          body: JSON.stringify({ content }),
-        }
-      );
+      const response = await fetch(`${baseUrl}/replies/${replyId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: token } : {}),
+        },
+        body: JSON.stringify({ content }),
+      })
 
-      if (!response.ok) throw new Error("Failed to update reply");
+      if (!response.ok) throw new Error("Failed to update reply")
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.success && data.response) {
         set((state) => ({
@@ -115,14 +112,14 @@ export const replyStore = create<ReplyStore>((set) => ({
               ? { ...reply, content: data.response.content }
               : reply
           ),
-        }));
+        }))
       } else {
-        console.error("Update failed:", data.message || "No reply returned");
+        console.error("Update failed:", data.message || "No reply returned")
       }
     } catch (err: any) {
-      console.error("Error updating reply:", err.message || "Unknown error");
+      console.error("Error updating reply:", err.message || "Unknown error")
     }
   },
 
   //#endregion
-}));
+}))

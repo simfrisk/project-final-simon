@@ -1,21 +1,24 @@
 // AFeatureCard.tsx
-import styled from "styled-components";
-import { spacing } from "../../../../themes/spacing";
+import styled from "styled-components"
+import { spacing } from "../../../../themes/spacing"
 
 type AFeatureCardProps = {
-  title: string;
-};
+  title: string
+}
 
 export const AFeatureCard = ({ title }: AFeatureCardProps) => {
   return (
     <ButtonContainer>
       <div>
         <strong>{title}</strong>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quidem nam temporibus minima.</p>
+        <p>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quidem nam
+          temporibus minima.
+        </p>
       </div>
     </ButtonContainer>
-  );
-};
+  )
+}
 
 const ButtonContainer = styled.button`
   color: ${({ theme }) => theme.colors.text};
@@ -35,4 +38,4 @@ const ButtonContainer = styled.button`
     color: ${({ theme }) => theme.colors.textAlternative};
     margin-top: ${spacing.xs};
   }
-`;
+`

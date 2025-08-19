@@ -99,8 +99,8 @@ const postLike = async (req, res) => {
         const hasLiked = comment.likes.includes(user._id);
         if (hasLiked) {
             // Unlike
-            comment.likes = comment.likes.filter(id => id.toString() !== user._id.toString());
-            user.likedComments = user.likedComments.filter(id => id.toString() !== comment._id.toString());
+            comment.likes = comment.likes.filter((id) => id.toString() !== user._id.toString());
+            user.likedComments = user.likedComments.filter((id) => id.toString() !== comment._id.toString());
         }
         else {
             // Like

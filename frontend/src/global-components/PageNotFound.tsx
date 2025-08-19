@@ -1,17 +1,19 @@
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import styled from "styled-components"
+import { Link } from "react-router-dom"
 
-export const PageNotFound = () =>  {
+export const PageNotFound = () => {
   return (
     <Container>
       <Content>
         <Icon>👻</Icon>
         <Title>Page Not Found</Title>
-        <Message>The page you're looking for doesn't exist or has been moved.</Message>
+        <Message>
+          The page you're looking for doesn't exist or has been moved.
+        </Message>
         <HomeButton to="/">Go Home</HomeButton>
       </Content>
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
@@ -21,29 +23,29 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   padding: 2rem;
-`;
+`
 
 const Content = styled.div`
   text-align: center;
   max-width: 400px;
-`;
+`
 
 const Icon = styled.div`
   font-size: 4rem;
   color: #9ca3af;
   margin-bottom: 1rem;
-`;
+`
 
 const Title = styled.h1`
   font-size: 2.5rem;
   color: #1f2937;
   margin-bottom: 0.5rem;
-`;
+`
 
 const Message = styled.p`
   color: #6b7280;
   margin-bottom: 1.5rem;
-`;
+`
 
 const HomeButton = styled(Link)`
   display: inline-block;
@@ -58,4 +60,4 @@ const HomeButton = styled(Link)`
   &:hover {
     background-color: #374151;
   }
-`;
+`

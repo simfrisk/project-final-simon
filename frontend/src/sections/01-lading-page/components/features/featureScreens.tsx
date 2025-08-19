@@ -1,9 +1,9 @@
-import { AFeatureScreen } from "./aFeatureScreen";
+import { AFeatureScreen } from "./aFeatureScreen"
 
 export const FeatureScreens = () => {
   return (
     <>
-    <AFeatureScreen />
+      <AFeatureScreen />
     </>
   )
-};
+}

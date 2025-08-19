@@ -1,32 +1,34 @@
-import { useEffect, useState } from 'react';
-import type { RefObject } from 'react';
+import { useEffect, useState } from "react"
+import type { RefObject } from "react"
 
-export const useVideoProgress = (videoRef: RefObject<HTMLVideoElement | null>) => {
-  const [progress, setProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+export const useVideoProgress = (
+  videoRef: RefObject<HTMLVideoElement | null>
+) => {
+  const [progress, setProgress] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const video = videoRef.current
+    if (!video) return
 
     const updateProgress = () => {
-      setProgress((video.currentTime / video.duration) * 100);
-    };
+      setProgress((video.currentTime / video.duration) * 100)
+    }
 
     const updatePlayState = () => {
-      setIsPlaying(!video.paused);
-    };
+      setIsPlaying(!video.paused)
+    }
 
-    video.addEventListener('timeupdate', updateProgress);
-    video.addEventListener('play', updatePlayState);
-    video.addEventListener('pause', updatePlayState);
+    video.addEventListener("timeupdate", updateProgress)
+    video.addEventListener("play", updatePlayState)
+    video.addEventListener("pause", updatePlayState)
 
     return () => {
-      video.removeEventListener('timeupdate', updateProgress);
-      video.removeEventListener('play', updatePlayState);
-      video.removeEventListener('pause', updatePlayState);
-    };
-  }, [videoRef]);
+      video.removeEventListener("timeupdate", updateProgress)
+      video.removeEventListener("play", updatePlayState)
+      video.removeEventListener("pause", updatePlayState)
+    }
+  }, [videoRef])
 
-  return { progress, isPlaying };
-};
+  return { progress, isPlaying }
+}

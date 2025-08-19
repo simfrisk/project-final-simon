@@ -1,5 +1,5 @@
-import { Project } from "../models/Projects";
-import { Request, Response } from "express";
+import { Project } from "../models/Projects"
+import { Request, Response } from "express"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { Request, Response } from "express";
  *     summary: Get a project by ID
  *     tags:
  *       - Projects
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -96,14 +96,16 @@ import { Request, Response } from "express";
  *                   type: string
  *                   example: "Project could not be found"
  */
-export const getProjectById = async (req: Request, res: Response): Promise<Response> => {
-
+export const getProjectById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { projectId } = req.params
 
   try {
     const project = await Project.findById(projectId)
       .select("projectName projectDescription video classId projectCreatedBy")
-      .populate("projectCreatedBy", "name email profileImage");
+      .populate("projectCreatedBy", "name email profileImage")
     if (!project) {
       return res.status(404).json({
         success: false,
@@ -111,19 +113,18 @@ export const getProjectById = async (req: Request, res: Response): Promise<Respo
         message: "Project was not found",
       })
     }
-    const { _id, projectName, projectDescription, video, classId } = project;
+    const { _id, projectName, projectDescription, video, classId } = project
 
     return res.status(200).json({
       success: true,
       response: { _id, projectName, projectDescription, video, classId },
       message: "Project found",
-    });
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: error,
-      message: "Project could not be found"
+      message: "Project could not be found",
     })
   }
-
 }

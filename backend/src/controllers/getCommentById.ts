@@ -1,5 +1,5 @@
-import { CommentModel } from "../models/Comment";
-import { Request, Response } from "express";
+import { CommentModel } from "../models/Comment"
+import { Request, Response } from "express"
 
 /**
  * @swagger
@@ -8,7 +8,7 @@ import { Request, Response } from "express";
  *     summary: Get a comment by its ID
  *     tags:
  *       - Comments
- *     security:                   
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -90,29 +90,35 @@ import { Request, Response } from "express";
  *                   type: string
  *                   example: "Comment could not be fetched"
  */
-export const getCommentById = async (req: Request, res: Response): Promise<Response> => {
-  const { commentId } = req.params;
+export const getCommentById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { commentId } = req.params
 
   try {
-    const comment = await CommentModel.findById({ commentId, commentType: "question" });
+    const comment = await CommentModel.findById({
+      commentId,
+      commentType: "question",
+    })
     if (!comment) {
       return res.status(404).json({
         success: false,
         response: null,
         message: "Comment was not found",
-      });
+      })
     }
 
     return res.status(200).json({
       success: true,
       response: comment,
       message: "Comment found",
-    });
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: error,
       message: "Comment could not be fetched",
-    });
+    })
   }
-};
+}
