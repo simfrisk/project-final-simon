@@ -120,7 +120,7 @@ export const useUserStore = create<UserStore>((set) => ({
   //#region ----- CREATE USER -----
   createUser: async (formData: FormData) => {
     try {
-      const res = await fetch(`${baseUrl}/user`, {
+      const res = await fetch(`${baseUrl}/users`, {
         method: "POST",
         body: formData, // No need to set headers manually for FormData
       })

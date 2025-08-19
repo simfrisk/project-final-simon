@@ -74,7 +74,7 @@ router.post(
 )
 router.post("/projects/:projectId/comments", authenticateUser, postCommentById)
 router.post("/comments/:commentId/replies", authenticateUser, postReplyById)
-router.post("/user", uploadImage.single("image"), postUser)
+router.post("/users", uploadImage.single("image"), postUser)
 router.post("/comments/:commentId/likes", authenticateUser, postLike)
 router.post("/replies/:replyId/likes", authenticateUser, postReplyLike)
 router.post("/session", postSession)
@@ -95,6 +95,6 @@ router.delete("/classes/:classId", authenticateUser, deleteClass)
 router.delete("/projects/:projectId", authenticateUser, deleteProject)
 router.delete("/comments/:commentId", authenticateUser, deleteComment)
 router.delete("/replies/:replyId", authenticateUser, deleteReply)
-router.delete("/user/:userId", authenticateUser, deleteUser)
+router.delete("/users/:userId", authenticateUser, deleteUser)
 
 export default router
