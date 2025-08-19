@@ -61,11 +61,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     })
   }
 
-  const PLACEHOLDER_USER = {
-    _id: null,
-    name: "Deleted User",
-    role: "student",
-  }
+  // <-- Use the actual placeholder user ID from your DB
+  const PLACEHOLDER_USER_ID = new mongoose.Types.ObjectId(
+    "68a45fbaca5d5d29fe782190"
+  )
 
   const session = await mongoose.startSession()
   session.startTransaction()
@@ -84,13 +83,13 @@ export const deleteUser = async (req: Request, res: Response) => {
     // Reassign comments
     await CommentModel.updateMany(
       { commentCreatedBy: user._id },
-      { $set: { commentCreatedBy: PLACEHOLDER_USER } }
+      { $set: { commentCreatedBy: PLACEHOLDER_USER_ID } }
     ).session(session)
 
     // Reassign replies
     await Reply.updateMany(
       { replyCreatedBy: user._id },
-      { $set: { replyCreatedBy: PLACEHOLDER_USER } }
+      { $set: { replyCreatedBy: PLACEHOLDER_USER_ID } }
     ).session(session)
 
     // Delete the user
@@ -110,7 +109,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(400).json({
       success: false,
       message: "Could not delete user",
-      errors: error,
+      errors: error instanceof Error ? error.message : error,
     })
   }
 }
