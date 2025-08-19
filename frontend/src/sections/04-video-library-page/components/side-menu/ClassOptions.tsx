@@ -52,6 +52,7 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
     if (!classId) return
     await updateClass(classId, { newTitle: newName })
     setIsEditing(false)
+    setIsRemovingClass(false)
   }
 
   console.log(classId)

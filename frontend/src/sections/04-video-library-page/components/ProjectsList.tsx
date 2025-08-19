@@ -109,6 +109,25 @@ export const ProjectsList = () => {
 
   if (error) return <p>Error: {error}</p>
 
+  //If there are not projects
+  if (!loading && projects.length === 0) {
+    return (
+      <Container>
+        <HeaderWrapper>
+          <ClassTitle>
+            {currentClass?.classTitle ?? "Loading class title..."}
+          </ClassTitle>
+        </HeaderWrapper>
+        <NoProjectsContainer>
+          <NoProjectsMessage>
+            You have no projects in this class...
+          </NoProjectsMessage>
+        </NoProjectsContainer>
+      </Container>
+    )
+  }
+
+  //Main return
   return (
     <Container>
       <HeaderWrapper>
@@ -367,4 +386,17 @@ const CreateWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
+`
+
+const NoProjectsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  margin: 30px 0;
+`
+
+const NoProjectsMessage = styled.h3`
+  color: ${({ theme }) => theme.colors.text};
 `

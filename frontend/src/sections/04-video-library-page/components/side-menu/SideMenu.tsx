@@ -74,9 +74,11 @@ export const SideMenu = () => {
                 $active={isActive}
               >
                 {cls.classTitle}
-                <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>
-                  &#8942;
-                </MoreInfo>
+                {userRole === "teacher" && (
+                  <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>
+                    &#8942;
+                  </MoreInfo>
+                )}
               </Class>
             )
           })}
