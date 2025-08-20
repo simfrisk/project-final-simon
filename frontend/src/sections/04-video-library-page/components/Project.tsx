@@ -1,3 +1,4 @@
+//#region ----- IMPORTS -----
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import type { ProjectType } from "../../../store/projectStore"
@@ -5,6 +6,9 @@ import { useEditingStore } from "../../../store/editStore"
 import { useProjectStore } from "../../../store/projectStore"
 import { useState } from "react"
 
+//#endregion
+
+//#region ----- INTERFACES -----
 interface ProjectProps
   extends Pick<
     ProjectType,
@@ -18,6 +22,9 @@ interface ProjectProps
   } | null
 }
 
+//#endregion
+
+//#region ----- COMPONENT LOGIC -----
 export const Project = ({
   projectId,
   projectName,
@@ -59,43 +66,66 @@ export const Project = ({
     })
   }
 
-  const handleShowDelete = (e: React.MouseEvent<HTMLImageElement>) => {
+  const handleShowDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
     setIsRemovingProject(true)
     setRemovingProjectId(projectId)
   }
 
+  //#endregion
+
+  //#region ----- RENDERED UI -----
   return (
     <>
-      <Card onClick={() => navigate(`/review/${projectId}`)}>
+      <Card
+        role="button"
+        tabIndex={0}
+        aria-label={`View project ${projectName}`}
+        onClick={() => navigate(`/review/${projectId}`)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            navigate(`/review/${projectId}`)
+          }
+        }}
+      >
         <Thumbnail
           src={thumbnail || "/fallback-thumbnail.jpg"}
-          alt="Thumbnail"
+          alt={`Thumbnail for project ${projectName}`}
         />
 
         <TextContainer>
-          <h3>{projectName}</h3>
-          <p>{projectDescription}</p>
+          <h3 title={projectName}>{projectName}</h3>
+          <p title={projectDescription}>{projectDescription}</p>
         </TextContainer>
 
         <CardFooter>
           <p>{projectCreatedBy?.name || "Unknown"}</p>
 
           <Edit>
-            <img
-              src="/icons/edit.svg"
-              alt="Edit Icon"
+            <button
+              aria-label={`Edit project ${projectName}`}
               onClick={(e) => {
                 e.stopPropagation()
                 setIsEditing(true)
               }}
-            />
-            <img
-              src="/icons/delete.svg"
-              alt="Delete Icon"
+            >
+              <img
+                src="/icons/edit.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+            <button
+              aria-label={`Delete project ${projectName}`}
               onClick={handleShowDelete}
-            />
+            >
+              <img
+                src="/icons/delete.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
           </Edit>
 
           <p>Duration: 12:23</p>
@@ -103,15 +133,23 @@ export const Project = ({
       </Card>
 
       {isEditing && (
-        <TransparentBackground onClick={() => setIsEditing(false)}>
+        <TransparentBackground
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-project-title"
+          onClick={() => setIsEditing(false)}
+        >
           <CreateWrapper onClick={(e) => e.stopPropagation()}>
             <form onSubmit={handleUpdate}>
+              <h2 id="edit-project-title">Edit Project</h2>
+
               <label htmlFor="newName">New Name</label>
               <input
                 id="newName"
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
+                aria-required="false"
               />
 
               <label htmlFor="newDescription">New Description</label>
@@ -119,9 +157,10 @@ export const Project = ({
                 id="newDescription"
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
+                aria-required="false"
               />
 
-              <ErrorMessage>{errorMesage}</ErrorMessage>
+              <ErrorMessage role="alert">{errorMesage}</ErrorMessage>
 
               <button type="submit">Update Project</button>
             </form>
@@ -132,6 +171,9 @@ export const Project = ({
   )
 }
 
+//#endregion
+
+//#region ----- STYLED COMPOENTNS -----
 const Edit = styled.div`
   opacity: 0;
   visibility: hidden;
@@ -139,22 +181,42 @@ const Edit = styled.div`
   column-gap: 10px;
   align-items: center;
   justify-content: center;
-  width: 40px;
   margin: 0 20px 0 0;
-  cursor: pointer;
   transform: translatey(30%);
   transition:
     opacity 0.3s ease,
     visibility 0s linear 0.3s,
     transform 0.3s ease;
 
-  img {
-    filter: ${({ theme }) => theme.filter.inverted};
-  }
+  button {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.8
+    ); /* semi-transparent background */
+    border: none;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease;
 
-  img:hover {
-    transition: ease 0.3s;
-    transform: scale(0.8);
+    &:hover,
+    &:focus {
+      background-color: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+    }
+
+    img {
+      filter: ${({ theme }) => theme.filter.inverted};
+      width: 20px;
+      height: 20px;
+    }
   }
 `
 
@@ -278,3 +340,5 @@ const ErrorMessage = styled.p`
   font-weight: bold;
   padding-left: 4px;
 `
+
+//#endregion

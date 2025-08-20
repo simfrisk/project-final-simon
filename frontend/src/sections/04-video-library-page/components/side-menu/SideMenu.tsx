@@ -1,13 +1,15 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import { useEffect } from "react"
 import { useClassStore } from "../../../../store/classStore"
 import { MediaQueries } from "../../../../themes/mediaQueries"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { useEditingStore } from "../../../../store/editStore"
-import { useNavigate, useParams } from "react-router-dom"
 import { useUserStore } from "../../../../store/userStore"
 import { ClassOptions } from "./ClassOptions"
+//#endregion
 
+//#region ----- COMPONENT LOGIC -----
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
@@ -27,12 +29,12 @@ export const SideMenu = () => {
   const user = useUserStore((state) => state.user)
   const userRole = user?.role
 
+  const { classId } = useParams()
+  const navigate = useNavigate()
+
   useEffect(() => {
     fetchClasses()
   }, [fetchClasses])
-
-  const { classId } = useParams()
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (!classId && classes.length > 0) {
@@ -40,16 +42,11 @@ export const SideMenu = () => {
     }
   }, [classId, classes, navigate])
 
-  const handleEditClass = async () => {
-    setIsEditingClass(true)
-  }
+  const handleEditClass = () => setIsEditingClass(true)
+  const handleEditProject = () => setIsEditingProject(true)
 
-  const handleEditProject = async () => {
-    setIsEditingProject(true)
-  }
-
-  const handelMoreInfo = (
-    e: React.MouseEvent<HTMLParagraphElement>,
+  const handleMoreInfo = (
+    e: React.MouseEvent<HTMLButtonElement>,
     classId: string
   ) => {
     e.stopPropagation()
@@ -58,9 +55,15 @@ export const SideMenu = () => {
     setRemovingClassId(classId)
   }
 
+  //#endregion
+
+  //#region ----- RENDERED UI -----
   return (
-    <Container>
-      <TopSection>
+    <Container
+      role="navigation"
+      aria-label="Class Side Menu"
+    >
+      <TopSection aria-label="Class List">
         <h3>Classes</h3>
         <ProjectWrapper>
           {classes.map((cls) => {
@@ -72,10 +75,17 @@ export const SideMenu = () => {
                 to={to}
                 key={cls._id}
                 $active={isActive}
+                aria-current={isActive ? "page" : undefined}
               >
-                {cls.classTitle}
+                <span>{cls.classTitle}</span>
                 {userRole === "teacher" && (
-                  <MoreInfo onClick={(e) => handelMoreInfo(e, cls._id)}>
+                  <MoreInfo
+                    onClick={(e) => handleMoreInfo(e, cls._id)}
+                    aria-label={`More options for class ${cls.classTitle}`}
+                    aria-haspopup="true"
+                    role="button"
+                    tabIndex={0}
+                  >
                     &#8942;
                   </MoreInfo>
                 )}
@@ -85,21 +95,22 @@ export const SideMenu = () => {
         </ProjectWrapper>
       </TopSection>
 
-      {/* This updates the class and Deletes class */}
       {isRemovingClass && <ClassOptions classId={removingClassId || ""} />}
 
       {userRole === "teacher" && (
-        <BottomSection>
+        <BottomSection aria-label="Class Actions">
           <FormContainer>
             <StyledButton
               type="button"
               onClick={handleEditClass}
+              aria-label="Add new class"
             >
               + Class
             </StyledButton>
             <StyledButton
               type="button"
               onClick={handleEditProject}
+              aria-label="Add new project"
             >
               + Project
             </StyledButton>
@@ -109,9 +120,9 @@ export const SideMenu = () => {
     </Container>
   )
 }
+//#endregion
 
-// Styled Components
-
+//#region ----- STYLED COMPONENTS -----
 const Container = styled.section`
   display: flex;
   flex-direction: column;
@@ -227,3 +238,4 @@ const FormContainer = styled.div`
     width: 100%;
   }
 `
+//#endregion

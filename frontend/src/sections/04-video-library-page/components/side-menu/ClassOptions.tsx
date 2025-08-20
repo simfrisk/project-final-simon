@@ -1,13 +1,22 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import { useEditingStore } from "../../../../store/editStore"
 import { useClassStore } from "../../../../store/classStore"
 import { ConfirmBox } from "../../../../global-components/ComfirmBox"
 import { useState } from "react"
+//#endregion
 
+//#region ----- TYPES -----
 interface ClassOptionsProps {
   classId: string
 }
 
+interface StyledButtonProps {
+  $danger?: boolean
+}
+//#endregion
+
+//#region ----- COMPONENT LOGIC -----
 export const ClassOptions = ({ classId }: ClassOptionsProps) => {
   const removingClassId = useEditingStore((state) => state.removingClassId)
   const setIsRemovingClass = useEditingStore(
@@ -17,17 +26,17 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
   const updateClass = useClassStore((state) => state.updateClass)
 
   const [showConfirm, setShowConfirm] = useState(false)
-  const [showOptions, setshowOptions] = useState(true)
+  const [showOptions, setShowOptions] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [newName, setNewName] = useState("")
 
   const handleDeleteClick = () => {
     setShowConfirm(true)
-    setshowOptions(false)
+    setShowOptions(false)
   }
 
   const handleConfirmDelete = () => {
-    if (removingClassId) {
-      deleteClass(removingClassId)
-    }
+    if (removingClassId) deleteClass(removingClassId)
     setIsRemovingClass(false)
     setShowConfirm(false)
   }
@@ -37,14 +46,10 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
     setShowConfirm(false)
   }
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [newName, setNewName] = useState("")
-
-  const handleUpdating = async (e: React.FormEvent) => {
+  const handleUpdating = (e: React.FormEvent) => {
     e.preventDefault()
-    e.stopPropagation()
     setIsEditing(true)
-    setshowOptions(false)
+    setShowOptions(false)
   }
 
   const handleSubmitUpdate = async (e: React.FormEvent) => {
@@ -54,36 +59,63 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
     setIsEditing(false)
     setIsRemovingClass(false)
   }
+  //#endregion
 
-  console.log(classId)
-
+  //#region ----- RENDERED UI -----
   return (
     <>
-      <TransparentBackground onClick={handleCancel} />
+      <TransparentBackground
+        onClick={handleCancel}
+        aria-hidden="true"
+      />
+
       {showOptions && (
-        <Container>
-          <StyledButton onClick={handleUpdating}>Edit name</StyledButton>
+        <Container
+          role="menu"
+          aria-label="Class options"
+        >
           <StyledButton
+            type="button"
+            onClick={handleUpdating}
+            aria-label="Edit class name"
+          >
+            Edit name
+          </StyledButton>
+          <StyledButton
+            type="button"
             $danger
             onClick={handleDeleteClick}
+            aria-label="Delete class"
           >
             Delete Class
           </StyledButton>
         </Container>
       )}
+
       {showConfirm && (
         <ConfirmBox
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="confirm-delete-title"
           message="Are you sure you want to delete?"
           onCancel={handleCancel}
           onConfirm={handleConfirmDelete}
         />
       )}
 
-      {/* This updates the class */}
       {isEditing && (
-        <CreateWrapper onClick={(e) => e.stopPropagation()}>
+        <CreateWrapper
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-class-title"
+        >
           <form onSubmit={handleSubmitUpdate}>
-            <label htmlFor="newName">New Name</label>
+            <label
+              htmlFor="newName"
+              id="edit-class-title"
+            >
+              New Name
+            </label>
             <input
               id="newName"
               type="text"
@@ -92,29 +124,31 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
             />
-            <button type="submit">Update Class</button>
+            <button
+              type="submit"
+              aria-label="Update class name"
+            >
+              Update Class
+            </button>
           </form>
         </CreateWrapper>
       )}
     </>
   )
 }
+//#endregion
 
-interface StyledButtonProps {
-  $danger?: boolean
-}
-
+//#region ----- STYLED COMPONENTS -----
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: #c7c7c7;
-  position: absolute; /* You can make this fixed if you want it in the center */
+  position: absolute;
   padding: 5px 10px;
   border-radius: 15px;
   border: none;
-  z-index: 11; /* above background */
-
+  z-index: 11;
   top: 25%;
   right: 79%;
 `
@@ -193,3 +227,4 @@ const CreateWrapper = styled.div`
     color: ${({ theme }) => theme.colors.background};
   }
 `
+//#endregion

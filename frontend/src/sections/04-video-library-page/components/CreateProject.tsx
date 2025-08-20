@@ -1,27 +1,33 @@
+//#region ----- IMPORTS -----
 import { useParams } from "react-router-dom"
 import styled from "styled-components"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useProjectStore } from "../../../store/projectStore"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useEditingStore } from "../../../store/editStore"
-import { useRef } from "react"
+//#endregion
 
+//#region ----- CONSTANTS -----
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
+//#endregion
 
+//#region ----- COMPONENT LOGIC -----
 export const CreateProject = () => {
   const { classId } = useParams<{ classId: string }>()
   const addProject = useProjectStore((state) => state.addProject)
-
-  const [projectName, setProjectName] = useState("")
-  const [projectDescription, setProjectDescription] = useState("")
-  const [videoFile, setVideoFile] = useState<File | null>(null)
   const setIsEditingProject = useEditingStore(
     (state) => state.setIsEditingProject
   )
 
+  const [projectName, setProjectName] = useState("")
+  const [projectDescription, setProjectDescription] = useState("")
+  const [videoFile, setVideoFile] = useState<File | null>(null)
   const [errorMesage, setErrorMessage] = useState("")
   const projectNameRef = useRef<HTMLInputElement>(null)
 
+  //#endregion
+
+  //#region ----- HANDLERS -----
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -69,7 +75,9 @@ export const CreateProject = () => {
     setVideoFile(null)
     setIsEditingProject(false)
   }
+  //#endregion
 
+  //#region ----- RENDERED UI -----
   return (
     <FormContainer
       as="form"
@@ -106,8 +114,9 @@ export const CreateProject = () => {
     </FormContainer>
   )
 }
+//#endregion
 
-// Styles
+//#region ----- STYLED COMPONENTS -----
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -158,3 +167,4 @@ const ErrorMessage = styled.p`
   font-weight: bold;
   padding-left: 4px;
 `
+//#endregion

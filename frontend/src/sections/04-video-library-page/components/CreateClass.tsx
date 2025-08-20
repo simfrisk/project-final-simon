@@ -1,9 +1,12 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useClassStore } from "../../../store/classStore"
 import { useEditingStore } from "../../../store/editStore"
+//#endregion
 
+//#region ----- COMPONENT LOGIC -----
 export const CreateClass = () => {
   const addClass = useClassStore((state) => state.addClass)
   const [classTitle, setClassTitle] = useState("")
@@ -16,6 +19,9 @@ export const CreateClass = () => {
     setIsEditingClass(false)
   }
 
+  //#endregion
+
+  //#region ----- RENDERED UI -----
   return (
     <FormContainer
       as="form"
@@ -34,8 +40,9 @@ export const CreateClass = () => {
     </FormContainer>
   )
 }
+//#endregion
 
-// Styles
+//#region ----- STYLED COMPONENTS -----
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -71,3 +78,4 @@ const AddProjectBtn = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
 `
+//#endregion
