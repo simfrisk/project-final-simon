@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useProjectStore } from "../../../store/projectStore"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useEditingStore } from "../../../store/editStore"
+import { useRef } from "react"
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 
@@ -18,6 +19,9 @@ export const CreateProject = () => {
     (state) => state.setIsEditingProject
   )
 
+  const [errorMesage, setErrorMessage] = useState("")
+  const projectNameRef = useRef<HTMLInputElement>(null)
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -29,11 +33,16 @@ export const CreateProject = () => {
       return
     }
 
+    setErrorMessage("")
     setVideoFile(file)
   }
 
   const handleCreateProject = async () => {
-    if (!projectName.trim()) return
+    if (!projectName.trim()) {
+      setErrorMessage("Please fill in a project name")
+      projectNameRef.current?.focus()
+      return
+    }
 
     if (!classId) {
       alert("No class ID found in the route.")
@@ -60,9 +69,16 @@ export const CreateProject = () => {
   }
 
   return (
-    <FormContainer>
+    <FormContainer
+      as="form"
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleCreateProject()
+      }}
+    >
       <ProjectNameInput
         placeholder="Project Name"
+        ref={projectNameRef}
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
       />
@@ -76,7 +92,15 @@ export const CreateProject = () => {
         accept="video/*"
         onChange={handleFileChange}
       />
-      <AddProjectBtn onClick={handleCreateProject}>Add Project</AddProjectBtn>
+
+      <ErrorMessage>{errorMesage}</ErrorMessage>
+
+      <AddProjectBtn
+        type="submit"
+        onClick={handleCreateProject}
+      >
+        Add Project
+      </AddProjectBtn>
     </FormContainer>
   )
 }
@@ -97,11 +121,12 @@ const FormContainer = styled.div`
   }
 `
 
-const ProjectNameInput = styled.textarea`
+const ProjectNameInput = styled.input`
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   width: 100%;
+  height: 45px;
 `
 
 const DescriptionTextArea = styled.textarea`
@@ -124,4 +149,10 @@ const AddProjectBtn = styled.button`
     transform: scale(0.96);
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
+`
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-weight: bold;
+  padding-left: 4px;
 `

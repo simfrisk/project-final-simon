@@ -60,7 +60,6 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
   return (
     <>
       <TransparentBackground onClick={handleCancel} />
-
       {showOptions && (
         <Container>
           <StyledButton onClick={handleUpdating}>Edit name</StyledButton>
@@ -72,7 +71,6 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
           </StyledButton>
         </Container>
       )}
-
       {showConfirm && (
         <ConfirmBox
           message="Are you sure you want to delete?"
@@ -81,6 +79,7 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
         />
       )}
 
+      {/* This updates the class */}
       {isEditing && (
         <CreateWrapper onClick={(e) => e.stopPropagation()}>
           <form onSubmit={handleSubmitUpdate}>
@@ -88,10 +87,12 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
             <input
               id="newName"
               type="text"
+              required
+              maxLength={100}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
             />
-            <button type="submit">Update Project</button>
+            <button type="submit">Update Class</button>
           </form>
         </CreateWrapper>
       )}

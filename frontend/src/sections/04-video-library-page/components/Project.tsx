@@ -28,6 +28,7 @@ export const Project = ({
   const navigate = useNavigate()
 
   const [isEditing, setIsEditing] = useState(false)
+  const [errorMesage, setErrorMessage] = useState("")
 
   const setIsRemovingProject = useEditingStore(
     (state) => state.setIsRemovingProject
@@ -43,7 +44,15 @@ export const Project = ({
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     e.stopPropagation()
+
     if (!projectId) return
+
+    if (!newName.trim() && !newDescription.trim()) {
+      setErrorMessage("Please fill in at least one field.")
+      return
+    }
+
+    setErrorMessage("")
     await updateProject(projectId, {
       newName,
       newDescription,
@@ -111,6 +120,8 @@ export const Project = ({
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
               />
+
+              <ErrorMessage>{errorMesage}</ErrorMessage>
 
               <button type="submit">Update Project</button>
             </form>
@@ -260,4 +271,10 @@ const TransparentBackground = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 999;
+`
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-weight: bold;
+  padding-left: 4px;
 `

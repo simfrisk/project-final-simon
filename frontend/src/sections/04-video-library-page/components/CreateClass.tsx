@@ -17,13 +17,20 @@ export const CreateClass = () => {
   }
 
   return (
-    <FormContainer>
-      <ProjectNameInput
+    <FormContainer
+      as="form"
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleCreateProject()
+      }}
+    >
+      <ClassNameInput
         placeholder="Project Name"
+        required
         value={classTitle}
         onChange={(e) => setClassTitle(e.target.value)}
       />
-      <AddProjectBtn onClick={handleCreateProject}>+ Project</AddProjectBtn>
+      <AddProjectBtn type="submit">Add Class</AddProjectBtn>
     </FormContainer>
   )
 }
@@ -44,7 +51,7 @@ const FormContainer = styled.div`
   }
 `
 
-const ProjectNameInput = styled.textarea`
+const ClassNameInput = styled.input`
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;

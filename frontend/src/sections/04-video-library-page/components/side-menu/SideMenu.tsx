@@ -85,6 +85,7 @@ export const SideMenu = () => {
         </ProjectWrapper>
       </TopSection>
 
+      {/* This updates the class and Deletes class */}
       {isRemovingClass && <ClassOptions classId={removingClassId || ""} />}
 
       {userRole === "teacher" && (
