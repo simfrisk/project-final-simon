@@ -27,7 +27,9 @@ export const CreateProject = () => {
     if (!file) return
 
     if (file.size > MAX_FILE_SIZE) {
-      alert("Video file size exceeds 100MB. Please select a smaller file.")
+      setErrorMessage(
+        "Video file size exceeds 100MB. Please select a smaller file."
+      )
       e.target.value = ""
       setVideoFile(null)
       return
