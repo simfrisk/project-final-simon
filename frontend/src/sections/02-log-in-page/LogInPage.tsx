@@ -41,13 +41,13 @@ export const LogInPage: React.FC = () => {
       return
     }
 
-    const success = await login(formData.email, formData.password)
+    const result = await login(formData.email, formData.password)
 
-    if (success) {
-      setError(null) // clear any previous errors
+    if (result.success) {
+      setError(null)
       navigate("/library/")
     } else {
-      setError("Login failed. Please check your credentials.")
+      setError(result.message) // display backend message
     }
   }
 
@@ -102,7 +102,7 @@ export const LogInPage: React.FC = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  minLength={3}
+                  minLength={1}
                 />
                 <PasswordToggleButton
                   onClick={togglePasswordVisibility}

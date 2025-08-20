@@ -1,7 +1,6 @@
 //#region ----- IMPORTS -----
 import { create } from "zustand"
 import { baseUrl } from "../config/api"
-
 //#endregion
 
 //#region ----- INTERFACES -----
@@ -17,21 +16,24 @@ interface AuthUser {
 interface UserStore {
   user: AuthUser | null
   isLoggedIn: boolean
-  login: (email: string, password: string) => Promise<boolean>
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; message: string }>
   logout: () => void
-  createUser: (formData: FormData) => Promise<boolean>
+  createUser: (
+    formData: FormData
+  ) => Promise<{ success: boolean; message: string }>
 }
-
 //#endregion
 
-//#region ----- GET USER FROM LOCAL STORAGE  -----
+//#region ----- GET USER FROM LOCAL STORAGE -----
 const savedEmail = localStorage.getItem("email")
 const savedUserId = localStorage.getItem("userId")
 const savedToken = localStorage.getItem("accessToken")
 const savedRole = localStorage.getItem("role")
 const savedName = localStorage.getItem("name")
 const savedProfileImage = localStorage.getItem("profileImage")
-
 //#endregion
 
 //#region ----- INITIAL USER -----
@@ -51,15 +53,12 @@ const initialUser: AuthUser | null =
         profileImage: savedProfileImage,
       }
     : null
-
 //#endregion
 
 //#region ----- ZUSTAND USER STORE -----
 export const useUserStore = create<UserStore>((set) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
-
-  //#endregion
 
   //#region ----- LOGIN -----
   login: async (email, password) => {
@@ -73,7 +72,6 @@ export const useUserStore = create<UserStore>((set) => ({
       const data = await res.json()
 
       if (res.ok && data.accessToken) {
-        // Make sure backend sends back "name" in the session response
         const user = {
           email,
           userId: data.userId,
@@ -92,16 +90,24 @@ export const useUserStore = create<UserStore>((set) => ({
         localStorage.setItem("profileImage", user.profileImage)
 
         set({ user, isLoggedIn: true })
-        return true
+        return { success: true, message: "Login successful" }
       } else {
-        return false
+        if (res.status === 401) {
+          return { success: false, message: "Incorrect email or password" }
+        } else if (res.status === 404) {
+          return { success: false, message: "User does not exist" }
+        } else {
+          return {
+            success: false,
+            message: data.error || data.message || "Login failed",
+          }
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login failed:", err)
-      return false
+      return { success: false, message: err.message || "Login failed" }
     }
   },
-
   //#endregion
 
   //#region ----- LOGOUT -----
@@ -114,7 +120,6 @@ export const useUserStore = create<UserStore>((set) => ({
     localStorage.removeItem("profileImage")
     set({ user: null, isLoggedIn: false })
   },
-
   //#endregion
 
   //#region ----- CREATE USER -----
@@ -122,7 +127,7 @@ export const useUserStore = create<UserStore>((set) => ({
     try {
       const res = await fetch(`${baseUrl}/users`, {
         method: "POST",
-        body: formData, // No need to set headers manually for FormData
+        body: formData,
       })
 
       const data = await res.json()
@@ -146,15 +151,18 @@ export const useUserStore = create<UserStore>((set) => ({
         localStorage.setItem("profileImage", user.profileImage)
 
         set({ user, isLoggedIn: true })
-        return true
+
+        return { success: true, message: "User created successfully" }
       } else {
-        return false
+        return {
+          success: false,
+          message: data.message || "Could not create user",
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Create user failed:", err)
-      return false
+      return { success: false, message: err.message || "Could not create user" }
     }
   },
-
   //#endregion
 }))

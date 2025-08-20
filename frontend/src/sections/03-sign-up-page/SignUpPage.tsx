@@ -20,9 +20,16 @@ export const SignUpPage: React.FC = () => {
 
   const [preview, setPreview] = useState<string | null>(null)
 
+  const [error, setError] = useState<string | null>(null)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.target as SignUpFormElements
+
+    if (!form.checkValidity()) {
+      form.reportValidity()
+      return
+    }
 
     const formData = new FormData()
     formData.append("name", form.name.value)
@@ -33,12 +40,13 @@ export const SignUpPage: React.FC = () => {
       formData.append("image", form.image.files[0])
     }
 
-    const success = await createUser(formData)
+    const result = await createUser(formData)
 
-    if (success) {
+    if (result.success) {
+      setError(null) // clear any previous errors
       navigate("/library/")
     } else {
-      alert("Sign up failed. Please check your credentials.")
+      setError(result.message)
     }
   }
 
@@ -76,7 +84,7 @@ export const SignUpPage: React.FC = () => {
                   type="text"
                   name="name"
                   placeholder="Enter full name"
-                  minLength={3}
+                  minLength={2}
                   required
                 />
               </label>
@@ -87,6 +95,7 @@ export const SignUpPage: React.FC = () => {
                   type="email"
                   name="email"
                   placeholder="Enter Email"
+                  minLength={4}
                   required
                 />
               </label>
@@ -97,6 +106,7 @@ export const SignUpPage: React.FC = () => {
                   type="password"
                   name="password"
                   placeholder="Enter Password"
+                  minLength={5}
                   required
                 />
               </label>
@@ -140,6 +150,8 @@ export const SignUpPage: React.FC = () => {
                   onChange={handlePreview}
                 />
               </label>
+
+              {error && <ErrorMessage>{error}</ErrorMessage>}
 
               {preview && (
                 <img
@@ -327,4 +339,11 @@ const RoleLabel = styled.label<{ selected: boolean }>`
     top: 1px;
     left: 1px;
   }
+`
+
+const ErrorMessage = styled.div`
+  color: red;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
 `
