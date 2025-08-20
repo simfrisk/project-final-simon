@@ -1,3 +1,4 @@
+//#region ----- IMPORTS -----
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { useNavigate, useParams } from "react-router-dom"
@@ -13,13 +14,15 @@ import { CreateClass } from "./CreateClass"
 import { Loader } from "../../../global-components/loader"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { ConfirmBox } from "../../../global-components/ComfirmBox"
+//#endregion
 
+//#region ----- ROUTER / NAVIGATION -----
 export const ProjectsList = () => {
-  // ROUTER / NAVIGATION
   const { classId } = useParams()
   const navigate = useNavigate()
+  //#endregion
 
-  // STORE HOOKS
+  //#region ----- STORE HOOKS -----
   const fetchProjects = useProjectStore((state) => state.fetchProjects)
   const projects = useProjectStore((state) => state.projects)
   const loading = useProjectStore((state) => state.loading)
@@ -47,26 +50,27 @@ export const ProjectsList = () => {
   const deleteClass = useClassStore((state) => state.deleteClass)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const classes = useClassStore((state) => state.classes)
+  //#endregion
 
-  // STATE VARIABLES
+  //#region ----- STATE VARIABLES -----
   const [deleteSelect, setDeleteSelect] = useState<string>("")
   const [showOptions, setShowOptions] = useState<boolean>(false)
+  //#endregion
 
-  // EFFECTS
-  // Fetch all classes on mount
+  //#region ----- EFFECTS -----
   useEffect(() => {
     fetchClasses()
   }, [fetchClasses])
 
-  // Fetch projects and class info when classId changes
   useEffect(() => {
     if (classId) {
       fetchProjects(classId)
       fetchClassById(classId)
     }
   }, [fetchProjects, fetchClassById, classId])
+  //#endregion
 
-  // EVENT HANDLERS
+  //#region ----- EVENT HANDLERS -----
   const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedClassId = e.target.value
     navigate(`/library/classes/${selectedClassId}/projects`)
@@ -96,8 +100,9 @@ export const ProjectsList = () => {
 
     setIsRemovingProject(false)
   }
+  //#endregion
 
-  // CONDITIONAL RENDERING
+  //#region ----- CONDITIONAL RENDERING -----
   if (loading) {
     return (
       <LoadingContainer>
@@ -108,7 +113,9 @@ export const ProjectsList = () => {
   }
 
   if (error) return <p>Error: {error}</p>
+  //#endregion
 
+  //#region ----- RENDER UI -----
   return (
     <Container>
       <HeaderWrapper>
@@ -224,6 +231,9 @@ export const ProjectsList = () => {
     </Container>
   )
 }
+//#endregion
+
+//#region ----- STYLED COMPONENTS -----
 
 // STYLED COMPONENTS
 
@@ -389,3 +399,5 @@ const NoProjectsContainer = styled.div`
 const NoProjectsMessage = styled.h3`
   color: ${({ theme }) => theme.colors.text};
 `
+
+//#endregion
