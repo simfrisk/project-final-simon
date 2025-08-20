@@ -219,6 +219,17 @@ const CommentListContainer = styled.div`
 
   @media ${MediaQueries.biggerSizes} {
     overflow: scroll;
+
+    /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+
+    /* Hide scrollbar for Edge/IE */
+    -ms-overflow-style: none;
   }
 `
 
