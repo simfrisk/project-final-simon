@@ -8,19 +8,19 @@ export const VideoLibraryPage = () => {
   return (
     <>
       <Navigation />
-      <Section>
-        <Content>
-          <SideMenuContainer>
+      <MainSection aria-label="Video Library Section">
+        <ContentWrapper>
+          <SideNavContainer aria-label="Video Library Navigation">
             <SideMenu />
-          </SideMenuContainer>
+          </SideNavContainer>
           <Outlet />
-        </Content>
-      </Section>
+        </ContentWrapper>
+      </MainSection>
     </>
   )
 }
 
-const Section = styled.section`
+const MainSection = styled.section`
   width: 100%;
   padding: 34px 0;
 
@@ -29,14 +29,14 @@ const Section = styled.section`
   }
 `
 
-const Content = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
 `
 
-const SideMenuContainer = styled.div`
+const SideNavContainer = styled.section`
   width: 250px;
   flex-shrink: 0;
   display: none;

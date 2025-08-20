@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { useProjectStore } from "../../../store/projectStore"
 import { useUserStore } from "../../../store/userStore"
@@ -13,15 +14,17 @@ import { Loader } from "../../../global-components/loader"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { ConfirmBox } from "../../../global-components/ComfirmBox"
 
-import { useNavigate, useParams } from "react-router-dom"
-
 export const ProjectsList = () => {
+  // ROUTER / NAVIGATION
   const { classId } = useParams()
+  const navigate = useNavigate()
 
+  // STORE HOOKS
   const fetchProjects = useProjectStore((state) => state.fetchProjects)
   const projects = useProjectStore((state) => state.projects)
   const loading = useProjectStore((state) => state.loading)
   const error = useProjectStore((state) => state.error)
+  const deleteProject = useProjectStore((state) => state.deleteProject)
 
   const user = useUserStore((state) => state.user)
   const userRole = user?.role
@@ -29,6 +32,8 @@ export const ProjectsList = () => {
   const isEditingClass = useEditingStore((state) => state.isEditingClass)
   const isEditingProject = useEditingStore((state) => state.isEditingProject)
   const isRemovingProject = useEditingStore((state) => state.isRemovingProject)
+  const projectId = useEditingStore((state) => state.removingProjectId)
+
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
   const setIsEditingProject = useEditingStore(
     (state) => state.setIsEditingProject
@@ -36,39 +41,36 @@ export const ProjectsList = () => {
   const setIsRemovingProject = useEditingStore(
     (state) => state.setIsRemovingProject
   )
-  const deleteProject = useProjectStore((state) => state.deleteProject)
-  const deleteClass = useClassStore((state) => state.deleteClass)
-  const projectId = useEditingStore((state) => state.removingProjectId)
 
   const fetchClassById = useClassStore((state) => state.fetchClassById)
   const currentClass = useClassStore((state) => state.class)
-
-  // delete project or class selector
-  const [deleteSelect, setDeleteSelect] = useState<string>("")
-
-  // class selector
-  const navigate = useNavigate()
+  const deleteClass = useClassStore((state) => state.deleteClass)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const classes = useClassStore((state) => state.classes)
 
+  // STATE VARIABLES
+  const [deleteSelect, setDeleteSelect] = useState<string>("")
+  const [showOptions, setShowOptions] = useState<boolean>(false)
+
+  // EFFECTS
+  // Fetch all classes on mount
   useEffect(() => {
     fetchClasses()
   }, [fetchClasses])
 
-  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedClassId = e.target.value
-    navigate(`/library/classes/${selectedClassId}/projects`)
-  }
-
-  // hide and show option buttons
-  const [showOptions, setShowOptions] = useState<boolean>(false)
-
+  // Fetch projects and class info when classId changes
   useEffect(() => {
     if (classId) {
       fetchProjects(classId)
       fetchClassById(classId)
     }
   }, [fetchProjects, fetchClassById, classId])
+
+  // EVENT HANDLERS
+  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedClassId = e.target.value
+    navigate(`/library/classes/${selectedClassId}/projects`)
+  }
 
   const handleTransparentBackground = () => {
     setIsEditingClass(false)
@@ -78,9 +80,9 @@ export const ProjectsList = () => {
 
   const handleEditClass = () => setIsEditingClass(true)
   const handleEditProject = () => setIsEditingProject(true)
-  const handlCancel = () => setIsRemovingProject(false)
+  const handleCancel = () => setIsRemovingProject(false)
 
-  const handelDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
 
     if (deleteSelect === "classSelect") {
@@ -95,6 +97,7 @@ export const ProjectsList = () => {
     setIsRemovingProject(false)
   }
 
+  // CONDITIONAL RENDERING
   if (loading) {
     return (
       <LoadingContainer>
@@ -115,6 +118,7 @@ export const ProjectsList = () => {
 
         <TopBar>
           <ClassSelect
+            aria-label="Select class"
             value={classId}
             onChange={handleClassChange}
           >
@@ -129,7 +133,11 @@ export const ProjectsList = () => {
           </ClassSelect>
 
           {userRole === "teacher" && (
-            <StyledButton onClick={() => setShowOptions((prev) => !prev)}>
+            <StyledButton
+              aria-expanded={showOptions}
+              aria-label={showOptions ? "Hide options" : "Show options"}
+              onClick={() => setShowOptions((prev) => !prev)}
+            >
               {showOptions ? "Hide" : "Show options"}
             </StyledButton>
           )}
@@ -206,8 +214,8 @@ export const ProjectsList = () => {
             {userRole === "teacher" && isRemovingProject && (
               <ConfirmBox
                 message={"Are you sure you want to delete?"}
-                onCancel={handlCancel}
-                onConfirm={handelDelete}
+                onCancel={handleCancel}
+                onConfirm={handleDelete}
               />
             )}
           </CreateWrapper>
