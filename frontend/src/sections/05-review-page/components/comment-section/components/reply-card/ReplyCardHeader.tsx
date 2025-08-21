@@ -12,14 +12,16 @@ export const ReplyCardHeader = ({ reply }: ReplyCardHeaderProps) => {
       <ImageContainer onClick={() => console.log(reply._id)}>
         <img
           src={reply.replyCreatedBy?.profileImage || "/default-profile.png"}
-          alt={`${reply.replyCreatedBy?.name || "Anonymous"}'s profile image`}
+          aria-label={`View profile of ${reply.replyCreatedBy?.name || "Anonymous"}`}
         />
       </ImageContainer>
       <Content>
         <CardHeader>
           <strong>{reply.replyCreatedBy?.name || "Anonymous"}</strong>
-          <Dot>&middot;</Dot>
-          <span>{moment(reply.createdAt).fromNow()}</span>
+          <Dot aria-hidden="true">&middot;</Dot>
+          <span aria-label="Shows when posted">
+            {moment(reply.createdAt).fromNow()}
+          </span>
         </CardHeader>
       </Content>
     </Container>

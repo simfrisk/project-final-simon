@@ -6,7 +6,10 @@ export const ReviewNav = () => {
 
   return (
     <Container>
-      <BackContainer onClick={() => navigate(-1)}>
+      <BackContainer
+        aria-label="Go back to prevoius page"
+        onClick={() => navigate(-1)}
+      >
         <img
           src="/icons/back.svg"
           alt="Go back"

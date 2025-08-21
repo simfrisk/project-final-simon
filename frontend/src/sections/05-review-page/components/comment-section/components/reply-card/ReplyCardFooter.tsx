@@ -1,6 +1,9 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import type { ReplyType } from "../../../../../../store/commentStore"
+//#endregion
 
+//#region ----- INTERFACES / TYPES -----
 type ReplyCardFooterProps = {
   reply: ReplyType
   isEditing: boolean
@@ -9,7 +12,9 @@ type ReplyCardFooterProps = {
   toggleReplyLike: (replyId: string) => void
   deleteReply: (replyId: string, commentId: string) => void
 }
+//#endregion
 
+//#region ----- COMPONENT -----
 export const ReplyCardFooter = ({
   reply,
   isEditing,
@@ -18,49 +23,80 @@ export const ReplyCardFooter = ({
   toggleReplyLike,
   deleteReply,
 }: ReplyCardFooterProps) => {
+  //#region ----- RENDER -----
   return (
-    <Container>
-      <React>
-        <ActionButton onClick={() => setReplyToCommentId(reply.commentId)}>
+    <Container
+      role="group"
+      aria-label="Reply actions"
+    >
+      <Actions>
+        <ActionButton
+          onClick={() => setReplyToCommentId(reply.commentId)}
+          aria-label="Reply to this comment"
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           Reply
         </ActionButton>
-        <ActionButtonIcon onClick={() => toggleReplyLike(reply._id)}>
+
+        <ActionButtonIcon
+          onClick={() => toggleReplyLike(reply._id)}
+          aria-label={`Like this reply. ${reply.likesCount ?? 0} likes`}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           <img
             src="/icons/like.svg"
-            alt="Like button"
+            alt=""
+            aria-hidden="true"
           />
           <LikeCount count={reply.likesCount ?? 0}>
             {reply.likesCount ?? 0}
           </LikeCount>
         </ActionButtonIcon>
-      </React>
+      </Actions>
+
       <Edit>
         {!isEditing && (
-          <img
-            src="/icons/edit.svg"
-            alt="Edit Icon"
+          <IconButton
             onClick={() => setIsEditing(true)}
-          />
+            aria-label="Edit this reply"
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            <img
+              src="/icons/edit.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </IconButton>
         )}
-        <img
+
+        <IconButton
           onClick={() => deleteReply(reply._id, reply.commentId)}
-          src="/icons/delete.svg"
-          alt="Delete Icon"
-        />
+          aria-label="Delete this reply"
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <img
+            src="/icons/delete.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </IconButton>
       </Edit>
     </Container>
   )
+  //#endregion
 }
+//#endregion
 
-const React = styled.div`
-  display: flex;
-  column-gap: 10px;
-`
-
+//#region ----- STYLED COMPONENTS -----
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+`
+
+const Actions = styled.div`
+  display: flex;
+  column-gap: 10px;
 `
 
 const ActionButton = styled.button`
@@ -70,8 +106,10 @@ const ActionButton = styled.button`
   padding: 0;
   cursor: pointer;
 
-  &:hover {
+  &:hover,
+  &:focus {
     text-decoration: underline;
+    outline: none;
   }
 `
 
@@ -84,12 +122,31 @@ const ActionButtonIcon = styled.button`
   transform: scale(0.7);
   cursor: pointer;
 
+  &:hover,
+  &:focus {
+    transform: scale(0.9);
+    outline: none;
+  }
+
   img {
     filter: ${({ theme }) => theme.filter.inverted};
   }
+`
 
-  img:hover {
+const IconButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
     transform: scale(0.9);
+    outline: none;
+  }
+
+  img {
+    filter: ${({ theme }) => theme.filter.inverted};
   }
 `
 
@@ -109,18 +166,10 @@ export const Edit = styled.div`
   width: 40px;
   margin: 0 20px 0 0;
   cursor: pointer;
-  transform: translatey(30%);
+  transform: translateY(30%);
   transition:
     opacity 0.3s ease,
     visibility 0s linear 0.3s,
     transform 0.3s ease;
-
-  img {
-    filter: ${({ theme }) => theme.filter.inverted};
-  }
-
-  img:hover {
-    transition: ease 0.3s;
-    transform: scale(0.9);
-  }
 `
+//#endregion

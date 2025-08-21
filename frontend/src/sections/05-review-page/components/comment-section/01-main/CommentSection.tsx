@@ -294,7 +294,16 @@ const Card = styled.div<{ $role?: string }>`
 `
 
 const ReplyCardContainer = styled.div`
-  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  &:hover ${Edit} {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
 `
 
 const AddReplyForm = styled.form`
