@@ -160,7 +160,9 @@ const ProjectWrapper = styled.div`
   padding: 10px;
 `
 
-const MoreInfo = styled.p`
+const MoreInfo = styled.button`
+  all: unset;
+  cursor: pointer;
   visibility: hidden;
   position: relative;
   margin: 0;

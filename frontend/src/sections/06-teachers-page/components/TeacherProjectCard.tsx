@@ -40,7 +40,7 @@ export const TeacherProjectCard = ({
 
   //#region ----- HANDLERS -----
   const timeStampHandler = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    e: React.MouseEvent<HTMLElement>,
     commentId: string,
     timeStamp: string
   ) => {
