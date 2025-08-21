@@ -39,6 +39,8 @@ import { Project } from "../models/Projects"
  *                       projectDescription:
  *                         type: string
  *                         nullable: true
+ *                       teacher:
+ *                         type: string
  *                       video:
  *                         type: string
  *                         nullable: true
@@ -71,7 +73,7 @@ export const getProjects = async (
 
     const result = await Project.find({ classId })
       .select(
-        "projectName projectDescription video thumbnail classId projectCreatedBy"
+        "projectName projectDescription teacher video thumbnail classId projectCreatedBy"
       )
       .populate("projectCreatedBy", "name email profileImage")
 

@@ -36,6 +36,8 @@ import { Project } from "../models/Projects"
  *                       projectDescription:
  *                         type: string
  *                         nullable: true
+ *                       teacher:
+ *                         type: string
  *                       video:
  *                         type: string
  *                         nullable: true
@@ -93,7 +95,7 @@ export const getProjectsWithComments = async (
         },
       })
       .select(
-        "projectName projectDescription video thumbnail classId projectCreatedBy"
+        "projectName projectDescription teacher video thumbnail classId projectCreatedBy"
       )
       .populate("projectCreatedBy", "name email profileImage")
 

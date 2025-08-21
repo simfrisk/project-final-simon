@@ -41,6 +41,9 @@ const Projects_1 = require("../models/Projects");
  *                     projectDescription:
  *                       type: string
  *                       example: "A project that does cool things"
+ *                     teacher:
+ *                       type: string
+ *                       example: "Mr. Smith"
  *                     video:
  *                       type: string
  *                       example: "https://someurl.com/video.mp4"
@@ -101,7 +104,7 @@ const getProjectById = async (req, res) => {
     const { projectId } = req.params;
     try {
         const project = await Projects_1.Project.findById(projectId)
-            .select("projectName projectDescription video classId projectCreatedBy")
+            .select("projectName projectDescription teacher video classId projectCreatedBy")
             .populate("projectCreatedBy", "name email profileImage");
         if (!project) {
             return res.status(404).json({

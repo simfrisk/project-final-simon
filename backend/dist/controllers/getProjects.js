@@ -40,6 +40,8 @@ const Projects_1 = require("../models/Projects");
  *                       projectDescription:
  *                         type: string
  *                         nullable: true
+ *                       teacher:
+ *                         type: string
  *                       video:
  *                         type: string
  *                         nullable: true
@@ -67,7 +69,7 @@ const getProjects = async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await Projects_1.Project.find({ classId })
-            .select("projectName projectDescription video thumbnail classId projectCreatedBy")
+            .select("projectName projectDescription teacher video thumbnail classId projectCreatedBy")
             .populate("projectCreatedBy", "name email profileImage");
         return res.status(200).json({
             success: true,

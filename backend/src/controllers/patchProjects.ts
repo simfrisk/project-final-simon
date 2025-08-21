@@ -5,10 +5,10 @@ import { Project } from "../models/Projects"
  * @swagger
  * /projects/{projectId}:
  *   patch:
- *     summary: Update an existing project's name and/or description
+ *     summary: Update an existing project's name, description, and/or teacher
  *     tags:
  *       - Projects
- *     description: Allows an authenticated user to update the name and/or description of a project by its ID.
+ *     description: Allows an authenticated user to update the name, description, and/or teacher of a project by its ID.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -31,6 +31,9 @@ import { Project } from "../models/Projects"
  *               newDescription:
  *                 type: string
  *                 example: This is an updated description for the project.
+ *               newTeacher:
+ *                 type: string
+ *                 example: "Mrs. Johnson"
  *     responses:
  *       200:
  *         description: The project was successfully updated
@@ -82,7 +85,7 @@ import { Project } from "../models/Projects"
  */
 export const patchProject = async (req: Request, res: Response) => {
   const { projectId } = req.params
-  const { newName, newDescription } = req.body
+  const { newName, newDescription, newTeacher } = req.body
 
   try {
     const project = await Project.findById(projectId)
@@ -97,6 +100,7 @@ export const patchProject = async (req: Request, res: Response) => {
 
     if (newName) project.projectName = newName
     if (newDescription) project.projectDescription = newDescription
+    if (newTeacher) project.teacher = newTeacher
 
     const updatedProject = await project.save()
 

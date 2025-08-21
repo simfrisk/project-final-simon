@@ -40,6 +40,9 @@ import { Request, Response } from "express"
  *                     projectDescription:
  *                       type: string
  *                       example: "A project that does cool things"
+ *                     teacher:
+ *                       type: string
+ *                       example: "Mr. Smith"
  *                     video:
  *                       type: string
  *                       example: "https://someurl.com/video.mp4"
@@ -104,7 +107,9 @@ export const getProjectById = async (
 
   try {
     const project = await Project.findById(projectId)
-      .select("projectName projectDescription video classId projectCreatedBy")
+      .select(
+        "projectName projectDescription teacher video classId projectCreatedBy"
+      )
       .populate("projectCreatedBy", "name email profileImage")
     if (!project) {
       return res.status(404).json({

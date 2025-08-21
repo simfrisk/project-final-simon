@@ -32,6 +32,9 @@ import { Project } from "../models/Projects"
  *               projectDescription:
  *                 type: string
  *                 example: "A detailed description of the project."
+ *               teacher:
+ *                 type: string
+ *                 example: "Mr. Smith"
  *               video:
  *                 type: string
  *                 format: binary
@@ -57,6 +60,8 @@ import { Project } from "../models/Projects"
  *                     projectName:
  *                       type: string
  *                     projectDescription:
+ *                       type: string
+ *                     teacher:
  *                       type: string
  *                     video:
  *                       type: string
@@ -123,8 +128,8 @@ export const postProject = async (
     console.log("Received body:", req.body)
     console.log("Received file:", req.file)
 
-    const { classId } = req.params // ✅ Grab it from the URL
-    const { projectName, projectDescription } = req.body
+    const { classId } = req.params
+    const { projectName, projectDescription, teacher } = req.body
 
     if (!projectName) {
       return res.status(400).json({
@@ -141,6 +146,7 @@ export const postProject = async (
       classId,
       projectName,
       projectDescription,
+      teacher,
       video: videoUrl,
       thumbnail: thumbnailUrl,
       projectCreatedBy: req.user?._id,

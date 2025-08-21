@@ -37,6 +37,8 @@ const Projects_1 = require("../models/Projects");
  *                       projectDescription:
  *                         type: string
  *                         nullable: true
+ *                       teacher:
+ *                         type: string
  *                       video:
  *                         type: string
  *                         nullable: true
@@ -90,7 +92,7 @@ const getProjectsWithComments = async (req, res) => {
                 select: "name profileImage role",
             },
         })
-            .select("projectName projectDescription video thumbnail classId projectCreatedBy")
+            .select("projectName projectDescription teacher video thumbnail classId projectCreatedBy")
             .populate("projectCreatedBy", "name email profileImage");
         return res.status(200).json({
             success: true,

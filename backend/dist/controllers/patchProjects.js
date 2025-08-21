@@ -6,10 +6,10 @@ const Projects_1 = require("../models/Projects");
  * @swagger
  * /projects/{projectId}:
  *   patch:
- *     summary: Update an existing project's name and/or description
+ *     summary: Update an existing project's name, description, and/or teacher
  *     tags:
  *       - Projects
- *     description: Allows an authenticated user to update the name and/or description of a project by its ID.
+ *     description: Allows an authenticated user to update the name, description, and/or teacher of a project by its ID.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -32,6 +32,9 @@ const Projects_1 = require("../models/Projects");
  *               newDescription:
  *                 type: string
  *                 example: This is an updated description for the project.
+ *               newTeacher:
+ *                 type: string
+ *                 example: "Mrs. Johnson"
  *     responses:
  *       200:
  *         description: The project was successfully updated
@@ -83,7 +86,7 @@ const Projects_1 = require("../models/Projects");
  */
 const patchProject = async (req, res) => {
     const { projectId } = req.params;
-    const { newName, newDescription } = req.body;
+    const { newName, newDescription, newTeacher } = req.body;
     try {
         const project = await Projects_1.Project.findById(projectId);
         if (!project) {
@@ -97,6 +100,8 @@ const patchProject = async (req, res) => {
             project.projectName = newName;
         if (newDescription)
             project.projectDescription = newDescription;
+        if (newTeacher)
+            project.teacher = newTeacher;
         const updatedProject = await project.save();
         res.status(200).json({
             success: true,

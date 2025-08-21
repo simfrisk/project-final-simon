@@ -6,6 +6,7 @@ const ProjectSchema = new mongoose_1.Schema({
     classId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Class", required: true },
     projectName: { type: String, required: true },
     projectDescription: String,
+    teacher: String,
     video: String,
     thumbnail: String,
     projectCreatedBy: {
