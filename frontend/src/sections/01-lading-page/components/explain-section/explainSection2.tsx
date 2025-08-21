@@ -27,7 +27,8 @@ export const ExplainSection2 = () => {
           />
           <ExplainerCard
             title="Personal comments on time"
-            text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            text="Want to add personal comments? Switch to private mode and keep notes linked directly to the video timeline."
+            video="./PrivetComments.mp4"
           />
           <ExplainerCard
             title="All your classes in one page"
