@@ -12,15 +12,21 @@ import { useVideoStore } from "../../../../store/videoStore"
 import { useTabStore } from "../../../../store/tabStore"
 //#endregion
 
+//#region ---- Component -----
 export const VideoSection = () => {
-  const activeTab = useTabStore((state) => state.activeTab)
-
+  //#region ---- REFS -----
   const timelineRef = useRef<HTMLDivElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  //#endregion
 
+  //#region ---- STATE -----
   const [volume, setVolume] = useState(1)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  //#endregion
+
+  //#region ---- STORES -----
+  const activeTab = useTabStore((state) => state.activeTab)
 
   const {
     isPlaying,
@@ -41,7 +47,9 @@ export const VideoSection = () => {
 
   const projectVideo = useProjectStore((state) => state.project?.video)
   const duration = formatTime(videoEl?.duration || 0)
+  //#endregion
 
+  //#region ---- EFFECTS -----
   // Sync local videoRef with Zustand store
   useEffect(() => {
     if (videoRef.current) {
@@ -71,7 +79,6 @@ export const VideoSection = () => {
     if (!video) return
 
     const handleCanPlayThrough = () => setVideoLoaded(true)
-
     video.addEventListener("canplaythrough", handleCanPlayThrough)
     return () =>
       video.removeEventListener("canplaythrough", handleCanPlayThrough)
@@ -99,7 +106,9 @@ export const VideoSection = () => {
     video.currentTime = currentTime
     video.pause() // Optional: remove this line to auto-play after seek
   }, [markerTriggerCount])
+  //#endregion
 
+  //#region ---- HANDLERS -----
   // Volume
   const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value)
@@ -126,15 +135,16 @@ export const VideoSection = () => {
     videoRef.current && videoRef.current.duration
       ? (videoRef.current.currentTime / videoRef.current.duration) * 100
       : 0
-
   //#endregion
 
+  //#region ---- RENDER -----
   return (
     <Container>
       <StyledVideo
         ref={videoRef}
         onClick={togglePlay}
         controls={false}
+        aria-label={isPlaying ? "Pause video" : "Play video"}
       >
         {videoUrl && (
           <source
@@ -149,19 +159,26 @@ export const VideoSection = () => {
         <PlayPauseButton
           isPlaying={isPlaying}
           onClick={togglePlay}
+          aria-label={isPlaying ? "Pause video" : "Play video"}
         />
         <VolumeControl>
-          <label>🔊</label>
+          <label htmlFor="volumeSlider">🔊</label>
           <input
+            id="volumeSlider"
             type="range"
-            min="0"
-            max="1"
-            step="0.01"
+            min={0}
+            max={1}
+            step={0.01}
             value={volume}
             onChange={changeVolume}
+            role="slider"
+            aria-valuemin={0}
+            aria-valuemax={1}
+            aria-valuenow={volume}
+            aria-label="Volume control"
           />
         </VolumeControl>
-        <TimeDisplay>
+        <TimeDisplay aria-live="polite">
           {formattedTime} / {duration}
         </TimeDisplay>
       </Controls>
@@ -169,6 +186,23 @@ export const VideoSection = () => {
       <PlayBar
         ref={timelineRef}
         onClick={handleTimelineClick}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={videoEl?.duration || 0}
+        aria-valuenow={videoEl?.currentTime || 0}
+        aria-label="Video progress bar"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (!videoEl) return
+          const step = videoEl.duration ? videoEl.duration / 50 : 1
+          if (e.key === "ArrowRight")
+            videoEl.currentTime = Math.min(
+              videoEl.currentTime + step,
+              videoEl.duration
+            )
+          if (e.key === "ArrowLeft")
+            videoEl.currentTime = Math.max(videoEl.currentTime - step, 0)
+        }}
       >
         <Progress style={{ width: `${progress}%` }} />
         {videoLoaded &&
@@ -182,17 +216,28 @@ export const VideoSection = () => {
               <MarkerWrapper
                 key={_id}
                 style={{ left: `${percent}%` }}
-                onClick={(e) => {
-                  e.stopPropagation()
-
-                  commentStore.getState().setSelectedCommentId(_id)
-                  commentStore.getState().setSelectedTimeStamp(timeStamp)
-
-                  useVideoStore.getState().setTimeCode(timeInSeconds)
-                  useVideoStore.getState().incrementMarkerTrigger()
-                }}
               >
-                <Marker />
+                <Marker
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Comment at ${timeStamp}: ${content}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    commentStore.getState().setSelectedCommentId(_id)
+                    commentStore.getState().setSelectedTimeStamp(timeStamp)
+                    useVideoStore.getState().setTimeCode(timeInSeconds)
+                    useVideoStore.getState().incrementMarkerTrigger()
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      commentStore.getState().setSelectedCommentId(_id)
+                      commentStore.getState().setSelectedTimeStamp(timeStamp)
+                      useVideoStore.getState().setTimeCode(timeInSeconds)
+                      useVideoStore.getState().incrementMarkerTrigger()
+                    }
+                  }}
+                />
                 <MarkerMessage>{content}</MarkerMessage>
               </MarkerWrapper>
             )
@@ -200,9 +245,11 @@ export const VideoSection = () => {
       </PlayBar>
     </Container>
   )
+  //#endregion
 }
+//#endregion
 
-//#region ---- Styling -----
+//#region ---- STYLED COMPONENTS -----
 
 const Container = styled.div`
   width: 100%;
