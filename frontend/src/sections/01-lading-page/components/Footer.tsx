@@ -10,13 +10,19 @@ export const Footer = () => {
         <p>This is a school project created by Simon Frisk</p>
 
         <SocialMedia>
-          <a href="">
+          <a
+            href="https://github.com/simfrisk/project-final-simon"
+            target="blank"
+          >
             <img
               src="/icons/Ic-Github.svg"
               alt="Github link"
             />
           </a>
-          <a href="">
+          <a
+            href="https://www.linkedin.com/in/simon-frisk-59aba7bb/"
+            target="blank"
+          >
             <img
               src="/icons/Linked-In.svg"
               alt=""
