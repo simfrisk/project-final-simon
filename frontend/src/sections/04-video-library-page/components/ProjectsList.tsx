@@ -193,20 +193,14 @@ export const ProjectsList = () => {
       ) : (
         <ProjectWrapper>
           {projects.map(
-            ({
-              _id,
-              projectName,
-              projectDescription,
-              thumbnail,
-              projectCreatedBy,
-            }) => (
+            ({ _id, projectName, projectDescription, teacher, thumbnail }) => (
               <Project
                 key={_id}
                 projectId={_id ?? ""}
                 projectName={projectName}
                 projectDescription={projectDescription}
+                teacher={teacher}
                 thumbnail={thumbnail}
-                projectCreatedBy={projectCreatedBy}
               />
             )
           )}

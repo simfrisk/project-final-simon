@@ -18,6 +18,7 @@ export interface ProjectType {
   classId: string
   projectName: string
   projectDescription: string
+  teacher: string
   video: string | File | null
   thumbnail?: string
   projectCreatedBy?: UserType
@@ -38,7 +39,7 @@ interface ProjectsStore {
   deleteProject: (projectId: string) => Promise<void>
   updateProject: (
     projectId: string,
-    updates: { newName?: string; newDescription?: string }
+    updates: { newName?: string; newDescription?: string; newTeacher?: string }
   ) => Promise<void>
 }
 
@@ -198,6 +199,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const formData = new FormData()
       formData.append("projectName", newProject.projectName)
       formData.append("projectDescription", newProject.projectDescription || "")
+      formData.append("teacher", newProject.teacher || "")
       if (newProject.video) {
         formData.append("video", newProject.video)
       }
@@ -283,7 +285,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   //#region ----- UPDATE PROJECT -----
   updateProject: async (
     projectId: string,
-    updates: { newName?: string; newDescription?: string }
+    updates: { newName?: string; newDescription?: string; newTeacher?: string }
   ) => {
     set({ loading: true, error: null, message: null })
     try {

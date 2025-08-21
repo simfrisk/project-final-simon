@@ -21,6 +21,7 @@ export const CreateProject = () => {
 
   const [projectName, setProjectName] = useState("")
   const [projectDescription, setProjectDescription] = useState("")
+  const [teacher, setTeacher] = useState("")
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [errorMesage, setErrorMessage] = useState("")
   const projectNameRef = useRef<HTMLInputElement>(null)
@@ -65,6 +66,7 @@ export const CreateProject = () => {
     await addProject(classId, {
       projectName,
       projectDescription,
+      teacher,
       classId,
       video: videoFile,
     })
@@ -72,6 +74,7 @@ export const CreateProject = () => {
     // Clear inputs after creation
     setProjectName("")
     setProjectDescription("")
+    setTeacher("")
     setVideoFile(null)
     setIsEditingProject(false)
   }
@@ -101,6 +104,11 @@ export const CreateProject = () => {
         type="file"
         accept="video/*"
         onChange={handleFileChange}
+      />
+      <ProjectNameInput
+        placeholder="Teacher in video"
+        value={teacher}
+        onChange={(e) => setTeacher(e.target.value)}
       />
 
       <ErrorMessage>{errorMesage}</ErrorMessage>

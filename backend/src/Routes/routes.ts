@@ -2,7 +2,6 @@ import express from "express"
 import { authenticateUser } from "../middleware/authenticateUser"
 import { uploadVideo } from "../middleware/uploadVideo"
 import { uploadImage } from "../middleware/uploadImage"
-
 import { deleteComment } from "../controllers/deleteComment"
 import { deleteProject } from "../controllers/deleteProject"
 import { deleteReply } from "../controllers/deleteReply"

@@ -1,3 +1,4 @@
+//#region ----- IMPORTS -----
 import { useState } from "react"
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
@@ -10,7 +11,9 @@ import { unFormatTime } from "../../05-review-page/components/video-section/util
 import { commentStore } from "../../../store/commentStore"
 
 import type { MessageType } from "../../../store/commentStore"
+//#endregion
 
+//#region ----- INTERFACES -----
 interface TeacherProjectCardProps {
   projectId: string
   projectName: string
@@ -18,7 +21,9 @@ interface TeacherProjectCardProps {
   thumbnail?: string
   comments?: MessageType[]
 }
+//#endregion
 
+//#region ----- COMPONENT -----
 export const TeacherProjectCard = ({
   projectName,
   projectDescription,
@@ -26,16 +31,20 @@ export const TeacherProjectCard = ({
   comments = [],
   projectId,
 }: TeacherProjectCardProps) => {
+  //#endregion
+
+  //#region ----- STATE -----
   const [showComments, setShowComments] = useState(false)
   const navigate = useNavigate()
+  //#endregion
 
+  //#region ----- HANDLERS -----
   const timeStampHandler = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     commentId: string,
     timeStamp: string
   ) => {
     e.stopPropagation()
-
     const newTimecode = unFormatTime(timeStamp)
 
     useVideoStore.getState().setTimeCode(newTimecode)
@@ -44,28 +53,38 @@ export const TeacherProjectCard = ({
 
     navigate(`/review/${projectId}?commentId=${commentId}`)
   }
+  //#endregion
 
+  //#region ----- RENDER -----
   return (
     <CardWrapper>
-      <CardInner onClick={() => setShowComments((prev) => !prev)}>
+      <CardHeaderButton
+        aria-expanded={showComments}
+        aria-controls={`comments-${projectId}`}
+        onClick={() => setShowComments((prev) => !prev)}
+      >
         <CardThumbnail>
           <img
             src={thumbnail || "/default-thumb.jpg"}
-            alt="Thumbnail of project"
+            alt={`Thumbnail for project: ${projectName}`}
           />
         </CardThumbnail>
         <CardContentWrapper>
           <CardHeader>
             <h3>{projectName}</h3>
-            <p>{`${comments.length} items`}</p>
+            <p aria-label={`${comments.length} comments`}>
+              {`${comments.length} items`}
+            </p>
           </CardHeader>
           <p>{projectDescription}</p>
         </CardContentWrapper>
-      </CardInner>
+      </CardHeaderButton>
 
       <AnimatePresence initial={false}>
         {showComments && comments.length > 0 && (
-          <motion.div
+          <motion.section
+            id={`comments-${projectId}`}
+            aria-live="polite"
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ height: 0 }}
@@ -80,10 +99,10 @@ export const TeacherProjectCard = ({
             >
               <CommentList>
                 {comments
-                  .filter((comment) => comment.isChecked === false)
+                  .filter((comment) => !comment.isChecked)
                   .map((comment) => (
                     <CommentItem key={comment._id}>
-                      <CommentLink
+                      <CommentButton
                         onClick={(e) =>
                           timeStampHandler(e, comment._id, comment.timeStamp)
                         }
@@ -94,7 +113,7 @@ export const TeacherProjectCard = ({
                               comment.commentCreatedBy?.profileImage ||
                               "/default-profile.jpg"
                             }
-                            alt={`${comment.commentCreatedBy?.name || "User"} profile`}
+                            alt={`Profile image of ${comment.commentCreatedBy?.name || "unknown user"}`}
                           />
                         </CommentThumbnail>
                         <CommentContent>
@@ -106,19 +125,20 @@ export const TeacherProjectCard = ({
                             </p>
                           </CommentFooter>
                         </CommentContent>
-                      </CommentLink>
+                      </CommentButton>
                     </CommentItem>
                   ))}
               </CommentList>
             </motion.div>
-          </motion.div>
+          </motion.section>
         )}
       </AnimatePresence>
     </CardWrapper>
   )
 }
+//#endregion
 
-// Styled Components
+//#region ----- STYLED COMPONENTS -----
 
 const CardWrapper = styled.div`
   width: 90%;
@@ -129,45 +149,18 @@ const CardWrapper = styled.div`
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
   color: inherit;
   text-decoration: none;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(0.995);
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.295);
-  }
-
-  p,
-  h3 {
-    margin: 0;
-  }
-
-  h3 {
-    white-space: nowrap; /* prevent title wrap */
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  p {
-    display: -webkit-box; /* important for multiline ellipsis */
-    -webkit-line-clamp: 2; /* limit to 3 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal; /* allow wrapping inside the lines */
-  }
 `
 
-const CardInner = styled.article`
+const CardHeaderButton = styled.button`
   display: flex;
   width: 100%;
-  align-items: stretch; // Important!
-  padding-right: 30px;
+  align-items: stretch;
+  padding: 14px 30px; /* restore original padding */
+  border: none;
+  background: none;
   cursor: pointer;
+  text-align: left;
   transition: transform 0.3s ease;
-
-  p {
-    color: ${({ theme }) => theme.colors.textAlternative};
-  }
 
   &:hover {
     transform: scale(0.998);
@@ -179,7 +172,6 @@ const CardThumbnail = styled.div`
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
   overflow: hidden;
-  border: 4px solid ${({ theme }) => theme.colors.offBackground};
   border-radius: 15px;
   margin-right: 20px;
 
@@ -207,13 +199,10 @@ const CardContentWrapper = styled.div`
 const CardHeader = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
   gap: 4px;
 
   h3 {
     color: ${({ theme }) => theme.colors.text};
-    white-space: normal; /* allow wrapping on small screens */
   }
 
   p {
@@ -221,12 +210,12 @@ const CardHeader = styled.div`
   }
 
   @media ${MediaQueries.biggerSizes} {
-    flex-direction: row; /* side by side */
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
     h3 {
-      white-space: nowrap; /* prevent wrapping */
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       flex: 1;
@@ -257,14 +246,16 @@ const CommentItem = styled.div`
   }
 `
 
-const CommentLink = styled.div`
+const CommentButton = styled.button`
   display: flex;
   align-items: center;
   gap: 22px;
   width: 100%;
-  padding: 14px 30px;
-  text-decoration: none;
-  color: inherit;
+  padding: 14px 30px; /* restore original padding */
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
   transition: transform 0.3s ease;
 
   &:hover {
@@ -304,3 +295,5 @@ const CommentFooter = styled.div`
   color: #888;
   margin-top: 4px;
 `
+
+//#endregion

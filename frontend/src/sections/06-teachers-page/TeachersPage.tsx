@@ -1,8 +1,8 @@
+//#region ----- IMPORTS -----
 import { useEffect } from "react"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { useProjectStore } from "../../store/projectStore"
 import styled from "styled-components"
-
 import { SmallButton } from "../../global-components/buttons"
 import { TeacherProjectCard } from "./components/TeacherProjectCard"
 import { TeachersSideMenu } from "./components/TeachersSideMenu"
@@ -10,36 +10,30 @@ import { useEditingStore } from "../../store/editStore"
 import { useClassStore } from "../../store/classStore"
 import { MediaQueries } from "../../themes/mediaQueries"
 
+//#endregion
+
 export const TeachersPage = () => {
+  //#region ----- STORE HOOKS -----
   const projects = useProjectStore((state) => state.projects)
   const fetchProjectsWithComments = useProjectStore(
     (state) => state.fetchProjectsWithComments
   )
-
+  const classes = useClassStore((state) => state.classes)
+  const fetchClasses = useClassStore((state) => state.fetchClasses)
   const currentClassId = useEditingStore((state) => state.currentClassId)
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId)
 
-  const classes = useClassStore((state) => state.classes)
-  const fetchClasses = useClassStore((state) => state.fetchClasses)
+  //#endregion
 
-  // Fetch on page load
+  //#region ----- EFFECTS -----
+
+  // Fetch classes and projects on mount
   useEffect(() => {
     fetchClasses()
     fetchProjectsWithComments()
   }, [])
 
-  const filteredProjects = projects
-    .filter((project) => project.classId === currentClassId)
-    .filter(
-      (project) =>
-        Array.isArray(project.comments) &&
-        project.comments.some(
-          (comment) =>
-            comment.commentType === "question" && comment.isChecked === false
-        )
-    )
-
-  //A propp that counts the notChecked Comments for each class so if > 0 it does not show.
+  // Automatically select first class with unchecked comments
   const classesWithUncheckedComments = classes.filter((cls) => {
     const projectsInClass = projects.filter(
       (project) => project.classId === cls._id
@@ -53,28 +47,49 @@ export const TeachersPage = () => {
     return uncheckedCommentsCount > 0
   })
 
-  //selects the fist class in the list
   useEffect(() => {
     if (classesWithUncheckedComments.length > 0 && !currentClassId) {
       setCurrentClassId(classesWithUncheckedComments[0]._id)
     }
   }, [classesWithUncheckedComments, currentClassId, setCurrentClassId])
+  //#endregion
 
-  const handleClassFetch = (id: string) => setCurrentClassId(id)
+  //#region ----- EVENT HANDLERS -----
+  const handleClassChange = (id: string) => setCurrentClassId(id)
+  //#endregion
 
+  //#region ----- DERIVED DATA -----
+  // Filter projects for the currently selected class with unchecked questions
+  const filteredProjects = projects
+    .filter((project) => project.classId === currentClassId)
+    .filter(
+      (project) =>
+        Array.isArray(project.comments) &&
+        project.comments.some(
+          (comment) =>
+            comment.commentType === "question" && comment.isChecked === false
+        )
+    )
+  //#endregion
+
+  //#region ----- RENDER -----
   return (
     <>
       <Navigation />
 
       <DashboardLayout>
-        <TeachersSideMenu classesCount={classesWithUncheckedComments} />
+        <TeachersSideMenu
+          classesCount={classesWithUncheckedComments}
+          aria-label="Teacher side menu with classes having unchecked comments"
+        />
 
-        <MainContent>
-          <PageTitle>Teachers Dashboard</PageTitle>
+        <MainContent role="main">
+          <PageTitle tabIndex={-1}>Teachers Dashboard</PageTitle>
 
           <ClassSelect
             value={currentClassId || ""}
-            onChange={(e) => handleClassFetch(e.target.value)}
+            onChange={(e) => handleClassChange(e.target.value)}
+            aria-label="Select class with unchecked comments"
           >
             {classesWithUncheckedComments.map((cls) => (
               <option
@@ -86,13 +101,25 @@ export const TeachersPage = () => {
             ))}
           </ClassSelect>
 
-          <ActionBar>
-            <SmallButton text="Projects" />
-            <SmallButton text="All comments" />
-            <SmallButton text="Messages" />
+          <ActionBar
+            role="toolbar"
+            aria-label="Dashboard actions"
+          >
+            <SmallButton
+              text="View Projects"
+              aria-label="View all projects"
+            />
+            <SmallButton
+              text="View All Comments"
+              aria-label="View all comments"
+            />
+            <SmallButton
+              text="View Messages"
+              aria-label="View messages"
+            />
           </ActionBar>
 
-          <ProjectsList>
+          <ProjectsList aria-label="List of projects with unanswered questions">
             {filteredProjects.map(
               ({
                 _id,
@@ -114,6 +141,7 @@ export const TeachersPage = () => {
                     projectDescription={projectDescription}
                     thumbnail={thumbnail}
                     comments={questionComments}
+                    aria-label={`Project card for ${projectName}, ${questionComments.length} unanswered questions`}
                   />
                 )
               }
@@ -125,7 +153,9 @@ export const TeachersPage = () => {
   )
 }
 
-// Styled Components
+//#endregion
+
+//#region ----- STYLED COMPONENTS -----
 const PageTitle = styled.h2`
   text-align: center;
   margin-top: 40px;
@@ -193,3 +223,5 @@ const ProjectsList = styled.div`
   max-width: 800px;
   margin-bottom: 20px;
 `
+
+//#endregion

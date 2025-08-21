@@ -15,11 +15,7 @@ interface ProjectProps
     "_id" | "projectName" | "projectDescription" | "thumbnail"
   > {
   projectId: string
-  projectCreatedBy?: {
-    _id: string
-    name: string
-    email?: string
-  } | null
+  teacher: string
 }
 
 //#endregion
@@ -29,8 +25,8 @@ export const Project = ({
   projectId,
   projectName,
   projectDescription,
+  teacher,
   thumbnail,
-  projectCreatedBy,
 }: ProjectProps) => {
   const navigate = useNavigate()
 
@@ -47,6 +43,7 @@ export const Project = ({
 
   const [newName, setNewName] = useState("")
   const [newDescription, setNewDescription] = useState("")
+  const [newTeacher, setNewTeacher] = useState("")
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,8 +51,8 @@ export const Project = ({
 
     if (!projectId) return
 
-    if (!newName.trim() && !newDescription.trim()) {
-      setErrorMessage("Please fill in at least one field.")
+    if (!newName.trim() && !newDescription.trim() && !newTeacher.trim()) {
+      setErrorMessage("Please fill in Name or description")
       return
     }
 
@@ -63,6 +60,7 @@ export const Project = ({
     await updateProject(projectId, {
       newName,
       newDescription,
+      newTeacher,
     })
   }
 
@@ -100,7 +98,7 @@ export const Project = ({
         </TextContainer>
 
         <CardFooter>
-          <p>{projectCreatedBy?.name || "Unknown"}</p>
+          <p>{teacher || "Unknown"}</p>
 
           <Edit>
             <button
@@ -157,6 +155,14 @@ export const Project = ({
                 id="newDescription"
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
+                aria-required="false"
+              />
+
+              <label htmlFor="newTeacher">New Teacher</label>
+              <textarea
+                id="newTeacher"
+                value={newTeacher}
+                onChange={(e) => setNewTeacher(e.target.value)}
                 aria-required="false"
               />
 

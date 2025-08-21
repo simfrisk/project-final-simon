@@ -94,7 +94,6 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
 
       {showConfirm && (
         <ConfirmBox
-          role="alertdialog"
           aria-modal="true"
           aria-labelledby="confirm-delete-title"
           message="Are you sure you want to delete?"
