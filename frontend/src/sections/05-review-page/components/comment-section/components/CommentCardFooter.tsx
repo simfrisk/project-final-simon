@@ -30,45 +30,62 @@ export const CommentCardFooter = ({
   return (
     <Container>
       <ReactionGroup>
-        <ActionButton onClick={() => setReplyToCommentId(_id)}>
+        <ActionButton
+          type="button"
+          onClick={() => setReplyToCommentId(_id)}
+          onKeyDown={(e) => e.stopPropagation()}
+          aria-label="Reply to comment"
+        >
           Reply
         </ActionButton>
-        <ActionButtonIcon onClick={() => toggleLike(_id)}>
+        <ActionButtonIcon
+          onClick={() => toggleLike(_id)}
+          onKeyDown={(e) => e.stopPropagation()}
+          aria-label={`Like comment. Current likes: ${likesCount ?? 0}`}
+        >
           <img
             src="/icons/like.svg"
-            alt="Like button"
+            alt=""
+            aria-hidden="true"
           />
-          <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
+          <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0} </LikeCount>
         </ActionButtonIcon>
       </ReactionGroup>
 
       {(user?.role === "teacher" || user?.userId === commentCreatedBy?._id) && (
         <Edit>
           {editingCommentId !== _id && (
-            <img
-              src="/icons/edit.svg"
-              alt="Edit Icon"
+            <EditButton
               onClick={() => {
                 setEditingCommentId(_id)
                 setEditedContent(content)
               }}
-            />
+              onKeyDown={(e) => e.stopPropagation()}
+              aria-label="Edit comment"
+            >
+              <img
+                src="/icons/edit.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </EditButton>
           )}
-          <img
-            src="/icons/delete.svg"
-            alt="Delete Icon"
+          <EditButton
             onClick={() => deleteComment(_id)}
-          />
+            onKeyDown={(e) => e.stopPropagation()}
+            aria-label="Delete comment"
+          >
+            <img
+              src="/icons/delete.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </EditButton>
         </Edit>
       )}
     </Container>
   )
 }
-
-const ReactionGroup = styled.div`
-  display: flex;
-  column-gap: 10px;
-`
 
 const Container = styled.div`
   display: flex;
@@ -76,13 +93,18 @@ const Container = styled.div`
   width: 100%;
 `
 
+const ReactionGroup = styled.div`
+  display: flex;
+  column-gap: 10px;
+`
+
 const ActionButton = styled.button`
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: ease 0.3s;
   color: ${({ theme }) => theme.colors.textAlternative};
+  transition: all 0.3s ease;
 
   &:hover {
     text-decoration: underline;
@@ -90,54 +112,56 @@ const ActionButton = styled.button`
   }
 `
 
-const LikeCount = styled.p<{ $count: number }>`
-  visibility: ${({ $count }) => ($count > 0 ? "inline-block" : "hidden")};
-  font-size: 20px;
-  margin: 0;
-`
-
 const ActionButtonIcon = styled.button`
   display: flex;
-  color: ${({ theme }) => theme.colors.primary};
-  column-gap: 10px;
-  transition: ease 0.3s;
+  column-gap: 8px;
+  align-items: center;
   background: none;
   border: none;
   padding: 0;
   transform: scale(0.7);
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.primary};
+  transition: all 0.3s ease;
 
   img {
     filter: ${({ theme }) => theme.filter.inverted};
   }
 
-  img:hover {
+  &:hover img {
     transform: scale(0.9);
   }
 `
 
+const LikeCount = styled.span<{ $count: number }>`
+  visibility: ${({ $count }) => ($count > 0 ? "visible" : "hidden")};
+  font-size: 20px;
+`
+
 export const Edit = styled.div`
-  opacity: 0;
-  visibility: hidden;
   display: flex;
   column-gap: 10px;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  margin: 0 20px 0 0;
   cursor: pointer;
-  transform: translateY(30%);
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease,
-    transform 0.3s ease;
+  transition: all 0.3s ease;
+  margin-right: 20px;
+`
+
+const EditButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
 
   img {
     filter: ${({ theme }) => theme.filter.inverted};
   }
 
-  img:hover {
-    transition: ease 0.3s;
+  &:hover img {
     transform: scale(0.9);
   }
 `
