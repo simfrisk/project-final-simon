@@ -151,9 +151,8 @@ export const TeachersPage = () => {
       </DashboardLayout>
     </>
   )
+  //#endregion
 }
-
-//#endregion
 
 //#region ----- STYLED COMPONENTS -----
 const PageTitle = styled.h2`

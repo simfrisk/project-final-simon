@@ -1,20 +1,29 @@
-import { useState } from "react"
-import type { MessageType } from "../../../../../store/commentStore"
+//#region ----- IMPORTS -----
+import { useState, useMemo } from "react"
 import styled from "styled-components"
-import { commentStore } from "../../../../../store/commentStore"
-import { ReplyCard } from "../components/reply-card/ReplyCard"
 import { MediaQueries } from "../../../../../themes/mediaQueries"
-import { unFormatTime } from "../../video-section/utils/unFormatTime"
+
+import { commentStore } from "../../../../../store/commentStore"
 import { useUserStore } from "../../../../../store/userStore"
 import { useTabStore } from "../../../../../store/tabStore"
 import { useVideoStore } from "../../../../../store/videoStore"
+
+import type { MessageType } from "../../../../../store/commentStore"
+import { unFormatTime } from "../../video-section/utils/unFormatTime"
+import { handleReplySubmit } from "./utils/handleReplySubmit"
+
 import { CommentCardHeader } from "../components/CommentCardHeader"
 import { CheckBtn } from "../components/CommentCardHeader"
 import { CommentCardMain } from "../components/CommentCardMain"
 import { CommentCardFooter } from "../components/CommentCardFooter"
 import { Edit } from "../components/CommentCardFooter"
+import { ReplyCard } from "../components/reply-card/ReplyCard"
 
+//#endregion
+
+//#region ----- COMPONENT -----
 export const CommentSection = () => {
+  //#region ----- STORE & STATE HOOKS -----
   const activeTab = useTabStore((state) => state.activeTab)
   const { user } = useUserStore()
 
@@ -22,69 +31,60 @@ export const CommentSection = () => {
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null)
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
   const [editedContent, setEditedContent] = useState("")
-
-  //Replie toggle
-  const [openReplies, setOpenReplies] = useState<{ [key: string]: boolean }>({})
-
-  const toggleReplies = (id: string) => {
-    setOpenReplies((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }))
-  }
+  const [openReplies, setOpenReplies] = useState<Set<string>>(new Set())
 
   const selectedCommentId = commentStore((state) => state.selectedCommentId)
   const addReply = commentStore((state) => state.addReply)
   const updateComment = commentStore((state) => state.updateComment)
-
-  const rawMessages: MessageType[] =
-    activeTab === "private"
-      ? commentStore((state) => state.privateComments)
-      : commentStore((state) => state.projectComments)
-
-  const messages = [...rawMessages].sort(
-    (a, b) => unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp)
-  )
-
   const toggleCheck = commentStore((state) => state.toggleCheck)
   const toggleLike = commentStore((state) => state.toggleLike)
   const deleteComment = commentStore((state) => state.deleteComment)
   const setSelectedTimeStamp = commentStore(
     (state) => state.setSelectedTimeStamp
   )
+  //#endregion
+
+  //#region ----- DATA PREPARATION -----
+  const rawMessages: MessageType[] =
+    activeTab === "private"
+      ? commentStore((state) => state.privateComments)
+      : commentStore((state) => state.projectComments)
+
+  const messages = useMemo(
+    () =>
+      [...rawMessages].sort(
+        (a, b) => unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp)
+      ),
+    [rawMessages]
+  )
+  //#endregion
+
+  //#region ----- HANDLERS -----
+  const toggleReplies = (id: string) => {
+    setOpenReplies((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) newSet.delete(id)
+      else newSet.add(id)
+      return newSet
+    })
+  }
 
   const handleToggleCheck = async (id: string) => {
     if (user?.role !== "teacher") return
     await toggleCheck(id)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!reply.trim() || !replyToCommentId) return
-
-    const targetComment = messages.find((msg) => msg._id === replyToCommentId)
-    if (!targetComment || !targetComment.projectId) {
-      console.error("Missing projectId or commentId")
-      return
-    }
-
-    try {
-      await addReply({
-        content: reply.trim(),
-        commentId: targetComment._id,
-        projectId: targetComment.projectId,
-      })
-
-      setReply("")
-      setReplyToCommentId(null)
-      setOpenReplies((prev) => ({
-        ...prev,
-        [replyToCommentId]: true,
-      }))
-    } catch (err) {
-      console.error("Failed to add reply:", err)
-    }
-  }
+  const handleSubmit = (e: React.FormEvent) =>
+    handleReplySubmit(
+      e,
+      reply,
+      replyToCommentId,
+      messages,
+      addReply,
+      setReply,
+      setReplyToCommentId,
+      setOpenReplies
+    )
 
   const handleSaveEdit = async (commentId: string) => {
     if (!editedContent.trim()) return
@@ -98,6 +98,16 @@ export const CommentSection = () => {
     setEditedContent("")
   }
 
+  const handleCardClick = (timeStamp: string, commentId: string) => {
+    const seconds = unFormatTime(timeStamp)
+    setSelectedTimeStamp(timeStamp)
+    commentStore.getState().setSelectedCommentId(commentId)
+    useVideoStore.getState().setTimeCode(seconds)
+    useVideoStore.getState().incrementMarkerTrigger()
+  }
+  //#endregion
+
+  //#region ----- RENDER -----
   return (
     <CommentListContainer>
       {messages.map(
@@ -114,14 +124,16 @@ export const CommentSection = () => {
           <Card
             key={_id}
             $role={commentCreatedBy?.role}
-            onClick={() => {
-              const seconds = unFormatTime(timeStamp)
-              setSelectedTimeStamp(timeStamp)
-              commentStore.getState().setSelectedCommentId(_id)
-              useVideoStore.getState().setTimeCode(seconds)
-              useVideoStore.getState().incrementMarkerTrigger()
-            }}
+            onClick={() => handleCardClick(timeStamp, _id)}
             tabIndex={0}
+            role="button"
+            aria-pressed={selectedCommentId === _id}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                handleCardClick(timeStamp, _id)
+              }
+            }}
             className={selectedCommentId === _id ? "active-comment" : ""}
           >
             <CommentCardHeader
@@ -163,18 +175,19 @@ export const CommentSection = () => {
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Write a reply..."
-                  aria-label="Write a reply for the comment"
+                  aria-label={`Write a reply for comment by ${commentCreatedBy?.name ?? "user"}`}
                 />
                 <button
                   type="submit"
-                  aria-label="Subimt the reply "
+                  aria-label="Submit the reply"
+                  disabled={!reply.trim()}
                 >
                   Add
                 </button>
               </AddReplyForm>
             )}
 
-            {(replies?.length || 0) > 0 && (
+            {(replies?.length ?? 0) > 0 && (
               <>
                 <ShowReplies
                   type="button"
@@ -182,13 +195,15 @@ export const CommentSection = () => {
                     e.stopPropagation()
                     toggleReplies(_id)
                   }}
+                  aria-expanded={openReplies.has(_id)}
+                  aria-controls={`replies-${_id}`}
                 >
-                  <ArrowIcon isOpen={!!openReplies[_id]} />
+                  <ArrowIcon $isOpen={openReplies.has(_id)} />
                   {`${replies?.length ?? 0} ${replies?.length === 1 ? "Reply" : "Replies"}`}
                 </ShowReplies>
 
-                {openReplies[_id] && (
-                  <ReplyCardContainer>
+                {openReplies.has(_id) && (
+                  <ReplyCardContainer id={`replies-${_id}`}>
                     {replies?.map((reply) => (
                       <ReplyCard
                         key={reply._id}
@@ -205,11 +220,13 @@ export const CommentSection = () => {
       )}
     </CommentListContainer>
   )
+  //#endregion
 }
+//#endregion
 
-// Styled Components
+//#region ----- STYLED COMPONENTS -----
 
-const CommentListContainer = styled.div`
+const CommentListContainer = styled.section`
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -220,15 +237,10 @@ const CommentListContainer = styled.div`
   @media ${MediaQueries.biggerSizes} {
     overflow: scroll;
 
-    /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
     &::-webkit-scrollbar {
       display: none;
     }
-
-    /* Hide scrollbar for Firefox */
     scrollbar-width: none;
-
-    /* Hide scrollbar for Edge/IE */
     -ms-overflow-style: none;
   }
 `
@@ -286,6 +298,10 @@ const ReplyCardContainer = styled.div`
 `
 
 const AddReplyForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
   textarea {
     background-color: ${({ theme }) =>
       theme.name === "dark" ? "#242e3e" : "#fff"};
@@ -293,52 +309,51 @@ const AddReplyForm = styled.form`
     padding: 10px 12px;
     border: 1px solid ${({ theme }) => theme.colors.textAlternative};
     border-radius: 6px;
-    margin: 10px 0px 2px 0;
     width: 100%;
     min-height: 80px;
+    margin: 10px 0;
+    resize: vertical;
   }
 
   button {
-    width: 100%;
+    width: 100%; // full width
     padding: 8px 14px;
     border: none;
     border-radius: 15px;
-    margin: 8px 0px 10px 0;
-    color: white;
     background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #0056b3;
+      transform: scale(0.98);
+    }
   }
 `
 
 const ShowReplies = styled.button`
   display: flex;
-  justify-content: center;
-  color: ${({ theme }) => theme.colors.text};
-  border: none;
-  padding: 6px 10px;
-  border-radius: 15px;
-  cursor: pointer;
-  background-color: transparent;
-  display: flex;
   align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 6px;
   gap: 6px;
-  font-weight: bold;
-  transition: ease 0.3s;
-
-  &:hover {
-    transform: scale(0.96);
-    background-color: #1961b431;
-  }
+  padding: 4px 0;
 `
 
-const ArrowIcon = styled.span<{ isOpen: boolean }>`
-  justify-content: center;
+const ArrowIcon = styled.span<{ $isOpen: boolean }>`
   display: inline-block;
-  border-style: solid;
-  border-width: 6px 6px 0 6px;
-  border-color: ${({ theme }) => theme.colors.text} transparent transparent
-    transparent;
-  transform: ${({ isOpen }) => (isOpen ? "rotate(0)" : "rotate(-90deg)")};
-  transition: transform 0.3s ease;
   width: 0;
   height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid ${({ theme }) => theme.colors.text};
+  transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0deg)")};
 `
+
+//#endregion

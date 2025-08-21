@@ -1,12 +1,19 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import { useState } from "react"
+
 import { commentStore } from "../../../../store/commentStore"
 import { useVideoStore } from "../../../../store/videoStore"
 import { useTimecode } from "../../../../store/timeCodeStore"
 import { useProjectStore } from "../../../../store/projectStore"
 import { useTabStore } from "../../../../store/tabStore"
+//#endregion
 
+//#region ----- COMPONENT -----
 export const CommentForm = () => {
+  //#endregion
+
+  //#region ----- STORE HOOKS / STATE -----
   const activeTab = useTabStore((state) => state.activeTab)
   const setActiveTab = useTabStore((state) => state.setActiveTab)
 
@@ -20,7 +27,9 @@ export const CommentForm = () => {
 
   const project = useProjectStore((state) => state.project)
   const projectId = project?._id
+  //#endregion
 
+  //#region ----- HANDLERS -----
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!text.trim()) return
@@ -35,24 +44,34 @@ export const CommentForm = () => {
     setText("")
     incrementMarkerTrigger()
   }
+  //#endregion
 
+  //#region ----- RENDER -----
   return (
-    <Container
+    <FormContainer
       as="form"
       onSubmit={handleSubmit}
+      aria-label="Add a comment"
     >
       <TextInput
+        id="comment-input"
         type="text"
         placeholder="Leave your comment here..."
         value={text}
         onChange={(e) => setText(e.target.value)}
         onClick={stopVideo}
+        aria-required="true"
+        aria-label="Comment text"
       />
 
       <Footer>
         <TimeTag>
-          <p>{timecode}</p>
-          <input type="checkbox" />
+          <p id="timecode-label">{timecode}</p>
+          <input
+            type="checkbox"
+            aria-labelledby="timecode-label"
+            aria-checked="false"
+          />
         </TimeTag>
 
         {activeTab !== "private" && (
@@ -67,19 +86,27 @@ export const CommentForm = () => {
                   | "public"
               )
             }
+            aria-label="Select comment type"
           >
-            <option value="1uestion">Question</option>
+            <option value="question">Question</option>
             <option value="public">Public Comment</option>
           </Select>
         )}
 
-        <SendButton type="submit">Send</SendButton>
+        <SendButton
+          type="submit"
+          aria-label="Send comment"
+        >
+          Send
+        </SendButton>
       </Footer>
-    </Container>
+    </FormContainer>
   )
+  //#endregion
 }
 
-const Container = styled.div`
+//#region ----- STYLED COMPONENTS -----
+const FormContainer = styled.section`
   position: sticky;
   bottom: 16px;
   width: 95%;
@@ -103,8 +130,7 @@ const TextInput = styled.input`
   color: ${({ theme }) => theme.colors.text};
 
   &:focus {
-    outline: none;
-    border-color: #007bff;
+    outline: 2px solid #007bff;
   }
 `
 
@@ -143,8 +169,7 @@ const Select = styled.select`
   cursor: pointer;
 
   &:focus {
-    outline: none;
-    border-color: #007bff;
+    outline: 2px solid #007bff;
   }
 `
 
@@ -158,7 +183,10 @@ const SendButton = styled.button`
   cursor: pointer;
   transition: background-color 0.2s ease;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: ${({ theme }) => theme.colors.primaryHover};
+    outline: 2px solid #007bff;
   }
 `
+//#endregion

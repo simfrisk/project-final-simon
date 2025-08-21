@@ -1,27 +1,40 @@
-import styled from "styled-components"
+//#region ----- IMPORTS -----
 import { useEffect } from "react"
-import { CommentForm } from "../components/comment-form/CommentForm"
-import { CommentSection } from "../components/comment-section/01-main/CommentSection"
-import { VideoSection } from "../components/video-section/VideoSection"
-import { CommentHeader } from "../components/comment-header/CommentHeader"
-import { MediaQueries } from "../../../themes/mediaQueries"
-import { DescriptionSection } from "../components/description/DescriptionSection"
 import { useParams } from "react-router-dom"
+import styled from "styled-components"
+
+// Components
+import { CommentForm } from "../components/comment-form/CommentForm"
+import { CommentHeader } from "../components/comment-header/CommentHeader"
+import { CommentSection } from "../components/comment-section/01-main/CommentSection"
+import { DescriptionSection } from "../components/description/DescriptionSection"
+import { ReviewNav } from "../components/nav/ReviewNav"
+import { VideoSection } from "../components/video-section/VideoSection"
+
+// Themes / Stores
+import { MediaQueries } from "../../../themes/mediaQueries"
 import { useProjectStore } from "../../../store/projectStore"
 import { commentStore } from "../../../store/commentStore"
-import { ReviewNav } from "../components/nav/ReviewNav"
 import { useTabStore } from "../../../store/tabStore"
 
-export const ReviewPage = () => {
-  const { projectId } = useParams<{ projectId: string }>()
+//#endregion
 
+//#region ----- COMPONENT -----
+export const ReviewPage = () => {
+  //#region ----- ROUTER / PARAMS -----
+  const { projectId } = useParams<{ projectId: string }>()
+  //#endregion
+
+  //#region ----- STORE HOOKS -----
   const activeTab = useTabStore((state) => state.activeTab)
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById)
   const fetchComments = commentStore((state) => state.fetchComments)
   const fetchPrivateComments = commentStore(
     (state) => state.fetchPrivateComments
   )
+  //#endregion
 
+  //#region ----- EFFECTS -----
   useEffect(() => {
     if (!projectId) return
 
@@ -37,30 +50,50 @@ export const ReviewPage = () => {
       })
     }
   }, [projectId, fetchProjectById, fetchComments, fetchPrivateComments])
+  //#endregion
 
+  //#region ----- CONDITIONAL RENDERING -----
   if (!projectId) {
-    return <div>Project ID not found</div>
+    return (
+      <main
+        role="main"
+        aria-live="polite"
+      >
+        <p>Project ID not found</p>
+      </main>
+    )
   }
+  //#endregion
 
+  //#region ----- RENDER UI -----
   return (
     <>
-      <ReviewNav />
-      <Container>
-        <StyledVideoSection />
-        <RightColumn>
-          <StyledCommentHeader />
+      <ReviewNav aria-label="Review Navigation" />
+      <MainContainer role="main">
+        <StyledVideoSection aria-label="Project video" />
 
-          {activeTab === "description" && <StyledDescriptionSection />}
-          {activeTab !== "description" && <StyledCommentSection />}
+        <RightColumn>
+          <StyledCommentHeader aria-label="Comments header" />
+
+          {activeTab === "description" && (
+            <StyledDescriptionSection aria-label="Project description" />
+          )}
+          {activeTab !== "description" && (
+            <StyledCommentSection aria-label="Project comments" />
+          )}
         </RightColumn>
 
-        {activeTab !== "description" && <StyledCommentForm />}
-      </Container>
+        {activeTab !== "description" && (
+          <StyledCommentForm aria-label="Add a comment" />
+        )}
+      </MainContainer>
     </>
   )
+  //#endregion
 }
 
-const Container = styled.div`
+//#region ----- STYLED COMPONENTS -----
+const MainContainer = styled.div`
   display: grid;
   width: 100%;
 
@@ -91,8 +124,10 @@ const RightColumn = styled.div`
   }
 `
 
-// Just use CommentHeader directly; no props needed
 const StyledCommentHeader = styled(CommentHeader)``
 
 const StyledCommentSection = styled(CommentSection)``
+
 const StyledDescriptionSection = styled(DescriptionSection)``
+
+//#endregion

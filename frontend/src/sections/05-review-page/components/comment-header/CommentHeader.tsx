@@ -1,32 +1,53 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
+
 import { useProjectStore } from "../../../../store/projectStore"
 import { MediaQueries } from "../../../../themes/mediaQueries"
 import { useTabStore } from "../../../../store/tabStore"
+//#endregion
 
+//#region ----- Component Logic -----
 export const CommentHeader = () => {
   const project = useProjectStore((state) => state.project)
   const activeTab = useTabStore((state) => state.activeTab)
   const setActiveTab = useTabStore((state) => state.setActiveTab)
 
   if (!project) return null
+  //#endregion
 
+  //#region ----- RENDER -----
   return (
     <Container>
       <Title>{project.projectName}</Title>
-      <ButtonGroup>
+      <ButtonGroup
+        role="tablist"
+        aria-label="Comment tabs"
+      >
         <TabButton
+          role="tab"
+          id="tab-description"
+          aria-selected={activeTab === "description"}
+          aria-controls="panel-description"
           $active={activeTab === "description"}
           onClick={() => setActiveTab("description")}
         >
           Description
         </TabButton>
         <TabButton
+          role="tab"
+          id="tab-question"
+          aria-selected={activeTab === "question" || activeTab === "public"}
+          aria-controls="panel-question"
           $active={activeTab === "question" || activeTab === "public"}
           onClick={() => setActiveTab("question")}
         >
           Question
         </TabButton>
         <TabButton
+          role="tab"
+          id="tab-private"
+          aria-selected={activeTab === "private"}
+          aria-controls="panel-private"
           $active={activeTab === "private"}
           onClick={() => setActiveTab("private")}
         >
@@ -35,9 +56,11 @@ export const CommentHeader = () => {
       </ButtonGroup>
     </Container>
   )
+  //#endregion
 }
 
-const Container = styled.div`
+//#region ----- STYLED COMPONENTS -----
+const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,3 +109,4 @@ const TabButton = styled.button<{ $active?: boolean }>`
     box-shadow: 0 0 0 3px rgb(0 123 255 / 0.5);
   }
 `
+//#endregion
