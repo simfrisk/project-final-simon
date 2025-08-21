@@ -1,3 +1,4 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
 import {
   CircleCheckboxLabel,
@@ -5,7 +6,9 @@ import {
   StyledCircle,
 } from "../../../../../global-components/checkbox"
 import moment from "moment"
+//#endregion
 
+//#region ----- INTERFACES / TYPES -----
 interface CommentCardHeaderProps {
   _id: string
   commentCreatedBy?: {
@@ -18,7 +21,9 @@ interface CommentCardHeaderProps {
   user?: { role?: string } | null
   handleToggleCheck: (id: string) => void
 }
+//#endregion
 
+//#region ----- COMPONENT -----
 export const CommentCardHeader: React.FC<CommentCardHeaderProps> = ({
   _id,
   commentCreatedBy,
@@ -27,23 +32,37 @@ export const CommentCardHeader: React.FC<CommentCardHeaderProps> = ({
   user,
   handleToggleCheck,
 }) => {
+  //#region ----- VARIABLES -----
+  const name = commentCreatedBy?.name || "Anonymous"
+  const timestamp = createdAt ? moment(createdAt).fromNow() : "Unknown time"
+  //#endregion
+
+  //#region ----- RENDER -----
   return (
     <Container>
       <ImageContainer $role={commentCreatedBy?.role}>
         <img
           src={commentCreatedBy?.profileImage || "/default-profile.png"}
-          alt={`${commentCreatedBy?.name || "Anonymous"}'s profile image`}
+          alt={`${name}'s profile image`}
         />
       </ImageContainer>
+
       <Content>
-        <CardHeader>
-          <strong>{commentCreatedBy?.name || "Anonymous"}</strong>
+        <CardHeader aria-label={`Comment by ${name} ${timestamp}`}>
+          <strong>{name}</strong>
           <Dot>&middot;</Dot>
-          <span>{moment(createdAt).fromNow()}</span>
+          <span>{timestamp}</span>
         </CardHeader>
       </Content>
+
       {(user?.role === "teacher" || isChecked) && (
-        <CheckBtn $checked={isChecked}>
+        <CheckBtn
+          $checked={isChecked}
+          role="checkbox"
+          aria-checked={isChecked}
+          aria-label={`Mark comment by ${name} as checked`}
+          onClick={() => handleToggleCheck(_id)}
+        >
           <CircleCheckboxLabel>
             <HiddenCheckbox
               checked={isChecked}
@@ -55,8 +74,11 @@ export const CommentCardHeader: React.FC<CommentCardHeaderProps> = ({
       )}
     </Container>
   )
+  //#endregion
 }
+//#endregion
 
+//#region ----- STYLED COMPONENTS -----
 const Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -104,9 +126,10 @@ export const CheckBtn = styled.div<{ $checked: boolean }>`
   justify-content: center;
   width: 40px;
   cursor: pointer;
-  transform: translatey(30%);
+  transform: translateY(30%);
   transition:
     opacity 0.3s ease,
     visibility 0.3s ease,
     transform 0.3s ease;
 `
+//#endregion

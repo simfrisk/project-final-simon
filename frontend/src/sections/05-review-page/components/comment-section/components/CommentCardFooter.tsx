@@ -1,5 +1,8 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
+//#endregion
 
+//#region ----- TYPES / INTERFACES -----
 interface CommentCardFooterProps {
   _id: string
   likesCount?: number
@@ -13,7 +16,9 @@ interface CommentCardFooterProps {
   toggleLike: (id: string) => void
   setReplyToCommentId: (id: string) => void
 }
+//#endregion
 
+//#region ----- COMPONENT -----
 export const CommentCardFooter = ({
   _id,
   likesCount,
@@ -27,6 +32,16 @@ export const CommentCardFooter = ({
   toggleLike,
   setReplyToCommentId,
 }: CommentCardFooterProps) => {
+  //#endregion
+
+  //#region ----- HANDLERS -----
+  const handleEdit = () => {
+    setEditingCommentId(_id)
+    setEditedContent(content)
+  }
+  //#endregion
+
+  //#region ----- RENDER -----
   return (
     <Container>
       <ReactionGroup>
@@ -48,7 +63,7 @@ export const CommentCardFooter = ({
             alt=""
             aria-hidden="true"
           />
-          <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0} </LikeCount>
+          <LikeCount $count={likesCount ?? 0}>{likesCount ?? 0}</LikeCount>
         </ActionButtonIcon>
       </ReactionGroup>
 
@@ -56,10 +71,7 @@ export const CommentCardFooter = ({
         <Edit>
           {editingCommentId !== _id && (
             <EditButton
-              onClick={() => {
-                setEditingCommentId(_id)
-                setEditedContent(content)
-              }}
+              onClick={handleEdit}
               onKeyDown={(e) => e.stopPropagation()}
               aria-label="Edit comment"
             >
@@ -85,8 +97,10 @@ export const CommentCardFooter = ({
       )}
     </Container>
   )
+  //#endregion
 }
 
+//#region ----- STYLED COMPONENTS -----
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -165,3 +179,4 @@ const EditButton = styled.button`
     transform: scale(0.9);
   }
 `
+//#endregion

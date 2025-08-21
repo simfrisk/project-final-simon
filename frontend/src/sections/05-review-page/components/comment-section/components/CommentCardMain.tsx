@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import React from "react"
 
 interface CommentCardMainProps {
   _id: string
@@ -23,29 +24,23 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
     <Container>
       {editingCommentId === _id ? (
         <>
-          <textarea
+          <TextArea
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
             rows={3}
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "14px",
-              borderRadius: "8px",
-              border: "1px solid lightgray",
-            }}
+            aria-label="Write a question or comment to the video"
           />
-          <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
-            <button onClick={() => handleSaveEdit(_id)}>Save</button>
-            <button
+          <ButtonGroup>
+            <Button onClick={() => handleSaveEdit(_id)}>Save</Button>
+            <Button
               onClick={() => {
                 setEditingCommentId(null)
                 setEditedContent(content)
               }}
             >
               Cancel
-            </button>
-          </div>
+            </Button>
+          </ButtonGroup>
         </>
       ) : (
         content
@@ -54,23 +49,40 @@ export const CommentCardMain: React.FC<CommentCardMainProps> = ({
   )
 }
 
+/* ---------------- Styled Components ---------------- */
+
 const Container = styled.p`
   text-align: left;
   width: 100%;
   margin: 8px 0;
   color: ${({ theme }) => theme.colors.textAlternative};
+`
 
-  button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 15px;
-    margin: 8px 2px;
-    color: white;
-    background-color: #007bff;
-    transition: ease 0.3s;
-  }
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid lightgray;
+`
 
-  button:hover {
+const ButtonGroup = styled.div`
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+`
+
+const Button = styled.button`
+  padding: 8px 14px;
+  border: none;
+  border-radius: 15px;
+  margin: 8px 2px;
+  color: white;
+  background-color: #007bff;
+  transition: ease 0.3s;
+  cursor: pointer;
+
+  &:hover {
     background-color: #1988fe;
     transform: scale(0.97);
   }
