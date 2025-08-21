@@ -100,15 +100,15 @@ export const CreateProject = () => {
         value={projectDescription}
         onChange={(e) => setProjectDescription(e.target.value)}
       />
-      <input
-        type="file"
-        accept="video/*"
-        onChange={handleFileChange}
-      />
       <ProjectNameInput
         placeholder="Teacher in video"
         value={teacher}
         onChange={(e) => setTeacher(e.target.value)}
+      />
+      <input
+        type="file"
+        accept="video/*"
+        onChange={handleFileChange}
       />
 
       <ErrorMessage>{errorMesage}</ErrorMessage>

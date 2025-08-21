@@ -129,6 +129,8 @@ export const CommentSection = () => {
             role="button"
             aria-pressed={selectedCommentId === _id}
             onKeyDown={(e) => {
+              if (e.target !== e.currentTarget) return
+
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault()
                 handleCardClick(timeStamp, _id)
@@ -295,6 +297,7 @@ const Card = styled.div<{ $role?: string }>`
 
 const ReplyCardContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   &:hover ${Edit} {
     opacity: 1;

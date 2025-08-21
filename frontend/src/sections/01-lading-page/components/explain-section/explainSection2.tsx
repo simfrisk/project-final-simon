@@ -17,11 +17,13 @@ export const ExplainSection2 = () => {
           />
           <ExplainerCard
             title="Ask questions at video"
-            text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            text="Your question is placed on the timeline at the exact moment you comment, giving it clear context within the lesson."
+            video="./Commentsform.mp4"
           />
           <ExplainerCard
             title="Teachers Page to organize questions"
-            text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            text="As a teacher you’ll see every unanswered comment on your page, each one linking straight to the exact moment it was posted."
+            video="./Teacher.mp4"
           />
           <ExplainerCard
             title="Personal comments on time"
