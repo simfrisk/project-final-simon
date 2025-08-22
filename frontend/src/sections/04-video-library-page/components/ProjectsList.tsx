@@ -191,6 +191,7 @@ export const ProjectsList = () => {
           </NoProjectsMessage>
         </NoProjectsContainer>
       ) : (
+        // Here are the projects
         <ProjectWrapper>
           {projects.map(
             ({ _id, projectName, projectDescription, teacher, thumbnail }) => (
