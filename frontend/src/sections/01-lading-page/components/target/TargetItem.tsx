@@ -1,27 +1,27 @@
-import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import styled from "styled-components"
+import { MediaQueries } from "../../../../themes/mediaQueries"
 
 interface TargetItemProps {
   title: string
   description: string
+  isOpen?: boolean
+  onClick?: () => void
 }
 
-export const TargetItem = ({ title, description }: TargetItemProps) => {
-  const [open, setOpen] = useState(false)
-
+export const TargetItem = ({ title, description, isOpen, onClick }: TargetItemProps) => {
   return (
     <ListItem>
       <HeaderButton
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
+        onClick={onClick}
+        aria-expanded={isOpen}
       >
         <h3>{title}</h3>
-        <span>{open ? "–" : "+"}</span>
+        <span>{isOpen ? "–" : "+"}</span>
       </HeaderButton>
 
       <AnimatePresence initial={false}>
-        {open && (
+        {isOpen && (
           <motion.section
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
@@ -54,6 +54,11 @@ const ListItem = styled.li`
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
+  width: 100%;
+
+  @media ${MediaQueries.biggerSizes} {
+    max-width: 500px;
+  }
 `
 
 const HeaderButton = styled.button`
@@ -70,7 +75,9 @@ const HeaderButton = styled.button`
   font-weight: 600;
 
   h3 {
+    font-size: 20px;
     margin: 0;
+    color: ${({ theme }) => theme.colors.text};
   }
 
   &:hover {

@@ -15,8 +15,7 @@ export const FeatureCards = () => {
   ]
 
   const next = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
-  const prev = () =>
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+  const prev = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
     <Container>
@@ -81,9 +80,10 @@ const Controls = styled.div`
   margin-top: ${spacing.sm};
 
   button {
-    padding: ${spacing.xs} ${spacing.sm};
+    padding: ${spacing.sm} ${spacing.lg};
     border-radius: 10px;
-    background-color: ${({ theme }) => theme.colors.primary};
+    font-size: 14px;
+    background-color: ${({ theme }) => theme.colors.secondary};
     color: ${({ theme }) => theme.colors.offBackground};
     border: none;
     cursor: pointer;
@@ -96,8 +96,7 @@ const Dot = styled.li<{ $active: boolean }>`
   border-radius: 50%;
   margin: 0 6px;
   transform: translateY(5px);
-  background-color: ${({ $active, theme }) =>
-    $active ? theme.colors.primary : "#ccc"};
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.primary : "#ccc")};
   display: inline-block;
   cursor: pointer;
 `

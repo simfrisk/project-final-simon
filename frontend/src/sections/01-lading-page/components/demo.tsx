@@ -46,7 +46,7 @@ export const Demos = () => {
 
 const Title = styled.h2`
   text-align: center;
-  margin: ${spacing.lg} 0;
+  padding-bottom: ${spacing.md};
 `
 
 const CardWrapper = styled.div`

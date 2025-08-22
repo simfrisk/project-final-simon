@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { MainButton } from "../../../global-components/buttons"
-import { Section } from "../../../global-components/Section"
+import { Section as BaseSection } from "../../../global-components/Section"
 import { Container as BaseContainer } from "../../../global-components/Section"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { spacing } from "../../../themes/spacing"
@@ -11,6 +11,17 @@ export const Hero = () => {
       secondarySection
       aria-label="Hero section with introduction to Video Notes for the Modern Classroom"
     >
+      <VideoBackground
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source
+          src="/Teacher.mp4"
+          type="video/mp4"
+        />
+      </VideoBackground>
       <Container role="banner">
         <Content role="presentation">
           <Logo
@@ -18,12 +29,9 @@ export const Hero = () => {
             alt="Classync logo"
             role="img"
           />
-          <MainTitle id="hero-title">
-            Video Notes for the Modern Classroom
-          </MainTitle>
+          <MainTitle id="hero-title">Video Notes for the Modern Classroom</MainTitle>
           <SubTitle id="hero-subtitle">
-            Time-stamped feedback tools built for classrooms, courses, and
-            content creators.
+            Time-stamped feedback tools built for classrooms, courses, and content creators.
           </SubTitle>
           <MainButtonWrapper
             role="group"
@@ -50,6 +58,21 @@ export const Hero = () => {
     </Section>
   )
 }
+
+const Section = styled(BaseSection)`
+  position: relative;
+  overflow: hidden; /* prevents video overflow scrollbars */
+`
+
+const VideoBackground = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ensures full coverage */
+  z-index: -1; /* behind the content */
+`
 
 const Container = styled(BaseContainer)`
   display: flex;
