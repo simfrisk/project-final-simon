@@ -7,32 +7,44 @@ import { spacing } from "../../../themes/spacing"
 
 export const Hero = () => {
   return (
-    <Section secondarySection>
-      <Container>
-        <Content>
+    <Section
+      secondarySection
+      aria-label="Hero section with introduction to Video Notes for the Modern Classroom"
+    >
+      <Container role="banner">
+        <Content role="presentation">
           <Logo
             src="/Hero.webp"
-            alt="Image of some scribble"
+            alt="Classync logo"
+            role="img"
           />
-          <MainTitle>Video Notes for the Modern Classroom</MainTitle>
-          <SubTitle>
+          <MainTitle id="hero-title">
+            Video Notes for the Modern Classroom
+          </MainTitle>
+          <SubTitle id="hero-subtitle">
             Time-stamped feedback tools built for classrooms, courses, and
             content creators.
           </SubTitle>
-          <MainButtonWrapper>
+          <MainButtonWrapper
+            role="group"
+            aria-label="Primary actions"
+          >
             <MainButton
               text="Get Started"
               url="/signUp"
+              aria-label="Get started by signing up for Classync"
             />
             <MainButton
               text="Login"
               url="/login"
+              aria-label="Login to your Classync account"
             />
           </MainButtonWrapper>
         </Content>
         <StyledImage
           src="./class.jpg"
-          alt="Classroom image"
+          alt="Students in a classroom"
+          role="img"
         />
       </Container>
     </Section>

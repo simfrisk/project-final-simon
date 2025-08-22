@@ -2,10 +2,11 @@ import { Navigation } from "../../../global-components/navigation/Navigation"
 import { Hero } from "../components/Hero"
 import styled from "styled-components"
 import { ExplainSection } from "../components/ExplainSection"
-import { ExplainSection2 } from "../components/explain-section/explainSection2"
+import { Demos } from "../components/demo"
 import { Footer } from "../components/Footer"
 import { FeatureSection } from "../components/features/featureSection"
 import { Collaborate } from "../components/Collaborate"
+import { Target } from "../components/Target"
 
 export const LandingPage = () => {
   return (
@@ -13,7 +14,8 @@ export const LandingPage = () => {
       <Navigation />
       <Hero />
       <Collaborate />
-      <ExplainSection2 />
+      <Demos />
+      <Target />
       <ExplainSection />
       <FeatureSection />
       <Footer />

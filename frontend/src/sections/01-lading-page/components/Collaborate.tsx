@@ -48,9 +48,7 @@ const Container = styled(BaseContainer)`
   text-align: center;
 `
 
-const Title = styled.h2`
-  margin-bottom: ${spacing.lg};
-`
+const Title = styled.h2``
 
 const Schools = styled.div`
   display: flex;
@@ -69,7 +67,7 @@ const SchoolImage = styled.img`
   border-radius: 15px;
 
   @media ${MediaQueries.biggerSizes} {
-    height: 160px;
+    height: 140px;
     margin: ${spacing.lg};
   }
 `

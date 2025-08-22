@@ -30,12 +30,17 @@ export const Section = styled.section<SectionProps>`
 `
 
 export const Container = styled.div`
-  max-width: 1500px;
   margin: 0 auto;
   width: 100%;
   padding: 0 24px;
 
   @media ${MediaQueries.biggerSizes} {
+    max-width: 1300px;
+    padding: 0 40px;
+  }
+
+  @media ${MediaQueries.widescreen} {
+    max-width: 1500px;
     padding: 0 40px;
   }
 `

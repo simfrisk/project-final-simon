@@ -67,7 +67,7 @@ const Container = styled.article`
   row-gap: ${spacing.sm};
   border-radius: 15px;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   padding: ${spacing.md};
   margin: 0 auto;
   background-color: #1f2a36;

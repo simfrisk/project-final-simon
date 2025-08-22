@@ -23,7 +23,6 @@ const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing.lg};
-  width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
     flex-direction: row;

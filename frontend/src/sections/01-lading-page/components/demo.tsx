@@ -1,10 +1,10 @@
 import styled from "styled-components"
-import { Container, Section } from "../../../../global-components/Section"
-import { ExplainerCard } from "./ExplainerCard"
-import { MediaQueries } from "../../../../themes/mediaQueries"
-import { spacing } from "../../../../themes/spacing"
+import { Container, Section } from "../../../global-components/Section"
+import { ExplainerCard } from "./explain-section/ExplainerCard"
+import { MediaQueries } from "../../../themes/mediaQueries"
+import { spacing } from "../../../themes/spacing"
 
-export const ExplainSection2 = () => {
+export const Demos = () => {
   return (
     <Section thirdSection>
       <Container>
