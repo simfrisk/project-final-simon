@@ -72,7 +72,7 @@ export const Target = () => {
                 isOpen={openIndex === index}
                 onClick={() => {
                   setOpenIndex(openIndex === index ? null : index)
-                  setActiveIndex(index) // <-- update image
+                  setActiveIndex(index)
                 }}
               />
             ))}

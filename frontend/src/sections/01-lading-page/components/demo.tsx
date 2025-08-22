@@ -51,13 +51,14 @@ const Title = styled.h2`
 
 const CardWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
   gap: ${spacing.xxl};
-  justify-content: center;
   margin: ${spacing.xxl} 0;
 
+  /* 1 column by default (mobile) */
+  grid-template-columns: 1fr;
+
   @media ${MediaQueries.biggerSizes} {
+    /* Up to 3 columns on bigger screens */
     grid-template-columns: repeat(3, 1fr);
-    gap: ${spacing.xxl};
   }
 `
