@@ -43,22 +43,14 @@ router.get("/classes/:classId", authenticateUser, getClassById)
 
 //projects
 router.get("/classes/:classId/projects", authenticateUser, getProjects)
-router.get(
-  "/classes/projects/with-comments",
-  authenticateUser,
-  getProjectsWithComments
-)
+router.get("/classes/projects/with-comments", authenticateUser, getProjectsWithComments)
 router.get("/projects/:projectId", authenticateUser, getProjectById)
 
 // Comments
 router.get("/projects/:projectId/comments", getComments)
 router.get("/comments/all", authenticateUser, getAllComments)
 router.get("/comments/:commentId", getCommentById)
-router.get(
-  "/projects/:projectId/comments/private",
-  authenticateUser,
-  getPrivateComments
-)
+router.get("/projects/:projectId/comments/private", authenticateUser, getPrivateComments)
 
 // Replies
 router.get("/comments/:commentId/replies", getReplies)
@@ -83,11 +75,7 @@ router.patch("/classes/:classId", authenticateUser, patchClass)
 router.patch("/projects/:projectId", authenticateUser, patchProject)
 router.patch("/replies/:replyId", authenticateUser, patchReply)
 router.patch("/comments/:commentId", authenticateUser, patchComment)
-router.patch(
-  "/comments/:commentId/toggle-check",
-  authenticateUser,
-  patchIsChecked
-)
+router.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked)
 
 // Delete
 router.delete("/classes/:classId", authenticateUser, deleteClass)

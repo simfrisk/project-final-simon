@@ -6,7 +6,7 @@ import { Demos } from "../components/demo"
 import { Footer } from "../components/Footer"
 import { FeatureSection } from "../components/features/featureSection"
 import { Collaborate } from "../components/Collaborate"
-import { Target } from "../components/Target"
+import { Target } from "../components/target/Target"
 
 export const LandingPage = () => {
   return (

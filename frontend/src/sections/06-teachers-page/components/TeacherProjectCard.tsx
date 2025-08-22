@@ -72,9 +72,7 @@ export const TeacherProjectCard = ({
         <CardContentWrapper>
           <CardHeader>
             <h3>{projectName}</h3>
-            <p aria-label={`${comments.length} comments`}>
-              {`${comments.length} items`}
-            </p>
+            <p aria-label={`${comments.length} comments`}>{`${comments.length} items`}</p>
           </CardHeader>
           <p>{projectDescription}</p>
         </CardContentWrapper>
@@ -103,16 +101,11 @@ export const TeacherProjectCard = ({
                   .map((comment) => (
                     <CommentItem key={comment._id}>
                       <CommentButton
-                        onClick={(e) =>
-                          timeStampHandler(e, comment._id, comment.timeStamp)
-                        }
+                        onClick={(e) => timeStampHandler(e, comment._id, comment.timeStamp)}
                       >
                         <CommentThumbnail>
                           <img
-                            src={
-                              comment.commentCreatedBy?.profileImage ||
-                              "/default-profile.jpg"
-                            }
+                            src={comment.commentCreatedBy?.profileImage || "/default-profile.jpg"}
                             alt={`Profile image of ${comment.commentCreatedBy?.name || "unknown user"}`}
                           />
                         </CommentThumbnail>
@@ -120,9 +113,7 @@ export const TeacherProjectCard = ({
                           <p>{comment.content}</p>
                           <CommentFooter>
                             <p>{moment(comment.createdAt).fromNow()}</p>
-                            <p>
-                              {comment.commentCreatedBy?.name || "Unknown user"}
-                            </p>
+                            <p>{comment.commentCreatedBy?.name || "Unknown user"}</p>
                           </CommentFooter>
                         </CommentContent>
                       </CommentButton>
