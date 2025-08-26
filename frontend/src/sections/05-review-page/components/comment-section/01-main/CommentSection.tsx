@@ -39,9 +39,7 @@ export const CommentSection = () => {
   const toggleCheck = commentStore((state) => state.toggleCheck)
   const toggleLike = commentStore((state) => state.toggleLike)
   const deleteComment = commentStore((state) => state.deleteComment)
-  const setSelectedTimeStamp = commentStore(
-    (state) => state.setSelectedTimeStamp
-  )
+  const setSelectedTimeStamp = commentStore((state) => state.setSelectedTimeStamp)
   //#endregion
 
   //#region ----- DATA PREPARATION -----
@@ -51,10 +49,7 @@ export const CommentSection = () => {
       : commentStore((state) => state.projectComments)
 
   const messages = useMemo(
-    () =>
-      [...rawMessages].sort(
-        (a, b) => unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp)
-      ),
+    () => [...rawMessages].sort((a, b) => unFormatTime(a.timeStamp) - unFormatTime(b.timeStamp)),
     [rawMessages]
   )
   //#endregion
@@ -201,7 +196,9 @@ export const CommentSection = () => {
                   aria-controls={`replies-${_id}`}
                 >
                   <ArrowIcon $isOpen={openReplies.has(_id)} />
-                  {`${replies?.length ?? 0} ${replies?.length === 1 ? "Reply" : "Replies"}`}
+                  <RepliesCount $isSingle={replies?.length === 1}>
+                    {`${replies?.length ?? 0} ${replies?.length === 1 ? "Reply" : "Replies"}`}
+                  </RepliesCount>
                 </ShowReplies>
 
                 {openReplies.has(_id) && (
@@ -262,17 +259,13 @@ const Card = styled.div<{ $role?: string }>`
   &:hover {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-      $role === "teacher"
-        ? theme.colors.lightBlueHover
-        : theme.colors.backgroundHover};
+      $role === "teacher" ? theme.colors.lightBlueHover : theme.colors.backgroundHover};
   }
 
   &:focus {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-      $role === "teacher"
-        ? theme.colors.lightBlueActive
-        : theme.colors.backgroundActive};
+      $role === "teacher" ? theme.colors.lightBlueActive : theme.colors.backgroundActive};
     border-left: solid #007bff 3px;
     transition: ease 0.2s;
   }
@@ -315,8 +308,7 @@ const AddReplyForm = styled.form`
   gap: 8px;
 
   textarea {
-    background-color: ${({ theme }) =>
-      theme.name === "dark" ? "#242e3e" : "#fff"};
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#242e3e" : "#fff")};
     color: ${({ theme }) => theme.colors.text};
     padding: 10px 12px;
     border: 1px solid ${({ theme }) => theme.colors.textAlternative};
@@ -366,6 +358,11 @@ const ArrowIcon = styled.span<{ $isOpen: boolean }>`
   border-right: 6px solid transparent;
   border-top: 6px solid ${({ theme }) => theme.colors.text};
   transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+`
+
+const RepliesCount = styled.span<{ $isSingle: boolean }>`
+  color: ${({ theme }) => theme.colors.textAlternative};
+  margin-left: 2px;
 `
 
 //#endregion

@@ -10,10 +10,7 @@ import { useState } from "react"
 
 //#region ----- INTERFACES -----
 interface ProjectProps
-  extends Pick<
-    ProjectType,
-    "_id" | "projectName" | "projectDescription" | "thumbnail"
-  > {
+  extends Pick<ProjectType, "_id" | "projectName" | "projectDescription" | "thumbnail"> {
   projectId: string
   teacher: string
 }
@@ -33,12 +30,8 @@ export const Project = ({
   const [isEditing, setIsEditing] = useState(false)
   const [errorMesage, setErrorMessage] = useState("")
 
-  const setIsRemovingProject = useEditingStore(
-    (state) => state.setIsRemovingProject
-  )
-  const setRemovingProjectId = useEditingStore(
-    (state) => state.setRemovingProjectId
-  )
+  const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject)
+  const setRemovingProjectId = useEditingStore((state) => state.setRemovingProjectId)
   const updateProject = useProjectStore((state) => state.updateProject)
 
   const [newName, setNewName] = useState("")
@@ -195,12 +188,7 @@ const Edit = styled.div`
     transform 0.3s ease;
 
   button {
-    background-color: rgba(
-      255,
-      255,
-      255,
-      0.8
-    ); /* semi-transparent background */
+    background-color: rgba(255, 255, 255, 0.8); /* semi-transparent background */
     border: none;
     border-radius: 6px;
     padding: 6px;
@@ -293,7 +281,8 @@ const CreateWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background: ${({ theme }) => theme.colors.offBackground};
+  border: 2px solid ${({ theme }) => theme.colors.textAlternative};
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -309,12 +298,18 @@ const CreateWrapper = styled.div`
     height: 32px;
     padding: 5px 10px;
     border-radius: 5px;
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
+    color: ${({ theme }) => theme.colors.text};
+    border: none;
   }
 
   textarea {
     height: 100px;
     padding: 10px 10px;
+    border: none;
     border-radius: 5px;
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
+    color: ${({ theme }) => theme.colors.text};
   }
 
   button {
@@ -324,7 +319,7 @@ const CreateWrapper = styled.div`
     height: 32px;
     border: none;
     background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.background};
+    color: white};
   }
 `
 

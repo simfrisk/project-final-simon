@@ -19,9 +19,7 @@ interface StyledButtonProps {
 //#region ----- COMPONENT LOGIC -----
 export const ClassOptions = ({ classId }: ClassOptionsProps) => {
   const removingClassId = useEditingStore((state) => state.removingClassId)
-  const setIsRemovingClass = useEditingStore(
-    (state) => state.setIsRemovingClass
-  )
+  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass)
   const deleteClass = useClassStore((state) => state.deleteClass)
   const updateClass = useClassStore((state) => state.updateClass)
 
@@ -155,8 +153,7 @@ const Container = styled.div`
 const StyledButton = styled.button<StyledButtonProps>`
   display: inline-block;
   padding: 10px 20px;
-  background-color: ${({ $danger, theme }) =>
-    $danger ? "red" : theme.colors.primary};
+  background-color: ${({ $danger, theme }) => ($danger ? "red" : theme.colors.primary)};
   color: white;
   text-decoration: none;
   border: none;
@@ -170,8 +167,7 @@ const StyledButton = styled.button<StyledButtonProps>`
   transition: ease 0.3s;
 
   &:hover {
-    background-color: ${({ $danger, theme }) =>
-      $danger ? "#f1948a" : theme.colors.primaryHover};
+    background-color: ${({ $danger, theme }) => ($danger ? "#f1948a" : theme.colors.primaryHover)};
     transform: scale(0.98);
   }
 `

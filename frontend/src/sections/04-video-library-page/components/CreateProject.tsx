@@ -15,9 +15,7 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 export const CreateProject = () => {
   const { classId } = useParams<{ classId: string }>()
   const addProject = useProjectStore((state) => state.addProject)
-  const setIsEditingProject = useEditingStore(
-    (state) => state.setIsEditingProject
-  )
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject)
 
   const [projectName, setProjectName] = useState("")
   const [projectDescription, setProjectDescription] = useState("")
@@ -34,9 +32,7 @@ export const CreateProject = () => {
     if (!file) return
 
     if (file.size > MAX_FILE_SIZE) {
-      setErrorMessage(
-        "Video file size exceeds 100MB. Please select a smaller file."
-      )
+      setErrorMessage("Video file size exceeds 100MB. Please select a smaller file.")
       e.target.value = ""
       setVideoFile(null)
       return
@@ -131,12 +127,29 @@ const FormContainer = styled.div`
   justify-content: center;
   gap: 10px;
   width: 92vw;
-  background-color: #e1e1e1;
+  background-color: ${({ theme }) => theme.colors.offBackground};
+  border: 2px solid ${({ theme }) => theme.colors.textAlternative};
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px 20px;
 
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
+  }
+
+  input {
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
+    color: ${({ theme }) => theme.colors.text};
+    margin: 6px 0;
+  }
+
+  textarea {
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
+    color: ${({ theme }) => theme.colors.text};
+    margin: 6px 0;
+  }
+
+  input[type="file"] {
+    background-color: transparent;
   }
 `
 

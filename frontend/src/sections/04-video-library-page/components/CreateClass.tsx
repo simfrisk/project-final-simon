@@ -49,12 +49,19 @@ const FormContainer = styled.div`
   justify-content: center;
   gap: 10px;
   width: 92vw;
-  background-color: #e1e1e1;
+  background-color: ${({ theme }) => theme.colors.offBackground};
+  border: 2px solid ${({ theme }) => theme.colors.textAlternative};
   border-radius: 10px;
   padding: 10px;
 
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
+  }
+
+  input {
+    background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
+    color: ${({ theme }) => theme.colors.text};
+    margin: 6px 0;
   }
 `
 

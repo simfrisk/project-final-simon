@@ -30,7 +30,7 @@ const Container = styled.div`
 
   h3 {
     margin: 0 auto;
-    color: ${({ theme }) => theme.colors.offBackground};
+    color: #eeeeee;
     font-size: 18px;
     text-align: left;
 

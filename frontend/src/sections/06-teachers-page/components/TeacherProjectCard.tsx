@@ -146,7 +146,7 @@ const CardHeaderButton = styled.button`
   display: flex;
   width: 100%;
   align-items: stretch;
-  padding: 14px 30px; /* restore original padding */
+  padding: 14px 18px;
   border: none;
   background: none;
   cursor: pointer;
@@ -185,6 +185,10 @@ const CardContentWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
+
+  p {
+    color: ${({ theme }) => theme.colors.text};
+  }
 `
 
 const CardHeader = styled.div`
@@ -277,6 +281,10 @@ const CommentContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  p {
+    color: ${({ theme }) => theme.colors.text};
+  }
 `
 
 const CommentFooter = styled.div`
@@ -285,6 +293,10 @@ const CommentFooter = styled.div`
   font-size: 0.8rem;
   color: #888;
   margin-top: 4px;
+
+  p {
+    color: ${({ theme }) => theme.colors.textAlternative};
+  }
 `
 
 //#endregion

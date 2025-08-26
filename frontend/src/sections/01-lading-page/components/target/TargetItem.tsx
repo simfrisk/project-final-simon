@@ -81,6 +81,7 @@ const HeaderButton = styled.button`
   }
 
   span {
+    color: ${({ theme }) => theme.colors.textAlternative};
     font-size: 28px;
     font-weight: 400;
     line-height: 1;
