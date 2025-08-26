@@ -98,16 +98,6 @@ export const VideoSection = () => {
     return () => video.removeEventListener("timeupdate", handleTimeUpdate)
   }, [setTimeCode, setTimecode])
 
-  // Handle fullscreen state changes
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange)
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange)
-  }, [])
-
   // ✅ Seek video when markerTriggerCount changes
   useEffect(() => {
     const video = videoRef.current
@@ -129,19 +119,7 @@ export const VideoSection = () => {
   }
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      // Enter fullscreen
-      if (videoRef.current?.requestFullscreen) {
-        videoRef.current.requestFullscreen()
-        setIsFullscreen(true)
-      }
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-        setIsFullscreen(false)
-      }
-    }
+    setIsFullscreen(!isFullscreen)
   }
 
   // Seek via timeline
@@ -165,12 +143,13 @@ export const VideoSection = () => {
 
   //#region ---- RENDER -----
   return (
-    <Container>
+    <Container $isFullScreen={isFullscreen}>
       <StyledVideo
         ref={videoRef}
         onClick={togglePlay}
         controls={false}
         aria-label={isPlaying ? "Pause video" : "Play video"}
+        $isFullScreen={isFullscreen}
       >
         {videoUrl && (
           <source
@@ -181,42 +160,39 @@ export const VideoSection = () => {
         Your browser does not support the video tag.
       </StyledVideo>
 
-      <Controls style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <PlayPauseButton
-            isPlaying={isPlaying}
-            onClick={togglePlay}
-            aria-label={isPlaying ? "Pause video" : "Play video"}
+      <Controls $isFullScreen={isFullscreen}>
+        <PlayPauseButton
+          isPlaying={isPlaying}
+          onClick={togglePlay}
+          aria-label={isPlaying ? "Pause video" : "Play video"}
+        />
+        <TimeDisplay aria-live="polite">
+          {formattedTime} / {duration}
+        </TimeDisplay>
+        <VolumeControl>
+          <label htmlFor="volumeSlider">🔊</label>
+          <input
+            id="volumeSlider"
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={volume}
+            onChange={changeVolume}
+            role="slider"
+            aria-valuemin={0}
+            aria-valuemax={1}
+            aria-valuenow={volume}
+            aria-label="Volume control"
           />
-          <TimeDisplay aria-live="polite">
-            {formattedTime} / {duration}
-          </TimeDisplay>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <VolumeControl>
-            <label htmlFor="volumeSlider">🔊</label>
-            <input
-              id="volumeSlider"
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={changeVolume}
-              role="slider"
-              aria-valuemin={0}
-              aria-valuemax={1}
-              aria-valuenow={volume}
-              aria-label="Volume control"
-            />
-          </VolumeControl>
-          <FullscreenButton
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-          >
-            {isFullscreen ? "⛶" : "⛶"}
-          </FullscreenButton>
-        </div>
+        </VolumeControl>
+
+        <FullscreenButton
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          {isFullscreen ? "⛶" : "⛶"}
+        </FullscreenButton>
       </Controls>
 
       <PlayBar
@@ -228,6 +204,7 @@ export const VideoSection = () => {
         aria-valuenow={videoEl?.currentTime || 0}
         aria-label="Video progress bar"
         tabIndex={0}
+        $isFullScreen={isFullscreen}
         onKeyDown={(e) => {
           if (!videoEl) return
           const step = videoEl.duration ? videoEl.duration / 50 : 1
@@ -281,21 +258,33 @@ export const VideoSection = () => {
 
 //#region ---- STYLED COMPONENTS -----
 
-const Container = styled.div`
+const Container = styled.div<{ $isFullScreen: boolean }>`
   width: 100%;
   aspect-ratio: 16 / 9;
   position: relative;
   background: ${({ theme }) => theme.colors.background};
   overflow: hidden;
+
+  ${({ $isFullScreen }) =>
+    $isFullScreen &&
+    `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    aspect-ratio: unset;
+  `}
 `
 
-const StyledVideo = styled.video`
+const StyledVideo = styled.video<{ $isFullScreen: boolean }>`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 `
 
-const Controls = styled.div`
+const Controls = styled.div<{ $isFullScreen: boolean }>`
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -304,6 +293,14 @@ const Controls = styled.div`
   align-items: center;
   gap: 16px;
   z-index: 1;
+
+  ${({ $isFullScreen }) =>
+    $isFullScreen &&
+    `
+    bottom: 40px;
+    left: 40px;
+    right: 40px;
+  `}
 `
 
 const VolumeControl = styled.div`
@@ -337,7 +334,7 @@ const TimeDisplay = styled.div`
   margin-left: auto;
 `
 
-const PlayBar = styled.div`
+const PlayBar = styled.div<{ $isFullScreen: boolean }>`
   position: absolute;
   bottom: 10px;
   left: 20px;
@@ -347,6 +344,15 @@ const PlayBar = styled.div`
   border-radius: 4px;
   cursor: pointer;
   z-index: 1;
+
+  ${({ $isFullScreen }) =>
+    $isFullScreen &&
+    `
+    bottom: 20px;
+    left: 40px;
+    right: 40px;
+    height: 12px;
+  `}
 `
 
 const Progress = styled.div`
