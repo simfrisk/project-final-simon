@@ -96,25 +96,31 @@ const Section = styled(BaseSection)`
   color: ${({ theme }) => theme.colors.text};
 `
 
+const Title = styled.h2`
+  text-align: left;
+  margin-bottom: ${spacing.md};
+
+  @media ${MediaQueries.biggerSizes} {
+    text-align: left;
+  }
+`
+
 const Header = styled.div`
-  text-align: center;
-  padding-bottom: ${spacing.xxl};
+  text-align: left;
+  padding-bottom: ${spacing.md};
 
   @media ${MediaQueries.biggerSizes} {
     text-align: left;
     width: 60%;
+    padding-bottom: ${spacing.xxl};
   }
 
   h3 {
-    font-size: 21px;
-  }
-`
+    font-size: 18px;
 
-const Title = styled.h2`
-  text-align: center;
-
-  @media ${MediaQueries.biggerSizes} {
-    text-align: left;
+    @media ${MediaQueries.biggerSizes} {
+      font-size: 21px;
+    }
   }
 `
 

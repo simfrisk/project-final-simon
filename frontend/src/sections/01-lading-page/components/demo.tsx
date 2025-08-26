@@ -27,7 +27,7 @@ export const Demos = () => {
           />
           <ExplainerCard
             title="Personal comments on time"
-            text="Want to add personal comments? Switch to private mode and keep notes linked directly to the video timeline."
+            text="Want to add personal comments? Switch to private mode and easily keep your notes linked directly to the video timeline."
             video="./PrivetComments.mp4"
           />
           <ExplainerCard

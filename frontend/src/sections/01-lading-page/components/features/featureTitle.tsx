@@ -25,23 +25,19 @@ const Container = styled.div`
 
   h2 {
     margin: ${spacing.md} 0;
-    text-align: center;
-
-    @media ${MediaQueries.biggerSizes} {
-      text-align: left;
-    }
+    text-align: left;
   }
 
   h3 {
     margin: 0 auto;
     color: ${({ theme }) => theme.colors.offBackground};
-    font-size: 21px;
-    text-align: center;
+    font-size: 18px;
+    text-align: left;
 
     @media ${MediaQueries.biggerSizes} {
       margin-left: 0;
       width: 60%;
-      text-align: left;
+      font-size: 21px;
     }
   }
 `
