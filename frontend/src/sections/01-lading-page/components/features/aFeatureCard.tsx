@@ -1,6 +1,7 @@
 // AFeatureCard.tsx
 import styled from "styled-components"
 import { spacing } from "../../../../themes/spacing"
+import { MediaQueries } from "../../../../themes/mediaQueries"
 
 type AFeatureCardProps = {
   title: string
@@ -31,11 +32,15 @@ const ButtonContainer = styled.button<{ $isActive: boolean }>`
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
   background-color: #1f2a36;
   width: 100%;
-  height: 150px;
-  padding: 0 ${spacing.lg};
+  height: 100%;
+  padding: 10px ${spacing.lg};
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  @media ${MediaQueries.biggerSizes} {
+    height: 150px;
+  }
 
   p {
     color: #cecece;
@@ -45,7 +50,9 @@ const ButtonContainer = styled.button<{ $isActive: boolean }>`
   ${({ $isActive }) =>
     $isActive &&
     `
-    transform: translateY(-2px);
-    background-color: #465169;
-  `}
+      @media ${MediaQueries.biggerSizes} {
+        transform: translateY(-2px);
+        background-color: #465169;
+      }
+    `}
 `

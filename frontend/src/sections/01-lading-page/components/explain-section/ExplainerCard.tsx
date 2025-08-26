@@ -42,12 +42,14 @@ export const ExplainerCard = ({ title, text, video }: ExplainerCardProps) => {
   }, [isInView, isMobile])
 
   return (
-    <Container ref={containerRef}>
+    <Container
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+    >
       <StyledVideo
         ref={videoRef}
         muted
         playsInline
-        onMouseEnter={handleMouseEnter}
       >
         <source
           src={video || "/Explainer3.mp4"}
@@ -70,6 +72,11 @@ const Container = styled.article`
   /* remove max-width */
   padding: ${spacing.md};
   background-color: #1f2a36;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 `
 
 const StyledVideo = styled.video`
@@ -77,5 +84,4 @@ const StyledVideo = styled.video`
   aspect-ratio: 4 / 3;
   object-fit: cover;
   width: 100%;
-  cursor: pointer;
 `

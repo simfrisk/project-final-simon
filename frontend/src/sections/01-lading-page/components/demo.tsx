@@ -46,7 +46,10 @@ export const Demos = () => {
 
 const Title = styled.h2`
   text-align: center;
-  padding-bottom: ${spacing.md};
+
+  @media ${MediaQueries.biggerSizes} {
+    padding-bottom: ${spacing.lg};
+  }
 `
 
 const CardWrapper = styled.div`

@@ -55,19 +55,25 @@ const Schools = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   margin-top: ${spacing.md};
+  width: 100%;
+
+  gap: ${spacing.sm};
 
   @media ${MediaQueries.biggerSizes} {
     margin-top: ${spacing.lg};
+    gap: ${spacing.lg};
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
 `
 
 const SchoolImage = styled.img`
-  height: 60px;
-  margin: ${spacing.xs};
   border-radius: 15px;
+  height: clamp(80px, 20vw, 180px);
 
   @media ${MediaQueries.biggerSizes} {
-    height: 140px;
-    margin: ${spacing.lg};
+    height: clamp(50px, 13vw, 180px);
+    flex: 1;
+    object-fit: contain;
   }
 `
