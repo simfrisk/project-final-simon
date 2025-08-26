@@ -23,6 +23,7 @@ export const VideoSection = () => {
   const [volume, setVolume] = useState(1)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   //#endregion
 
   //#region ---- STORES -----
@@ -97,6 +98,16 @@ export const VideoSection = () => {
     return () => video.removeEventListener("timeupdate", handleTimeUpdate)
   }, [setTimeCode, setTimecode])
 
+  // Handle fullscreen state changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange)
+  }, [])
+
   // ✅ Seek video when markerTriggerCount changes
   useEffect(() => {
     const video = videoRef.current
@@ -114,6 +125,22 @@ export const VideoSection = () => {
     setVolume(newVolume)
     if (videoRef.current) {
       videoRef.current.volume = newVolume
+    }
+  }
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      if (videoRef.current?.requestFullscreen) {
+        videoRef.current.requestFullscreen()
+        setIsFullscreen(true)
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+        setIsFullscreen(false)
+      }
     }
   }
 
@@ -154,32 +181,42 @@ export const VideoSection = () => {
         Your browser does not support the video tag.
       </StyledVideo>
 
-      <Controls>
-        <PlayPauseButton
-          isPlaying={isPlaying}
-          onClick={togglePlay}
-          aria-label={isPlaying ? "Pause video" : "Play video"}
-        />
-        <VolumeControl>
-          <label htmlFor="volumeSlider">🔊</label>
-          <input
-            id="volumeSlider"
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={volume}
-            onChange={changeVolume}
-            role="slider"
-            aria-valuemin={0}
-            aria-valuemax={1}
-            aria-valuenow={volume}
-            aria-label="Volume control"
+      <Controls style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <PlayPauseButton
+            isPlaying={isPlaying}
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pause video" : "Play video"}
           />
-        </VolumeControl>
-        <TimeDisplay aria-live="polite">
-          {formattedTime} / {duration}
-        </TimeDisplay>
+          <TimeDisplay aria-live="polite">
+            {formattedTime} / {duration}
+          </TimeDisplay>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <VolumeControl>
+            <label htmlFor="volumeSlider">🔊</label>
+            <input
+              id="volumeSlider"
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={volume}
+              onChange={changeVolume}
+              role="slider"
+              aria-valuemin={0}
+              aria-valuemax={1}
+              aria-valuenow={volume}
+              aria-label="Volume control"
+            />
+          </VolumeControl>
+          <FullscreenButton
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? "⛶" : "⛶"}
+          </FullscreenButton>
+        </div>
       </Controls>
 
       <PlayBar
@@ -278,6 +315,19 @@ const VolumeControl = styled.div`
     width: 80px;
     background: rgba(255, 255, 255, 0.3);
     accent-color: ${({ theme }) => theme.colors.primary};
+  }
+`
+
+const FullscreenButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
   }
 `
 
