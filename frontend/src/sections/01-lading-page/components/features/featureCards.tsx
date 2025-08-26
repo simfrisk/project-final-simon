@@ -227,8 +227,8 @@ const Controls = styled.div`
     padding: ${spacing.sm} ${spacing.lg};
     border-radius: 10px;
     font-size: 14px;
-    background-color: ${({ theme }) => theme.colors.secondary};
-    color: ${({ theme }) => theme.colors.offBackground};
+    background-color: #1f2a36;
+    color: #f5f5f5;
     border: none;
     cursor: pointer;
   }
