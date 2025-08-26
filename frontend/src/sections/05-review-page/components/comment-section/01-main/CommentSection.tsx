@@ -254,18 +254,36 @@ const Card = styled.div<{ $role?: string }>`
   align-items: stretch;
   cursor: pointer;
   background-color: ${({ $role, theme }) =>
-    $role === "teacher" ? theme.colors.lightBlue : theme.colors.background};
+    $role === "teacher" && theme.name === "dark"
+      ? theme.colors.primary
+      : $role === "teacher"
+        ? theme.colors.lightBlue
+        : theme.name === "dark"
+          ? theme.colors.lightBlue
+          : theme.colors.background};
 
   &:hover {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-      $role === "teacher" ? theme.colors.lightBlueHover : theme.colors.backgroundHover};
+      $role === "teacher" && theme.name === "dark"
+        ? theme.colors.primaryHover
+        : $role === "teacher"
+          ? theme.colors.lightBlueHover
+          : theme.name === "dark"
+            ? theme.colors.lightBlueHover
+            : theme.colors.backgroundHover};
   }
 
   &:focus {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-      $role === "teacher" ? theme.colors.lightBlueActive : theme.colors.backgroundActive};
+      $role === "teacher" && theme.name === "dark"
+        ? theme.colors.primaryActive
+        : $role === "teacher"
+          ? theme.colors.lightBlueActive
+          : theme.name === "dark"
+            ? theme.colors.lightBlueActive
+            : theme.colors.backgroundActive};
     border-left: solid #007bff 3px;
     transition: ease 0.2s;
   }

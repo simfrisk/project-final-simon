@@ -207,7 +207,6 @@ const Edit = styled.div`
     }
 
     img {
-      filter: ${({ theme }) => theme.filter.inverted};
       width: 20px;
       height: 20px;
     }
@@ -321,7 +320,7 @@ const CreateWrapper = styled.div`
     height: 32px;
     border: none;
     background-color: ${({ theme }) => theme.colors.primary};
-    color: white};
+    color: white;
   }
 `
 

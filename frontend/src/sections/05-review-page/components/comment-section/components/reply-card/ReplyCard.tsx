@@ -62,7 +62,13 @@ const Card = styled.div<{ $role?: string }>`
   display: flex;
   flex-direction: column;
   background-color: ${({ $role, theme }) =>
-    $role === "teacher" ? theme.colors.lightBlue : theme.colors.background};
+    $role === "teacher" && theme.name === "dark"
+      ? theme.colors.primary
+      : $role === "teacher"
+        ? theme.colors.lightBlue
+        : theme.name === "dark"
+          ? theme.colors.lightBlue
+          : theme.colors.background};
   border-radius: 12px;
   padding: 12px 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
@@ -74,9 +80,13 @@ const Card = styled.div<{ $role?: string }>`
   &:hover {
     transform: scale(0.98);
     background-color: ${({ $role, theme }) =>
-      $role === "teacher"
-        ? theme.colors.lightBlueHover
-        : theme.colors.backgroundHover};
+      $role === "teacher" && theme.name === "dark"
+        ? theme.colors.primaryHover
+        : $role === "teacher"
+          ? theme.colors.lightBlueHover
+          : theme.name === "dark"
+            ? theme.colors.lightBlueHover
+            : theme.colors.backgroundHover};
   }
 
   &:hover ${Edit} {

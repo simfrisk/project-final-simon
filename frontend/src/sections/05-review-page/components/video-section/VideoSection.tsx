@@ -80,8 +80,7 @@ export const VideoSection = () => {
 
     const handleCanPlayThrough = () => setVideoLoaded(true)
     video.addEventListener("canplaythrough", handleCanPlayThrough)
-    return () =>
-      video.removeEventListener("canplaythrough", handleCanPlayThrough)
+    return () => video.removeEventListener("canplaythrough", handleCanPlayThrough)
   }, [])
 
   // Update current time and formatted time on play
@@ -196,21 +195,15 @@ export const VideoSection = () => {
           if (!videoEl) return
           const step = videoEl.duration ? videoEl.duration / 50 : 1
           if (e.key === "ArrowRight")
-            videoEl.currentTime = Math.min(
-              videoEl.currentTime + step,
-              videoEl.duration
-            )
-          if (e.key === "ArrowLeft")
-            videoEl.currentTime = Math.max(videoEl.currentTime - step, 0)
+            videoEl.currentTime = Math.min(videoEl.currentTime + step, videoEl.duration)
+          if (e.key === "ArrowLeft") videoEl.currentTime = Math.max(videoEl.currentTime - step, 0)
         }}
       >
         <Progress style={{ width: `${progress}%` }} />
         {videoLoaded &&
           messages.map(({ _id, timeStamp, content }) => {
             const timeInSeconds = unFormatTime(timeStamp)
-            const percent = videoEl?.duration
-              ? (timeInSeconds / videoEl.duration) * 100
-              : 0
+            const percent = videoEl?.duration ? (timeInSeconds / videoEl.duration) * 100 : 0
 
             return (
               <MarkerWrapper
@@ -255,7 +248,7 @@ const Container = styled.div`
   width: 100%;
   aspect-ratio: 16 / 9;
   position: relative;
-  background: white;
+  background: ${({ theme }) => theme.colors.background};
   overflow: hidden;
 `
 
@@ -283,6 +276,8 @@ const VolumeControl = styled.div`
 
   input[type="range"] {
     width: 80px;
+    background: rgba(255, 255, 255, 0.3);
+    accent-color: ${({ theme }) => theme.colors.primary};
   }
 `
 
@@ -306,7 +301,7 @@ const PlayBar = styled.div`
 
 const Progress = styled.div`
   height: 100%;
-  background: #2196f3;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 4px;
   pointer-events: none;
 `
