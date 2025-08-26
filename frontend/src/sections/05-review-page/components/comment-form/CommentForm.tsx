@@ -17,9 +17,7 @@ export const CommentForm = () => {
   const activeTab = useTabStore((state) => state.activeTab)
   const setActiveTab = useTabStore((state) => state.setActiveTab)
 
-  const incrementMarkerTrigger = useVideoStore(
-    (state) => state.incrementMarkerTrigger
-  )
+  const incrementMarkerTrigger = useVideoStore((state) => state.incrementMarkerTrigger)
   const [text, setText] = useState("")
   const addMessage = commentStore((state) => state.addMessage)
   const timecode = useTimecode((state) => state.timecode)
@@ -67,24 +65,13 @@ export const CommentForm = () => {
       <Footer>
         <TimeTag>
           <p id="timecode-label">{timecode}</p>
-          <input
-            type="checkbox"
-            aria-labelledby="timecode-label"
-            aria-checked="false"
-          />
         </TimeTag>
 
         {activeTab !== "private" && (
           <Select
             value={activeTab}
             onChange={(e) =>
-              setActiveTab(
-                e.target.value as
-                  | "description"
-                  | "question"
-                  | "private"
-                  | "public"
-              )
+              setActiveTab(e.target.value as "description" | "question" | "private" | "public")
             }
             aria-label="Select comment type"
           >
@@ -174,10 +161,10 @@ const Select = styled.select`
 `
 
 const SendButton = styled.button`
-  padding: 8px 16px;
+  padding: 8px 26px;
   background-color: ${({ theme }) => theme.colors.primary};
   border: none;
-  border-radius: 6px;
+  border-radius: 15px;
   color: white;
   font-weight: 600;
   cursor: pointer;

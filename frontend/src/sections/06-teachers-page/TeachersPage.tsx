@@ -15,9 +15,7 @@ import { MediaQueries } from "../../themes/mediaQueries"
 export const TeachersPage = () => {
   //#region ----- STORE HOOKS -----
   const projects = useProjectStore((state) => state.projects)
-  const fetchProjectsWithComments = useProjectStore(
-    (state) => state.fetchProjectsWithComments
-  )
+  const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments)
   const classes = useClassStore((state) => state.classes)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const currentClassId = useEditingStore((state) => state.currentClassId)
@@ -35,13 +33,9 @@ export const TeachersPage = () => {
 
   // Automatically select first class with unchecked comments
   const classesWithUncheckedComments = classes.filter((cls) => {
-    const projectsInClass = projects.filter(
-      (project) => project.classId === cls._id
-    )
+    const projectsInClass = projects.filter((project) => project.classId === cls._id)
     const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
-      const unchecked = (project.comments ?? []).filter(
-        (comment) => !comment.isChecked
-      )
+      const unchecked = (project.comments ?? []).filter((comment) => !comment.isChecked)
       return count + unchecked.length
     }, 0)
     return uncheckedCommentsCount > 0
@@ -66,8 +60,7 @@ export const TeachersPage = () => {
       (project) =>
         Array.isArray(project.comments) &&
         project.comments.some(
-          (comment) =>
-            comment.commentType === "question" && comment.isChecked === false
+          (comment) => comment.commentType === "question" && comment.isChecked === false
         )
     )
   //#endregion
@@ -121,16 +114,9 @@ export const TeachersPage = () => {
 
           <ProjectsList aria-label="List of projects with unanswered questions">
             {filteredProjects.map(
-              ({
-                _id,
-                projectName,
-                projectDescription,
-                thumbnail,
-                comments,
-              }) => {
+              ({ _id, projectName, projectDescription, thumbnail, comments }) => {
                 const questionComments = (comments ?? []).filter(
-                  (comment) =>
-                    comment.commentType === "question" && !comment.isChecked
+                  (comment) => comment.commentType === "question" && !comment.isChecked
                 )
 
                 return (
