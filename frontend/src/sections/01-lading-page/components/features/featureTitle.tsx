@@ -7,11 +7,11 @@ export const FeatureTitle = () => {
   return (
     <Container>
       <h2>Classync 101</h2>
-      <p>
+      <h3>
         Take control of your comments with timestamps to keep everything organized and easy to find
         and remember. Whether you’re reviewing lessons or giving feedback, it’s all clear,
         trackable, and right where you need it.
-      </p>
+      </h3>
     </Container>
   )
 }
@@ -32,12 +32,15 @@ const Container = styled.div`
     }
   }
 
-  p {
-    margin-top: ${spacing.sm};
-    max-width: 650px;
+  h3 {
+    margin: 0 auto;
+    color: ${({ theme }) => theme.colors.offBackground};
+    font-size: 21px;
     text-align: center;
 
     @media ${MediaQueries.biggerSizes} {
+      margin-left: 0;
+      width: 60%;
       text-align: left;
     }
   }

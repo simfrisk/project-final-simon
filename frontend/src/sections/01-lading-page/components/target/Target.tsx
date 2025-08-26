@@ -49,7 +49,14 @@ export const Target = () => {
   return (
     <Section>
       <Container>
-        <Title>Who is it for?</Title>
+        <Header>
+          <Title>Who is it for?</Title>
+          <h3>
+            Take control of your comments with timestamps to keep everything organized and easy to
+            find and remember. Whether you’re reviewing lessons or giving feedback, it’s all clear,
+            trackable, and right where you need it.
+          </h3>
+        </Header>
         <ContentContainer>
           <ImageContainer>
             {items.map((item, index) => (
@@ -89,17 +96,35 @@ const Section = styled(BaseSection)`
   color: ${({ theme }) => theme.colors.text};
 `
 
-const Title = styled.h2`
+const Header = styled.div`
   text-align: center;
   padding-bottom: ${spacing.xxl};
+
+  @media ${MediaQueries.biggerSizes} {
+    text-align: left;
+    width: 60%;
+  }
+
+  h3 {
+    font-size: 21px;
+  }
+`
+
+const Title = styled.h2`
+  text-align: center;
+
+  @media ${MediaQueries.biggerSizes} {
+    text-align: left;
+  }
 `
 
 const ContentContainer = styled.div`
   display: flex;
+  justify-content: flex-start;
   flex-direction: column;
   gap: ${spacing.lg};
   align-items: stretch;
-  justify-content: center;
+  width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
     flex-direction: row;
@@ -111,13 +136,12 @@ const ContentContainer = styled.div`
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 400px;
-  aspect-ratio: 4/3;
   flex-shrink: 0;
   margin: 0 auto;
 
   @media ${MediaQueries.biggerSizes} {
     margin: 0;
+    flex: 1; // Add this to make it expand
   }
 `
 
@@ -126,7 +150,9 @@ const Image = styled(motion.img)`
   top: 0;
   left: 0;
   width: 100%;
+  max-width: 800px;
   height: 100%;
+  object-fit: contain;
   object-fit: cover;
   border-radius: 20px;
 `
@@ -137,12 +163,10 @@ const List = styled.ul`
   gap: ${spacing.lg};
   padding: 0;
   margin: 0;
-  width: 100%;
-  max-width: 600px;
 
   @media ${MediaQueries.biggerSizes} {
     flex: 1;
     margin: 0;
-    width: none;
+    width: 50%;
   }
 `

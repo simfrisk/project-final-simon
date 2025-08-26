@@ -57,7 +57,7 @@ const ListItem = styled.li`
   width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
-    max-width: 600px;
+    max-width: 800px;
   }
 `
 

@@ -57,6 +57,10 @@ const CardWrapper = styled.div`
   /* 1 column by default (mobile) */
   grid-template-columns: 1fr;
 
+  @media ${MediaQueries.tablet} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   @media ${MediaQueries.biggerSizes} {
     /* Up to 3 columns on bigger screens */
     grid-template-columns: repeat(3, 1fr);
