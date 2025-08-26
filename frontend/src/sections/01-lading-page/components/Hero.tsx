@@ -121,10 +121,11 @@ const MainTitle = styled.h1`
   font-weight: 700;
 `
 
-const SubTitle = styled.p`
+const SubTitle = styled.h3`
   margin: ${spacing.sm} 0;
   color: ${({ theme }) => theme.colors.textAlternative};
-  font-weight: 400;
+  font-size: 21px;
+  width: 80%;
 `
 
 const MainButtonWrapper = styled.div`
