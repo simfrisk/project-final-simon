@@ -188,7 +188,7 @@ const Edit = styled.div`
     transform 0.3s ease;
 
   button {
-    background-color: rgba(255, 255, 255, 0.8); /* semi-transparent background */
+    background-color: rgba(255, 255, 255, 0.8);
     border: none;
     border-radius: 6px;
     padding: 6px;
@@ -221,7 +221,9 @@ const Card = styled.div`
   border-radius: 10px;
   transition: ease 0.3s;
   overflow: hidden;
-  box-shadow: 0 4px 5px ${({ theme }) => theme.colors.boxShadow};
+  box-shadow: 0 4px 5px ${({ theme }) => (theme.name === "dark" ? "none" : theme.colors.boxShadow)};
+  background-color: ${({ theme }) =>
+    theme.name === "dark" ? theme.colors.offBackground : "white"};
 
   &:hover {
     transform: scale(0.98);

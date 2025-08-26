@@ -30,6 +30,7 @@ export const CreateClass = () => {
         handleCreateProject()
       }}
     >
+      <h3>Create a new class</h3>
       <ClassNameInput
         placeholder="Project Name"
         required
@@ -52,7 +53,7 @@ const FormContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.offBackground};
   border: 2px solid ${({ theme }) => theme.colors.textAlternative};
   border-radius: 10px;
-  padding: 10px;
+  padding: 25px 20px;
 
   @media ${MediaQueries.biggerSizes} {
     width: 500px;
@@ -62,6 +63,11 @@ const FormContainer = styled.div`
     background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
     color: ${({ theme }) => theme.colors.text};
     margin: 6px 0;
+  }
+
+  h3 {
+    color: ${({ theme }) => theme.colors.text};
+    text-align: center;
   }
 `
 
