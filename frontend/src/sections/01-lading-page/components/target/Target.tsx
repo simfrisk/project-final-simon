@@ -134,11 +134,11 @@ const Image = styled(motion.img)`
 const List = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: ${spacing.md};
+  gap: ${spacing.lg};
   padding: 0;
   margin: 0;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
 
   @media ${MediaQueries.biggerSizes} {
     flex: 1;

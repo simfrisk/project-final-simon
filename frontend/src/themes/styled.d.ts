@@ -12,6 +12,10 @@ declare module "styled-components" {
       offBackgroundHover: string
       offBackgroundActive: string
 
+      lightGray: string
+      lightGrayHover: string
+      lightGrayActive: string
+
       text: string
       textHover: string
       textActive: string

@@ -8,16 +8,21 @@ export const FeatureTitle = () => {
     <Container>
       <h2>Classync 101</h2>
       <p>
-        Take control of your comments with timestamps to keep everything
-        organized and easy to find and remember. Whether you’re reviewing
-        lessons or giving feedback, it’s all clear, trackable, and right where
-        you need it.
+        Take control of your comments with timestamps to keep everything organized and easy to find
+        and remember. Whether you’re reviewing lessons or giving feedback, it’s all clear,
+        trackable, and right where you need it.
       </p>
     </Container>
   )
 }
 
 const Container = styled.div`
+  padding-bottom: ${spacing.sm};
+
+  @media ${MediaQueries.biggerSizes} {
+    padding-bottom: ${spacing.xxl};
+  }
+
   h2 {
     margin: ${spacing.md} 0;
     text-align: center;

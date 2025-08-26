@@ -25,7 +25,7 @@ export const Hero = () => {
       <Container role="banner">
         <Content role="presentation">
           <Logo
-            src="/Hero.webp"
+            src="/Hero2.png"
             alt="Classync logo"
             role="img"
           />
@@ -70,8 +70,8 @@ const VideoBackground = styled.video`
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ensures full coverage */
-  z-index: -1; /* behind the content */
+  object-fit: cover;
+  z-index: -1;
 `
 
 const Container = styled(BaseContainer)`
@@ -117,10 +117,14 @@ const Logo = styled.img`
 
 const MainTitle = styled.h1`
   margin: ${spacing.sm} 0;
+  color: ${({ theme }) => theme.colors.text};
+  font-weight: 700;
 `
 
 const SubTitle = styled.p`
   margin: ${spacing.sm} 0;
+  color: ${({ theme }) => theme.colors.textAlternative};
+  font-weight: 400;
 `
 
 const MainButtonWrapper = styled.div`

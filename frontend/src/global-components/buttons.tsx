@@ -21,13 +21,16 @@ export const SmallButton: React.FC<MainButtonProps> = ({ text, url }) => {
 
 // Styled components
 const MainStyledButton = styled.button`
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background: ${({ theme }) => theme.colors.primary};
   color: white;
   padding: 22px 35px;
   border-radius: 35px;
   font-size: 1rem;
   border: none;
-  transition: ease 0.3s;
+  transition: all ease 0.3s;
+  box-shadow: 0 4px 15px rgba(22, 106, 240, 0.3);
+  position: relative;
+  overflow: hidden;
 
   @media ${MediaQueries.biggerSizes} {
     font-size: 1.2rem;
@@ -35,7 +38,8 @@ const MainStyledButton = styled.button`
 
   &:hover {
     scale: 0.95;
-    background-color: ${({ theme }) => theme.colors.secondaryHover};
+    box-shadow: 0 6px 20px rgba(22, 106, 240, 0.4);
+    background: ${({ theme }) => theme.colors.primaryHover};
   }
 `
 

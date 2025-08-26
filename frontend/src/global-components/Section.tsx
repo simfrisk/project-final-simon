@@ -11,7 +11,7 @@ interface SectionProps {
 export const Section = styled.section<SectionProps>`
   background-color: ${(props) => {
     if (props.thirdSection) return "#141A20"
-    if (props.secondarySection) return props.theme.colors.primary
+    if (props.secondarySection) return props.theme.colors.lightGray
     return props.theme.colors.background
   }};
 

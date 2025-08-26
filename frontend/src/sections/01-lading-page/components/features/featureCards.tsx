@@ -4,56 +4,110 @@ import { Carousel } from "react-responsive-carousel"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 import styled from "styled-components"
 import { spacing } from "../../../../themes/spacing"
+import { MediaQueries } from "../../../../themes/mediaQueries"
 
 export const FeatureCards = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Calculate which card should be active based on current image
+  const activeCardIndex = currentImageIndex % 3
 
   const slides = [
-    <AFeatureCard title="Time Stamps" />,
-    <AFeatureCard title="Teachers Page" />,
-    <AFeatureCard title="Personal Comments" />,
+    <AFeatureCard
+      title="Time Stamps"
+      isActive={0 === activeCardIndex}
+    />,
+    <AFeatureCard
+      title="Teachers Page"
+      isActive={1 === activeCardIndex}
+    />,
+    <AFeatureCard
+      title="Personal Comments"
+      isActive={2 === activeCardIndex}
+    />,
   ]
+
+  // Images for desktop carousel
+  const images = ["/commentTag.png", "/teachersTag.png", "/personalCommentsTag.png"]
 
   const next = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
   const prev = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
-  return (
-    <Container>
-      <Carousel
-        selectedItem={currentSlide}
-        onChange={setCurrentSlide}
-        showThumbs={false}
-        infiniteLoop
-        showArrows={false}
-        showStatus={false}
-        showIndicators={true}
-        swipeable={true}
-        emulateTouch={true}
-        dynamicHeight={false}
-        renderIndicator={(
-          onClickHandler: React.MouseEventHandler<HTMLLIElement>,
-          isSelected: boolean,
-          index: number
-        ) => (
-          <Dot
-            key={index}
-            onClick={onClickHandler}
-            $active={isSelected}
-            aria-label={`Slide ${index + 1}`}
-            title={`Slide ${index + 1}`}
-          />
-        )}
-      >
-        {slides.map((slide, index) => (
-          <CardContainer key={index}>{slide}</CardContainer>
-        ))}
-      </Carousel>
+  const handleCardClick = (cardIndex: number) => {
+    setCurrentImageIndex(cardIndex)
+  }
 
-      <Controls>
-        <button onClick={prev}>Prev</button>
-        <button onClick={next}>Next</button>
-      </Controls>
-    </Container>
+  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length)
+  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+
+  return (
+    <>
+      <Container>
+        {/* Desktop: Images that carousel when clicking on cards */}
+        <DesktopContainer>
+          <CardsContainer>
+            {slides.map((slide, index) => (
+              <ClickableCardContainer
+                key={index}
+                onClick={() => handleCardClick(index)}
+              >
+                {slide}
+              </ClickableCardContainer>
+            ))}
+          </CardsContainer>
+
+          <ImageCarousel>
+            <img
+              src={images[currentImageIndex]}
+              alt={`School ${currentImageIndex + 1}`}
+            />
+            <ImageControls>
+              <button onClick={prevImage}>‹</button>
+              <button onClick={nextImage}>›</button>
+            </ImageControls>
+          </ImageCarousel>
+        </DesktopContainer>
+
+        {/* Mobile: Only card carousel */}
+        <MobileContainer>
+          <Carousel
+            selectedItem={currentSlide}
+            onChange={setCurrentSlide}
+            showThumbs={false}
+            infiniteLoop
+            showArrows={false}
+            showStatus={false}
+            showIndicators={true}
+            swipeable={true}
+            emulateTouch={true}
+            dynamicHeight={false}
+            renderIndicator={(
+              onClickHandler: React.MouseEventHandler<HTMLLIElement>,
+              isSelected: boolean,
+              index: number
+            ) => (
+              <Dot
+                key={index}
+                onClick={onClickHandler}
+                $active={isSelected}
+                aria-label={`Slide ${index + 1}`}
+                title={`Slide ${index + 1}`}
+              />
+            )}
+          >
+            {slides.map((slide, index) => (
+              <CardContainer key={index}>{slide}</CardContainer>
+            ))}
+          </Carousel>
+
+          <Controls>
+            <button onClick={prev}>Prev</button>
+            <button onClick={next}>Next</button>
+          </Controls>
+        </MobileContainer>
+      </Container>
+    </>
   )
 }
 
@@ -61,6 +115,96 @@ const Container = styled.div`
   margin: ${spacing.lg} 0;
   display: flex;
   flex-direction: column;
+`
+
+const DesktopContainer = styled.div`
+  display: none;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: flex;
+    align-items: center;
+    gap: ${spacing.xl};
+  }
+`
+
+const MobileContainer = styled.div`
+  display: block;
+
+  @media ${MediaQueries.biggerSizes} {
+    display: none;
+  }
+`
+
+const ImageCarousel = styled.div`
+  position: relative;
+  width: 50%;
+  height: 485px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+`
+
+const ImageControls = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 ${spacing.md};
+
+  button {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+`
+
+const CardsContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
+`
+
+const ClickableCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 15px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+  }
 `
 
 const CardContainer = styled.div`

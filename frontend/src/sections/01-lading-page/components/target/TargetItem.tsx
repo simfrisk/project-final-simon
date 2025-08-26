@@ -46,18 +46,18 @@ export const TargetItem = ({ title, description, isOpen, onClick }: TargetItemPr
 
 // ---------------- styled ----------------
 const ListItem = styled.li`
-  margin-bottom: 12px;
-  border-radius: 12px;
+  margin-bottom: 8px;
+  border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.colors.offBackground};
   background: ${({ theme }) => theme.colors.background};
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
   width: 100%;
 
   @media ${MediaQueries.biggerSizes} {
-    max-width: 500px;
+    max-width: 600px;
   }
 `
 
@@ -66,18 +66,24 @@ const HeaderButton = styled.button`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 14px 20px;
+  padding: 20px 28px;
   border: none;
   background: none;
   cursor: pointer;
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
 
   h3 {
-    font-size: 20px;
+    font-size: 24px;
     margin: 0;
     color: ${({ theme }) => theme.colors.text};
+  }
+
+  span {
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
   }
 
   &:hover {
@@ -86,8 +92,8 @@ const HeaderButton = styled.button`
 `
 
 const Content = styled.div`
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 20px 28px;
+  font-size: 18px;
   color: ${({ theme }) => theme.colors.textAlternative};
-  line-height: 1.5;
+  line-height: 1.6;
 `

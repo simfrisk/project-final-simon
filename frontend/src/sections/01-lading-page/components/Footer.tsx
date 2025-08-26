@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { Container } from "../../../global-components/Section"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { spacing } from "../../../themes/spacing"
+import { Section as BaseSection } from "../../../global-components/Section"
 
 export const Footer = () => {
   return (
@@ -34,23 +35,17 @@ export const Footer = () => {
   )
 }
 
-const Section = styled.section`
+const Section = styled(BaseSection)`
   background-color: black;
   color: white;
-  width: 100%;
-  padding: 64px 0;
   text-align: center;
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 128px 0;
-  }
 `
 
 const SocialMedia = styled.div`
   display: flex;
   justify-content: center;
   gap: ${spacing.md};
-  margin-top: ${spacing.md};
+  margin-top: ${spacing.lg};
 
   a {
     color: white;
