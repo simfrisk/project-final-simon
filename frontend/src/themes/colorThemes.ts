@@ -63,6 +63,7 @@ export const darkTheme: DefaultTheme = {
     primary: "rgb(44, 84, 124)",
     primaryHover: "rgb(38, 74, 110)",
     primaryActive: "rgb(34, 67, 100)",
+    secondary: "rgb(28, 34, 45)",
     secondaryHover: "#2a2a2a",
     secondaryActive: "#3a3a3a",
     border: "#333333",
