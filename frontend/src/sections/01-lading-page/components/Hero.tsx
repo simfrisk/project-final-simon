@@ -98,7 +98,7 @@ const MainTitle = styled.h1`
   font-weight: 700;
 `
 
-const SubTitle = styled.h3`
+const SubTitle = styled.h2`
   margin: ${spacing.sm} 0;
   color: ${({ theme }) => theme.colors.textAlternative};
   font-size: 21px;
