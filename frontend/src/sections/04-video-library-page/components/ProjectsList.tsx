@@ -38,12 +38,8 @@ export const ProjectsList = () => {
   const projectId = useEditingStore((state) => state.removingProjectId)
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
-  const setIsEditingProject = useEditingStore(
-    (state) => state.setIsEditingProject
-  )
-  const setIsRemovingProject = useEditingStore(
-    (state) => state.setIsRemovingProject
-  )
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject)
+  const setIsRemovingProject = useEditingStore((state) => state.setIsRemovingProject)
 
   const fetchClassById = useClassStore((state) => state.fetchClassById)
   const currentClass = useClassStore((state) => state.class)
@@ -119,9 +115,7 @@ export const ProjectsList = () => {
   return (
     <Container>
       <HeaderWrapper>
-        <ClassTitle>
-          {currentClass?.classTitle ?? "Loading class title..."}
-        </ClassTitle>
+        <ClassTitle>{currentClass?.classTitle ?? "Loading class title..."}</ClassTitle>
 
         <TopBar>
           <ClassSelect
@@ -186,25 +180,21 @@ export const ProjectsList = () => {
 
       {projects.length === 0 ? (
         <NoProjectsContainer>
-          <NoProjectsMessage>
-            You have no projects in this class...
-          </NoProjectsMessage>
+          <NoProjectsMessage>You have no projects in this class...</NoProjectsMessage>
         </NoProjectsContainer>
       ) : (
         // Here are the projects
         <ProjectWrapper>
-          {projects.map(
-            ({ _id, projectName, projectDescription, teacher, thumbnail }) => (
-              <Project
-                key={_id}
-                projectId={_id ?? ""}
-                projectName={projectName}
-                projectDescription={projectDescription}
-                teacher={teacher}
-                thumbnail={thumbnail}
-              />
-            )
-          )}
+          {projects.map(({ _id, projectName, projectDescription, teacher, thumbnail }) => (
+            <Project
+              key={_id}
+              projectId={_id ?? ""}
+              projectName={projectName}
+              projectDescription={projectDescription}
+              teacher={teacher}
+              thumbnail={thumbnail}
+            />
+          ))}
         </ProjectWrapper>
       )}
 
@@ -391,7 +381,7 @@ const NoProjectsContainer = styled.div`
   margin: 30px 0;
 `
 
-const NoProjectsMessage = styled.h3`
+const NoProjectsMessage = styled.p`
   color: ${({ theme }) => theme.colors.text};
 `
 

@@ -72,7 +72,7 @@ export const Project = ({
       <Card
         role="button"
         tabIndex={0}
-        aria-label={`View project ${projectName}`}
+        aria-label={`View project ${projectName} by ${teacher || "Unknown"}`}
         onClick={() => navigate(`/review/${projectId}`)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {

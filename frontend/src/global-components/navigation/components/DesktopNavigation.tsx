@@ -66,7 +66,7 @@ export const DesktopNavigation = ({
               </NavLinkItem>
             </NavMenuItem>
 
-            <UserProfile aria-label="User profile section">
+            <UserProfile>
               <img
                 src={user?.profileImage}
                 alt={`${user?.name || "User"} profile picture`}

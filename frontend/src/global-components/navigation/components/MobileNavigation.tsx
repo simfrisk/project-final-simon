@@ -32,7 +32,7 @@ export const MobileNavigation = ({
     <>
       <MobileMenuToggle>
         {isLoggedIn && (
-          <UserProfile aria-label="User profile section">
+          <UserProfile>
             <img
               src={user?.profileImage}
               alt={`${user?.name || "User"} profile picture`}
@@ -54,7 +54,6 @@ export const MobileNavigation = ({
         aria-label="Mobile Main Navigation"
         role="navigation"
         id="mobile-nav-menu"
-        aria-hidden={!isMenuOpen}
       >
         <NavMenu
           role="menu"
@@ -67,6 +66,7 @@ export const MobileNavigation = ({
               role="menuitem"
               aria-current={location.pathname === "/" ? "page" : undefined}
               aria-label="Return to homepage"
+              tabIndex={isMenuOpen ? 0 : -1}
             >
               Home
             </NavLinkItem>
@@ -80,6 +80,7 @@ export const MobileNavigation = ({
                 role="menuitem"
                 aria-current={location.pathname === "/teachersPage" ? "page" : undefined}
                 aria-label="Access teachers dashboard and tools"
+                tabIndex={isMenuOpen ? 0 : -1}
               >
                 Teacher Dashboard
               </NavLinkItem>
@@ -95,6 +96,7 @@ export const MobileNavigation = ({
                   role="menuitem"
                   aria-current={location.pathname === "/library" ? "page" : undefined}
                   aria-label="Access video library and courses"
+                  tabIndex={isMenuOpen ? 0 : -1}
                 >
                   Library
                 </NavLinkItem>
@@ -104,6 +106,7 @@ export const MobileNavigation = ({
                   onClick={handleLogout}
                   role="menuitem"
                   aria-label="Sign out of your account"
+                  tabIndex={isMenuOpen ? 0 : -1}
                 >
                   Logout
                 </LogoutButton>
@@ -117,6 +120,7 @@ export const MobileNavigation = ({
                 role="menuitem"
                 aria-current={location.pathname === "/login" ? "page" : undefined}
                 aria-label="Sign in to your account"
+                tabIndex={isMenuOpen ? 0 : -1}
               >
                 Login
               </NavLinkItem>
@@ -129,6 +133,7 @@ export const MobileNavigation = ({
               role="menuitem"
               aria-label="Toggle between light and dark theme"
               aria-pressed={false}
+              tabIndex={isMenuOpen ? 0 : -1}
             >
               Toggle Theme
             </ThemeToggleButton>
@@ -159,6 +164,7 @@ const MobileNav = styled.nav<{ $isOpen: boolean }>`
   transform: ${({ $isOpen }) => ($isOpen ? "translateY(0)" : "translateY(-100%)")};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
+  visibility: ${({ $isOpen }) => ($isOpen ? "visible" : "hidden")};
 
   @media ${MediaQueries.biggerSizes} {
     display: none;

@@ -30,61 +30,63 @@ export const App = () => {
     <ThemeProvider theme={themeMode === "light" ? lightTheme : darkTheme}>
       <AppContainer>
         <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route
-              path="/"
-              element={<LandingPage />}
-            />
-            <Route
-              path="/login"
-              element={<LogInPage />}
-            />
-            <Route
-              path="/signUp"
-              element={<SignUpPage />}
-            />
-            <Route
-              path="/teachersPage"
-              element={<TeachersPage />}
-            />
-
-            {/* Protected routes with nested routing */}
-            <Route
-              path="/library"
-              element={
-                <RequireAuthentication>
-                  <VideoLibraryPage />
-                </RequireAuthentication>
-              }
-            >
-              {/* If no class selected */}
+          <main role="main">
+            <Routes>
+              {/* Public routes */}
               <Route
-                index
-                element={<ChooseClassMessage />}
+                path="/"
+                element={<LandingPage />}
               />
-              {/* When classId is selected */}
               <Route
-                path="classes/:classId/projects"
-                element={<ProjectsList />}
+                path="/login"
+                element={<LogInPage />}
               />
-            </Route>
+              <Route
+                path="/signUp"
+                element={<SignUpPage />}
+              />
+              <Route
+                path="/teachersPage"
+                element={<TeachersPage />}
+              />
 
-            <Route
-              path="/review/:projectId"
-              element={
-                <RequireAuthentication>
-                  <ReviewPage />
-                </RequireAuthentication>
-              }
-            />
+              {/* Protected routes with nested routing */}
+              <Route
+                path="/library"
+                element={
+                  <RequireAuthentication>
+                    <VideoLibraryPage />
+                  </RequireAuthentication>
+                }
+              >
+                {/* If no class selected */}
+                <Route
+                  index
+                  element={<ChooseClassMessage />}
+                />
+                {/* When classId is selected */}
+                <Route
+                  path="classes/:classId/projects"
+                  element={<ProjectsList />}
+                />
+              </Route>
 
-            {/* Fallback 404 */}
-            <Route
-              path="*"
-              element={<PageNotFound />}
-            />
-          </Routes>
+              <Route
+                path="/review/:projectId"
+                element={
+                  <RequireAuthentication>
+                    <ReviewPage />
+                  </RequireAuthentication>
+                }
+              />
+
+              {/* Fallback 404 */}
+              <Route
+                path="*"
+                element={<PageNotFound />}
+              />
+            </Routes>
+          </main>
         </BrowserRouter>
       </AppContainer>
     </ThemeProvider>

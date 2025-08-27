@@ -27,7 +27,7 @@ export const Navigation = () => {
     <NavHeader role="banner">
       <LogoLink
         to="/"
-        aria-label="Classync Home - Return to homepage"
+        aria-label="Classync - Return to homepage"
       >
         <LogoTitle>Classync</LogoTitle>
         <BetaTag>Beta</BetaTag>

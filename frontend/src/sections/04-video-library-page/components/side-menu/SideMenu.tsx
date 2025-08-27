@@ -16,12 +16,8 @@ export const SideMenu = () => {
   const location = useLocation()
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
-  const setIsEditingProject = useEditingStore(
-    (state) => state.setIsEditingProject
-  )
-  const setIsRemovingClass = useEditingStore(
-    (state) => state.setIsRemovingClass
-  )
+  const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject)
+  const setIsRemovingClass = useEditingStore((state) => state.setIsRemovingClass)
   const isRemovingClass = useEditingStore((set) => set.isRemovingClass)
   const setRemovingClassId = useEditingStore((set) => set.setRemovingClassId)
   const removingClassId = useEditingStore((state) => state.removingClassId)
@@ -45,10 +41,7 @@ export const SideMenu = () => {
   const handleEditClass = () => setIsEditingClass(true)
   const handleEditProject = () => setIsEditingProject(true)
 
-  const handleMoreInfo = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    classId: string
-  ) => {
+  const handleMoreInfo = (e: React.MouseEvent<HTMLButtonElement>, classId: string) => {
     e.stopPropagation()
     e.preventDefault()
     setIsRemovingClass(true)
