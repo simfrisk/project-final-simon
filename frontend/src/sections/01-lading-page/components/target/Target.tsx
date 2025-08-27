@@ -71,7 +71,6 @@ export const Target = () => {
           </ImageContainer>
 
           <List
-            role="list"
             aria-label="Target audience categories"
             aria-describedby="target-description"
           >

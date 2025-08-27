@@ -75,6 +75,7 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
           <StyledButton
             type="button"
             onClick={handleUpdating}
+            role="menuitem"
             aria-label="Edit class name"
           >
             Edit name
@@ -83,6 +84,7 @@ export const ClassOptions = ({ classId }: ClassOptionsProps) => {
             type="button"
             $danger
             onClick={handleDeleteClick}
+            role="menuitem"
             aria-label="Delete class"
           >
             Delete Class

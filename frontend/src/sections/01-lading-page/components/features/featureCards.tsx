@@ -46,10 +46,7 @@ export const FeatureCards = () => {
       <Container>
         {/* Desktop: Images that carousel when clicking on cards */}
         <DesktopContainer>
-          <CardsContainer
-            role="list"
-            aria-label="Feature selection cards"
-          >
+          <CardsContainer aria-label="Feature selection cards">
             {slides.map((slide, index) => (
               <ClickableCardContainer
                 key={index}

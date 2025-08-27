@@ -13,7 +13,6 @@ export const Demos = () => {
       <Container>
         <Title id="demo-title">The platform that powers your online courses</Title>
         <CardWrapper
-          role="list"
           aria-label="Platform feature demonstrations"
           aria-describedby="demo-description"
         >
