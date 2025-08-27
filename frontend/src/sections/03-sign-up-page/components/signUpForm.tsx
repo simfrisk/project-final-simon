@@ -71,6 +71,18 @@ export const SignUpForm: React.FC = () => {
           />
         </FormGroup>
 
+        <FormGroup>
+          <label htmlFor="profileImage">Upload profile picture</label>
+          <input
+            type="file"
+            id="profileImage"
+            name="profileImage"
+            accept="image/*"
+            onChange={handlePreview}
+            aria-describedby={preview ? "image-preview" : undefined}
+          />
+        </FormGroup>
+
         <RoleGroup>
           <RoleLabel htmlFor="role-teacher">
             <input
@@ -96,18 +108,6 @@ export const SignUpForm: React.FC = () => {
             Student
           </RoleLabel>
         </RoleGroup>
-
-        <FormGroup>
-          <label htmlFor="profileImage">Upload profile picture</label>
-          <input
-            type="file"
-            id="profileImage"
-            name="profileImage"
-            accept="image/*"
-            onChange={handlePreview}
-            aria-describedby={preview ? "image-preview" : undefined}
-          />
-        </FormGroup>
 
         {error && <ErrorMessage id="form-error">{error}</ErrorMessage>}
         {preview && (

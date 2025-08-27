@@ -136,7 +136,8 @@ const TimeTag = styled.div`
 
   p {
     font-size: 14px;
-    color: ${({ theme }) => theme.colors.textAlternative};
+    font-weight: 700;
+    color: ${({ theme }) => (theme.name === "dark" ? "#fff" : "#444343")};
     margin: 0;
   }
 

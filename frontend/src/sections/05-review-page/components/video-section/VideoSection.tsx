@@ -283,6 +283,7 @@ const StyledVideo = styled.video<{ $isFullScreen: boolean }>`
   height: 100%;
   object-fit: contain;
   background-color: black;
+  color: white;
 `
 
 const Controls = styled.div<{ $isFullScreen: boolean }>`

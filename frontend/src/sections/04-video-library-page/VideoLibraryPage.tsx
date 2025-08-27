@@ -7,6 +7,7 @@ import { MediaQueries } from "../../themes/mediaQueries"
 export const VideoLibraryPage = () => {
   return (
     <>
+      <InvisibleH1>Video Library</InvisibleH1>
       <Navigation />
       <MainSection aria-label="Video Library Section">
         <ContentWrapper>
@@ -46,4 +47,14 @@ const SideNavContainer = styled.section`
     display: block;
     padding: 72px 0;
   }
+`
+
+const InvisibleH1 = styled.h1`
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 `

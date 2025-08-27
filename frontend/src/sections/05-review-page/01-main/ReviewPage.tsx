@@ -29,9 +29,7 @@ export const ReviewPage = () => {
   const activeTab = useTabStore((state) => state.activeTab)
   const fetchProjectById = useProjectStore((state) => state.fetchProjectById)
   const fetchComments = commentStore((state) => state.fetchComments)
-  const fetchPrivateComments = commentStore(
-    (state) => state.fetchPrivateComments
-  )
+  const fetchPrivateComments = commentStore((state) => state.fetchPrivateComments)
   //#endregion
 
   //#region ----- EFFECTS -----
@@ -68,6 +66,7 @@ export const ReviewPage = () => {
   //#region ----- RENDER UI -----
   return (
     <>
+      <InvisibleH1>Project Review</InvisibleH1>
       <ReviewNav aria-label="Review Navigation" />
       <MainContainer role="main">
         <StyledVideoSection aria-label="Project video" />
@@ -78,14 +77,10 @@ export const ReviewPage = () => {
           {activeTab === "description" && (
             <StyledDescriptionSection aria-label="Project description" />
           )}
-          {activeTab !== "description" && (
-            <StyledCommentSection aria-label="Project comments" />
-          )}
+          {activeTab !== "description" && <StyledCommentSection aria-label="Project comments" />}
         </RightColumn>
 
-        {activeTab !== "description" && (
-          <StyledCommentForm aria-label="Add a comment" />
-        )}
+        {activeTab !== "description" && <StyledCommentForm aria-label="Add a comment" />}
       </MainContainer>
     </>
   )
@@ -129,5 +124,15 @@ const StyledCommentHeader = styled(CommentHeader)``
 const StyledCommentSection = styled(CommentSection)``
 
 const StyledDescriptionSection = styled(DescriptionSection)``
+
+const InvisibleH1 = styled.h1`
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+`
 
 //#endregion

@@ -9,7 +9,7 @@ export const LoginHeader = () => {
       />
 
       <WelcomeMessage id="login-heading">
-        <h2>Welcome</h2>
+        <Title>Welcome</Title>
         <p>Nice to have you back.</p>
       </WelcomeMessage>
     </Header>
@@ -35,4 +35,12 @@ const Logo = styled.img`
 const WelcomeMessage = styled.div`
   text-align: center;
   margin: 10px 0 30px 0;
+`
+
+const Title = styled.h1`
+  font-size: 32px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 20px;
+  color: ${({ theme }) => theme.colors.text};
 `

@@ -135,7 +135,7 @@ const ActionButtonIcon = styled.button`
   padding: 0;
   transform: scale(0.7);
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.text};
   transition: all 0.3s ease;
 
   img {

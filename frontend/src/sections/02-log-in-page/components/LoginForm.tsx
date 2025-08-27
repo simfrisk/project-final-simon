@@ -78,11 +78,7 @@ export const LoginForm: React.FC = () => {
               aria-pressed={showPassword}
             >
               <img
-                src={
-                  showPassword
-                    ? "/icons/visibility_off.svg"
-                    : "/icons/visibility_on.svg"
-                }
+                src={showPassword ? "/icons/visibility_off.svg" : "/icons/visibility_on.svg"}
                 alt=""
                 width={20}
                 height={20}
