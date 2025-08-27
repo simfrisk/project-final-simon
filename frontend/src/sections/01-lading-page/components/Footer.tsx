@@ -6,30 +6,48 @@ import { MediaQueries } from "../../../themes/mediaQueries"
 
 export const Footer = () => {
   return (
-    <Section>
+    <Section
+      role="contentinfo"
+      aria-labelledby="footer-title"
+    >
       <Container>
         <Wrapper>
-          <p>This is a school project created by Simon Frisk</p>
-          <div>
-            <a
-              href="https://github.com/simfrisk/project-final-simon"
-              target="blank"
-            >
-              <img
-                src="/icons/Ic-Github.svg"
-                alt="Github link"
-              />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/simon-frisk-59aba7bb/"
-              target="blank"
-            >
-              <img
-                src="/icons/Linked-In.svg"
-                alt=""
-              />
-            </a>
-          </div>
+          <FooterText id="footer-title">This is a school project created by Simon Frisk</FooterText>
+          <SocialLinks
+            role="list"
+            aria-label="Social media and project links"
+          >
+            <SocialLink role="listitem">
+              <a
+                href="https://github.com/simfrisk/project-final-simon"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View project source code on GitHub"
+              >
+                <img
+                  src="/icons/Ic-Github.svg"
+                  alt="GitHub logo"
+                  aria-hidden="true"
+                />
+                <span className="sr-only">GitHub</span>
+              </a>
+            </SocialLink>
+            <SocialLink role="listitem">
+              <a
+                href="https://www.linkedin.com/in/simon-frisk-59aba7bb/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Connect with Simon Frisk on LinkedIn"
+              >
+                <img
+                  src="/icons/Linked-In.svg"
+                  alt="LinkedIn logo"
+                  aria-hidden="true"
+                />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+            </SocialLink>
+          </SocialLinks>
         </Wrapper>
       </Container>
     </Section>
@@ -55,18 +73,52 @@ const Wrapper = styled.div`
     flex-direction: row;
     width: 100%;
   }
+`
 
-  div {
-    display: flex;
-    gap: ${spacing.md};
-  }
+const FooterText = styled.p`
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+`
 
+const SocialLinks = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+`
+
+const SocialLink = styled.div`
   a {
     color: white;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:focus {
+      outline: 2px solid white;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
   }
 
   img {
     height: 30px;
+    width: auto;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 `

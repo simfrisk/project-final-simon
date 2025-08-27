@@ -6,35 +6,58 @@ import { spacing } from "../../../themes/spacing"
 
 export const Collaborate = () => {
   return (
-    <Section>
+    <Section aria-labelledby="collaborate-title">
       <Container>
-        <Title>We collaborate with 150+ online schools</Title>
-        <Schools>
+        <Title id="collaborate-title">We collaborate with 150+ online schools</Title>
+        <Schools
+          role="list"
+          aria-label="Partner schools logos"
+          aria-describedby="collaborate-description"
+        >
           <SchoolImage
             src="./School1.png"
-            alt="School 1"
+            alt="School 1 partner logo"
+            role="listitem"
+            aria-label="School 1 partner institution"
           />
           <SchoolImage
             src="./School2.png"
-            alt="School 2"
+            alt="School 2 partner logo"
+            role="listitem"
+            aria-label="School 2 partner institution"
           />
           <SchoolImage
             src="./School7.png"
-            alt="School 7"
+            alt="School 7 partner logo"
+            role="listitem"
+            aria-label="School 7 partner institution"
           />
           <SchoolImage
             src="./School4.png"
-            alt="School 4"
+            alt="School 4 partner logo"
+            role="listitem"
+            aria-label="School 4 partner institution"
           />
           <SchoolImage
             src="./School3.png"
-            alt="School 3"
+            alt="School 3 partner logo"
+            role="listitem"
+            aria-label="School 3 partner institution"
           />
           <SchoolImage
             src="./School6.png"
-            alt="School 6"
+            alt="School 6 partner logo"
+            role="listitem"
+            aria-label="School 6 partner institution"
           />
         </Schools>
+        <Description
+          id="collaborate-description"
+          aria-hidden="true"
+        >
+          Our platform collaborates with over 150 online schools and educational institutions to
+          provide comprehensive learning solutions.
+        </Description>
       </Container>
     </Section>
   )
@@ -48,7 +71,9 @@ const Container = styled(BaseContainer)`
   text-align: center;
 `
 
-const Title = styled.h2``
+const Title = styled.h2`
+  margin-bottom: ${spacing.md};
+`
 
 const Schools = styled.div`
   display: flex;
@@ -76,4 +101,14 @@ const SchoolImage = styled.img`
     flex: 1;
     object-fit: contain;
   }
+`
+
+const Description = styled.p`
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 `

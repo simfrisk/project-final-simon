@@ -10,14 +10,18 @@ type AFeatureCardProps = {
 
 export const AFeatureCard = ({ title, isActive = false }: AFeatureCardProps) => {
   return (
-    <ButtonContainer $isActive={isActive}>
+    <ButtonContainer
+      $isActive={isActive}
+      aria-pressed={isActive}
+      aria-label={`${title} feature - ${isActive ? "Currently selected" : "Click to select"}`}
+    >
       <div>
-        <strong>{title}</strong>
-        <p>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eum, numquam quasi ex doloremque
           natus quia minima ab suscipit voluptatem nisi fuga eius possimus ipsum itaque explicabo.
           Commodi libero, vel eos voluptatum fuga nam culpa consequatur?
-        </p>
+        </CardDescription>
       </div>
     </ButtonContainer>
   )
@@ -55,4 +59,17 @@ const ButtonContainer = styled.button<{ $isActive: boolean }>`
         background-color: #465169;
       }
     `}
+`
+
+const CardTitle = styled.strong`
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+`
+
+const CardDescription = styled.p`
+  color: #cecece;
+  margin-top: ${spacing.xs};
+  line-height: 1.4;
 `

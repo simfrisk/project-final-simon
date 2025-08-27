@@ -1,10 +1,16 @@
 import styled from "styled-components"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { HamburgerMenu } from "./Burger"
 import { MediaQueries } from "../../../themes/mediaQueries"
 
+interface User {
+  role?: string
+  name?: string
+  profileImage?: string
+}
+
 interface MobileProps {
-  user: any
+  user: User | null
   isLoggedIn: boolean
   isMenuOpen: boolean
   toggleMenu: () => void
@@ -19,82 +25,122 @@ export const MobileNavigation = ({
   toggleMenu,
   toggleTheme,
   handleLogout,
-}: MobileProps) => (
-  <>
-    <MobileMenuToggle>
-      {isLoggedIn && (
-        <UserProfile>
-          <img
-            src={user?.profileImage}
-            alt={`${user?.name || "User"} profile`}
-          />
-        </UserProfile>
-      )}
-      <HamburgerMenu
-        isOpen={isMenuOpen}
-        onToggle={toggleMenu}
-      />
-    </MobileMenuToggle>
+}: MobileProps) => {
+  const location = useLocation()
 
-    <MobileNav
-      $isOpen={isMenuOpen}
-      aria-label="Mobile Main Navigation"
-    >
-      <NavMenu>
-        <NavMenuItem>
-          <NavLinkItem
-            to="/"
-            onClick={toggleMenu}
+  return (
+    <>
+      <MobileMenuToggle>
+        {isLoggedIn && (
+          <UserProfile
+            role="img"
+            aria-label="User profile section"
           >
-            Home
-          </NavLinkItem>
-        </NavMenuItem>
+            <img
+              src={user?.profileImage}
+              alt={`${user?.name || "User"} profile picture`}
+              aria-hidden="true"
+            />
+          </UserProfile>
+        )}
+        <HamburgerMenu
+          isOpen={isMenuOpen}
+          onToggle={toggleMenu}
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle mobile navigation menu"
+          aria-controls="mobile-nav-menu"
+        />
+      </MobileMenuToggle>
 
-        {user?.role === "teacher" && (
-          <NavMenuItem>
+      <MobileNav
+        $isOpen={isMenuOpen}
+        aria-label="Mobile Main Navigation"
+        role="navigation"
+        id="mobile-nav-menu"
+        aria-hidden={!isMenuOpen}
+      >
+        <NavMenu
+          role="menu"
+          aria-label="Mobile navigation menu"
+        >
+          <NavMenuItem role="none">
             <NavLinkItem
-              to="/teachersPage"
+              to="/"
               onClick={toggleMenu}
+              role="menuitem"
+              aria-current={location.pathname === "/" ? "page" : undefined}
+              aria-label="Return to homepage"
             >
-              Teacher Dashboard
+              Home
             </NavLinkItem>
           </NavMenuItem>
-        )}
 
-        {isLoggedIn ? (
-          <>
-            <NavMenuItem>
+          {user?.role === "teacher" && (
+            <NavMenuItem role="none">
               <NavLinkItem
-                to="/library"
+                to="/teachersPage"
                 onClick={toggleMenu}
+                role="menuitem"
+                aria-current={location.pathname === "/teachersPage" ? "page" : undefined}
+                aria-label="Access teachers dashboard and tools"
               >
-                Library
+                Teacher Dashboard
               </NavLinkItem>
             </NavMenuItem>
-            <NavMenuItem>
-              <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-            </NavMenuItem>
-          </>
-        ) : (
-          <NavMenuItem>
-            <NavLinkItem
-              to="/login"
-              onClick={toggleMenu}
-            >
-              Login
-            </NavLinkItem>
-          </NavMenuItem>
-        )}
+          )}
 
-        <NavMenuItem>
-          <ThemeToggleButton onClick={toggleTheme}>
-            Toggle Theme
-          </ThemeToggleButton>
-        </NavMenuItem>
-      </NavMenu>
-    </MobileNav>
-  </>
-)
+          {isLoggedIn ? (
+            <>
+              <NavMenuItem role="none">
+                <NavLinkItem
+                  to="/library"
+                  onClick={toggleMenu}
+                  role="menuitem"
+                  aria-current={location.pathname === "/library" ? "page" : undefined}
+                  aria-label="Access video library and courses"
+                >
+                  Library
+                </NavLinkItem>
+              </NavMenuItem>
+              <NavMenuItem role="none">
+                <LogoutButton
+                  onClick={handleLogout}
+                  role="menuitem"
+                  aria-label="Sign out of your account"
+                >
+                  Logout
+                </LogoutButton>
+              </NavMenuItem>
+            </>
+          ) : (
+            <NavMenuItem role="none">
+              <NavLinkItem
+                to="/login"
+                onClick={toggleMenu}
+                role="menuitem"
+                aria-current={location.pathname === "/login" ? "page" : undefined}
+                aria-label="Sign in to your account"
+              >
+                Login
+              </NavLinkItem>
+            </NavMenuItem>
+          )}
+
+          <NavMenuItem role="none">
+            <ThemeToggleButton
+              onClick={toggleTheme}
+              role="menuitem"
+              aria-label="Toggle between light and dark theme"
+              aria-pressed={false}
+            >
+              Toggle Theme
+            </ThemeToggleButton>
+          </NavMenuItem>
+        </NavMenu>
+      </MobileNav>
+    </>
+  )
+}
 
 const MobileNav = styled.nav<{ $isOpen: boolean }>`
   display: flex;
@@ -113,8 +159,7 @@ const MobileNav = styled.nav<{ $isOpen: boolean }>`
   transition:
     transform 0.3s ease,
     opacity 0.5s ease;
-  transform: ${({ $isOpen }) =>
-    $isOpen ? "translateY(0)" : "translateY(-100%)"};
+  transform: ${({ $isOpen }) => ($isOpen ? "translateY(0)" : "translateY(-100%)")};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
 
@@ -148,9 +193,21 @@ const NavLinkItem = styled(Link)`
   color: white;
   text-decoration: none;
   font-size: 1.2rem;
+  padding: 12px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: block;
+  width: 100%;
 
   &:hover {
-    transform: scale(0.94);
+    transform: scale(0.98);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 `
 
@@ -161,9 +218,22 @@ const LogoutButton = styled.button`
   border: none;
   cursor: pointer;
   font-family: inherit;
+  padding: 12px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: block;
+  width: 100%;
+  text-align: left;
 
   &:hover {
-    transform: scale(0.94);
+    transform: scale(0.98);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 `
 
@@ -182,14 +252,26 @@ const UserProfile = styled.div`
 `
 
 const ThemeToggleButton = styled.button`
-  padding: 10px 16px;
+  padding: 12px 16px;
   border: none;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  display: block;
+  width: 100%;
+  text-align: left;
 
   &:hover {
-    transform: scale(0.97);
+    transform: scale(0.98);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  &:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
   }
 `

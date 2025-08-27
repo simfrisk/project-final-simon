@@ -8,9 +8,10 @@ type ExplainerCardProps = {
   title: string
   text: string
   video?: string
+  index: number
 }
 
-export const ExplainerCard = ({ title, text, video }: ExplainerCardProps) => {
+export const ExplainerCard = ({ title, text, video, index }: ExplainerCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLElement | null>(null)
   const isInView = useInView(containerRef, { amount: 0.5 })
@@ -45,19 +46,25 @@ export const ExplainerCard = ({ title, text, video }: ExplainerCardProps) => {
     <Container
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
+      role="listitem"
+      aria-labelledby={`card-title-${index}`}
+      aria-describedby={`card-text-${index}`}
     >
       <StyledVideo
         ref={videoRef}
         muted
         playsInline
+        aria-label={`Demonstration video for ${title}`}
+        aria-describedby={`card-text-${index}`}
       >
         <source
           src={video || "/Explainer3.mp4"}
           type="video/mp4"
         />
+        Your browser does not support the video tag.
       </StyledVideo>
-      <strong>{title}</strong>
-      <p>{text}</p>
+      <CardTitle id={`card-title-${index}`}>{title}</CardTitle>
+      <CardText id={`card-text-${index}`}>{text}</CardText>
     </Container>
   )
 }
@@ -84,4 +91,18 @@ const StyledVideo = styled.video`
   aspect-ratio: 4 / 3;
   object-fit: cover;
   width: 100%;
+`
+
+const CardTitle = styled.h3`
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+`
+
+const CardText = styled.p`
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #b0b8c1;
 `

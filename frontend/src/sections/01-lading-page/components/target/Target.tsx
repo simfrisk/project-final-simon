@@ -47,35 +47,41 @@ export const Target = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <Section>
+    <Section aria-labelledby="target-title">
       <Container>
         <Header>
-          <Title>Who is it for?</Title>
-          <h3>
-            Take control of your comments with timestamps to keep everything organized and easy to
-            find and remember. Whether you’re reviewing lessons or giving feedback, it’s all clear,
-            trackable, and right where you need it.
-          </h3>
+          <Title id="target-title">Who is it for?</Title>
         </Header>
         <ContentContainer>
-          <ImageContainer>
+          <ImageContainer
+            aria-label="Target audience visual representations"
+            aria-describedby="target-description"
+          >
             {items.map((item, index) => (
               <Image
                 key={index}
                 src={item.image}
-                alt={item.title}
+                alt={`${item.title} - Visual representation`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeIndex === index ? 1 : 0 }}
                 transition={{ duration: 0.4 }}
+                aria-hidden={activeIndex !== index}
+                role="img"
               />
             ))}
           </ImageContainer>
 
-          <List>
+          <List
+            role="list"
+            aria-label="Target audience categories"
+            aria-describedby="target-description"
+          >
+            {/* here are the children */}
             {items.map((item, index) => (
               <TargetItem
                 key={index}
                 {...item}
+                index={index}
                 isOpen={openIndex === index}
                 onClick={() => {
                   setOpenIndex(openIndex === index ? null : index)

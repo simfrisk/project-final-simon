@@ -8,10 +8,16 @@ import { spacing } from "../../../../themes/spacing"
 
 export const FeatureSection = () => {
   return (
-    <Section thirdSection>
+    <Section
+      thirdSection
+      aria-labelledby="feature-title"
+    >
       <Container>
         <FeatureTitle />
-        <CardWrapper>
+        <CardWrapper
+          role="region"
+          aria-label="Platform features showcase"
+        >
           <FeatureCards />
         </CardWrapper>
       </Container>

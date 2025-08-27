@@ -5,29 +5,34 @@ import { MediaQueries } from "../../../../themes/mediaQueries"
 interface TargetItemProps {
   title: string
   description: string
+  index: number
   isOpen?: boolean
   onClick?: () => void
 }
 
-export const TargetItem = ({ title, description, isOpen, onClick }: TargetItemProps) => {
+export const TargetItem = ({ title, description, index, isOpen, onClick }: TargetItemProps) => {
   return (
-    <ListItem>
+    <ListItem role="listitem">
       <HeaderButton
         onClick={onClick}
         aria-expanded={isOpen}
+        aria-controls={`target-content-${index}`}
+        aria-label={`${isOpen ? "Collapse" : "Expand"} ${title} details`}
       >
-        <h3>{title}</h3>
-        <span>{isOpen ? "–" : "+"}</span>
+        <h3 id={`target-title-${index}`}>{title}</h3>
+        <span aria-hidden="true">{isOpen ? "–" : "+"}</span>
       </HeaderButton>
 
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.section
+            id={`target-content-${index}`}
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
             style={{ overflow: "hidden" }}
+            aria-labelledby={`target-title-${index}`}
           >
             <motion.div
               initial={{ y: -5, opacity: 0 }}

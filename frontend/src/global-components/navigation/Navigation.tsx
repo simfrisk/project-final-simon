@@ -24,13 +24,13 @@ export const Navigation = () => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev)
 
   return (
-    <NavHeader>
+    <NavHeader role="banner">
       <LogoLink
         to="/"
-        aria-label="Classync Home"
+        aria-label="Classync Home - Return to homepage"
       >
-        <h1>Classync</h1>
-        <span>Beta</span>
+        <LogoTitle>Classync</LogoTitle>
+        <BetaTag>Beta</BetaTag>
       </LogoLink>
 
       <DesktopNavigation
@@ -86,4 +86,16 @@ const LogoLink = styled(Link)`
   &:hover {
     transform: scale(0.94);
   }
+`
+
+const LogoTitle = styled.h1`
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: bold;
+`
+
+const BetaTag = styled.span`
+  font-size: 12px;
+  transform: translateY(2px);
+  opacity: 0.8;
 `

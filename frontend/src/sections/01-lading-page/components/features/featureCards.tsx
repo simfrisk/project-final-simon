@@ -46,26 +46,60 @@ export const FeatureCards = () => {
       <Container>
         {/* Desktop: Images that carousel when clicking on cards */}
         <DesktopContainer>
-          <CardsContainer>
+          <CardsContainer
+            role="list"
+            aria-label="Feature selection cards"
+          >
             {slides.map((slide, index) => (
               <ClickableCardContainer
                 key={index}
                 onClick={() => handleCardClick(index)}
+                role="listitem"
+                aria-label={`Select ${["Time Stamps", "Teachers Page", "Personal Comments"][index]} feature`}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    handleCardClick(index)
+                  }
+                }}
               >
                 {slide}
               </ClickableCardContainer>
             ))}
           </CardsContainer>
 
-          <ImageCarousel>
+          <ImageCarousel
+            role="region"
+            aria-label="Feature demonstration images"
+            aria-describedby="image-description"
+          >
             <img
               src={images[currentImageIndex]}
-              alt={`School ${currentImageIndex + 1}`}
+              alt={`${["Time Stamps", "Teachers Page", "Personal Comments"][currentImageIndex]} feature demonstration`}
             />
             <ImageControls>
-              <button onClick={prevImage}>‹</button>
-              <button onClick={nextImage}>›</button>
+              <button
+                onClick={prevImage}
+                aria-label="Previous feature image"
+                aria-describedby="image-description"
+              >
+                ‹
+              </button>
+              <button
+                onClick={nextImage}
+                aria-label="Next feature image"
+                aria-describedby="image-description"
+              >
+                ›
+              </button>
             </ImageControls>
+            <div
+              id="image-description"
+              aria-hidden="true"
+            >
+              {`Showing ${["Time Stamps", "Teachers Page", "Personal Comments"][currentImageIndex]} feature demonstration`}
+            </div>
           </ImageCarousel>
         </DesktopContainer>
 
@@ -82,6 +116,7 @@ export const FeatureCards = () => {
             swipeable={true}
             emulateTouch={true}
             dynamicHeight={false}
+            aria-label="Feature cards carousel"
             renderIndicator={(
               onClickHandler: React.MouseEventHandler<HTMLLIElement>,
               isSelected: boolean,
@@ -91,19 +126,35 @@ export const FeatureCards = () => {
                 key={index}
                 onClick={onClickHandler}
                 $active={isSelected}
-                aria-label={`Slide ${index + 1}`}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={isSelected ? "true" : "false"}
                 title={`Slide ${index + 1}`}
               />
             )}
           >
             {slides.map((slide, index) => (
-              <CardContainer key={index}>{slide}</CardContainer>
+              <CardContainer
+                key={index}
+                role="listitem"
+              >
+                {slide}
+              </CardContainer>
             ))}
           </Carousel>
 
           <Controls>
-            <button onClick={prev}>Prev</button>
-            <button onClick={next}>Next</button>
+            <button
+              onClick={prev}
+              aria-label="Previous feature card"
+            >
+              Prev
+            </button>
+            <button
+              onClick={next}
+              aria-label="Next feature card"
+            >
+              Next
+            </button>
           </Controls>
         </MobileContainer>
       </Container>

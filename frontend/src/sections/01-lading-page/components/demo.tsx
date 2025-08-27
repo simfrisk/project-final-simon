@@ -6,37 +6,50 @@ import { spacing } from "../../../themes/spacing"
 
 export const Demos = () => {
   return (
-    <Section thirdSection>
+    <Section
+      thirdSection
+      aria-labelledby="demo-title"
+    >
       <Container>
-        <Title>The platform that powers your online courses</Title>
-        <CardWrapper>
+        <Title id="demo-title">The platform that powers your online courses</Title>
+        <CardWrapper
+          role="list"
+          aria-label="Platform feature demonstrations"
+          aria-describedby="demo-description"
+        >
           <ExplainerCard
             title="Find comments in timeline"
             text="Make sure your comments stay perfectly synced on the timeline when clicked. No interruptions or distractions, just seamless interaction."
             video="https://res.cloudinary.com/dgr7l5nsx/video/upload/f_mp4/v1754990343/videos/yhzdf7phuo0a0udgm40d.mov"
+            index={1}
           />
           <ExplainerCard
             title="Ask questions at video"
             text="Your question is placed on the timeline at the exact moment you comment, giving it clear context within the lesson."
             video="./Commentsform.mp4"
+            index={2}
           />
           <ExplainerCard
             title="Teachers Page to organize questions"
-            text="As a teacher you’ll see every unanswered comment on your page, each one linking straight to the exact moment it was posted."
+            text="As a teacher you'll see every unanswered comment on your page, each one linking straight to the exact moment it was posted."
             video="./Teacher.mp4"
+            index={3}
           />
           <ExplainerCard
             title="Personal comments on time"
             text="Want to add personal comments? Switch to private mode and easily keep your notes linked directly to the video timeline."
             video="./PrivetComments.mp4"
+            index={4}
           />
           <ExplainerCard
             title="All your classes in one page"
             text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            index={5}
           />
           <ExplainerCard
             title="Don't forget to give some love"
             text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            index={6}
           />
         </CardWrapper>
       </Container>
