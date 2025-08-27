@@ -191,13 +191,14 @@ const RoleLabel = styled.label`
   input[type="radio"]:checked + span::before {
     content: "";
     display: block;
-    width: 90%;
-    height: 90%;
+    width: 8px;
+    height: 8px;
     background-color: ${({ theme }) => theme.colors.primary};
     border-radius: 50%;
     position: absolute;
-    top: 1px;
-    left: 1px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   input[type="radio"]:focus + span {

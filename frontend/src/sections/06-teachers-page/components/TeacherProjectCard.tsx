@@ -188,6 +188,13 @@ const CardContentWrapper = styled.div`
 
   p {
     color: ${({ theme }) => theme.colors.text};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    max-height: 67px;
   }
 `
 
