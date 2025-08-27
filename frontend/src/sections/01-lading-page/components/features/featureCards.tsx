@@ -16,14 +16,17 @@ export const FeatureCards = () => {
   const slides = [
     <AFeatureCard
       title="Time Stamps"
+      description="Pinpoint exact moments in videos with precise time-stamped comments. Create contextual feedback that stays perfectly synced to your content timeline."
       isActive={0 === activeCardIndex}
     />,
     <AFeatureCard
       title="Teachers Page"
+      description="Organize and manage all student questions in one centralized location. Track unanswered comments and provide timely feedback efficiently."
       isActive={1 === activeCardIndex}
     />,
     <AFeatureCard
       title="Personal Comments"
+      description="Switch to private mode for personal notes and observations. Keep your thoughts organized and linked directly to specific video moments."
       isActive={2 === activeCardIndex}
     />,
   ]

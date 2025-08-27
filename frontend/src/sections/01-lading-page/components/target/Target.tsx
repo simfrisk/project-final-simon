@@ -51,6 +51,11 @@ export const Target = () => {
       <Container>
         <Header>
           <Title id="target-title">Who is it for?</Title>
+          <h3>
+            Our platform is designed for educators and students who need precise, time-stamped
+            feedback on video content. Our tools help you pinpoint exact moments and provide
+            contextual feedback that enhances learning.
+          </h3>
         </Header>
         <ContentContainer>
           <ImageContainer
@@ -115,7 +120,7 @@ const Header = styled.div`
 
   @media ${MediaQueries.biggerSizes} {
     text-align: left;
-    width: 60%;
+    width: 70%;
     padding-bottom: ${spacing.xxl};
   }
 

@@ -15,7 +15,7 @@ export const TeachersSideMenu = ({ classesCount }: TeachersSideMenuProps) => {
   return (
     <Container>
       <TopSection>
-        <h3>Classes</h3>
+        <h2>Classes</h2>
         <ClassList>
           {classesCount?.map((cls) => (
             <ClassItem
@@ -44,10 +44,6 @@ const Container = styled.section`
   width: 250px;
   display: none;
 
-  h3 {
-    margin-bottom: 24px;
-  }
-
   @media ${MediaQueries.biggerSizes} {
     display: block;
   }
@@ -56,8 +52,10 @@ const Container = styled.section`
 const TopSection = styled.div`
   width: 100%;
 
-  h3 {
+  h2 {
+    font-size: 24px;
     padding: 0 35px;
+    margin-bottom: 24px;
   }
 `
 
@@ -86,9 +84,7 @@ const ClassItem = styled.div<{ $selected?: boolean }>`
   &:hover {
     transform: scale(0.97);
     background-color: ${({ theme, $selected }) =>
-      $selected
-        ? theme.colors.offBackgroundActive
-        : theme.colors.offBackgroundHover};
+      $selected ? theme.colors.offBackgroundActive : theme.colors.offBackgroundHover};
   }
 
   p {

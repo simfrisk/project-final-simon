@@ -5,10 +5,11 @@ import { MediaQueries } from "../../../../themes/mediaQueries"
 
 type AFeatureCardProps = {
   title: string
+  description: string
   isActive?: boolean
 }
 
-export const AFeatureCard = ({ title, isActive = false }: AFeatureCardProps) => {
+export const AFeatureCard = ({ title, description, isActive = false }: AFeatureCardProps) => {
   return (
     <ButtonContainer
       $isActive={isActive}
@@ -17,11 +18,7 @@ export const AFeatureCard = ({ title, isActive = false }: AFeatureCardProps) => 
     >
       <div>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eum, numquam quasi ex doloremque
-          natus quia minima ab suscipit voluptatem nisi fuga eius possimus ipsum itaque explicabo.
-          Commodi libero, vel eos voluptatum fuga nam culpa consequatur?
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
       </div>
     </ButtonContainer>
   )
@@ -72,4 +69,10 @@ const CardDescription = styled.p`
   color: #cecece;
   margin-top: ${spacing.xs};
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
 `

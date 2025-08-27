@@ -37,7 +37,7 @@ const Description = styled.h3`
 
   @media ${MediaQueries.biggerSizes} {
     margin-left: 0;
-    width: 60%;
+    width: 67%;
     font-size: 21px;
   }
 `

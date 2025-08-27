@@ -57,7 +57,7 @@ export const SideMenu = () => {
       aria-label="Class Side Menu"
     >
       <TopSection aria-label="Class List">
-        <h3>Classes</h3>
+        <h2>Classes</h2>
         <ProjectWrapper>
           {classes.map((cls) => {
             const to = `/library/classes/${cls._id}/projects`
@@ -138,8 +138,9 @@ const Container = styled.section`
 const TopSection = styled.div`
   width: 100%;
 
-  h3 {
+  h2 {
     padding: 0 35px;
+    font-size: 24px;
   }
 `
 
