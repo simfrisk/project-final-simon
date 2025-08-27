@@ -48,7 +48,7 @@ import { UserModel } from "../models/user"
  */
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const result = await UserModel.find()
+    const result = await UserModel.find().select("-password -accessToken")
 
     return res.status(200).json({
       success: true,

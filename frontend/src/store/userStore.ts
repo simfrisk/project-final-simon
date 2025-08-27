@@ -16,14 +16,11 @@ interface AuthUser {
 interface UserStore {
   user: AuthUser | null
   isLoggedIn: boolean
-  login: (
-    email: string,
-    password: string
-  ) => Promise<{ success: boolean; message: string }>
+  users: AuthUser[] // Add this
+  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
   logout: () => void
-  createUser: (
-    formData: FormData
-  ) => Promise<{ success: boolean; message: string }>
+  createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
+  getAllUsers: () => Promise<{ success: boolean; message: string }> // Add this
 }
 //#endregion
 
@@ -38,12 +35,7 @@ const savedProfileImage = localStorage.getItem("profileImage")
 
 //#region ----- INITIAL USER -----
 const initialUser: AuthUser | null =
-  savedEmail &&
-  savedUserId &&
-  savedToken &&
-  savedRole &&
-  savedName &&
-  savedProfileImage
+  savedEmail && savedUserId && savedToken && savedRole && savedName && savedProfileImage
     ? {
         email: savedEmail,
         userId: savedUserId,
@@ -59,6 +51,7 @@ const initialUser: AuthUser | null =
 export const useUserStore = create<UserStore>((set) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
+  users: [], // Add this
 
   //#region ----- LOGIN -----
   login: async (email, password) => {
@@ -162,6 +155,36 @@ export const useUserStore = create<UserStore>((set) => ({
     } catch (err: any) {
       console.error("Create user failed:", err)
       return { success: false, message: err.message || "Could not create user" }
+    }
+  },
+  //#endregion
+
+  //#region ----- GET ALL USERS -----
+  getAllUsers: async () => {
+    try {
+      const token = localStorage.getItem("accessToken")
+      const res = await fetch(`${baseUrl}/users`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        set({ users: data.response })
+        return { success: true, message: "Users fetched successfully" }
+      } else {
+        return {
+          success: false,
+          message: data.message || "Failed to fetch users",
+        }
+      }
+    } catch (err: unknown) {
+      console.error("Get users failed:", err)
+      return { success: false, message: "Failed to fetch users" }
     }
   },
   //#endregion

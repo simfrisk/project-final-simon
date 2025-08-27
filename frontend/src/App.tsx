@@ -15,6 +15,7 @@ import { VideoLibraryPage } from "./sections/04-video-library-page/VideoLibraryP
 import { ChooseClassMessage } from "./sections/04-video-library-page/components/ChooseClassMessage" // You’ll create this
 import { ProjectsList } from "./sections/04-video-library-page/components/ProjectsList" // And this
 import "./utils/moment-config"
+import { UserPage } from "./sections/07-user-page/UserPage"
 
 //#endregion ----- UPDATE REPLY -----
 
@@ -43,6 +44,10 @@ export const App = () => {
               <Route
                 path="/teachersPage"
                 element={<TeachersPage />}
+              />
+              <Route
+                path="/users"
+                element={<UserPage />}
               />
 
               {/* Protected routes with nested routing */}
