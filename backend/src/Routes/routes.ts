@@ -2,86 +2,86 @@ import express from "express"
 import { authenticateUser } from "../middleware/authenticateUser"
 import { uploadVideo } from "../middleware/uploadVideo"
 import { uploadImage } from "../middleware/uploadImage"
+
+// Import controllers
+import { deleteClass } from "../controllers/deleteClass"
 import { deleteComment } from "../controllers/deleteComment"
 import { deleteProject } from "../controllers/deleteProject"
 import { deleteReply } from "../controllers/deleteReply"
+import { deleteUser } from "../controllers/deleteUser"
+import { getAllComments } from "../controllers/getAllComments"
+import { getClassById } from "../controllers/getClassById"
+import { getClasses } from "../controllers/getClasses"
 import { getCommentById } from "../controllers/getCommentById"
 import { getComments } from "../controllers/getComments"
 import { getHome } from "../controllers/getHome"
+import { getPrivateComments } from "../controllers/getPrivateComments"
 import { getProjectById } from "../controllers/getProjectById"
 import { getProjects } from "../controllers/getProjects"
+import { getProjectsWithComments } from "../controllers/getProjectsWithComments"
 import { getReplies } from "../controllers/getReplies"
-import { patchReply } from "../controllers/patchReply"
+import { patchClass } from "../controllers/patchClass"
 import { patchComment } from "../controllers/patchComment"
 import { patchIsChecked } from "../controllers/patchIsChecked"
-import { postCommentById } from "../controllers/postCommentById"
+import { patchProject } from "../controllers/patchProjects"
+import { patchReply } from "../controllers/patchReply"
 import { postClass } from "../controllers/postClass"
+import { postCommentById } from "../controllers/postCommentById"
+import { postLike } from "../controllers/postLike"
 import { postProject } from "../controllers/postProject"
 import { postReplyById } from "../controllers/postReplyById"
-import { postUser } from "../controllers/postUser"
-import { postSession } from "../controllers/postSession"
-import { getAllComments } from "../controllers/getAllComments"
-import { getProjectsWithComments } from "../controllers/getProjectsWithComments"
-import { getPrivateComments } from "../controllers/getPrivateComments"
-import { deleteClass } from "../controllers/deleteClass"
-import { getClasses } from "../controllers/getClasses"
-import { getClassById } from "../controllers/getClassById"
-import { postLike } from "../controllers/postLike"
 import { postReplyLike } from "../controllers/postReplyLike"
-import { patchProject } from "../controllers/patchProjects"
-import { patchClass } from "../controllers/patchClass"
-import { deleteUser } from "../controllers/deleteUser"
+import { postSession } from "../controllers/postSession"
+import { postUser } from "../controllers/postUser"
 
 const router = express.Router()
 
-// Home
+// DOCUMENTATION
 router.get("/alt/doc", getHome)
 
-//Classes
+// CLASSES
 router.get("/classes", authenticateUser, getClasses)
 router.get("/classes/:classId", authenticateUser, getClassById)
+router.post("/classes", postClass)
+router.patch("/classes/:classId", authenticateUser, patchClass)
+router.delete("/classes/:classId", authenticateUser, deleteClass)
 
-//projects
+// PROJECTS
 router.get("/classes/:classId/projects", authenticateUser, getProjects)
 router.get("/classes/projects/with-comments", authenticateUser, getProjectsWithComments)
 router.get("/projects/:projectId", authenticateUser, getProjectById)
-
-// Comments
-router.get("/projects/:projectId/comments", getComments)
-router.get("/comments/all", authenticateUser, getAllComments)
-router.get("/comments/:commentId", getCommentById)
-router.get("/projects/:projectId/comments/private", authenticateUser, getPrivateComments)
-
-// Replies
-router.get("/comments/:commentId/replies", getReplies)
-
-// Posting
-router.post("/classes", postClass)
 router.post(
   "/classes/:classId/projects",
   uploadVideo.single("video"),
   authenticateUser,
   postProject
 )
-router.post("/projects/:projectId/comments", authenticateUser, postCommentById)
-router.post("/comments/:commentId/replies", authenticateUser, postReplyById)
-router.post("/users", uploadImage.single("image"), postUser)
-router.post("/comments/:commentId/likes", authenticateUser, postLike)
-router.post("/replies/:replyId/likes", authenticateUser, postReplyLike)
-router.post("/session", postSession)
-
-// Patch
-router.patch("/classes/:classId", authenticateUser, patchClass)
 router.patch("/projects/:projectId", authenticateUser, patchProject)
-router.patch("/replies/:replyId", authenticateUser, patchReply)
+router.delete("/projects/:projectId", authenticateUser, deleteProject)
+
+// COMMENTS
+router.get("/projects/:projectId/comments", getComments)
+router.get("/comments/all", authenticateUser, getAllComments)
+router.get("/comments/:commentId", getCommentById)
+router.get("/projects/:projectId/comments/private", authenticateUser, getPrivateComments)
+router.post("/projects/:projectId/comments", authenticateUser, postCommentById)
 router.patch("/comments/:commentId", authenticateUser, patchComment)
 router.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked)
-
-// Delete
-router.delete("/classes/:classId", authenticateUser, deleteClass)
-router.delete("/projects/:projectId", authenticateUser, deleteProject)
 router.delete("/comments/:commentId", authenticateUser, deleteComment)
+
+// REPLIES
+router.get("/comments/:commentId/replies", getReplies)
+router.post("/comments/:commentId/replies", authenticateUser, postReplyById)
+router.patch("/replies/:replyId", authenticateUser, patchReply)
 router.delete("/replies/:replyId", authenticateUser, deleteReply)
+
+// LIKES
+router.post("/comments/:commentId/likes", authenticateUser, postLike)
+router.post("/replies/:replyId/likes", authenticateUser, postReplyLike)
+
+// USERS & AUTHENTICATION
+router.post("/users", uploadImage.single("image"), postUser)
 router.delete("/users/:userId", authenticateUser, deleteUser)
+router.post("/session", postSession)
 
 export default router
