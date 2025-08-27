@@ -14,10 +14,7 @@ export const FeatureSection = () => {
     >
       <Container>
         <FeatureTitle />
-        <CardWrapper
-          role="region"
-          aria-label="Platform features showcase"
-        >
+        <CardWrapper>
           <FeatureCards />
         </CardWrapper>
       </Container>
