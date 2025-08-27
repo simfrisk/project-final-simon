@@ -37,8 +37,9 @@ const postReplyById_1 = require("../controllers/postReplyById");
 const postReplyLike_1 = require("../controllers/postReplyLike");
 const postSession_1 = require("../controllers/postSession");
 const postUser_1 = require("../controllers/postUser");
+const getUsers_1 = require("../controllers/getUsers");
 const router = express_1.default.Router();
-// DOCUMENTATION
+// ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome_1.getHome);
 // CLASSES
 router.get("/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
@@ -74,4 +75,5 @@ router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, post
 router.post("/users", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
 router.delete("/users/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
 router.post("/session", postSession_1.postSession);
+router.get("/users", getUsers_1.getUsers);
 exports.default = router;
