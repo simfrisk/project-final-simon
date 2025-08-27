@@ -33,7 +33,7 @@ const Container = styled.div`
 const SideContainer = styled.section`
   display: none;
   width: 80%;
-  background-image: url("/sideImage2.png");
+  background-image: url("/sideImage2.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -14,32 +14,32 @@ export const Collaborate = () => {
           aria-describedby="collaborate-description"
         >
           <SchoolImage
-            src="./School1.png"
+            src="./School1.webp"
             alt="School 1 partner logo"
             aria-label="School 1 partner institution"
           />
           <SchoolImage
-            src="./School2.png"
+            src="./School2.webp"
             alt="School 2 partner logo"
             aria-label="School 2 partner institution"
           />
           <SchoolImage
-            src="./School7.png"
+            src="./School7.webp"
             alt="School 7 partner logo"
             aria-label="School 7 partner institution"
           />
           <SchoolImage
-            src="./School4.png"
+            src="./School4.webp"
             alt="School 4 partner logo"
             aria-label="School 4 partner institution"
           />
           <SchoolImage
-            src="./School3.png"
+            src="./School3.webp"
             alt="School 3 partner logo"
             aria-label="School 3 partner institution"
           />
           <SchoolImage
-            src="./School6.png"
+            src="./School6.webp"
             alt="School 6 partner logo"
             aria-label="School 6 partner institution"
           />

@@ -5,7 +5,7 @@ export const SignUpHeader = () => {
     <>
       <LogoContainer>
         <Logo
-          src="/logo2.png"
+          src="/logo2.webp"
           alt="Classync Logo"
         />
       </LogoContainer>

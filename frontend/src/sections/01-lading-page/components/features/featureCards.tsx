@@ -29,7 +29,7 @@ export const FeatureCards = () => {
   ]
 
   // Images for desktop carousel
-  const images = ["/commentTag.png", "/teachersTag.png", "/personalCommentsTag.png"]
+  const images = ["/commentTag.webp", "/teachersTag.webp", "/personalCommentsTag.webp"]
 
   const next = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
   const prev = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)

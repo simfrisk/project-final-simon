@@ -18,25 +18,25 @@ export const Target = () => {
       title: "Online Education",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam rhoncus est eget est egestas sodales quis id mi. Aenean quis massa tempus, viverra nisi sit amet, finibus ex. Sed tortor massa, iaculis ut ipsum nec, ornare ullamcorper magna.",
-      image: "/SchoolTeam.jpeg",
+      image: "/SchoolTeam.webp",
     },
     {
       title: "Teacher Feedback",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam rhoncus est eget est egestas sodales quis id mi. Aenean quis massa tempus, viverra nisi sit amet, finibus ex. Sed tortor massa, iaculis ut ipsum nec, ornare ullamcorper magna.",
-      image: "/TeacherTeam.jpeg",
+      image: "/TeacherTeam.webp",
     },
     {
       title: "Group Projects",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam rhoncus est eget est egestas sodales quis id mi. Aenean quis massa tempus, viverra nisi sit amet, finibus ex. Sed tortor massa, iaculis ut ipsum nec, ornare ullamcorper magna.",
-      image: "/GroupTeam.jpeg",
+      image: "/GroupTeam.webp",
     },
     {
       title: "Sports & Performance",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam rhoncus est eget est egestas sodales quis id mi. Aenean quis massa tempus, viverra nisi sit amet, finibus ex. Sed tortor massa, iaculis ut ipsum nec, ornare ullamcorper magna.",
-      image: "/SportTeam.jpeg",
+      image: "/SportTeam.webp",
     },
   ]
 

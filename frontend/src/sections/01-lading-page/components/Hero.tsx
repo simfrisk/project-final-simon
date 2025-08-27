@@ -25,7 +25,7 @@ export const Hero = () => {
       <Container role="banner">
         <Content role="presentation">
           <Logo
-            src="/Hero2.png"
+            src="/Hero2.webp"
             alt="Classync logo"
           />
           <MainTitle id="hero-title">Video Notes for the Modern Classroom</MainTitle>
@@ -49,7 +49,7 @@ export const Hero = () => {
           </MainButtonWrapper>
         </Content>
         <StyledImage
-          src="./class.jpg"
+          src="./class.webp"
           alt="Students in a classroom"
         />
       </Container>
