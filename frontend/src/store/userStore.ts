@@ -21,6 +21,7 @@ interface UserStore {
   logout: () => void
   createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
   getAllUsers: () => Promise<{ success: boolean; message: string }> // Add this
+  sortUsersByRole: () => void // Add this
 }
 //#endregion
 
@@ -48,7 +49,7 @@ const initialUser: AuthUser | null =
 //#endregion
 
 //#region ----- ZUSTAND USER STORE -----
-export const useUserStore = create<UserStore>((set) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
   users: [], // Add this
@@ -188,4 +189,17 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
   //#endregion
+
+  sortUsersByRole: () => {
+    const { users } = get()
+    const sortedUsers = [...users].sort((a, b) => {
+      // Define role priority (customize this order as needed)
+      const rolePriority = { admin: 1, teacher: 2, student: 3 }
+      return (
+        (rolePriority[a.role as keyof typeof rolePriority] || 4) -
+        (rolePriority[b.role as keyof typeof rolePriority] || 4)
+      )
+    })
+    set({ users: sortedUsers })
+  },
 }))

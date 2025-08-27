@@ -12,18 +12,37 @@ export const UserPage = () => {
   return (
     <UserPageContainer>
       <h1>Users</h1>
+      <h2>Teachers</h2>
       <UsersContainer>
-        {users.map((user) => (
-          <UserContainer key={user.userId}>
-            <img
-              src={user.profileImage}
-              alt={user.name}
-            />
-            <h2>{user.name}</h2>
-            <p>{user.email}</p>
-            <p>{user.role}</p>
-          </UserContainer>
-        ))}
+        {users
+          .filter((user) => user.role === "teacher")
+          .map((user) => (
+            <UserContainer key={user.userId}>
+              <img
+                src={user.profileImage}
+                alt={user.name}
+              />
+              <h2>{user.name}</h2>
+              <p>{user.email}</p>
+              <p>{user.role}</p>
+            </UserContainer>
+          ))}
+      </UsersContainer>
+      <h2>Students</h2>
+      <UsersContainer>
+        {users
+          .filter((user) => user.role === "student")
+          .map((user) => (
+            <UserContainer key={user.userId}>
+              <img
+                src={user.profileImage}
+                alt={user.name}
+              />
+              <h2>{user.name}</h2>
+              <p>{user.email}</p>
+              <p>{user.role}</p>
+            </UserContainer>
+          ))}
       </UsersContainer>
     </UserPageContainer>
   )
@@ -68,6 +87,7 @@ const UserContainer = styled.div`
   img {
     width: 100px;
     height: 100px;
+    object-fit: cover;
     border-radius: 50%;
   }
 `
