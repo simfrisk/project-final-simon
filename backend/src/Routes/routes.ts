@@ -36,7 +36,7 @@ import { postUser } from "../controllers/postUser"
 
 const router = express.Router()
 
-// DOCUMENTATION
+// ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome)
 
 // CLASSES
