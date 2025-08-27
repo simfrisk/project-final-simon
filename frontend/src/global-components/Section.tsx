@@ -3,21 +3,21 @@ import styled from "styled-components"
 import { MediaQueries } from "../themes/mediaQueries"
 
 interface SectionProps {
-  secondarySection?: boolean
-  thirdSection?: boolean
+  $secondarySection?: boolean
+  $thirdSection?: boolean
   children?: React.ReactNode
 }
 
 export const Section = styled.section<SectionProps>`
   background-color: ${(props) => {
-    if (props.thirdSection) return "#141A20"
-    if (props.secondarySection) return props.theme.colors.lightGray
+    if (props.$thirdSection) return "#141A20"
+    if (props.$secondarySection) return props.theme.colors.lightGray
     return props.theme.colors.background
   }};
 
   color: ${(props) => {
-    if (props.thirdSection) return "white"
-    if (props.secondarySection) return "white"
+    if (props.$thirdSection) return "white"
+    if (props.$secondarySection) return "white"
     return props.theme.colors.text
   }};
 

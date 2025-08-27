@@ -8,7 +8,7 @@ import { spacing } from "../../../themes/spacing"
 export const Hero = () => {
   return (
     <Section
-      secondarySection
+      $secondarySection
       aria-label="Hero section with introduction to Video Notes for the Modern Classroom"
     >
       <Container role="banner">

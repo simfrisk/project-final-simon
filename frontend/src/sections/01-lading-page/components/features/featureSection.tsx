@@ -9,7 +9,7 @@ import { spacing } from "../../../../themes/spacing"
 export const FeatureSection = () => {
   return (
     <Section
-      thirdSection
+      $thirdSection
       aria-labelledby="feature-title"
     >
       <Container>

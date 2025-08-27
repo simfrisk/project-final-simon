@@ -15,15 +15,15 @@ export const HamburgerMenu = ({ isOpen, onToggle }: HamburgerMenuProps) => {
     >
       <Bar
         open={isOpen}
-        index={1}
+        $index={1}
       />
       <Bar
         open={isOpen}
-        index={2}
+        $index={2}
       />
       <Bar
         open={isOpen}
-        index={3}
+        $index={3}
       />
     </Hamburger>
   )
@@ -31,7 +31,7 @@ export const HamburgerMenu = ({ isOpen, onToggle }: HamburgerMenuProps) => {
 
 interface BarProps {
   open: boolean
-  index: number
+  $index: number
 }
 
 const Hamburger = styled.div`
@@ -56,12 +56,12 @@ const Bar = styled.span<BarProps>`
   background-color: white;
   border-radius: 2px;
   transition: 0.3s ease;
-  transform-origin: ${({ index }) =>
-    index === 1 ? "top left" : index === 3 ? "bottom left" : "center"};
+  transform-origin: ${({ $index }) =>
+    $index === 1 ? "top left" : $index === 3 ? "bottom left" : "center"};
 
-  ${({ open, index }) => {
-    if (index === 1) return `transform: ${open ? "rotate(45deg)" : "none"};`
-    if (index === 2) return `opacity: ${open ? 0 : 1};`
-    if (index === 3) return `transform: ${open ? "rotate(-45deg)" : "none"};`
+  ${({ open, $index }) => {
+    if ($index === 1) return `transform: ${open ? "rotate(45deg)" : "none"};`
+    if ($index === 2) return `opacity: ${open ? 0 : 1};`
+    if ($index === 3) return `transform: ${open ? "rotate(-45deg)" : "none"};`
   }}
 `

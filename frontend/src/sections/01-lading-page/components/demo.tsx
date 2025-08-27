@@ -7,7 +7,7 @@ import { spacing } from "../../../themes/spacing"
 export const Demos = () => {
   return (
     <Section
-      thirdSection
+      $thirdSection
       aria-labelledby="demo-title"
     >
       <Container>
