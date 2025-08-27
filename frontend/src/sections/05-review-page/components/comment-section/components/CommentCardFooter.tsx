@@ -154,12 +154,16 @@ const LikeCount = styled.span<{ $count: number }>`
 
 export const Edit = styled.div`
   display: flex;
+  opacity: 0;
+  visibility: hidden;
   column-gap: 10px;
   align-items: center;
+  align-content: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-right: 20px;
+  margin-right: 10px;
+  transform: translateY(10px);
 `
 
 const EditButton = styled.button`

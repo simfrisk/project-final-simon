@@ -291,13 +291,13 @@ const Card = styled.div<{ $role?: string }>`
   &:hover ${Edit} {
     opacity: 1;
     visibility: visible;
-    transform: translatey(0%);
+    transform: translateY(0);
   }
 
   &:hover ${CheckBtn} {
     opacity: 1;
     visibility: visible;
-    transform: translatey(0%);
+    transform: translateY(0);
   }
 
   &.active-comment {
@@ -310,13 +310,11 @@ const ReplyCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
   &:hover ${Edit} {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
   }
 `
 

@@ -27,7 +27,6 @@ export const CommentHeader = () => {
           role="tab"
           id="tab-description"
           aria-selected={activeTab === "description"}
-          aria-controls="panel-description"
           $active={activeTab === "description"}
           onClick={() => setActiveTab("description")}
         >
@@ -37,7 +36,6 @@ export const CommentHeader = () => {
           role="tab"
           id="tab-question"
           aria-selected={activeTab === "question" || activeTab === "public"}
-          aria-controls="panel-question"
           $active={activeTab === "question" || activeTab === "public"}
           onClick={() => setActiveTab("question")}
         >
@@ -47,7 +45,6 @@ export const CommentHeader = () => {
           role="tab"
           id="tab-private"
           aria-selected={activeTab === "private"}
-          aria-controls="panel-private"
           $active={activeTab === "private"}
           onClick={() => setActiveTab("private")}
         >
@@ -89,15 +86,15 @@ const ButtonGroup = styled.div`
 `
 
 const TabButton = styled.button<{ $active?: boolean }>`
-  background-color: ${({ $active, theme }) =>
-    $active ? theme.colors.primary : "transparent"};
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.primary : "transparent")};
   color: ${({ $active }) => ($active ? "white" : "#007bff")};
   border: 2px solid #007bff;
-  padding: 8px 20px;
+  padding: 8px 15px;
   border-radius: 24px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 14px;
 
   &:hover {
     background-color: ${({ $active }) => ($active ? "#0056b3" : "#e6f0ff")};

@@ -104,7 +104,7 @@ export const VideoSection = () => {
     if (!video) return
 
     video.currentTime = currentTime
-    video.pause() // Optional: remove this line to auto-play after seek
+    video.pause()
   }, [markerTriggerCount])
   //#endregion
 
@@ -282,6 +282,7 @@ const StyledVideo = styled.video<{ $isFullScreen: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: contain;
+  background-color: black;
 `
 
 const Controls = styled.div<{ $isFullScreen: boolean }>`
@@ -381,6 +382,30 @@ const Marker = styled.div`
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.2s;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  &:hover {
+    transform: scale(1.3);
+  }
+
+  &:focus {
+    transform: scale(1.2);
+    background-color: white;
+    outline-offset: -2px;
+  }
 `
 
 const MarkerMessage = styled.p`
