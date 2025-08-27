@@ -11,17 +11,6 @@ export const Hero = () => {
       secondarySection
       aria-label="Hero section with introduction to Video Notes for the Modern Classroom"
     >
-      <VideoBackground
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
-        <source
-          src="/Teacher.mp4"
-          type="video/mp4"
-        />
-      </VideoBackground>
       <Container role="banner">
         <Content role="presentation">
           <Logo
@@ -60,16 +49,6 @@ export const Hero = () => {
 const Section = styled(BaseSection)`
   position: relative;
   overflow: hidden; /* prevents video overflow scrollbars */
-`
-
-const VideoBackground = styled.video`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
 `
 
 const Container = styled(BaseContainer)`

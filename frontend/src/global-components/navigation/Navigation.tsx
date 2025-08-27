@@ -30,7 +30,6 @@ export const Navigation = () => {
         aria-label="Classync - Return to homepage"
       >
         <LogoTitle>Classync</LogoTitle>
-        <BetaTag>Beta</BetaTag>
       </LogoLink>
 
       <DesktopNavigation
@@ -92,10 +91,4 @@ const LogoTitle = styled.h1`
   font-size: 1.5rem;
   margin: 0;
   font-weight: bold;
-`
-
-const BetaTag = styled.span`
-  font-size: 12px;
-  transform: translateY(2px);
-  opacity: 0.8;
 `
