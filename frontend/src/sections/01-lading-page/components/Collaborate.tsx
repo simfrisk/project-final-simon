@@ -10,44 +10,37 @@ export const Collaborate = () => {
       <Container>
         <Title id="collaborate-title">We collaborate with 150+ online schools</Title>
         <Schools
-          role="list"
           aria-label="Partner schools logos"
           aria-describedby="collaborate-description"
         >
           <SchoolImage
             src="./School1.png"
             alt="School 1 partner logo"
-            role="listitem"
             aria-label="School 1 partner institution"
           />
           <SchoolImage
             src="./School2.png"
             alt="School 2 partner logo"
-            role="listitem"
             aria-label="School 2 partner institution"
           />
           <SchoolImage
             src="./School7.png"
             alt="School 7 partner logo"
-            role="listitem"
             aria-label="School 7 partner institution"
           />
           <SchoolImage
             src="./School4.png"
             alt="School 4 partner logo"
-            role="listitem"
             aria-label="School 4 partner institution"
           />
           <SchoolImage
             src="./School3.png"
             alt="School 3 partner logo"
-            role="listitem"
             aria-label="School 3 partner institution"
           />
           <SchoolImage
             src="./School6.png"
             alt="School 6 partner logo"
-            role="listitem"
             aria-label="School 6 partner institution"
           />
         </Schools>

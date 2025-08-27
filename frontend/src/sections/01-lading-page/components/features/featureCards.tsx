@@ -54,7 +54,6 @@ export const FeatureCards = () => {
               <ClickableCardContainer
                 key={index}
                 onClick={() => handleCardClick(index)}
-                role="listitem"
                 aria-label={`Select ${["Time Stamps", "Teachers Page", "Personal Comments"][index]} feature`}
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -133,12 +132,7 @@ export const FeatureCards = () => {
             )}
           >
             {slides.map((slide, index) => (
-              <CardContainer
-                key={index}
-                role="listitem"
-              >
-                {slide}
-              </CardContainer>
+              <CardContainer key={index}>{slide}</CardContainer>
             ))}
           </Carousel>
 

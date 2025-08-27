@@ -32,10 +32,7 @@ export const MobileNavigation = ({
     <>
       <MobileMenuToggle>
         {isLoggedIn && (
-          <UserProfile
-            role="img"
-            aria-label="User profile section"
-          >
+          <UserProfile aria-label="User profile section">
             <img
               src={user?.profileImage}
               alt={`${user?.name || "User"} profile picture`}

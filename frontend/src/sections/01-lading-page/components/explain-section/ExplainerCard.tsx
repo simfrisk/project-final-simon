@@ -46,7 +46,6 @@ export const ExplainerCard = ({ title, text, video, index }: ExplainerCardProps)
     <Container
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
-      role="listitem"
       aria-labelledby={`card-title-${index}`}
       aria-describedby={`card-text-${index}`}
     >

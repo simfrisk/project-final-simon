@@ -66,7 +66,6 @@ export const Target = () => {
                 animate={{ opacity: activeIndex === index ? 1 : 0 }}
                 transition={{ duration: 0.4 }}
                 aria-hidden={activeIndex !== index}
-                role="img"
               />
             ))}
           </ImageContainer>

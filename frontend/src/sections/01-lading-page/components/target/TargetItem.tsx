@@ -12,7 +12,7 @@ interface TargetItemProps {
 
 export const TargetItem = ({ title, description, index, isOpen, onClick }: TargetItemProps) => {
   return (
-    <ListItem role="listitem">
+    <ListItem>
       <HeaderButton
         onClick={onClick}
         aria-expanded={isOpen}

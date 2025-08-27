@@ -27,7 +27,6 @@ export const Hero = () => {
           <Logo
             src="/Hero2.png"
             alt="Classync logo"
-            role="img"
           />
           <MainTitle id="hero-title">Video Notes for the Modern Classroom</MainTitle>
           <SubTitle id="hero-subtitle">
@@ -52,7 +51,6 @@ export const Hero = () => {
         <StyledImage
           src="./class.jpg"
           alt="Students in a classroom"
-          role="img"
         />
       </Container>
     </Section>

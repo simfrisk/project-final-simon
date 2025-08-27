@@ -13,11 +13,8 @@ export const Footer = () => {
       <Container>
         <Wrapper>
           <FooterText id="footer-title">This is a school project created by Simon Frisk</FooterText>
-          <SocialLinks
-            role="list"
-            aria-label="Social media and project links"
-          >
-            <SocialLink role="listitem">
+          <SocialLinks aria-label="Social media and project links">
+            <SocialLink>
               <a
                 href="https://github.com/simfrisk/project-final-simon"
                 target="_blank"
@@ -32,7 +29,7 @@ export const Footer = () => {
                 <span className="sr-only">GitHub</span>
               </a>
             </SocialLink>
-            <SocialLink role="listitem">
+            <SocialLink>
               <a
                 href="https://www.linkedin.com/in/simon-frisk-59aba7bb/"
                 target="_blank"
