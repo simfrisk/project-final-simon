@@ -32,7 +32,8 @@ export const CreateClass = () => {
     >
       <h3>Create a new class</h3>
       <ClassNameInput
-        placeholder="Project Name"
+        placeholder="Class Name"
+        maxLength={100}
         required
         value={classTitle}
         onChange={(e) => setClassTitle(e.target.value)}

@@ -33,6 +33,7 @@ export const ReplyCardMain = ({
               borderRadius: "8px",
               border: "1px solid lightgray",
             }}
+            maxLength={500}
           />
           <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
             <button onClick={handleSaveEdit}>Save</button>

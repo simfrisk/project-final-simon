@@ -173,6 +173,7 @@ export const CommentSection = () => {
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Write a reply..."
                   aria-label={`Write a reply for comment by ${commentCreatedBy?.name ?? "user"}`}
+                  maxLength={500}
                 />
                 <button
                   type="submit"

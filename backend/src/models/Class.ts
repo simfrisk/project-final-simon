@@ -6,7 +6,7 @@ export interface ClassType {
 }
 
 const ClassSchema = new Schema<ClassType>({
-  classTitle: { type: String, required: true },
+  classTitle: { type: String, required: true, maxlength: 100, trim: true },
   projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
 })
 

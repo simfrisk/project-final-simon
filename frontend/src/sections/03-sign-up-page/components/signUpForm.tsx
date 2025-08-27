@@ -40,6 +40,7 @@ export const SignUpForm: React.FC = () => {
             name="fullName"
             placeholder="Enter full name"
             minLength={2}
+            maxLength={100}
             required
             aria-required="true"
           />
@@ -53,6 +54,7 @@ export const SignUpForm: React.FC = () => {
             name="email"
             placeholder="Enter Email"
             minLength={4}
+            maxLength={100}
             required
             aria-required="true"
           />

@@ -13,7 +13,7 @@ export interface Project {
 
 const ProjectSchema = new Schema<Project>({
   classId: { type: Schema.Types.ObjectId, ref: "Class", required: true },
-  projectName: { type: String, required: true },
+  projectName: { type: String, required: true, maxlength: 200, trim: true },
   projectDescription: String,
   teacher: String,
   video: String,

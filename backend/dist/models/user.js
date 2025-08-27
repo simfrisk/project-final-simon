@@ -10,6 +10,9 @@ const UserSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
+        minlength: 2,
+        maxlength: 100,
+        trim: true,
     },
     email: {
         type: String,
@@ -21,6 +24,9 @@ const UserSchema = new mongoose_1.Schema({
     password: {
         type: String,
         required: true,
+        minlength: 4,
+        maxlength: 100,
+        trim: true,
     },
     role: {
         type: String,

@@ -15,7 +15,7 @@ export interface CommentType {
 }
 
 const CommentSchema = new Schema<CommentType>({
-  content: { type: String, required: true },
+  content: { type: String, required: true, maxlength: 500, trim: true },
   projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
   createdAt: { type: Date, default: Date.now },
   timeStamp: String,

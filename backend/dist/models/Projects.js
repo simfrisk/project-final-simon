@@ -4,7 +4,7 @@ exports.Project = void 0;
 const mongoose_1 = require("mongoose");
 const ProjectSchema = new mongoose_1.Schema({
     classId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Class", required: true },
-    projectName: { type: String, required: true },
+    projectName: { type: String, required: true, maxlength: 200, trim: true },
     projectDescription: String,
     teacher: String,
     video: String,

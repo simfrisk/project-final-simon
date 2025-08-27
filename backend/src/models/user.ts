@@ -17,6 +17,9 @@ const UserSchema = new Schema<UserType>({
   name: {
     type: String,
     required: true,
+    minlength: 2,
+    maxlength: 100,
+    trim: true,
   },
   email: {
     type: String,
@@ -28,6 +31,9 @@ const UserSchema = new Schema<UserType>({
   password: {
     type: String,
     required: true,
+    minlength: 4,
+    maxlength: 100,
+    trim: true,
   },
   role: {
     type: String,

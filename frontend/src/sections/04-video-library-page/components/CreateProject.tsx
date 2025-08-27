@@ -91,6 +91,7 @@ export const CreateProject = () => {
         placeholder="Project Name"
         ref={projectNameRef}
         value={projectName}
+        maxLength={200}
         onChange={(e) => setProjectName(e.target.value)}
       />
       <DescriptionTextArea
