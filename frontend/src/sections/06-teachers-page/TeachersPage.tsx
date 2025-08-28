@@ -124,8 +124,14 @@ export const TeachersPage = () => {
             {filteredProjects.map(
               ({ _id, projectName, projectDescription, thumbnail, comments }) => {
                 const questionComments = (comments ?? []).filter(
-                  (comment) => comment.commentType === "question" && !comment.isChecked
+                  (comment) =>
+                    comment.commentType === "question" &&
+                    !comment.isChecked &&
+                    comment.commentCreatedBy?.role === "student"
                 )
+
+                // Only render the card if there are actually student comments to show
+                if (questionComments.length === 0) return null
 
                 return (
                   <TeacherProjectCard
