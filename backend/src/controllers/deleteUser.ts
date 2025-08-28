@@ -62,9 +62,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 
   // <-- Use the actual placeholder user ID from your DB
-  const PLACEHOLDER_USER_ID = new mongoose.Types.ObjectId(
-    "68a45fbaca5d5d29fe782190"
-  )
+  const PLACEHOLDER_USER_ID = new mongoose.Types.ObjectId("68a45fbaca5d5d29fe782190")
 
   const session = await mongoose.startSession()
   session.startTransaction()

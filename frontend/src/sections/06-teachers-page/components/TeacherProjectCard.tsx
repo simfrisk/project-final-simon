@@ -97,7 +97,9 @@ export const TeacherProjectCard = ({
             >
               <CommentList>
                 {comments
-                  .filter((comment) => !comment.isChecked)
+                  .filter(
+                    (comment) => !comment.isChecked && comment.commentCreatedBy?.role === "student"
+                  )
                   .map((comment) => (
                     <CommentItem key={comment._id}>
                       <CommentButton
