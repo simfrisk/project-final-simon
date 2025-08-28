@@ -2,9 +2,10 @@ import { useEffect } from "react"
 import { useUserStore } from "../../store/userStore"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
+import { MediaQueries } from "../../themes/mediaQueries"
 
 export const UserPage = () => {
-  const { users, getAllUsers } = useUserStore()
+  const { users, getAllUsers, user: currentUser } = useUserStore()
 
   useEffect(() => {
     getAllUsers()
@@ -16,7 +17,6 @@ export const UserPage = () => {
   return (
     <>
       <Navigation />
-
       <UserPageContainer
         role="main"
         aria-label="User Directory"
@@ -25,6 +25,41 @@ export const UserPage = () => {
           <PageTitle>Users</PageTitle>
           <PageSubtitle>See all teachers and students</PageSubtitle>
         </PageHeader>
+
+        {/* Current User Section */}
+        {currentUser && (
+          <SectionContainer
+            role="region"
+            aria-labelledby="current-user-section"
+            $isCurrentUserSection={true}
+          >
+            <SectionHeader>
+              <SectionTitle id="current-user-section">Current User</SectionTitle>
+              <CurrentUserBadge aria-label="You are currently logged in">You</CurrentUserBadge>
+            </SectionHeader>
+            <CurrentUserCard
+              role="listitem"
+              aria-label={`Current user: ${currentUser.name}`}
+            >
+              <UserImageContainer>
+                <UserImage
+                  src={currentUser.profileImage || "/default-avatar.png"}
+                  alt={`Profile picture of ${currentUser.name}`}
+                  onError={(e) => {
+                    e.currentTarget.src = "/default-avatar.png"
+                  }}
+                />
+              </UserImageContainer>
+              <UserInfo>
+                <UserName>{currentUser.name}</UserName>
+                <UserEmail aria-label={`Email: ${currentUser.email}`}>
+                  {currentUser.email}
+                </UserEmail>
+                <UserRole aria-label={`Role: ${currentUser.role}`}>{currentUser.role}</UserRole>
+              </UserInfo>
+            </CurrentUserCard>
+          </SectionContainer>
+        )}
 
         <SectionContainer
           role="region"
@@ -40,9 +75,9 @@ export const UserPage = () => {
             role="list"
             aria-label="List of teachers"
           >
-            {teachers.map((user) => (
+            {teachers.map((user, index) => (
               <UserCard
-                key={user.userId}
+                key={user.userId || `teacher-${index}`}
                 role="listitem"
                 aria-label={`Teacher: ${user.name}`}
               >
@@ -79,11 +114,12 @@ export const UserPage = () => {
             role="list"
             aria-label="List of students"
           >
-            {students.map((user) => (
+            {students.map((user, index) => (
               <UserCard
-                key={user.userId}
+                key={user.userId || `student-${index}`}
                 role="listitem"
                 aria-label={`Student: ${user.name}`}
+                $isCurrentUser={currentUser?.userId === user.userId}
               >
                 <UserImageContainer>
                   <UserImage
@@ -111,49 +147,55 @@ export const UserPage = () => {
 const UserPageContainer = styled.div`
   min-height: 100vh;
   background: ${({ theme }) => theme.colors.primary};
-  padding: 2rem;
+  padding: 32px;
 `
 
 const PageHeader = styled.div`
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 48px;
   color: ${({ theme }) => theme.colors.background};
 `
 
 const PageTitle = styled.h1`
-  font-size: 3.5rem;
+  font-size: 56px;
   font-weight: 800;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 8px 0;
   color: ${({ theme }) => theme.colors.background};
 `
 
 const PageSubtitle = styled.p`
-  font-size: 1.2rem;
+  font-size: 19px;
   opacity: 0.9;
   margin: 0;
   font-weight: 300;
 `
 
-const SectionContainer = styled.div`
+const SectionContainer = styled.div<{ $isCurrentUserSection?: boolean }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 32px;
+  margin-bottom: 32px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  ${({ $isCurrentUserSection, theme }) =>
+    $isCurrentUserSection &&
+    `
+    border: 4px solid ${theme.colors.primary};
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  `}
 `
 
 const SectionHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
 `
 
 const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 32px;
   font-weight: 700;
   margin: 0;
   color: ${({ theme }) => theme.colors.text};
@@ -162,9 +204,9 @@ const SectionTitle = styled.h2`
 const SectionCountTeacher = styled.span`
   background: ${({ theme }) => theme.colors.primary};
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border-radius: 25px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 `
@@ -172,40 +214,79 @@ const SectionCountTeacher = styled.span`
 const SectionCountStudent = styled.span`
   background: #f021ab;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border-radius: 25px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 `
 
 const UsersGrid = styled.div`
   display: grid;
+  justify-content: center;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 24px;
   align-items: start;
+
+  @media ${MediaQueries.biggerSizes} {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
 `
 
-const UserCard = styled.div`
+const UserCard = styled.div<{ $isCurrentUser?: boolean }>`
   background: ${({ theme }) => theme.colors.background};
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 24px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   border: 1px solid ${({ theme }) => theme.colors.background};
   position: relative;
+  width: 100%;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 300px;
+  }
+`
+
+const CurrentUserCard = styled(UserCard)`
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  background: ${({ theme }) => theme.colors.background};
+  backdrop-filter: blur(10px);
+  width: 100%;
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 300px;
+  }
+`
+
+const CurrentUserBadge = styled.span`
+  background: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.background};
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 `
 
 const UserImageContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 `
 
 const UserImage = styled.img`
@@ -213,10 +294,9 @@ const UserImage = styled.img`
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 4px solid #f8f9fa;
+  border: 4px solid ${({ theme }) => theme.colors.background};
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-
   ${UserCard}:hover & {
     transform: scale(1.05);
   }
@@ -227,21 +307,21 @@ const UserInfo = styled.div`
 `
 
 const UserName = styled.h3`
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 8px 0;
   color: ${({ theme }) => theme.colors.text};
 `
 
 const UserEmail = styled.p`
-  font-size: 0.9rem;
+  font-size: 14px;
   color: ${({ theme }) => theme.colors.text};
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 8px 0;
   word-break: break-word;
 `
 
 const UserRole = styled.p`
-  font-size: 0.8rem;
+  font-size: 13px;
   color: ${({ theme }) => theme.colors.text};
   margin: 0;
   text-transform: capitalize;

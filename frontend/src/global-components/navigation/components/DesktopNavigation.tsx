@@ -66,7 +66,7 @@ export const DesktopNavigation = ({
               </NavLinkItem>
             </NavMenuItem>
 
-            <UserProfile>
+            <UserProfile to="/users">
               <img
                 src={user?.profileImage}
                 alt={`${user?.name || "User"} profile picture`}
@@ -168,12 +168,17 @@ const LogoutButton = styled.button`
   }
 `
 
-const UserProfile = styled.div`
+const UserProfile = styled(Link)`
   flex-shrink: 0;
   width: 30px;
   height: 30px;
   border-radius: 50%;
   overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(0.92);
+  }
 
   img {
     width: 100%;
