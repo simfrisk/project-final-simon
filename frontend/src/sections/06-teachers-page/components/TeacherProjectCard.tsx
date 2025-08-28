@@ -253,9 +253,9 @@ const CommentItem = styled.div`
 const CommentButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 22px;
+  column-gap: 22px;
   width: 100%;
-  padding: 14px 30px; /* restore original padding */
+  padding: 14px 30px;
   border: none;
   background: none;
   text-align: left;
@@ -293,15 +293,15 @@ const CommentContent = styled.div`
 
   p {
     color: ${({ theme }) => theme.colors.text};
+    margin: 0;
   }
 `
 
 const CommentFooter = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 13px;
   color: #888;
-  margin-top: 4px;
 
   p {
     color: ${({ theme }) => theme.colors.textAlternative};
