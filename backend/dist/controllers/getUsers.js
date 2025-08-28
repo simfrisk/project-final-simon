@@ -49,7 +49,7 @@ const user_1 = require("../models/user");
  */
 const getUsers = async (req, res) => {
     try {
-        const result = await user_1.UserModel.find();
+        const result = await user_1.UserModel.find().select("-password -accessToken");
         return res.status(200).json({
             success: true,
             response: result,
