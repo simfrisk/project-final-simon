@@ -43,6 +43,7 @@ export const Demos = () => {
           <ExplainerCard
             title="All your classes in one page"
             text="Ensure your videos play in their highest resolution, always ad‑free. No competitor distractions or random suggestions here."
+            video="./lib.mp4"
             index={5}
           />
           <ExplainerCard
