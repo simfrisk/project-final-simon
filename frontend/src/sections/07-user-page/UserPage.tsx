@@ -147,36 +147,52 @@ export const UserPage = () => {
 const UserPageContainer = styled.div`
   min-height: 100vh;
   background: ${({ theme }) => theme.colors.primary};
-  padding: 32px;
+  padding: 16px;
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 32px;
+  }
 `
 
 const PageHeader = styled.div`
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
   color: ${({ theme }) => theme.colors.background};
+
+  @media ${MediaQueries.biggerSizes} {
+    margin-bottom: 48px;
+  }
 `
 
 const PageTitle = styled.h1`
-  font-size: 56px;
+  font-size: 32px;
   font-weight: 800;
   margin: 0 0 8px 0;
   color: ${({ theme }) => theme.colors.background};
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 56px;
+  }
 `
 
 const PageSubtitle = styled.p`
-  font-size: 19px;
+  font-size: 16px;
   opacity: 0.9;
   margin: 0;
   font-weight: 300;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 19px;
+  }
 `
 
 const SectionContainer = styled.div<{ $isCurrentUserSection?: boolean }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 32px;
-  margin-bottom: 32px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   ${({ $isCurrentUserSection, theme }) =>
     $isCurrentUserSection &&
@@ -184,60 +200,94 @@ const SectionContainer = styled.div<{ $isCurrentUserSection?: boolean }>`
     border: 4px solid ${theme.colors.primary};
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   `}
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 32px;
+    margin-bottom: 32px;
+    border-radius: 20px;
+  }
 `
 
 const SectionHeader = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 24px;
   padding-bottom: 16px;
+  text-align: center;
+
+  @media ${MediaQueries.biggerSizes} {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    text-align: left;
+  }
 `
 
 const SectionTitle = styled.h2`
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   margin: 0;
   color: ${({ theme }) => theme.colors.text};
   flex: 1;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 32px;
+  }
 `
+
 const SectionCountTeacher = styled.span`
   background: ${({ theme }) => theme.colors.primary};
   color: white;
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 25px;
+  }
 `
 
 const SectionCountStudent = styled.span`
   background: #f021ab;
   color: white;
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 25px;
+  }
 `
 
 const UsersGrid = styled.div`
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
   align-items: start;
 
   @media ${MediaQueries.biggerSizes} {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
   }
 `
 
 const UserCard = styled.div<{ $isCurrentUser?: boolean }>`
   background: ${({ theme }) => theme.colors.background};
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   border: 1px solid ${({ theme }) => theme.colors.background};
   position: relative;
@@ -250,6 +300,8 @@ const UserCard = styled.div<{ $isCurrentUser?: boolean }>`
 
   @media ${MediaQueries.biggerSizes} {
     width: 300px;
+    padding: 24px;
+    border-radius: 16px;
   }
 `
 
@@ -258,9 +310,9 @@ const CurrentUserCard = styled(UserCard)`
   background: ${({ theme }) => theme.colors.background};
   backdrop-filter: blur(10px);
   width: 100%;
-  border-radius: 20px;
-  padding: 32px;
-  margin-bottom: 32px;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -269,17 +321,26 @@ const CurrentUserCard = styled(UserCard)`
 
   @media ${MediaQueries.biggerSizes} {
     width: 300px;
+    padding: 32px;
+    margin-bottom: 32px;
+    border-radius: 20px;
   }
 `
 
 const CurrentUserBadge = styled.span`
   background: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.background};
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 25px;
+  }
 `
 
 const UserImageContainer = styled.div`
@@ -290,15 +351,21 @@ const UserImageContainer = styled.div`
 `
 
 const UserImage = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid ${({ theme }) => theme.colors.background};
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   ${UserCard}:hover & {
     transform: scale(1.05);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 120px;
+    height: 120px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 `
 
@@ -307,23 +374,37 @@ const UserInfo = styled.div`
 `
 
 const UserName = styled.h3`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: ${({ theme }) => theme.colors.text};
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 20px;
+    margin: 0 0 8px 0;
+  }
 `
 
 const UserEmail = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ theme }) => theme.colors.text};
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   word-break: break-word;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+  }
 `
 
 const UserRole = styled.p`
-  font-size: 13px;
+  font-size: 12px;
   color: ${({ theme }) => theme.colors.text};
   margin: 0;
   text-transform: capitalize;
   font-weight: 500;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 13px;
+  }
 `
