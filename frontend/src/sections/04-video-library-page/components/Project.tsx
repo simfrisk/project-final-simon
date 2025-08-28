@@ -6,6 +6,7 @@ import { useEditingStore } from "../../../store/editStore"
 import { useProjectStore } from "../../../store/projectStore"
 import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
+import { useUserStore } from "../../../store/userStore"
 
 //#endregion
 
@@ -27,7 +28,7 @@ export const Project = ({
   thumbnail,
 }: ProjectProps) => {
   const navigate = useNavigate()
-
+  const user = useUserStore((state) => state.user)
   const [isEditing, setIsEditing] = useState(false)
   const [errorMesage, setErrorMessage] = useState("")
 
@@ -94,31 +95,33 @@ export const Project = ({
         <CardFooter>
           <p>{teacher || "Unknown"}</p>
 
-          <Edit>
-            <button
-              aria-label={`Edit project ${projectName}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsEditing(true)
-              }}
-            >
-              <img
-                src="/icons/edit.svg"
-                alt=""
-                aria-hidden="true"
-              />
-            </button>
-            <button
-              aria-label={`Delete project ${projectName}`}
-              onClick={handleShowDelete}
-            >
-              <img
-                src="/icons/delete.svg"
-                alt=""
-                aria-hidden="true"
-              />
-            </button>
-          </Edit>
+          {user?.role === "teacher" && (
+            <Edit>
+              <button
+                aria-label={`Edit project ${projectName}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsEditing(true)
+                }}
+              >
+                <img
+                  src="/icons/edit.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                aria-label={`Delete project ${projectName}`}
+                onClick={handleShowDelete}
+              >
+                <img
+                  src="/icons/delete.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </button>
+            </Edit>
+          )}
 
           <p>Duration: 12:23</p>
         </CardFooter>
