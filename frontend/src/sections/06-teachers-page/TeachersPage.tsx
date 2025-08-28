@@ -53,14 +53,17 @@ export const TeachersPage = () => {
   //#endregion
 
   //#region ----- DERIVED DATA -----
-  // Filter projects for the currently selected class with unchecked questions
+  // Filter projects for the currently selected class with unchecked questions from students only
   const filteredProjects = projects
     .filter((project) => project.classId === currentClassId)
     .filter(
       (project) =>
         Array.isArray(project.comments) &&
         project.comments.some(
-          (comment) => comment.commentType === "question" && comment.isChecked === false
+          (comment) =>
+            comment.commentType === "question" &&
+            comment.isChecked === false &&
+            comment.commentCreatedBy?.role === "student"
         )
     )
   //#endregion
