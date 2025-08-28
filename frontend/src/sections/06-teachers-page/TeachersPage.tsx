@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { useProjectStore } from "../../store/projectStore"
 import styled from "styled-components"
-import { SmallButton } from "../../global-components/buttons"
+
 import { TeacherProjectCard } from "./components/TeacherProjectCard"
 import { TeachersSideMenu } from "./components/TeachersSideMenu"
 import { useEditingStore } from "../../store/editStore"
@@ -106,18 +106,9 @@ export const TeachersPage = () => {
             role="toolbar"
             aria-label="Dashboard actions"
           >
-            <SmallButton
-              text="View Projects"
-              aria-label="View all projects"
-            />
-            <SmallButton
-              text="View All Comments"
-              aria-label="View all comments"
-            />
-            <SmallButton
-              text="View Messages"
-              aria-label="View messages"
-            />
+            <WorkingButton aria-label="View all projects">View Projects</WorkingButton>
+            <ActionButton aria-label="View all comments">View All Comments</ActionButton>
+            <ActionButton aria-label="View messages">View Messages</ActionButton>
           </ActionBar>
 
           <ProjectsList aria-label="List of projects with unanswered questions">
@@ -151,7 +142,7 @@ export const TeachersPage = () => {
 //#region ----- STYLED COMPONENTS -----
 const PageTitle = styled.h2`
   text-align: center;
-  margin-top: 40px;
+  margin: 34px 0 24px 0;
 `
 
 const ClassSelect = styled.select`
@@ -215,6 +206,58 @@ const ProjectsList = styled.div`
   width: 100%;
   max-width: 800px;
   margin-bottom: 20px;
+`
+
+const WorkingButton = styled.button`
+  margin: 0px 10px 20px 10px;
+  padding: 8px 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 35px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+    transform: scale(1.02);
+  }
+
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.primaryHover};
+    outline-offset: 2px;
+  }
+`
+
+const ActionButton = styled.button`
+  position: relative;
+  margin: 0px 10px 20px 10px;
+  padding: 8px 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 35px;
+  background-color: #a3a3a3;
+  color: white;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+  text-decoration: line-through;
+
+  &::after {
+    content: "upcoming";
+    position: absolute;
+    top: -8px;
+    right: -15px;
+    background-color: #ff6b6b;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 `
 
 //#endregion
