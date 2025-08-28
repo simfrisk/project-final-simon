@@ -31,14 +31,19 @@ export const TeachersPage = () => {
     fetchProjectsWithComments()
   }, [])
 
-  // Automatically select first class with unchecked comments
+  // Automatically select first class with unchecked student comments
   const classesWithUncheckedComments = classes.filter((cls) => {
     const projectsInClass = projects.filter((project) => project.classId === cls._id)
-    const uncheckedCommentsCount = projectsInClass.reduce((count, project) => {
-      const unchecked = (project.comments ?? []).filter((comment) => !comment.isChecked)
-      return count + unchecked.length
+    const uncheckedStudentCommentsCount = projectsInClass.reduce((count, project) => {
+      const uncheckedStudentComments = (project.comments ?? []).filter(
+        (comment) =>
+          !comment.isChecked &&
+          comment.commentType === "question" &&
+          comment.commentCreatedBy?.role === "student"
+      )
+      return count + uncheckedStudentComments.length
     }, 0)
-    return uncheckedCommentsCount > 0
+    return uncheckedStudentCommentsCount > 0
   })
 
   useEffect(() => {
