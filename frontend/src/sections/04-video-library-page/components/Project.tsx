@@ -5,6 +5,7 @@ import type { ProjectType } from "../../../store/projectStore"
 import { useEditingStore } from "../../../store/editStore"
 import { useProjectStore } from "../../../store/projectStore"
 import { useState } from "react"
+import { MediaQueries } from "../../../themes/mediaQueries"
 
 //#endregion
 
@@ -289,6 +290,10 @@ const CreateWrapper = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 
+  @media ${MediaQueries.smallPhone} {
+    width: 90%;
+  }
+
   form {
     display: flex;
     flex-direction: column;
@@ -311,6 +316,10 @@ const CreateWrapper = styled.div`
     border-radius: 5px;
     background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
     color: ${({ theme }) => theme.colors.text};
+
+    @media ${MediaQueries.smallPhone} {
+      height: 80px;
+    }
   }
 
   button {

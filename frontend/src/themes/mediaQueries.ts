@@ -1,4 +1,5 @@
 export const MediaQueries = {
+  smallPhone: "(max-width: 350px)",
   mobile: "(max-width: 500px)",
   tablet: "(min-width: 601px) and (max-width: 900px)",
   desktop: "(min-width: 769px) and (max-width: 1200px)",

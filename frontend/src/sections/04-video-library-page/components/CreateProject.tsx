@@ -165,6 +165,7 @@ const FormContainer = styled.div`
     background-color: ${({ theme }) => (theme.name === "dark" ? "#363f49" : "#fff")};
     color: ${({ theme }) => theme.colors.text};
     margin: 0;
+    resize: vertical;
   }
 
   input[type="file"] {
@@ -186,6 +187,10 @@ const DescriptionTextArea = styled.textarea`
   border: 1px solid #ccc;
   width: 100%;
   min-height: 200px;
+
+  @media ${MediaQueries.smallPhone} {
+    min-height: 80px !important;
+  }
 `
 
 const AddProjectBtn = styled.button`

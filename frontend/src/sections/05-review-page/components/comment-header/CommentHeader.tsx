@@ -82,7 +82,18 @@ const Title = styled.h3`
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  @media ${MediaQueries.smallPhone} {
+    gap: 2px;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    gap: 16px;
+  }
 `
 
 const TabButton = styled.button<{ $active?: boolean }>`
@@ -104,6 +115,10 @@ const TabButton = styled.button<{ $active?: boolean }>`
   &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgb(0 123 255 / 0.5);
+  }
+
+  @media ${MediaQueries.smallPhone} {
+    padding: 4px 10px;
   }
 `
 //#endregion
