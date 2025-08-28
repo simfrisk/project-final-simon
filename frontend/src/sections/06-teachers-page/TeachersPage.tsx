@@ -148,6 +148,7 @@ const PageTitle = styled.h2`
 const ClassSelect = styled.select`
   text-align: center;
   padding: 10px 16px;
+  margin-bottom: 24px;
   font-size: 16px;
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 8px;
@@ -162,6 +163,7 @@ const ClassSelect = styled.select`
 
   @media ${MediaQueries.biggerSizes} {
     display: none;
+    margin-bottom: 0;
   }
 
   &:focus {
@@ -197,6 +199,9 @@ const ActionBar = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
+
+
+  @media ${MediaQueries.biggerSizes} {
 `
 
 const ProjectsList = styled.div`
@@ -218,6 +223,7 @@ const WorkingButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  max-width: 100px;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
@@ -228,12 +234,23 @@ const WorkingButton = styled.button`
     outline: 2px solid ${({ theme }) => theme.colors.primaryHover};
     outline-offset: 2px;
   }
+
+  @media ${MediaQueries.smallPhone} {
+    margin: 0px 4px 20px 4px;
+    padding: 8px 2px;
+    max-width: 90px;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    max-width: none;
+  }
 `
 
 const ActionButton = styled.button`
   position: relative;
-  margin: 0px 10px 20px 10px;
-  padding: 8px 16px;
+  margin: 0px 6px 20px 6px;
+  padding: 8px 10px;
+  max-width: 100px;
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 35px;
   background-color: #a3a3a3;
@@ -242,6 +259,10 @@ const ActionButton = styled.button`
   transition: all 0.2s ease;
   opacity: 0.6;
   text-decoration: line-through;
+
+  @media ${MediaQueries.biggerSizes} {
+    max-width: none;
+  }
 
   &::after {
     content: "upcoming";
@@ -255,8 +276,34 @@ const ActionButton = styled.button`
     padding: 2px 6px;
     border-radius: 10px;
     text-transform: uppercase;
+    transform: rotate(12deg);
     letter-spacing: 0.5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    @media ${MediaQueries.smallPhone} {
+      top: -10px;
+      right: -8px;
+      transform: rotate(12deg);
+      padding: 2px 4px;
+    }
+
+    @media ${MediaQueries.biggerSizes} {
+      top: -13px;
+      right: -16px;
+      transform: rotate(0deg);
+      padding: 3px 6px;
+    }
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    margin: 0px 10px 20px 10px;
+    padding: 8px 16px;
+  }
+
+  @media ${MediaQueries.smallPhone} {
+    margin: 0px 2px 20px 2px;
+    padding: 8px 2px;
+    max-width: 90px;
   }
 `
 
