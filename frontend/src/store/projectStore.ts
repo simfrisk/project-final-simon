@@ -105,15 +105,12 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const response = await fetch(
-        `${baseUrl}/classes/projects/with-comments`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        }
-      )
+      const response = await fetch(`${baseUrl}/classes/projects/with-comments`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
 
       if (!response.ok) throw new Error("Network response was not ok")
 
@@ -124,8 +121,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
           projects: json.response,
           loading: false,
           error: null,
-          message:
-            json.message || "Projects with comments fetched successfully",
+          message: json.message || "Projects with comments fetched successfully",
         })
       } else {
         set({
@@ -257,9 +253,7 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
 
       if (data.success) {
         set((state) => ({
-          projects: state.projects.filter(
-            (project) => project._id !== projectId
-          ),
+          projects: state.projects.filter((project) => project._id !== projectId),
           loading: false,
           message: data.message,
           error: null,

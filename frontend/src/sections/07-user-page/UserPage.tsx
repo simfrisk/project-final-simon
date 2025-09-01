@@ -1,11 +1,17 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useUserStore } from "../../store/userStore"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
+import { ConfirmBox } from "../../global-components/ComfirmBox"
 
 export const UserPage = () => {
   const { users, getAllUsers, user: currentUser } = useUserStore()
+  const { deleteUser } = useUserStore()
+  const [isEditingTeachers, setIsEditingTeachers] = useState<boolean>(false)
+  const [isEditingStudents, setIsEditingStudents] = useState<boolean>(false)
+  const [showConfirmBox, setShowConfirmBox] = useState<boolean>(false)
+  const [userToDelete, setUserToDelete] = useState<{ id: string; name: string } | null>(null)
 
   useEffect(() => {
     getAllUsers()
@@ -13,6 +19,32 @@ export const UserPage = () => {
 
   const teachers = users.filter((user) => user.role === "teacher")
   const students = users.filter((user) => user.role === "student")
+
+  const handleEditTeachers = () => {
+    setIsEditingTeachers(!isEditingTeachers)
+  }
+
+  const handleEditStudents = () => {
+    setIsEditingStudents(!isEditingStudents)
+  }
+
+  const handleDeleteClick = (userId: string, userName: string) => {
+    setUserToDelete({ id: userId, name: userName })
+    setShowConfirmBox(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      await deleteUser(userToDelete.id)
+      setShowConfirmBox(false)
+      setUserToDelete(null)
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setShowConfirmBox(false)
+    setUserToDelete(null)
+  }
 
   return (
     <>
@@ -61,12 +93,20 @@ export const UserPage = () => {
           </SectionContainer>
         )}
 
+        {/* Teachers Section */}
         <SectionContainer
           role="region"
           aria-labelledby="teachers-section"
         >
           <SectionHeader>
             <SectionTitle id="teachers-section">Teachers</SectionTitle>
+            <EditButton
+              onClick={() => {
+                handleEditTeachers()
+              }}
+            >
+              Edit
+            </EditButton>
             <SectionCountTeacher aria-label={`${teachers.length} teachers in total`}>
               {teachers.length} teachers
             </SectionCountTeacher>
@@ -77,11 +117,19 @@ export const UserPage = () => {
           >
             {teachers.map((user, index) => (
               <UserCard
-                key={user.userId || `teacher-${index}`}
+                key={user._id || `teacher-${index}`}
                 role="listitem"
                 aria-label={`Teacher: ${user.name}`}
               >
                 <UserImageContainer>
+                  {isEditingTeachers && (
+                    <DeleteUserButton
+                      onClick={() => handleDeleteClick(user._id, user.name)}
+                      aria-label={`Delete user ${user.name}`}
+                    >
+                      x
+                    </DeleteUserButton>
+                  )}
                   <UserImage
                     src={user.profileImage || "/default-avatar.png"}
                     alt={`Profile picture of ${user.name}`}
@@ -100,12 +148,20 @@ export const UserPage = () => {
           </UsersGrid>
         </SectionContainer>
 
+        {/* Students Section */}
         <SectionContainer
           role="region"
           aria-labelledby="students-section"
         >
           <SectionHeader>
             <SectionTitle id="students-section">Students</SectionTitle>
+            <EditButton
+              onClick={() => {
+                handleEditStudents()
+              }}
+            >
+              Edit
+            </EditButton>
             <SectionCountStudent aria-label={`${students.length} students in total`}>
               {students.length} students
             </SectionCountStudent>
@@ -114,32 +170,55 @@ export const UserPage = () => {
             role="list"
             aria-label="List of students"
           >
-            {students.map((user, index) => (
-              <UserCard
-                key={user.userId || `student-${index}`}
-                role="listitem"
-                aria-label={`Student: ${user.name}`}
-                $isCurrentUser={currentUser?.userId === user.userId}
-              >
-                <UserImageContainer>
-                  <UserImage
-                    src={user.profileImage || "/default-avatar.png"}
-                    alt={`Profile picture of ${user.name}`}
-                    onError={(e) => {
-                      e.currentTarget.src = "/default-avatar.png"
-                    }}
-                  />
-                </UserImageContainer>
-                <UserInfo>
-                  <UserName>{user.name}</UserName>
-                  <UserEmail aria-label={`Email: ${user.email}`}>{user.email}</UserEmail>
-                  <UserRole aria-label={`Role: ${user.role}`}>{user.role}</UserRole>
-                </UserInfo>
-              </UserCard>
-            ))}
+            {students
+              //Hides the placeholder user
+              .filter((user) => user._id !== "68a45fbaca5d5d29fe782190")
+              .map((user, index) => (
+                <UserCard
+                  key={user._id || `student-${index}`}
+                  role="listitem"
+                  aria-label={`Student: ${user.name}`}
+                  $isCurrentUser={currentUser?._id === user._id}
+                >
+                  <UserImageContainer>
+                    {isEditingStudents && (
+                      <DeleteUserButton
+                        onClick={() => handleDeleteClick(user._id, user.name)}
+                        aria-label={`Delete user ${user.name}`}
+                      >
+                        x
+                      </DeleteUserButton>
+                    )}
+                    <UserImage
+                      src={user.profileImage || "/default-avatar.png"}
+                      alt={`Profile picture of ${user.name}`}
+                      onError={(e) => {
+                        e.currentTarget.src = "/default-avatar.png"
+                      }}
+                    />
+                  </UserImageContainer>
+                  <UserInfo>
+                    <UserName>{user.name}</UserName>
+                    <UserEmail aria-label={`Email: ${user.email}`}>{user.email}</UserEmail>
+                    <UserRole aria-label={`Role: ${user.role}`}>{user.role}</UserRole>
+                  </UserInfo>
+                </UserCard>
+              ))}
           </UsersGrid>
         </SectionContainer>
       </UserPageContainer>
+
+      {/* Confirm Box Modal */}
+      {showConfirmBox && (
+        <>
+          <Backdrop onClick={handleCancelDelete} />
+          <ConfirmBox
+            message={`Are you sure you want to delete ${userToDelete?.name}?`}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
+        </>
+      )}
     </>
   )
 }
@@ -185,7 +264,6 @@ const PageSubtitle = styled.p`
     font-size: 19px;
   }
 `
-
 const SectionContainer = styled.div<{ $isCurrentUserSection?: boolean }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -235,6 +313,27 @@ const SectionTitle = styled.h2`
 
   @media ${MediaQueries.biggerSizes} {
     font-size: 32px;
+  }
+`
+
+const EditButton = styled.button`
+  background-color: #7e94c5;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 14px;
   }
 `
 
@@ -407,4 +506,48 @@ const UserRole = styled.p`
   @media ${MediaQueries.biggerSizes} {
     font-size: 13px;
   }
+`
+
+const DeleteUserButton = styled.button`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+
+  &:hover {
+    background: #ff3742;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 25px;
+  }
+`
+
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 199;
+  backdrop-filter: blur(2px);
 `

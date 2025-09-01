@@ -5,6 +5,7 @@ import { baseUrl } from "../config/api"
 
 //#region ----- INTERFACES -----
 interface AuthUser {
+  _id: string
   email: string
   name: string
   userId: string
@@ -21,6 +22,7 @@ interface UserStore {
   logout: () => void
   createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
   getAllUsers: () => Promise<{ success: boolean; message: string }> // Add this
+  deleteUser: (userId: string) => Promise<{ success: boolean; message: string }> // Add this
   sortUsersByRole: () => void // Add this
 }
 //#endregion
@@ -53,6 +55,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
   users: [], // Add this
+
+  //#endregion
 
   //#region ----- LOGIN -----
   login: async (email, password) => {
@@ -160,6 +164,37 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   //#endregion
 
+  //#region ----- DELETE USER -----
+  deleteUser: async (userId: string) => {
+    try {
+      const token = localStorage.getItem("accessToken")
+      const response = await fetch(`${baseUrl}/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+
+      if (!response.ok) throw new Error("Failed to delete user")
+
+      const data = await response.json()
+      if (data.success) {
+        set({ users: get().users.filter((user) => user._id !== userId) })
+        return { success: true, message: "User deleted successfully" }
+      } else {
+        return {
+          success: false,
+          message: data.message || "Failed to delete user",
+        }
+      }
+    } catch (err: any) {
+      console.error("Error deleting user:", err.message)
+      return { success: false, message: err.message || "Failed to delete user" }
+    }
+  },
+
+  //#endregion
+
   //#region ----- GET ALL USERS -----
   getAllUsers: async () => {
     try {
@@ -190,6 +225,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   //#endregion
 
+  //#region ----- SORT USERS BY ROLE -----
+
   sortUsersByRole: () => {
     const { users } = get()
     const sortedUsers = [...users].sort((a, b) => {
@@ -202,4 +239,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
     })
     set({ users: sortedUsers })
   },
+
+  //#endregion
 }))
