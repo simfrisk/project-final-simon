@@ -115,36 +115,38 @@ export const UserPage = () => {
             role="list"
             aria-label="List of teachers"
           >
-            {teachers.map((user, index) => (
-              <UserCard
-                key={user._id || `teacher-${index}`}
-                role="listitem"
-                aria-label={`Teacher: ${user.name}`}
-              >
-                <UserImageContainer>
-                  {isEditingTeachers && (
-                    <DeleteUserButton
-                      onClick={() => handleDeleteClick(user._id, user.name)}
-                      aria-label={`Delete user ${user.name}`}
-                    >
-                      x
-                    </DeleteUserButton>
-                  )}
-                  <UserImage
-                    src={user.profileImage || "/default-avatar.png"}
-                    alt={`Profile picture of ${user.name}`}
-                    onError={(e) => {
-                      e.currentTarget.src = "/default-avatar.png"
-                    }}
-                  />
-                </UserImageContainer>
-                <UserInfo>
-                  <UserName>{user.name}</UserName>
-                  <UserEmail aria-label={`Email: ${user.email}`}>{user.email}</UserEmail>
-                  <UserRole aria-label={`Role: ${user.role}`}>{user.role}</UserRole>
-                </UserInfo>
-              </UserCard>
-            ))}
+            {teachers
+              .filter((user) => user._id !== currentUser?._id)
+              .map((user, index) => (
+                <UserCard
+                  key={user._id || `teacher-${index}`}
+                  role="listitem"
+                  aria-label={`Teacher: ${user.name}`}
+                >
+                  <UserImageContainer>
+                    {isEditingTeachers && (
+                      <DeleteUserButton
+                        onClick={() => handleDeleteClick(user._id, user.name)}
+                        aria-label={`Delete user ${user.name}`}
+                      >
+                        x
+                      </DeleteUserButton>
+                    )}
+                    <UserImage
+                      src={user.profileImage || "/default-avatar.png"}
+                      alt={`Profile picture of ${user.name}`}
+                      onError={(e) => {
+                        e.currentTarget.src = "/default-avatar.png"
+                      }}
+                    />
+                  </UserImageContainer>
+                  <UserInfo>
+                    <UserName>{user.name}</UserName>
+                    <UserEmail aria-label={`Email: ${user.email}`}>{user.email}</UserEmail>
+                    <UserRole aria-label={`Role: ${user.role}`}>{user.role}</UserRole>
+                  </UserInfo>
+                </UserCard>
+              ))}
           </UsersGrid>
         </SectionContainer>
 
@@ -163,7 +165,8 @@ export const UserPage = () => {
               Edit
             </EditButton>
             <SectionCountStudent aria-label={`${students.length} students in total`}>
-              {students.length} students
+              {/* Subtracts 1 to hide the placeholder user */}
+              {students.length - 1} students
             </SectionCountStudent>
           </SectionHeader>
           <UsersGrid
