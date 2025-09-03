@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
 import { ConfirmBox } from "../../global-components/ComfirmBox"
+import { SignUpForm } from "../03-sign-up-page/components/signUpForm"
 
 export const UserPage = () => {
   const { users, getAllUsers, user: currentUser } = useUserStore()
@@ -100,13 +101,15 @@ export const UserPage = () => {
         >
           <SectionHeader>
             <SectionTitle id="teachers-section">Teachers</SectionTitle>
-            <EditButton
-              onClick={() => {
-                handleEditTeachers()
-              }}
-            >
-              Edit
-            </EditButton>
+            {currentUser?.role === "teacher" && (
+              <EditButton
+                onClick={() => {
+                  handleEditTeachers()
+                }}
+              >
+                Edit
+              </EditButton>
+            )}
             <SectionCountTeacher aria-label={`${teachers.length} teachers in total`}>
               {teachers.length} teachers
             </SectionCountTeacher>
@@ -157,13 +160,15 @@ export const UserPage = () => {
         >
           <SectionHeader>
             <SectionTitle id="students-section">Students</SectionTitle>
-            <EditButton
-              onClick={() => {
-                handleEditStudents()
-              }}
-            >
-              Edit
-            </EditButton>
+            {currentUser?.role === "teacher" && (
+              <EditButton
+                onClick={() => {
+                  handleEditStudents()
+                }}
+              >
+                Edit
+              </EditButton>
+            )}
             <SectionCountStudent aria-label={`${students.length} students in total`}>
               {/* Subtracts 1 to hide the placeholder user */}
               {students.length - 1} students
@@ -209,19 +214,24 @@ export const UserPage = () => {
               ))}
           </UsersGrid>
         </SectionContainer>
-      </UserPageContainer>
 
-      {/* Confirm Box Modal */}
-      {showConfirmBox && (
-        <>
-          <Backdrop onClick={handleCancelDelete} />
-          <ConfirmBox
-            message={`Are you sure you want to delete ${userToDelete?.name}?`}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-          />
-        </>
-      )}
+        {/* Confirm Box Modal */}
+        {showConfirmBox && (
+          <>
+            <Backdrop onClick={handleCancelDelete} />
+            <ConfirmBox
+              message={`Are you sure you want to delete ${userToDelete?.name}?`}
+              onConfirm={handleConfirmDelete}
+              onCancel={handleCancelDelete}
+            />
+          </>
+        )}
+
+        <SectionContainer>
+          <h2>Create User</h2>
+          <SignUpForm />
+        </SectionContainer>
+      </UserPageContainer>
     </>
   )
 }
@@ -239,7 +249,7 @@ const UserPageContainer = styled.div`
 const PageHeader = styled.div`
   text-align: center;
   margin-bottom: 32px;
-  color: ${({ theme }) => theme.colors.background};
+  color: white;
 
   @media ${MediaQueries.biggerSizes} {
     margin-bottom: 48px;
@@ -250,7 +260,6 @@ const PageTitle = styled.h1`
   font-size: 32px;
   font-weight: 800;
   margin: 0 0 8px 0;
-  color: ${({ theme }) => theme.colors.background};
 
   @media ${MediaQueries.biggerSizes} {
     font-size: 56px;
@@ -268,7 +277,7 @@ const PageSubtitle = styled.p`
   }
 `
 const SectionContainer = styled.div<{ $isCurrentUserSection?: boolean }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${({ theme }) => theme.colors.background};
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 20px;

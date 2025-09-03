@@ -85,31 +85,34 @@ export const SignUpForm: React.FC = () => {
           />
         </FormGroup>
 
-        <RoleGroup>
-          <RoleLabel htmlFor="role-teacher">
-            <input
-              id="role-teacher"
-              type="radio"
-              name="role"
-              value="teacher"
-              required
-            />
-            <span></span>
-            Teacher
-          </RoleLabel>
+        <FormGroup>
+          <label htmlFor="role-teacher">Role</label>
+          <RoleGroup>
+            <RoleLabel htmlFor="role-teacher">
+              <input
+                id="role-teacher"
+                type="radio"
+                name="role"
+                value="teacher"
+                required
+              />
+              <span></span>
+              Teacher
+            </RoleLabel>
 
-          <RoleLabel htmlFor="role-student">
-            <input
-              id="role-student"
-              type="radio"
-              name="role"
-              value="student"
-              required
-            />
-            <span></span>
-            Student
-          </RoleLabel>
-        </RoleGroup>
+            <RoleLabel htmlFor="role-student">
+              <input
+                id="role-student"
+                type="radio"
+                name="role"
+                value="student"
+                required
+              />
+              <span></span>
+              Student
+            </RoleLabel>
+          </RoleGroup>
+        </FormGroup>
 
         {error && <ErrorMessage id="form-error">{error}</ErrorMessage>}
         {preview && (
@@ -145,6 +148,23 @@ const FormGroup = styled.div`
     font-weight: 500;
   }
 
+  /* Dynamic required/optional labels using CSS */
+  label:has(+ input:required)::after {
+    content: " *";
+    color: red;
+  }
+
+  label:has(+ input:optional)::after {
+    content: " (optional)";
+    color: gray;
+    font-size: 0.9em;
+  }
+
+  label:has(+ div input[type="radio"]:required)::after {
+    content: " *";
+    color: red;
+  }
+
   input {
     height: 40px;
     width: 100%;
@@ -158,16 +178,15 @@ const FormGroup = styled.div`
 
 const RoleGroup = styled.div`
   display: flex;
-  justify-content: center;
   gap: 16px;
-  margin-top: 16px;
+  justify-content: flex-start;
 `
 
 const RoleLabel = styled.label`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 0;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
