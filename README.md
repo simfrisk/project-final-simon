@@ -47,21 +47,6 @@ I built this platform that lets you:
 - **TypeScript** for static type checking
 - **Git** for version control
 
-## 🏗️ How I planned this thing
-
-### My approach (as a student):
-
-3. **Focused on user experience** - Made sure everything felt intuitive to use
-4. **Tested on different devices** - Responsive design was a priority
-5. **Kept it maintainable** - Used TypeScript and organized my code well
-
-### Key decisions I made:
-
-- **Component-based architecture** - Broke everything into reusable pieces
-- **Separate state stores** - Different Zustand stores for classes, projects, comments, etc.
-- **Protected routes** - Only logged-in users can access certain features
-- **Mobile-first design** - Started with mobile and scaled up
-
 ## 🚀 Features
 
 ### 🎬 Video Management
@@ -76,7 +61,6 @@ I built this platform that lets you:
 - Comment threads that can have replies (and replies to replies!)
 - Like/unlike comments and replies
 - Comments are linked to specific video timestamps
-- Rich text formatting for better communication
 
 ### 👥 User Management
 
@@ -87,7 +71,7 @@ I built this platform that lets you:
 
 ### 🎨 Modern UI/UX
 
-- Dark/light theme switching (because why not?)
+- Dark/light theme switching
 - Responsive design that works on phones, tablets, and desktops
 - Smooth animations and transitions
 - Intuitive navigation that doesn't confuse users
@@ -223,44 +207,21 @@ project-final-simon/
 - Create and organize educational content
 - User role-based access control
 - Bulk operations
-- Search and filtering
 
 ## 🚧 What I'd do if I had more time
 
 Honestly, this project could go in so many directions! If I had more time, I'd love to add:
 
 - **Real-time collaboration** - WebSocket integration for live commenting
-- **Advanced analytics** - Track learning progress and insights
-- **Mobile app** - React Native or PWA
-- **AI features** - Automated feedback suggestions
-- **Better search** - Full-text search with filters
-- **Export features** - PDF reports and data export
-- **LMS integration** - Connect with Canvas, Moodle, etc.
-- **Performance optimization** - Lazy loading and code splitting
+- **More user settings** - Make the create user more controlled so that not anyone can be a user.
+- **Mobile app** - React Native
 
 ## 🤝 Want to contribute?
 
-I'd love to see what other students can add to this! Here's how:
+I'd love to see what other developers can add to this! Here's how:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## 👨‍💻 About me
-
-**Simon Frisk** - I'm a web development student who loves building things that actually solve real problems. This project represents months of learning, debugging, and iterating. You can find me on [GitHub](https://github.com/simonfrisk).
-
-## 🙏 Shoutouts
-
-- **React and TypeScript communities** - Your documentation and examples saved me countless times
-- **Styled Components team** - Made styling React components actually enjoyable
-- **MongoDB and Express.js** - Built a solid backend foundation
-- **All the open-source packages** - This project wouldn't exist without you
-
----
-
-**Built with ❤️, ☕, and probably too many late-night coding sessions**
-
-_This was my final project for my web development course. I learned so much building this, and I'm excited to see where I can take it next!_

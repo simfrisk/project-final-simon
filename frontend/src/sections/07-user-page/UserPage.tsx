@@ -227,10 +227,12 @@ export const UserPage = () => {
           </>
         )}
 
-        <SectionContainer>
-          <h2>Create User</h2>
-          <SignUpForm />
-        </SectionContainer>
+        {currentUser?.role === "teacher" && (
+          <SectionContainer>
+            <h2>Create User (In progress)</h2>
+            <SignUpForm />
+          </SectionContainer>
+        )}
       </UserPageContainer>
     </>
   )
