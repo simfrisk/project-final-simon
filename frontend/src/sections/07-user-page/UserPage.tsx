@@ -47,6 +47,12 @@ export const UserPage = () => {
     setUserToDelete(null)
   }
 
+  const handleDeleteUser = (user: { _id?: string; name: string }) => {
+    if (user._id) {
+      handleDeleteClick(user._id, user.name)
+    }
+  }
+
   return (
     <>
       <Navigation />
@@ -129,7 +135,7 @@ export const UserPage = () => {
                   <UserImageContainer>
                     {isEditingTeachers && (
                       <DeleteUserButton
-                        onClick={() => handleDeleteClick(user._id, user.name)}
+                        onClick={() => handleDeleteUser(user)}
                         aria-label={`Delete user ${user.name}`}
                       >
                         x
@@ -191,7 +197,7 @@ export const UserPage = () => {
                   <UserImageContainer>
                     {isEditingStudents && (
                       <DeleteUserButton
-                        onClick={() => handleDeleteClick(user._id, user.name)}
+                        onClick={() => handleDeleteUser(user)}
                         aria-label={`Delete user ${user.name}`}
                       >
                         x
@@ -229,7 +235,7 @@ export const UserPage = () => {
 
         {currentUser?.role === "teacher" && (
           <SectionContainer>
-            <h2>Create User (In progress)</h2>
+            <h2>Create User (In development)</h2>
             <SignUpForm />
           </SectionContainer>
         )}

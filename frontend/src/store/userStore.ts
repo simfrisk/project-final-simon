@@ -5,7 +5,7 @@ import { baseUrl } from "../config/api"
 
 //#region ----- INTERFACES -----
 interface AuthUser {
-  _id: string
+  _id?: string
   email: string
   name: string
   userId: string
@@ -40,6 +40,7 @@ const savedProfileImage = localStorage.getItem("profileImage")
 const initialUser: AuthUser | null =
   savedEmail && savedUserId && savedToken && savedRole && savedName && savedProfileImage
     ? {
+        _id: savedUserId, // Use userId as _id for initial user
         email: savedEmail,
         userId: savedUserId,
         role: savedRole,
@@ -71,6 +72,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
       if (res.ok && data.accessToken) {
         const user = {
+          _id: data.userId, // Include _id when available
           email,
           userId: data.userId,
           accessToken: data.accessToken,
@@ -101,9 +103,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
           }
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login failed:", err)
-      return { success: false, message: err.message || "Login failed" }
+      return { success: false, message: err instanceof Error ? err.message : "Login failed" }
     }
   },
   //#endregion
@@ -132,6 +134,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
       if (res.ok && data.accessToken) {
         const user = {
+          _id: data.userId, // Include _id when available
           email: formData.get("email") as string,
           userId: data.userId,
           accessToken: data.accessToken,
@@ -157,9 +160,12 @@ export const useUserStore = create<UserStore>((set, get) => ({
           message: data.message || "Could not create user",
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Create user failed:", err)
-      return { success: false, message: err.message || "Could not create user" }
+      return {
+        success: false,
+        message: err instanceof Error ? err.message : "Could not create user",
+      }
     }
   },
   //#endregion
@@ -187,9 +193,12 @@ export const useUserStore = create<UserStore>((set, get) => ({
           message: data.message || "Failed to delete user",
         }
       }
-    } catch (err: any) {
-      console.error("Error deleting user:", err.message)
-      return { success: false, message: err.message || "Failed to delete user" }
+    } catch (err: unknown) {
+      console.error("Error deleting user:", err)
+      return {
+        success: false,
+        message: err instanceof Error ? err.message : "Failed to delete user",
+      }
     }
   },
 
