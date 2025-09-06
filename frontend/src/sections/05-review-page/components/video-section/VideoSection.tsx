@@ -144,6 +144,14 @@ export const VideoSection = () => {
   //#region ---- RENDER -----
   return (
     <Container $isFullScreen={isFullscreen}>
+      {/* Loading state */}
+      {!videoLoaded && (
+        <PulsingBackground>
+          <SpinningCircle />
+        </PulsingBackground>
+      )}
+
+      {/* Video render */}
       <StyledVideo
         ref={videoRef}
         onClick={togglePlay}
@@ -431,6 +439,58 @@ const MarkerMessage = styled.p`
 
   ${MarkerWrapper}:hover & {
     display: block;
+  }
+`
+
+const PulsingBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  background-size: 200% 200%;
+  animation: pulse 3s ease-in-out infinite;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @keyframes pulse {
+    0% {
+      background-position: 0% 50%;
+      background-color: #151515;
+      opacity: 0.4;
+    }
+    50% {
+      background-position: 100% 50%;
+      background-color: #252525;
+      opacity: 1;
+    }
+    100% {
+      background-position: 0% 50%;
+      background-color: #151515;
+      opacity: 0.4;
+    }
+  }
+`
+
+const SpinningCircle = styled.div`
+  width: 35px;
+  height: 35px;
+  border: 4px solid transparent;
+  border-top: 4px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 21;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `
 
