@@ -17,13 +17,23 @@ interface AuthUser {
 interface UserStore {
   user: AuthUser | null
   isLoggedIn: boolean
-  users: AuthUser[] // Add this
+  users: AuthUser[]
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
   logout: () => void
   createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
-  getAllUsers: () => Promise<{ success: boolean; message: string }> // Add this
-  deleteUser: (userId: string) => Promise<{ success: boolean; message: string }> // Add this
-  sortUsersByRole: () => void // Add this
+  getAllUsers: () => Promise<{ success: boolean; message: string }>
+  deleteUser: (userId: string) => Promise<{ success: boolean; message: string }>
+  updateUser: (
+    userId: string,
+    updates: {
+      newName?: string
+      newEmail?: string
+      newRole?: string
+      newPassword?: string
+      newProfileImage?: string
+    }
+  ) => Promise<{ success: boolean; message: string }>
+  sortUsersByRole: () => void
 }
 //#endregion
 
@@ -198,6 +208,64 @@ export const useUserStore = create<UserStore>((set, get) => ({
       return {
         success: false,
         message: err instanceof Error ? err.message : "Failed to delete user",
+      }
+    }
+  },
+
+  //#endregion
+
+  //#region ----- PATCH USER -----
+
+  updateUser: async (
+    userId: string,
+    updates: {
+      newName?: string
+      newEmail?: string
+      newRole?: string
+      newPassword?: string
+      newProfileImage?: string
+    }
+  ) => {
+    try {
+      const token = localStorage.getItem("accessToken")
+      const response = await fetch(`${baseUrl}/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(updates),
+      })
+
+      if (!response.ok) throw new Error("Failed to patch user")
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update the current user if it's the same user being updated
+        const currentUser = get().user
+        if (currentUser && currentUser._id === userId) {
+          set({ user: data.response })
+        }
+
+        // Update the user in the users array
+        set((state) => ({
+          users: state.users.map((user) =>
+            user._id === userId ? { ...user, ...data.response } : user
+          ),
+        }))
+
+        return { success: true, message: "User updated successfully" }
+      } else {
+        return {
+          success: false,
+          message: data.message || "Failed to update user",
+        }
+      }
+    } catch (err: unknown) {
+      return {
+        success: false,
+        message: err instanceof Error ? err.message : "Failed to update user",
       }
     }
   },
