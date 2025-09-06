@@ -34,6 +34,7 @@ import { postReplyLike } from "../controllers/postReplyLike"
 import { postSession } from "../controllers/postSession"
 import { postUser } from "../controllers/postUser"
 import { getUsers } from "../controllers/getUsers"
+import { patchUser } from "../controllers/patchUser"
 
 const router = express.Router()
 
@@ -83,6 +84,7 @@ router.post("/replies/:replyId/likes", authenticateUser, postReplyLike)
 // USERS & AUTHENTICATION
 router.post("/users", uploadImage.single("image"), postUser)
 router.delete("/users/:userId", authenticateUser, deleteUser)
+router.patch("/users/:userId", authenticateUser, patchUser)
 router.post("/session", postSession)
 router.get("/users", getUsers)
 

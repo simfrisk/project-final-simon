@@ -38,6 +38,7 @@ const UserSchema = new Schema<UserType>({
   role: {
     type: String,
     required: true,
+    enum: ["teacher", "student"],
   },
   profileImage: {
     type: String,
