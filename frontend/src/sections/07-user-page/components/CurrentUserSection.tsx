@@ -1,12 +1,66 @@
 import styled from "styled-components"
+import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useUserStore } from "../../../store/userStore"
 
 export const CurrentUserSection = () => {
-  const { user: currentUser } = useUserStore()
+  const { user: currentUser, updateUser } = useUserStore()
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    name: currentUser?.name || "",
+    email: currentUser?.email || "",
+    role: currentUser?.role || "student",
+    profileImage: currentUser?.profileImage || "",
+  })
 
   if (!currentUser) {
     return null
+  }
+
+  const editUser = () => {
+    setIsEditing(true)
+    setFormData({
+      name: currentUser.name,
+      email: currentUser.email,
+      role: currentUser.role,
+      profileImage: currentUser.profileImage,
+    })
+  }
+
+  const cancelEdit = () => {
+    setIsEditing(false)
+    setFormData({
+      name: currentUser.name,
+      email: currentUser.email,
+      role: currentUser.role,
+      profileImage: currentUser.profileImage,
+    })
+  }
+
+  const saveUser = async () => {
+    try {
+      const result = await updateUser(currentUser._id!, {
+        newName: formData.name,
+        newEmail: formData.email,
+        newRole: formData.role,
+        newProfileImage: formData.profileImage,
+      })
+
+      if (result.success) {
+        setIsEditing(false)
+      } else {
+        console.error("Failed to update user:", result.message)
+      }
+    } catch (error) {
+      console.error("Error updating user:", error)
+    }
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
   }
 
   return (
@@ -32,10 +86,67 @@ export const CurrentUserSection = () => {
             }}
           />
         </UserImageContainer>
+        {!isEditing ? (
+          <EditUserButton
+            onClick={editUser}
+            aria-label={`Edit user ${currentUser.name}`}
+          >
+            ...
+          </EditUserButton>
+        ) : (
+          <ActionButtons>
+            <SaveButton
+              onClick={saveUser}
+              aria-label="Save changes"
+            >
+              ✓
+            </SaveButton>
+            <CancelButton
+              onClick={cancelEdit}
+              aria-label="Cancel editing"
+            >
+              ✕
+            </CancelButton>
+          </ActionButtons>
+        )}
         <UserInfo>
-          <UserName>{currentUser.name}</UserName>
-          <UserEmail aria-label={`Email: ${currentUser.email}`}>{currentUser.email}</UserEmail>
-          <UserRole aria-label={`Role: ${currentUser.role}`}>{currentUser.role}</UserRole>
+          {!isEditing ? (
+            <>
+              <UserName>{currentUser.name}</UserName>
+              <UserEmail aria-label={`Email: ${currentUser.email}`}>{currentUser.email}</UserEmail>
+              <UserRole aria-label={`Role: ${currentUser.role}`}>{currentUser.role}</UserRole>
+            </>
+          ) : (
+            <>
+              <UserInput
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                aria-label="Edit name"
+              />
+              <UserInput
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                aria-label="Edit email"
+              />
+              <RoleSelect
+                value={formData.role}
+                onChange={(e) => handleInputChange("role", e.target.value)}
+                aria-label="Select role"
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </RoleSelect>
+              <label htmlFor="profileImage">Profile picture</label>
+              <input
+                type="file"
+                id="profileImage"
+                onChange={(e) => handleInputChange("profileImage", e.target.value)}
+                aria-label="Edit profile picture"
+              />
+            </>
+          )}
         </UserInfo>
       </CurrentUserCard>
     </SectionContainer>
@@ -196,5 +307,128 @@ const UserRole = styled.p`
 
   @media ${MediaQueries.biggerSizes} {
     font-size: 13px;
+  }
+`
+
+const EditUserButton = styled.button`
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  padding: 0 10px 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryHover};
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
+const ActionButtons = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+`
+
+const SaveButton = styled.button`
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #45a049;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
+const CancelButton = styled.button`
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #da190b;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
+const UserInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  font-size: 14px;
+  background: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+`
+
+const RoleSelect = styled.select`
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 0;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  font-size: 14px;
+  background: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primaryHover};
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 16px;
+    padding: 10px 14px;
   }
 `
