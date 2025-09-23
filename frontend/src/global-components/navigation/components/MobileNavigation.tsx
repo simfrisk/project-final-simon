@@ -32,7 +32,7 @@ export const MobileNavigation = ({
     <>
       <MobileMenuToggle>
         {isLoggedIn && user?.role === "teacher" && (
-          <UserProfile to="/users">
+          <UserProfile to="/admin/users">
             <img
               src={user?.profileImage}
               alt={`${user?.name || "User"} profile picture`}
@@ -75,10 +75,10 @@ export const MobileNavigation = ({
           {user?.role === "teacher" && (
             <NavMenuItem role="none">
               <NavLinkItem
-                to="/teachersPage"
+                to="/teachers"
                 onClick={toggleMenu}
                 role="menuitem"
-                aria-current={location.pathname === "/teachersPage" ? "page" : undefined}
+                aria-current={location.pathname === "/teachers" ? "page" : undefined}
                 aria-label="Access teachers dashboard and tools"
                 tabIndex={isMenuOpen ? 0 : -1}
               >

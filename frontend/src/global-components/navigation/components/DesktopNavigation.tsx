@@ -43,9 +43,9 @@ export const DesktopNavigation = ({
         {user?.role === "teacher" && (
           <NavMenuItem role="none">
             <NavLinkItem
-              to="/teachersPage"
+              to="/teachers"
               role="menuitem"
-              aria-current={location.pathname === "/teachersPage" ? "page" : undefined}
+              aria-current={location.pathname === "/teachers" ? "page" : undefined}
               aria-label="Access teachers dashboard and tools"
             >
               Teachers Dashboard
@@ -66,7 +66,7 @@ export const DesktopNavigation = ({
               </NavLinkItem>
             </NavMenuItem>
 
-            <UserProfile to="/users">
+            <UserProfile to="/admin/users">
               <img
                 src={user?.profileImage}
                 alt={`${user?.name || "User"} profile picture`}

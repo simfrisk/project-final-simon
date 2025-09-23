@@ -9,16 +9,17 @@ import styled from "styled-components"
 import { LandingPage } from "./sections/01-lading-page/01-main/LandingPage"
 import { SignUpPage } from "./sections/03-sign-up-page/SignUpPage"
 import { RequireAuthentication } from "./utils/RequireAuthentication"
+import { RequireRole } from "./utils/RequireRole"
 import { PageNotFound } from "./global-components/PageNotFound"
 import { TeachersPage } from "./sections/06-teachers-page/TeachersPage"
 import { VideoLibraryPage } from "./sections/04-video-library-page/VideoLibraryPage"
-import { ChooseClassMessage } from "./sections/04-video-library-page/components/ChooseClassMessage" // You’ll create this
+import { ChooseClassMessage } from "./sections/04-video-library-page/components/ChooseClassMessage" // You'll create this
 import { ProjectsList } from "./sections/04-video-library-page/components/ProjectsList" // And this
 import "./utils/moment-config"
 import { UserPage } from "./sections/07-user-page/UserPage"
 import { CreateTeam } from "./sections/08-create-team-page/CreateTeam"
 
-//#endregion ----- UPDATE REPLY -----
+//#endregion ----- IMPORTS -----
 
 export const App = () => {
   const themeMode = useThemeStore((state) => state.themeMode)
@@ -29,7 +30,7 @@ export const App = () => {
         <BrowserRouter>
           <main role="main">
             <Routes>
-              {/* Public routes */}
+              {/* Public Routes */}
               <Route
                 path="/"
                 element={<LandingPage />}
@@ -42,20 +43,8 @@ export const App = () => {
                 path="/signUp"
                 element={<SignUpPage />}
               />
-              <Route
-                path="/teachersPage"
-                element={<TeachersPage />}
-              />
-              <Route
-                path="/users"
-                element={<UserPage />}
-              />
-              <Route
-                path="/createTeam"
-                element={<CreateTeam />}
-              />
 
-              {/* Protected routes with nested routing */}
+              {/* Protected Routes - All Authenticated Users */}
               <Route
                 path="/library"
                 element={
@@ -82,6 +71,35 @@ export const App = () => {
                   <RequireAuthentication>
                     <ReviewPage />
                   </RequireAuthentication>
+                }
+              />
+
+              {/* Teacher-Only Routes */}
+              <Route
+                path="/teachers"
+                element={
+                  <RequireRole allowedRoles={["teacher"]}>
+                    <TeachersPage />
+                  </RequireRole>
+                }
+              />
+
+              {/* Admin Routes - Teacher Access Only */}
+              <Route
+                path="/admin/users"
+                element={
+                  <RequireRole allowedRoles={["teacher"]}>
+                    <UserPage />
+                  </RequireRole>
+                }
+              />
+
+              <Route
+                path="/admin/teams"
+                element={
+                  <RequireRole allowedRoles={["teacher"]}>
+                    <CreateTeam />
+                  </RequireRole>
                 }
               />
 
