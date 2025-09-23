@@ -199,9 +199,6 @@ const ActionBar = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
-
-
-  @media ${MediaQueries.biggerSizes} {
 `
 
 const ProjectsList = styled.div`

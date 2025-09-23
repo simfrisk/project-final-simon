@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useUserStore } from "../../store/userStore"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
@@ -7,9 +7,17 @@ import { CurrentUserSection } from "./components/CurrentUserSection"
 import { TeachersSection } from "./components/TeachersSection"
 import { StudentsSection } from "./components/StudentsSection"
 import { CreateUserSection } from "./components/CreateUserSection"
+import { CreateTeam } from "../08-create-team-page/CreateTeam"
+
+interface ActiveTab {
+  users: string
+  teams: string
+  more: string
+}
 
 export const UserPage = () => {
   const { getAllUsers } = useUserStore()
+  const [activeTab, setActiveTab] = useState<keyof ActiveTab>("users")
 
   useEffect(() => {
     getAllUsers()
@@ -24,13 +32,43 @@ export const UserPage = () => {
       >
         <PageHeader>
           <PageTitle>Users</PageTitle>
+          <h2 style={{ color: "orange", fontSize: "28px" }}>"WORK IN PROGRESS"</h2>
           <PageSubtitle>See all teachers and students</PageSubtitle>
+          <ActionBar
+            role="toolbar"
+            aria-label="Dashboard actions"
+          >
+            <WorkingButton
+              aria-label="View all users"
+              onClick={() => setActiveTab("users")}
+            >
+              Users
+            </WorkingButton>
+            <WorkingButton
+              aria-label="View all teams"
+              onClick={() => setActiveTab("teams")}
+            >
+              Teams
+            </WorkingButton>
+            <WorkingButton
+              aria-label="More"
+              onClick={() => setActiveTab("more")}
+            >
+              More
+            </WorkingButton>
+          </ActionBar>
         </PageHeader>
 
-        <CurrentUserSection />
-        <TeachersSection />
-        <StudentsSection />
-        <CreateUserSection />
+        {activeTab === "users" && (
+          <>
+            <CurrentUserSection />
+            <TeachersSection />
+            <StudentsSection />
+            <CreateUserSection />
+          </>
+        )}
+        {activeTab === "teams" && <CreateTeam />}
+        {activeTab === "more" && <p>More</p>}
       </UserPageContainer>
     </>
   )
@@ -74,5 +112,43 @@ const PageSubtitle = styled.p`
 
   @media ${MediaQueries.biggerSizes} {
     font-size: 19px;
+  }
+`
+const ActionBar = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+`
+
+const WorkingButton = styled.button`
+  margin: 0px 10px 20px 10px;
+  padding: 8px 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 35px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 100px;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+    transform: scale(1.02);
+  }
+
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.primaryHover};
+    outline-offset: 2px;
+  }
+
+  @media ${MediaQueries.smallPhone} {
+    margin: 0px 4px 20px 4px;
+    padding: 8px 2px;
+    max-width: 90px;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    max-width: none;
   }
 `
