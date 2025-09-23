@@ -243,7 +243,7 @@ const StyledButton = styled.button`
   font-size: 16px;
   cursor: pointer;
   height: 50px;
-  margin: 40px 0;
+  margin: 20px 0;
   text-align: center;
   transition: ease 0.3s;
 

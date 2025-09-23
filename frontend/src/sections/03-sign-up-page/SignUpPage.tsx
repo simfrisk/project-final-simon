@@ -25,8 +25,7 @@ export const SignUpPage: React.FC = () => {
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  height: 94dvh;
-  margin-bottom: 40px;
+  min-height: 100vh;
 `
 
 const SideContainer = styled.section`
@@ -59,11 +58,12 @@ const Card = styled.main`
   padding: 20px;
   width: 100%;
   max-width: 600px;
-  margin: 64px auto;
+  margin: 10px auto;
 
   @media ${MediaQueries.biggerSizes} {
     justify-content: center;
     width: 95%;
+    margin: 20px auto;
   }
 
   input[type="text"],
