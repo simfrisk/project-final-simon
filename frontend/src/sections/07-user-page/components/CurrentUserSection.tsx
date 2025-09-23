@@ -79,10 +79,10 @@ export const CurrentUserSection = () => {
       >
         <UserImageContainer>
           <UserImage
-            src={currentUser.profileImage || "/default-avatar.png"}
+            src={currentUser.profileImage || "/logo2.png"}
             alt={`Profile picture of ${currentUser.name}`}
             onError={(e) => {
-              e.currentTarget.src = "/default-avatar.png"
+              e.currentTarget.src = "/logo2.png"
             }}
           />
         </UserImageContainer>

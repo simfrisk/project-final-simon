@@ -80,10 +80,10 @@ export const StudentsSection = () => {
                     </DeleteUserButton>
                   )}
                   <UserImage
-                    src={user.profileImage || "/default-avatar.png"}
+                    src={user.profileImage || "/logo2.png"}
                     alt={`Profile picture of ${user.name}`}
                     onError={(e) => {
-                      e.currentTarget.src = "/default-avatar.png"
+                      e.currentTarget.src = "/logo2.png"
                     }}
                   />
                 </UserImageContainer>
