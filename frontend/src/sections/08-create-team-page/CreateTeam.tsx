@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { Navigation } from "../../global-components/navigation/Navigation"
 import { Section } from "../../global-components/Section"
 import { Container as BaseContainer } from "../../global-components/Section"
 import styled from "styled-components"
@@ -36,7 +35,6 @@ export const CreateTeam = () => {
 
   return (
     <>
-      <Navigation />
       <Section>
         <Container>
           <h1>Create Team</h1>
