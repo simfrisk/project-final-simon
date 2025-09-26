@@ -12,6 +12,7 @@ export interface CommentType {
   commentCreatedBy: Types.ObjectId
   commentType: CommentCategory
   likes: Types.ObjectId[]
+  schemaVersion: string
 }
 
 const CommentSchema = new Schema<CommentType>({
@@ -32,6 +33,7 @@ const CommentSchema = new Schema<CommentType>({
     required: true,
   },
   likes: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+  schemaVersion: { type: String, default: "v2" },
 })
 
 export const CommentModel = model<CommentType>("Comment", CommentSchema)

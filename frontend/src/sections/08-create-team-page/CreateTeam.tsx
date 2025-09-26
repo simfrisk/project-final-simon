@@ -68,19 +68,6 @@ export const CreateTeam = () => {
               />
             </FormGroup>
 
-            <FormGroup>
-              <StyledLabel htmlFor="email">Contact Email</StyledLabel>
-              <StyledInput
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter Contact Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-
             {error && <ErrorMessage>{error}</ErrorMessage>}
 
             <ButtonWrapper>

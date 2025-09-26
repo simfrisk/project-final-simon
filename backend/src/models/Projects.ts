@@ -9,6 +9,7 @@ export interface Project {
   thumbnail?: string
   projectCreatedBy: Types.ObjectId
   comments: Types.ObjectId[]
+  schemaVersion: string
 }
 
 const ProjectSchema = new Schema<Project>({
@@ -24,6 +25,7 @@ const ProjectSchema = new Schema<Project>({
     required: true,
   },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+  schemaVersion: { type: String, default: "v2" },
 })
 
 export const Project = model<Project>("Project", ProjectSchema)

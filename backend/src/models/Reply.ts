@@ -7,6 +7,7 @@ export interface ReplyType {
   isChecked: boolean
   replyCreatedBy: Types.ObjectId
   replyLikes: Types.ObjectId[]
+  schemaVersion: string
 }
 
 const ReplySchema = new Schema<ReplyType>({
@@ -16,6 +17,7 @@ const ReplySchema = new Schema<ReplyType>({
   isChecked: { type: Boolean, required: true },
   replyCreatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   replyLikes: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+  schemaVersion: { type: String, default: "v2" },
 })
 
 export const Reply = model<ReplyType>("Reply", ReplySchema)

@@ -11,6 +11,10 @@ export interface UserType extends Document {
   accessToken: string
   likedComments: Types.ObjectId[]
   likedReplies: Types.ObjectId[]
+  workspaces: Types.ObjectId[]
+  teams: Types.ObjectId[]
+  assignedTeams: Types.ObjectId[]
+  schemaVersion: string
 }
 
 const UserSchema = new Schema<UserType>({
@@ -51,6 +55,10 @@ const UserSchema = new Schema<UserType>({
   },
   likedComments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
   likedReplies: [{ type: Schema.Types.ObjectId, ref: "Reply", default: [] }],
+  workspaces: [{ type: Schema.Types.ObjectId, ref: "Workspace", default: [] }],
+  teams: [{ type: Schema.Types.ObjectId, ref: "Team", default: [] }],
+  assignedTeams: [{ type: Schema.Types.ObjectId, ref: "Team", default: [] }],
+  schemaVersion: { type: String, default: "v2" },
 })
 
 export const UserModel = model<UserType>("User", UserSchema)
