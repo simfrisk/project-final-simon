@@ -35,11 +35,46 @@ import { postSession } from "../controllers/postSession"
 import { postUser } from "../controllers/postUser"
 import { getUsers } from "../controllers/getUsers"
 import { patchUser } from "../controllers/patchUser"
+import {
+  createInvitationLink,
+  validateInvitationToken,
+  useInvitationToken,
+  getInvitationHistory,
+} from "../controllers/workspace-invitation"
+import {
+  postWorkspace,
+  getWorkspaces,
+  getWorkspaceById,
+  patchWorkspace,
+  deleteWorkspace,
+  getWorkspaceUsers,
+} from "../controllers/workspace"
+import {
+  postTeam,
+  getTeams,
+  getTeamById,
+  patchTeam,
+  deleteTeam,
+  postTeamMember,
+  deleteTeamMember,
+  postTeamTeacher,
+  deleteTeamTeacher,
+  postTeamClass,
+  deleteTeamClass,
+} from "../controllers/team"
 
 const router = express.Router()
 
 // ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome)
+
+// WORKSPACES
+router.post("/workspace", authenticateUser, postWorkspace)
+router.get("/workspaces", authenticateUser, getWorkspaces)
+router.get("/workspace/:workspaceId", authenticateUser, getWorkspaceById)
+router.patch("/workspace/:workspaceId", authenticateUser, patchWorkspace)
+router.delete("/workspace/:workspaceId", authenticateUser, deleteWorkspace)
+router.get("/workspace/:workspaceId/users", authenticateUser, getWorkspaceUsers)
 
 // CLASSES
 router.get("/classes", authenticateUser, getClasses)
@@ -87,5 +122,24 @@ router.delete("/users/:userId", authenticateUser, deleteUser)
 router.patch("/users/:userId", authenticateUser, patchUser)
 router.post("/session", postSession)
 router.get("/users", getUsers)
+
+// WORKSPACE INVITATIONS
+router.post("/workspace/:workspaceId/invite", authenticateUser, createInvitationLink)
+router.get("/invitation/validate/:token", validateInvitationToken)
+router.post("/invitation/use", authenticateUser, useInvitationToken)
+router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
+
+// TEAMS
+router.post("/teams", authenticateUser, postTeam)
+router.get("/teams", authenticateUser, getTeams)
+router.get("/teams/:teamId", authenticateUser, getTeamById)
+router.patch("/teams/:teamId", authenticateUser, patchTeam)
+router.delete("/teams/:teamId", authenticateUser, deleteTeam)
+router.post("/teams/:teamId/members", authenticateUser, postTeamMember)
+router.delete("/teams/:teamId/members/:userId", authenticateUser, deleteTeamMember)
+router.post("/teams/:teamId/teachers", authenticateUser, postTeamTeacher)
+router.delete("/teams/:teamId/teachers/:userId", authenticateUser, deleteTeamTeacher)
+router.post("/teams/:teamId/classes", authenticateUser, postTeamClass)
+router.delete("/teams/:teamId/classes/:classId", authenticateUser, deleteTeamClass)
 
 export default router

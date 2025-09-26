@@ -22,10 +22,7 @@ interface ClassesStore {
   fetchClassById: (classId: string) => Promise<void>
   addClass: (classTitle: string) => Promise<void>
   deleteClass: (classId: string) => Promise<void>
-  updateClass: (
-    classId: string,
-    updates: { newTitle?: string }
-  ) => Promise<void>
+  updateClass: (classId: string, updates: { newTitle?: string }) => Promise<void>
 }
 
 //#endregion
@@ -188,9 +185,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
         const updatedClass = data.response
 
         set((state) => ({
-          classes: state.classes.map((c) =>
-            c._id === classId ? { ...c, ...updatedClass } : c
-          ),
+          classes: state.classes.map((c) => (c._id === classId ? { ...c, ...updatedClass } : c)),
           class:
             state.class && state.class._id === classId
               ? { ...state.class, ...updatedClass }
