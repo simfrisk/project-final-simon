@@ -1,0 +1,24 @@
+import { Router } from "express"
+import { authenticateUser } from "../middleware/authenticateUser"
+import {
+  createInvitationLink,
+  validateInvitationToken,
+  useInvitationToken,
+  getInvitationHistory,
+} from "../controllers/workspace-invitation"
+
+const router = Router()
+
+// Create invitation link (teachers only)
+router.post("/workspace/:workspaceId/invite", authenticateUser, createInvitationLink)
+
+// Validate invitation token (public endpoint)
+router.get("/invitation/validate/:token", validateInvitationToken)
+
+// Use invitation token (requires authentication)
+router.post("/invitation/use", authenticateUser, useInvitationToken)
+
+// Get invitation history (teachers only)
+router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
+
+export default router
