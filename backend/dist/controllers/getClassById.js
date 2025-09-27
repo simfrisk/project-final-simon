@@ -68,7 +68,9 @@ const Class_1 = require("../models/Class");
 const getClassById = async (req, res) => {
     const { classId } = req.params;
     try {
-        const foundClass = await Class_1.ClassModel.findById(classId).select("classTitle");
+        const foundClass = await Class_1.ClassModel.findById(classId)
+            .populate("workspaceId", "name")
+            .select("classTitle workspaceId");
         if (!foundClass) {
             return res.status(404).json({
                 success: false,
@@ -76,10 +78,9 @@ const getClassById = async (req, res) => {
                 message: "Class was not found",
             });
         }
-        const { _id, classTitle } = foundClass;
         return res.status(200).json({
             success: true,
-            response: { _id, classTitle },
+            response: foundClass,
             message: "Class found",
         });
     }

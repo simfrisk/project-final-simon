@@ -9,5 +9,6 @@ const ReplySchema = new mongoose_1.Schema({
     isChecked: { type: Boolean, required: true },
     replyCreatedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     replyLikes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
+    schemaVersion: { type: String, default: "v2" },
 });
 exports.Reply = (0, mongoose_1.model)("Reply", ReplySchema);

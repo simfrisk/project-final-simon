@@ -38,13 +38,39 @@ const postReplyLike_1 = require("../controllers/postReplyLike");
 const postSession_1 = require("../controllers/postSession");
 const postUser_1 = require("../controllers/postUser");
 const getUsers_1 = require("../controllers/getUsers");
+const patchUser_1 = require("../controllers/patchUser");
+const workspace_invitation_1 = require("../controllers/workspace-invitation");
+const postWorkspace_1 = require("../controllers/postWorkspace");
+const getWorkspaces_1 = require("../controllers/getWorkspaces");
+const getWorkspaceById_1 = require("../controllers/getWorkspaceById");
+const patchWorkspace_1 = require("../controllers/patchWorkspace");
+const deleteWorkspace_1 = require("../controllers/deleteWorkspace");
+const getWorkspaceUsers_1 = require("../controllers/getWorkspaceUsers");
+const postTeam_1 = require("../controllers/postTeam");
+const getTeams_1 = require("../controllers/getTeams");
+const getTeamById_1 = require("../controllers/getTeamById");
+const patchTeam_1 = require("../controllers/patchTeam");
+const deleteTeam_1 = require("../controllers/deleteTeam");
+const postTeamMember_1 = require("../controllers/postTeamMember");
+const deleteTeamMember_1 = require("../controllers/deleteTeamMember");
+const postTeamTeacher_1 = require("../controllers/postTeamTeacher");
+const deleteTeamTeacher_1 = require("../controllers/deleteTeamTeacher");
+const postTeamClass_1 = require("../controllers/postTeamClass");
+const deleteTeamClass_1 = require("../controllers/deleteTeamClass");
 const router = express_1.default.Router();
 // ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome_1.getHome);
+// WORKSPACES
+router.post("/workspace", authenticateUser_1.authenticateUser, postWorkspace_1.postWorkspace);
+router.get("/workspaces", authenticateUser_1.authenticateUser, getWorkspaces_1.getWorkspaces);
+router.get("/workspace/:workspaceId", authenticateUser_1.authenticateUser, getWorkspaceById_1.getWorkspaceById);
+router.patch("/workspace/:workspaceId", authenticateUser_1.authenticateUser, patchWorkspace_1.patchWorkspace);
+router.delete("/workspace/:workspaceId", authenticateUser_1.authenticateUser, deleteWorkspace_1.deleteWorkspace);
+router.get("/workspace/:workspaceId/users", authenticateUser_1.authenticateUser, getWorkspaceUsers_1.getWorkspaceUsers);
 // CLASSES
-router.get("/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
+router.get("/workspace/:workspaceId/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
 router.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);
-router.post("/classes", postClass_1.postClass);
+router.post("/workspace/:workspaceId/classes", postClass_1.postClass);
 router.patch("/classes/:classId", authenticateUser_1.authenticateUser, patchClass_1.patchClass);
 router.delete("/classes/:classId", authenticateUser_1.authenticateUser, deleteClass_1.deleteClass);
 // PROJECTS
@@ -74,6 +100,25 @@ router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, post
 // USERS & AUTHENTICATION
 router.post("/users", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
 router.delete("/users/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
+router.patch("/users/:userId", authenticateUser_1.authenticateUser, patchUser_1.patchUser);
 router.post("/session", postSession_1.postSession);
 router.get("/users", getUsers_1.getUsers);
+// WORKSPACE INVITATIONS
+router.post("/workspace/:workspaceId/invite", authenticateUser_1.authenticateUser, workspace_invitation_1.createInvitationLink);
+router.get("/invitation/validate/:token", workspace_invitation_1.validateInvitationToken);
+router.post("/invitation/use", authenticateUser_1.authenticateUser, workspace_invitation_1.useInvitationToken);
+router.get("/workspace/:workspaceId/invitations", authenticateUser_1.authenticateUser, workspace_invitation_1.getInvitationHistory);
+// TEAMS
+router.get("/workspace/:workspaceId/teams", authenticateUser_1.authenticateUser, getTeams_1.getTeams);
+router.get("/teams/:teamId", authenticateUser_1.authenticateUser, getTeamById_1.getTeamById);
+router.post("/workspace/:workspaceId/teams", authenticateUser_1.authenticateUser, postTeam_1.postTeam);
+router.patch("/teams/:teamId", authenticateUser_1.authenticateUser, patchTeam_1.patchTeam);
+router.delete("/teams/:teamId", authenticateUser_1.authenticateUser, deleteTeam_1.deleteTeam);
+// Team management routes (simplified individual operations)
+router.post("/teams/:teamId/members/:userId", authenticateUser_1.authenticateUser, postTeamMember_1.postTeamMember);
+router.delete("/teams/:teamId/members/:userId", authenticateUser_1.authenticateUser, deleteTeamMember_1.deleteTeamMember);
+router.post("/teams/:teamId/teachers/:userId", authenticateUser_1.authenticateUser, postTeamTeacher_1.postTeamTeacher);
+router.delete("/teams/:teamId/teachers/:userId", authenticateUser_1.authenticateUser, deleteTeamTeacher_1.deleteTeamTeacher);
+router.post("/teams/:teamId/classes/:classId", authenticateUser_1.authenticateUser, postTeamClass_1.postTeamClass);
+router.delete("/teams/:teamId/classes/:classId", authenticateUser_1.authenticateUser, deleteTeamClass_1.deleteTeamClass);
 exports.default = router;

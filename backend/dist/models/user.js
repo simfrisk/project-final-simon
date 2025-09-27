@@ -31,6 +31,7 @@ const UserSchema = new mongoose_1.Schema({
     role: {
         type: String,
         required: true,
+        enum: ["teacher", "student"],
     },
     profileImage: {
         type: String,
@@ -42,5 +43,9 @@ const UserSchema = new mongoose_1.Schema({
     },
     likedComments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment", default: [] }],
     likedReplies: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Reply", default: [] }],
+    workspaces: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Workspace", default: [] }],
+    teams: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Team", default: [] }],
+    assignedTeams: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Team", default: [] }],
+    schemaVersion: { type: String, default: "v2" },
 });
 exports.UserModel = (0, mongoose_1.model)("User", UserSchema);

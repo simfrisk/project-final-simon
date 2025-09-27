@@ -1,23 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postClass = void 0;
-const Class_1 = require("../models/Class");
+exports.postWorkspace = void 0;
+const workspace_1 = require("../models/workspace");
+const user_1 = require("../models/user");
 /**
  * @swagger
- * /workspace/{workspaceId}/classes:
+ * /workspace:
  *   post:
- *     summary: Create a new class within a workspace
+ *     summary: Create a new workspace
  *     tags:
- *       - Classes
+ *       - Workspaces
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: workspaceId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID of the workspace to add the class to
  *     requestBody:
  *       required: true
  *       content:
@@ -25,14 +19,14 @@ const Class_1 = require("../models/Class");
  *           schema:
  *             type: object
  *             required:
- *               - classTitle
+ *               - name
  *             properties:
- *               classTitle:
+ *               name:
  *                 type: string
- *                 example: "Math 101"
+ *                 example: "Math Department"
  *     responses:
  *       201:
- *         description: Class created successfully
+ *         description: Workspace created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -46,13 +40,13 @@ const Class_1 = require("../models/Class");
  *                   properties:
  *                     _id:
  *                       type: string
- *                     classTitle:
+ *                     name:
  *                       type: string
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
+ *                   example: "Workspace created successfully"
  *       400:
- *         description: Bad Request - missing classTitle
+ *         description: Bad Request - missing name
  *         content:
  *           application/json:
  *             schema:
@@ -65,7 +59,7 @@ const Class_1 = require("../models/Class");
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Workspace name is required"
  *       500:
  *         description: Server error
  *         content:
@@ -82,27 +76,32 @@ const Class_1 = require("../models/Class");
  *                   type: string
  *                   example: "Unknown server error"
  */
-const postClass = async (req, res) => {
+const postWorkspace = async (req, res) => {
     try {
-        const { classTitle } = req.body;
-        const { workspaceId } = req.params;
-        if (!classTitle) {
+        const { name } = req.body;
+        const createdBy = req.user?._id;
+        if (!name) {
             return res.status(400).json({
                 success: false,
                 response: null,
-                message: "Class title is required",
+                message: "Workspace name is required",
             });
         }
-        const newClass = new Class_1.ClassModel({ classTitle, workspaceId });
-        const savedNewClass = await newClass.save();
+        const newWorkspace = new workspace_1.WorkspaceModel({
+            name,
+            createdBy,
+        });
+        const savedNewWorkspace = await newWorkspace.save();
+        // Automatically add the creator to the workspace
+        await user_1.UserModel.findByIdAndUpdate(createdBy, { $addToSet: { workspaces: savedNewWorkspace._id } }, { new: true });
         return res.status(201).json({
             success: true,
-            response: savedNewClass,
-            message: "Class created successfully",
+            response: savedNewWorkspace,
+            message: "Workspace created successfully",
         });
     }
     catch (error) {
-        console.error("Error in postClass:", error);
+        console.error("Error in postWorkspace:", error);
         if (error instanceof Error) {
             return res.status(500).json({
                 success: false,
@@ -117,4 +116,4 @@ const postClass = async (req, res) => {
         });
     }
 };
-exports.postClass = postClass;
+exports.postWorkspace = postWorkspace;

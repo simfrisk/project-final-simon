@@ -1,38 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postClass = void 0;
-const Class_1 = require("../models/Class");
+exports.deleteTeamMember = void 0;
+const Team_1 = require("../models/Team");
+const user_1 = require("../models/user");
 /**
  * @swagger
- * /workspace/{workspaceId}/classes:
- *   post:
- *     summary: Create a new class within a workspace
+ * /teams/{teamId}/members/{userId}:
+ *   delete:
+ *     summary: Remove a member from a team
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: workspaceId
+ *         name: teamId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the workspace to add the class to
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - classTitle
- *             properties:
- *               classTitle:
- *                 type: string
- *                 example: "Math 101"
+ *         description: The ID of the team
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to remove
  *     responses:
- *       201:
- *         description: Class created successfully
+ *       200:
+ *         description: Member removed successfully
  *         content:
  *           application/json:
  *             schema:
@@ -42,17 +37,13 @@ const Class_1 = require("../models/Class");
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
+ *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
- *       400:
- *         description: Bad Request - missing classTitle
+ *                   example: "Member removed successfully"
+ *       404:
+ *         description: Team or User not found
  *         content:
  *           application/json:
  *             schema:
@@ -65,7 +56,7 @@ const Class_1 = require("../models/Class");
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Team or User not found"
  *       500:
  *         description: Server error
  *         content:
@@ -82,27 +73,30 @@ const Class_1 = require("../models/Class");
  *                   type: string
  *                   example: "Unknown server error"
  */
-const postClass = async (req, res) => {
+const deleteTeamMember = async (req, res) => {
     try {
-        const { classTitle } = req.body;
-        const { workspaceId } = req.params;
-        if (!classTitle) {
-            return res.status(400).json({
+        const { teamId, userId } = req.params;
+        const team = await Team_1.TeamModel.findById(teamId);
+        const user = await user_1.UserModel.findById(userId);
+        if (!team || !user) {
+            return res.status(404).json({
                 success: false,
                 response: null,
-                message: "Class title is required",
+                message: "Team or User not found",
             });
         }
-        const newClass = new Class_1.ClassModel({ classTitle, workspaceId });
-        const savedNewClass = await newClass.save();
-        return res.status(201).json({
+        // Remove user from team
+        await user_1.UserModel.findByIdAndUpdate(userId, {
+            $pull: { teams: teamId },
+        });
+        return res.status(200).json({
             success: true,
-            response: savedNewClass,
-            message: "Class created successfully",
+            response: null,
+            message: "Member removed successfully",
         });
     }
     catch (error) {
-        console.error("Error in postClass:", error);
+        console.error("Error in deleteTeamMember:", error);
         if (error instanceof Error) {
             return res.status(500).json({
                 success: false,
@@ -117,4 +111,4 @@ const postClass = async (req, res) => {
         });
     }
 };
-exports.postClass = postClass;
+exports.deleteTeamMember = deleteTeamMember;

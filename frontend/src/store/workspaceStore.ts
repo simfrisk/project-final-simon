@@ -33,7 +33,7 @@ interface WorkspaceStore {
 //#endregion
 
 //#region ----- ZUSTAND WORKSPACE STORE -----
-export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
+export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
   workspaces: [],
   workspace: null,
   loading: false,
@@ -64,8 +64,8 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       } else {
         throw new Error(json.message || "Failed to fetch workspaces")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
   //#endregion
@@ -94,8 +94,8 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       } else {
         throw new Error(json.message || "Failed to fetch workspace")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
   //#endregion
@@ -135,11 +135,11 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
           message: json.message || "Failed to create workspace",
         }
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
       return {
         success: false,
-        message: err.message || "Failed to create workspace",
+        message: err instanceof Error ? err.message : "Failed to create workspace",
       }
     }
   },
@@ -188,10 +188,10 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
           message: null,
         })
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       set({
         loading: false,
-        error: err.message || "Unknown error",
+        error: err instanceof Error ? err.message : "Unknown error",
         message: null,
       })
     }
@@ -223,8 +223,8 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       } else {
         throw new Error(data.message || "Failed to delete workspace")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
   //#endregion

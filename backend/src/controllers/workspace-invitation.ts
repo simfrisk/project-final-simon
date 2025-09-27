@@ -8,10 +8,13 @@ import { WorkspacePermissionChecker } from "../utils/workspace-permissions"
 export const createInvitationLink = async (req: Request, res: Response) => {
   try {
     const { workspaceId } = req.params
-    const createdBy = req.user._id
+    const createdBy = req.user?._id
 
     // Check if user can create invitations (only teachers/admins)
-    const canInvite = await WorkspacePermissionChecker.canInviteMembers(workspaceId, createdBy)
+    const canInvite = await WorkspacePermissionChecker.canInviteMembers(
+      workspaceId,
+      createdBy?.toString() || ""
+    )
     if (!canInvite) {
       return res.status(403).json({ message: "You don't have permission to create invitations" })
     }
@@ -38,7 +41,7 @@ export const createInvitationLink = async (req: Request, res: Response) => {
       expiresAt: invitation.expiresAt,
     })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" })
   }
 }
 
@@ -62,14 +65,14 @@ export const validateInvitationToken = async (req: Request, res: Response) => {
       expiresAt: invitation.expiresAt,
     })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" })
   }
 }
 
 export const useInvitationToken = async (req: Request, res: Response) => {
   try {
     const { token } = req.body
-    const userId = req.user._id
+    const userId = req.user?._id
 
     const invitation = await WorkspaceInvitationModel.findOne({
       token,
@@ -107,17 +110,20 @@ export const useInvitationToken = async (req: Request, res: Response) => {
 
     res.json({ message: "Successfully joined workspace" })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" })
   }
 }
 
 export const getInvitationHistory = async (req: Request, res: Response) => {
   try {
     const { workspaceId } = req.params
-    const userId = req.user._id
+    const userId = req.user?._id
 
     // Check if user can view invitation history
-    const canView = await WorkspacePermissionChecker.canInviteMembers(workspaceId, userId)
+    const canView = await WorkspacePermissionChecker.canInviteMembers(
+      workspaceId,
+      userId?.toString() || ""
+    )
     if (!canView) {
       return res
         .status(403)
@@ -131,6 +137,6 @@ export const getInvitationHistory = async (req: Request, res: Response) => {
 
     res.json({ invitations })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" })
   }
 }

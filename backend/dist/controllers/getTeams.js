@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClasses = void 0;
-const Class_1 = require("../models/Class");
+exports.getTeams = void 0;
+const workspace_1 = require("../models/workspace");
 /**
  * @swagger
- * /workspace/{workspaceId}/classes:
+ * /workspace/{workspaceId}/teams:
  *   get:
- *     summary: Retrieve all classes in a workspace
- *     description: Retrieve a list of classes with their titles for a specific workspace.
+ *     summary: Retrieve all teams in a workspace
+ *     description: Retrieve a list of teams with their names for a specific workspace.
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -18,10 +18,10 @@ const Class_1 = require("../models/Class");
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the workspace to get classes from
+ *         description: The ID of the workspace to get teams from
  *     responses:
  *       200:
- *         description: A list of classes
+ *         description: A list of teams
  *         content:
  *           application/json:
  *             schema:
@@ -36,12 +36,12 @@ const Class_1 = require("../models/Class");
  *                     properties:
  *                       _id:
  *                         type: string
- *                       classTitle:
+ *                       teamName:
  *                         type: string
  *                 message:
  *                   type: string
  *       500:
- *         description: Server error fetching classes
+ *         description: Server error fetching teams
  *         content:
  *           application/json:
  *             schema:
@@ -54,22 +54,32 @@ const Class_1 = require("../models/Class");
  *                 message:
  *                   type: string
  */
-const getClasses = async (req, res) => {
+const getTeams = async (req, res) => {
     try {
         const { workspaceId } = req.params;
-        const result = await Class_1.ClassModel.find({ workspaceId }).select("classTitle workspaceId");
+        // Get teams from specific workspace
+        const workspace = await workspace_1.WorkspaceModel.findById(workspaceId)
+            .populate("teams", "teamName")
+            .select("teams");
+        if (!workspace) {
+            return res.status(404).json({
+                success: false,
+                response: null,
+                message: "Workspace not found",
+            });
+        }
         return res.status(200).json({
             success: true,
-            response: result,
-            message: "Classes fetched successfully",
+            response: workspace.teams,
+            message: "Teams fetched successfully",
         });
     }
     catch (error) {
         return res.status(500).json({
             success: false,
             response: null,
-            message: "Failed to fetch classes.",
+            message: "Failed to fetch teams.",
         });
     }
 };
-exports.getClasses = getClasses;
+exports.getTeams = getTeams;

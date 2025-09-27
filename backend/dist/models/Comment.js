@@ -20,5 +20,6 @@ const CommentSchema = new mongoose_1.Schema({
         required: true,
     },
     likes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
+    schemaVersion: { type: String, default: "v2" },
 });
 exports.CommentModel = (0, mongoose_1.model)("Comment", CommentSchema);

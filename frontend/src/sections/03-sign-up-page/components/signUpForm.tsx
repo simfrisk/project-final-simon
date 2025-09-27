@@ -176,57 +176,6 @@ const FormGroup = styled.div`
   }
 `
 
-const RoleGroup = styled.div`
-  display: flex;
-  gap: 16px;
-  justify-content: flex-start;
-`
-
-const RoleLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-
-  input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  span {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #999;
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  input[type="radio"]:checked + span::before {
-    content: "";
-    display: block;
-    width: 8px;
-    height: 8px;
-    background-color: ${({ theme }) => theme.colors.primary};
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  input[type="radio"]:focus + span {
-    box-shadow: 0 0 0 3px rgba(100, 150, 250, 0.6);
-  }
-`
-
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
