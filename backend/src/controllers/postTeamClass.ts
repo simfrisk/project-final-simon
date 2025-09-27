@@ -1,15 +1,23 @@
 import { Request, Response } from "express"
+import { TeamModel } from "../models/Team"
 import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
- * /classes:
+ * /teams/{teamId}/classes:
  *   post:
- *     summary: Create a new class
+ *     summary: Give a team access to a class
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the team
  *     requestBody:
  *       required: true
  *       content:
@@ -17,18 +25,14 @@ import { ClassModel } from "../models/Class"
  *           schema:
  *             type: object
  *             required:
- *               - classTitle
- *               - workspaceId
+ *               - classId
  *             properties:
- *               classTitle:
- *                 type: string
- *                 example: "Math 101"
- *               workspaceId:
+ *               classId:
  *                 type: string
  *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
  *     responses:
- *       201:
- *         description: Class created successfully
+ *       200:
+ *         description: Class access granted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -39,16 +43,11 @@ import { ClassModel } from "../models/Class"
  *                   example: true
  *                 response:
  *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
+ *                   example: "Class access granted successfully"
  *       400:
- *         description: Bad Request - missing classTitle
+ *         description: Bad Request - missing classId
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +60,22 @@ import { ClassModel } from "../models/Class"
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Class ID is required"
+ *       404:
+ *         description: Team or Class not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Team or Class not found"
  *       500:
  *         description: Server error
  *         content:
@@ -78,36 +92,46 @@ import { ClassModel } from "../models/Class"
  *                   type: string
  *                   example: "Unknown server error"
  */
-export const postClass = async (req: Request, res: Response): Promise<Response> => {
+export const postTeamClass = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { teamId } = req.params
+    const { classId } = req.body
 
-    if (!classTitle) {
+    if (!classId) {
       return res.status(400).json({
         success: false,
         response: null,
-        message: "Class title is required",
+        message: "Class ID is required",
       })
     }
 
-    if (!workspaceId) {
-      return res.status(400).json({
+    const team = await TeamModel.findById(teamId)
+    const classDoc = await ClassModel.findById(classId)
+
+    if (!team || !classDoc) {
+      return res.status(404).json({
         success: false,
         response: null,
-        message: "Workspace ID is required",
+        message: "Team or Class not found",
       })
     }
 
-    const newClass = new ClassModel({ classTitle, workspaceId })
-    const savedNewClass = await newClass.save()
+    // Verify class belongs to same workspace as team
+    // Note: This validation would need to be done by checking which workspace contains this team
+    // For now, we'll allow any class access (you may want to add workspace validation later)
 
-    return res.status(201).json({
+    // Add class to team's accessTo
+    await TeamModel.findByIdAndUpdate(teamId, {
+      $addToSet: { accessTo: classId },
+    })
+
+    return res.status(200).json({
       success: true,
-      response: savedNewClass,
-      message: "Class created successfully",
+      response: { teamId, classId },
+      message: "Class access granted successfully",
     })
   } catch (error) {
-    console.error("Error in postClass:", error)
+    console.error("Error in postTeamClass:", error)
 
     if (error instanceof Error) {
       return res.status(500).json({

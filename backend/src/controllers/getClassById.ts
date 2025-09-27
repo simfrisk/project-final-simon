@@ -64,14 +64,13 @@ import { Request, Response } from "express"
  *                 message:
  *                   type: string
  */
-export const getClassById = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getClassById = async (req: Request, res: Response): Promise<Response> => {
   const { classId } = req.params
 
   try {
-    const foundClass = await ClassModel.findById(classId).select("classTitle")
+    const foundClass = await ClassModel.findById(classId)
+      .populate("workspaceId", "name")
+      .select("classTitle workspaceId")
 
     if (!foundClass) {
       return res.status(404).json({
@@ -81,11 +80,9 @@ export const getClassById = async (
       })
     }
 
-    const { _id, classTitle } = foundClass
-
     return res.status(200).json({
       success: true,
-      response: { _id, classTitle },
+      response: foundClass,
       message: "Class found",
     })
   } catch (error) {

@@ -1,13 +1,13 @@
 import { Request, Response } from "express"
-import { ClassModel } from "../models/Class"
+import { WorkspaceModel } from "../models/workspace"
 
 /**
  * @swagger
- * /classes:
+ * /workspace:
  *   post:
- *     summary: Create a new class
+ *     summary: Create a new workspace
  *     tags:
- *       - Classes
+ *       - Workspaces
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -17,18 +17,14 @@ import { ClassModel } from "../models/Class"
  *           schema:
  *             type: object
  *             required:
- *               - classTitle
- *               - workspaceId
+ *               - name
  *             properties:
- *               classTitle:
+ *               name:
  *                 type: string
- *                 example: "Math 101"
- *               workspaceId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
+ *                 example: "Math Department"
  *     responses:
  *       201:
- *         description: Class created successfully
+ *         description: Workspace created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -42,13 +38,13 @@ import { ClassModel } from "../models/Class"
  *                   properties:
  *                     _id:
  *                       type: string
- *                     classTitle:
+ *                     name:
  *                       type: string
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
+ *                   example: "Workspace created successfully"
  *       400:
- *         description: Bad Request - missing classTitle
+ *         description: Bad Request - missing name
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +57,7 @@ import { ClassModel } from "../models/Class"
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Workspace name is required"
  *       500:
  *         description: Server error
  *         content:
@@ -78,36 +74,32 @@ import { ClassModel } from "../models/Class"
  *                   type: string
  *                   example: "Unknown server error"
  */
-export const postClass = async (req: Request, res: Response): Promise<Response> => {
+export const postWorkspace = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { name } = req.body
+    const createdBy = req.user._id
 
-    if (!classTitle) {
+    if (!name) {
       return res.status(400).json({
         success: false,
         response: null,
-        message: "Class title is required",
+        message: "Workspace name is required",
       })
     }
 
-    if (!workspaceId) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Workspace ID is required",
-      })
-    }
-
-    const newClass = new ClassModel({ classTitle, workspaceId })
-    const savedNewClass = await newClass.save()
+    const newWorkspace = new WorkspaceModel({
+      name,
+      createdBy,
+    })
+    const savedNewWorkspace = await newWorkspace.save()
 
     return res.status(201).json({
       success: true,
-      response: savedNewClass,
-      message: "Class created successfully",
+      response: savedNewWorkspace,
+      message: "Workspace created successfully",
     })
   } catch (error) {
-    console.error("Error in postClass:", error)
+    console.error("Error in postWorkspace:", error)
 
     if (error instanceof Error) {
       return res.status(500).json({

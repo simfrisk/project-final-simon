@@ -1,15 +1,23 @@
 import { Request, Response } from "express"
-import { ClassModel } from "../models/Class"
+import { TeamModel } from "../models/Team"
+import { UserModel } from "../models/user"
 
 /**
  * @swagger
- * /classes:
+ * /teams/{teamId}/members:
  *   post:
- *     summary: Create a new class
+ *     summary: Add a member to a team
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the team
  *     requestBody:
  *       required: true
  *       content:
@@ -17,18 +25,14 @@ import { ClassModel } from "../models/Class"
  *           schema:
  *             type: object
  *             required:
- *               - classTitle
- *               - workspaceId
+ *               - userId
  *             properties:
- *               classTitle:
- *                 type: string
- *                 example: "Math 101"
- *               workspaceId:
+ *               userId:
  *                 type: string
  *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
  *     responses:
- *       201:
- *         description: Class created successfully
+ *       200:
+ *         description: Member added successfully
  *         content:
  *           application/json:
  *             schema:
@@ -39,16 +43,11 @@ import { ClassModel } from "../models/Class"
  *                   example: true
  *                 response:
  *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
+ *                   example: "Member added successfully"
  *       400:
- *         description: Bad Request - missing classTitle
+ *         description: Bad Request - missing userId
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +60,22 @@ import { ClassModel } from "../models/Class"
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "User ID is required"
+ *       404:
+ *         description: Team or User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 response:
+ *                   nullable: true
+ *                 message:
+ *                   type: string
+ *                   example: "Team or User not found"
  *       500:
  *         description: Server error
  *         content:
@@ -78,36 +92,42 @@ import { ClassModel } from "../models/Class"
  *                   type: string
  *                   example: "Unknown server error"
  */
-export const postClass = async (req: Request, res: Response): Promise<Response> => {
+export const postTeamMember = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { teamId } = req.params
+    const { userId } = req.body
 
-    if (!classTitle) {
+    if (!userId) {
       return res.status(400).json({
         success: false,
         response: null,
-        message: "Class title is required",
+        message: "User ID is required",
       })
     }
 
-    if (!workspaceId) {
-      return res.status(400).json({
+    const team = await TeamModel.findById(teamId)
+    const user = await UserModel.findById(userId)
+
+    if (!team || !user) {
+      return res.status(404).json({
         success: false,
         response: null,
-        message: "Workspace ID is required",
+        message: "Team or User not found",
       })
     }
 
-    const newClass = new ClassModel({ classTitle, workspaceId })
-    const savedNewClass = await newClass.save()
+    // Add user to team
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { teams: teamId },
+    })
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      response: savedNewClass,
-      message: "Class created successfully",
+      response: { teamId, userId },
+      message: "Member added successfully",
     })
   } catch (error) {
-    console.error("Error in postClass:", error)
+    console.error("Error in postTeamMember:", error)
 
     if (error instanceof Error) {
       return res.status(500).json({

@@ -1,15 +1,24 @@
 import { Request, Response } from "express"
-import { ClassModel } from "../models/Class"
+import { TeamModel } from "../models/Team"
+import { WorkspaceModel } from "../models/workspace"
+import { UserModel } from "../models/user"
 
 /**
  * @swagger
- * /classes:
+ * /workspace/{workspaceId}/teams:
  *   post:
- *     summary: Create a new class
+ *     summary: Create a new team within a workspace
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workspace to add the team to
  *     requestBody:
  *       required: true
  *       content:
@@ -17,18 +26,14 @@ import { ClassModel } from "../models/Class"
  *           schema:
  *             type: object
  *             required:
- *               - classTitle
- *               - workspaceId
+ *               - teamName
  *             properties:
- *               classTitle:
+ *               teamName:
  *                 type: string
- *                 example: "Math 101"
- *               workspaceId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
+ *                 example: "Math Team A"
  *     responses:
  *       201:
- *         description: Class created successfully
+ *         description: Team created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -42,13 +47,13 @@ import { ClassModel } from "../models/Class"
  *                   properties:
  *                     _id:
  *                       type: string
- *                     classTitle:
+ *                     teamName:
  *                       type: string
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
+ *                   example: "Team created successfully"
  *       400:
- *         description: Bad Request - missing classTitle
+ *         description: Bad Request - missing teamName
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +66,7 @@ import { ClassModel } from "../models/Class"
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Team name is required"
  *       500:
  *         description: Server error
  *         content:
@@ -78,36 +83,49 @@ import { ClassModel } from "../models/Class"
  *                   type: string
  *                   example: "Unknown server error"
  */
-export const postClass = async (req: Request, res: Response): Promise<Response> => {
+export const postTeam = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { teamName } = req.body
+    const { workspaceId } = req.params
+    const createdBy = req.user?._id
 
-    if (!classTitle) {
+    if (!teamName) {
       return res.status(400).json({
         success: false,
         response: null,
-        message: "Class title is required",
+        message: "Team name is required",
       })
     }
 
-    if (!workspaceId) {
-      return res.status(400).json({
+    // Verify workspace exists
+    const workspace = await WorkspaceModel.findById(workspaceId)
+    if (!workspace) {
+      return res.status(404).json({
         success: false,
         response: null,
-        message: "Workspace ID is required",
+        message: "Workspace not found",
       })
     }
 
-    const newClass = new ClassModel({ classTitle, workspaceId })
-    const savedNewClass = await newClass.save()
+    const newTeam = new TeamModel({
+      teamName,
+      createdBy,
+      workspaceId,
+    })
+    const savedNewTeam = await newTeam.save()
+
+    // Add team to workspace
+    await WorkspaceModel.findByIdAndUpdate(workspaceId, {
+      $addToSet: { teams: savedNewTeam._id },
+    })
 
     return res.status(201).json({
       success: true,
-      response: savedNewClass,
-      message: "Class created successfully",
+      response: savedNewTeam,
+      message: "Team created successfully",
     })
   } catch (error) {
-    console.error("Error in postClass:", error)
+    console.error("Error in postTeam:", error)
 
     if (error instanceof Error) {
       return res.status(500).json({

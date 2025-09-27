@@ -41,27 +41,23 @@ import {
   useInvitationToken,
   getInvitationHistory,
 } from "../controllers/workspace-invitation"
-import {
-  postWorkspace,
-  getWorkspaces,
-  getWorkspaceById,
-  patchWorkspace,
-  deleteWorkspace,
-  getWorkspaceUsers,
-} from "../controllers/workspace"
-import {
-  postTeam,
-  getTeams,
-  getTeamById,
-  patchTeam,
-  deleteTeam,
-  postTeamMember,
-  deleteTeamMember,
-  postTeamTeacher,
-  deleteTeamTeacher,
-  postTeamClass,
-  deleteTeamClass,
-} from "../controllers/team"
+import { postWorkspace } from "../controllers/postWorkspace"
+import { getWorkspaces } from "../controllers/getWorkspaces"
+import { getWorkspaceById } from "../controllers/getWorkspaceById"
+import { patchWorkspace } from "../controllers/patchWorkspace"
+import { deleteWorkspace } from "../controllers/deleteWorkspace"
+import { getWorkspaceUsers } from "../controllers/getWorkspaceUsers"
+import { postTeam } from "../controllers/postTeam"
+import { getTeams } from "../controllers/getTeams"
+import { getTeamById } from "../controllers/getTeamById"
+import { patchTeam } from "../controllers/patchTeam"
+import { deleteTeam } from "../controllers/deleteTeam"
+import { postTeamMember } from "../controllers/postTeamMember"
+import { deleteTeamMember } from "../controllers/deleteTeamMember"
+import { postTeamTeacher } from "../controllers/postTeamTeacher"
+import { deleteTeamTeacher } from "../controllers/deleteTeamTeacher"
+import { postTeamClass } from "../controllers/postTeamClass"
+import { deleteTeamClass } from "../controllers/deleteTeamClass"
 
 const router = express.Router()
 
@@ -130,7 +126,7 @@ router.post("/invitation/use", authenticateUser, useInvitationToken)
 router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
 
 // TEAMS
-router.post("/teams", authenticateUser, postTeam)
+router.post("/workspace/:workspaceId/teams", authenticateUser, postTeam)
 router.get("/teams", authenticateUser, getTeams)
 router.get("/teams/:teamId", authenticateUser, getTeamById)
 router.patch("/teams/:teamId", authenticateUser, patchTeam)

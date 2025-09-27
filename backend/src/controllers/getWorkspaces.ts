@@ -1,26 +1,19 @@
 import { Request, Response } from "express"
-import { ClassModel } from "../models/Class"
+import { WorkspaceModel } from "../models/workspace"
 
 /**
  * @swagger
- * /classes:
+ * /workspaces:
  *   get:
- *     summary: Retrieve all classes
- *     description: Retrieve a list of classes with their titles. Optionally filter by workspace.
+ *     summary: Retrieve all workspaces
+ *     description: Retrieve a list of workspaces with their names.
  *     tags:
- *       - Classes
+ *       - Workspaces
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: workspaceId
- *         required: false
- *         schema:
- *           type: string
- *         description: Filter classes by workspace ID
  *     responses:
  *       200:
- *         description: A list of classes
+ *         description: A list of workspaces
  *         content:
  *           application/json:
  *             schema:
@@ -35,12 +28,12 @@ import { ClassModel } from "../models/Class"
  *                     properties:
  *                       _id:
  *                         type: string
- *                       classTitle:
+ *                       name:
  *                         type: string
  *                 message:
  *                   type: string
  *       500:
- *         description: Server error fetching classes
+ *         description: Server error fetching workspaces
  *         content:
  *           application/json:
  *             schema:
@@ -53,27 +46,20 @@ import { ClassModel } from "../models/Class"
  *                 message:
  *                   type: string
  */
-export const getClasses = async (req: Request, res: Response): Promise<Response> => {
+export const getWorkspaces = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { workspaceId } = req.query
-
-    let query = {}
-    if (workspaceId) {
-      query = { workspaceId }
-    }
-
-    const result = await ClassModel.find(query).select("classTitle workspaceId")
+    const result = await WorkspaceModel.find().select("name")
 
     return res.status(200).json({
       success: true,
       response: result,
-      message: "Classes fetched successfully",
+      message: "Workspaces fetched successfully",
     })
   } catch (error) {
     return res.status(500).json({
       success: false,
       response: null,
-      message: "Failed to fetch classes.",
+      message: "Failed to fetch workspaces.",
     })
   }
 }

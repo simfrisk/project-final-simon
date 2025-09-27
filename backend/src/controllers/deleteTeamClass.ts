@@ -1,34 +1,32 @@
 import { Request, Response } from "express"
+import { TeamModel } from "../models/Team"
 import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
- * /classes:
- *   post:
- *     summary: Create a new class
+ * /teams/{teamId}/classes/{classId}:
+ *   delete:
+ *     summary: Remove a team's access to a class
  *     tags:
- *       - Classes
+ *       - Teams
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - classTitle
- *               - workspaceId
- *             properties:
- *               classTitle:
- *                 type: string
- *                 example: "Math 101"
- *               workspaceId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the team
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the class to remove access from
  *     responses:
- *       201:
- *         description: Class created successfully
+ *       200:
+ *         description: Class access removed successfully
  *         content:
  *           application/json:
  *             schema:
@@ -38,17 +36,13 @@ import { ClassModel } from "../models/Class"
  *                   type: boolean
  *                   example: true
  *                 response:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     classTitle:
- *                       type: string
+ *                   type: null
+ *                   example: null
  *                 message:
  *                   type: string
- *                   example: "Class created successfully"
- *       400:
- *         description: Bad Request - missing classTitle
+ *                   example: "Class access removed successfully"
+ *       404:
+ *         description: Team or Class not found
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +55,7 @@ import { ClassModel } from "../models/Class"
  *                   nullable: true
  *                 message:
  *                   type: string
- *                   example: "Class title is required"
+ *                   example: "Team or Class not found"
  *       500:
  *         description: Server error
  *         content:
@@ -78,36 +72,33 @@ import { ClassModel } from "../models/Class"
  *                   type: string
  *                   example: "Unknown server error"
  */
-export const postClass = async (req: Request, res: Response): Promise<Response> => {
+export const deleteTeamClass = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { teamId, classId } = req.params
 
-    if (!classTitle) {
-      return res.status(400).json({
+    const team = await TeamModel.findById(teamId)
+    const classDoc = await ClassModel.findById(classId)
+
+    if (!team || !classDoc) {
+      return res.status(404).json({
         success: false,
         response: null,
-        message: "Class title is required",
+        message: "Team or Class not found",
       })
     }
 
-    if (!workspaceId) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Workspace ID is required",
-      })
-    }
+    // Remove class from team's accessTo
+    await TeamModel.findByIdAndUpdate(teamId, {
+      $pull: { accessTo: classId },
+    })
 
-    const newClass = new ClassModel({ classTitle, workspaceId })
-    const savedNewClass = await newClass.save()
-
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      response: savedNewClass,
-      message: "Class created successfully",
+      response: null,
+      message: "Class access removed successfully",
     })
   } catch (error) {
-    console.error("Error in postClass:", error)
+    console.error("Error in deleteTeamClass:", error)
 
     if (error instanceof Error) {
       return res.status(500).json({
