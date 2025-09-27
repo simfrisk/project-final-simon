@@ -77,7 +77,7 @@ import { WorkspaceModel } from "../models/workspace"
 export const postWorkspace = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { name } = req.body
-    const createdBy = req.user._id
+    const createdBy = req.user?._id
 
     if (!name) {
       return res.status(400).json({
