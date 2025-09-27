@@ -18,6 +18,7 @@ import { ProjectsList } from "./sections/04-video-library-page/components/Projec
 import "./utils/moment-config"
 import { UserPage } from "./sections/07-user-page/UserPage"
 import { CreateTeam } from "./sections/08-create-team-page/CreateTeam"
+import { CreateWorkspacePage } from "./sections/09-create-workspace/CreateWorkspacePage"
 
 //#endregion ----- IMPORTS -----
 
@@ -42,6 +43,10 @@ export const App = () => {
               <Route
                 path="/signUp"
                 element={<SignUpPage />}
+              />
+              <Route
+                path="/create-workspace"
+                element={<CreateWorkspacePage />}
               />
 
               {/* Protected Routes - All Authenticated Users */}

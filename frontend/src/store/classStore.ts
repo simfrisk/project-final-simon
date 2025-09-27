@@ -9,6 +9,7 @@ import { baseUrl } from "../config/api"
 export interface ClassType {
   _id: string
   classTitle: string
+  workspaceId?: string
 }
 
 interface ClassesStore {
@@ -18,30 +19,37 @@ interface ClassesStore {
   error: string | null
   message: string | null
 
-  fetchClasses: () => Promise<void>
+  fetchClasses: (workspaceId?: string) => Promise<void>
   fetchClassById: (classId: string) => Promise<void>
-  addClass: (classTitle: string) => Promise<void>
+  addClass: (classTitle: string, workspaceId?: string) => Promise<void>
   deleteClass: (classId: string) => Promise<void>
-  updateClass: (classId: string, updates: { newTitle?: string }) => Promise<void>
+  updateClass: (
+    classId: string,
+    updates: { newTitle?: string; newWorkspaceId?: string }
+  ) => Promise<void>
+  getClassesByWorkspace: (workspaceId: string) => ClassType[]
 }
 
 //#endregion
 
 //#region ----- ZUSTAND CLASS STORE -----
-export const useClassStore = create<ClassesStore>((set) => ({
+export const useClassStore = create<ClassesStore>((set, get) => ({
   classes: [],
   class: null,
   loading: false,
   error: null,
   message: null,
 
-  fetchClasses: async () => {
+  fetchClasses: async (workspaceId?: string) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const response = await fetch(`${baseUrl}/classes`, {
+      const url = workspaceId
+        ? `${baseUrl}/classes?workspaceId=${workspaceId}`
+        : `${baseUrl}/classes`
+      const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -96,19 +104,20 @@ export const useClassStore = create<ClassesStore>((set) => ({
   //#endregion
 
   //#region ----- ADD CLASS -----
-  addClass: async (classTitle: string) => {
+  addClass: async (classTitle: string, workspaceId?: string) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
+      const body = workspaceId ? { classTitle, workspaceId } : { classTitle }
       const res = await fetch(`${baseUrl}/classes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
-        body: JSON.stringify({ classTitle }),
+        body: JSON.stringify(body),
       })
 
       const json = await res.json()
@@ -161,7 +170,7 @@ export const useClassStore = create<ClassesStore>((set) => ({
 
   //#region ----- UPDATE CLASS -----
 
-  updateClass: async (classId: string, updates: { newTitle?: string }) => {
+  updateClass: async (classId: string, updates: { newTitle?: string; newWorkspaceId?: string }) => {
     set({ loading: true, error: null, message: null })
 
     try {
@@ -208,6 +217,15 @@ export const useClassStore = create<ClassesStore>((set) => ({
         message: null,
       })
     }
+  },
+
+  //#endregion
+
+  //#region ----- GET CLASSES BY WORKSPACE -----
+
+  getClassesByWorkspace: (workspaceId: string) => {
+    const { classes } = get()
+    return classes.filter((cls) => cls.workspaceId === workspaceId)
   },
 
   //#endregion

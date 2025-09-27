@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { WorkspaceModel } from "../models/workspace"
+import { UserModel } from "../models/user"
 
 /**
  * @swagger
@@ -92,6 +93,13 @@ export const postWorkspace = async (req: Request, res: Response): Promise<Respon
       createdBy,
     })
     const savedNewWorkspace = await newWorkspace.save()
+
+    // Automatically add the creator to the workspace
+    await UserModel.findByIdAndUpdate(
+      createdBy,
+      { $addToSet: { workspaces: savedNewWorkspace._id } },
+      { new: true }
+    )
 
     return res.status(201).json({
       success: true,

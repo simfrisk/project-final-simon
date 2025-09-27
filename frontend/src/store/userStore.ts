@@ -12,6 +12,7 @@ interface AuthUser {
   accessToken: string
   role: string
   profileImage: string
+  workspaceId?: string
 }
 
 interface UserStore {
@@ -31,9 +32,11 @@ interface UserStore {
       newRole?: string
       newPassword?: string
       newProfileImage?: string
+      newWorkspaceId?: string
     }
   ) => Promise<{ success: boolean; message: string }>
   sortUsersByRole: () => void
+  setUserWorkspace: (workspaceId: string) => void
 }
 //#endregion
 
@@ -315,6 +318,19 @@ export const useUserStore = create<UserStore>((set, get) => ({
       )
     })
     set({ users: sortedUsers })
+  },
+
+  //#endregion
+
+  //#region ----- SET USER WORKSPACE -----
+
+  setUserWorkspace: (workspaceId: string) => {
+    const currentUser = get().user
+    if (currentUser) {
+      const updatedUser = { ...currentUser, workspaceId }
+      set({ user: updatedUser })
+      localStorage.setItem("workspaceId", workspaceId)
+    }
   },
 
   //#endregion

@@ -1,9 +1,7 @@
 import type { NavigateFunction } from "react-router"
 import type { FormEvent } from "react"
 
-type CreateUserFunction = (
-  formData: FormData
-) => Promise<{ success: boolean; message?: string }>
+type CreateUserFunction = (formData: FormData) => Promise<{ success: boolean; message?: string }>
 
 export const handleSignUpSubmit = async (
   e: FormEvent<HTMLFormElement>,
@@ -17,7 +15,6 @@ export const handleSignUpSubmit = async (
     fullName: HTMLInputElement
     email: HTMLInputElement
     password: HTMLInputElement
-    role: RadioNodeList
     profileImage: HTMLInputElement
   }
 
@@ -30,7 +27,7 @@ export const handleSignUpSubmit = async (
   formData.append("name", form.fullName.value)
   formData.append("email", form.email.value)
   formData.append("password", form.password.value)
-  formData.append("role", form.role.value)
+  formData.append("role", "teacher") // Automatically set role as teacher
   if (form.profileImage.files?.[0]) {
     formData.append("image", form.profileImage.files[0])
   }
@@ -39,7 +36,7 @@ export const handleSignUpSubmit = async (
 
   if (result.success) {
     setError(null)
-    navigate("/library")
+    navigate("/create-workspace")
   } else {
     setError(result.message || "Sign up failed")
   }

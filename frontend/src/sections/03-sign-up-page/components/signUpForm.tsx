@@ -85,7 +85,7 @@ export const SignUpForm: React.FC = () => {
           />
         </FormGroup>
 
-        <FormGroup>
+        {/* <FormGroup>
           <label htmlFor="role-teacher">Role</label>
           <RoleGroup>
             <RoleLabel htmlFor="role-teacher">
@@ -112,7 +112,7 @@ export const SignUpForm: React.FC = () => {
               Student
             </RoleLabel>
           </RoleGroup>
-        </FormGroup>
+        </FormGroup> */}
 
         {error && <ErrorMessage id="form-error">{error}</ErrorMessage>}
         {preview && (
