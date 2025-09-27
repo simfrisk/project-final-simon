@@ -4,7 +4,7 @@ import { UserModel } from "../models/user"
 
 /**
  * @swagger
- * /teams/{teamId}/members:
+ * /teams/{teamId}/members/{userId}:
  *   post:
  *     summary: Add a member to a team
  *     tags:
@@ -18,18 +18,12 @@ import { UserModel } from "../models/user"
  *         schema:
  *           type: string
  *         description: The ID of the team
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *             properties:
- *               userId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to add as a member
  *     responses:
  *       200:
  *         description: Member added successfully
@@ -94,16 +88,7 @@ import { UserModel } from "../models/user"
  */
 export const postTeamMember = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { teamId } = req.params
-    const { userId } = req.body
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "User ID is required",
-      })
-    }
+    const { teamId, userId } = req.params
 
     const team = await TeamModel.findById(teamId)
     const user = await UserModel.findById(userId)

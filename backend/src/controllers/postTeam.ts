@@ -31,6 +31,24 @@ import { UserModel } from "../models/user"
  *               teamName:
  *                 type: string
  *                 example: "Math Team A"
+ *               members:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["60f7b3b3b3b3b3b3b3b3b3b3", "60f7b3b3b3b3b3b3b3b3b3b4"]
+ *                 description: Array of user IDs to add as team members
+ *               teachers:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["60f7b3b3b3b3b3b3b3b3b3b5"]
+ *                 description: Array of teacher IDs to assign to the team
+ *               classes:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["60f7b3b3b3b3b3b3b3b3b3b6", "60f7b3b3b3b3b3b3b3b3b3b7"]
+ *                 description: Array of class IDs to give the team access to
  *     responses:
  *       201:
  *         description: Team created successfully
@@ -85,7 +103,7 @@ import { UserModel } from "../models/user"
  */
 export const postTeam = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { teamName } = req.body
+    const { teamName, members, teachers, classes } = req.body
     const { workspaceId } = req.params
     const createdBy = req.user?._id
 
@@ -111,6 +129,8 @@ export const postTeam = async (req: Request, res: Response): Promise<Response> =
       teamName,
       createdBy,
       workspaceId,
+      assignedTeachers: teachers || [],
+      accessTo: classes || [],
     })
     const savedNewTeam = await newTeam.save()
 
@@ -118,6 +138,22 @@ export const postTeam = async (req: Request, res: Response): Promise<Response> =
     await WorkspaceModel.findByIdAndUpdate(workspaceId, {
       $addToSet: { teams: savedNewTeam._id },
     })
+
+    // Add members to team (if provided)
+    if (members && members.length > 0) {
+      await UserModel.updateMany(
+        { _id: { $in: members } },
+        { $addToSet: { teams: savedNewTeam._id } }
+      )
+    }
+
+    // Add team to assigned teachers (if provided)
+    if (teachers && teachers.length > 0) {
+      await UserModel.updateMany(
+        { _id: { $in: teachers } },
+        { $addToSet: { assignedTeams: savedNewTeam._id } }
+      )
+    }
 
     return res.status(201).json({
       success: true,

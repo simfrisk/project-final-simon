@@ -4,7 +4,7 @@ import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
- * /teams/{teamId}/classes:
+ * /teams/{teamId}/classes/{classId}:
  *   post:
  *     summary: Give a team access to a class
  *     tags:
@@ -18,18 +18,12 @@ import { ClassModel } from "../models/Class"
  *         schema:
  *           type: string
  *         description: The ID of the team
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - classId
- *             properties:
- *               classId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
+ *       - in: path
+ *         name: classId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the class to give access to
  *     responses:
  *       200:
  *         description: Class access granted successfully
@@ -94,16 +88,7 @@ import { ClassModel } from "../models/Class"
  */
 export const postTeamClass = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { teamId } = req.params
-    const { classId } = req.body
-
-    if (!classId) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Class ID is required",
-      })
-    }
+    const { teamId, classId } = req.params
 
     const team = await TeamModel.findById(teamId)
     const classDoc = await ClassModel.findById(classId)
