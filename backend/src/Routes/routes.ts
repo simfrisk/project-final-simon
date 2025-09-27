@@ -73,9 +73,9 @@ router.delete("/workspace/:workspaceId", authenticateUser, deleteWorkspace)
 router.get("/workspace/:workspaceId/users", authenticateUser, getWorkspaceUsers)
 
 // CLASSES
-router.get("/classes", authenticateUser, getClasses)
+router.get("/workspace/:workspaceId/classes", authenticateUser, getClasses)
 router.get("/classes/:classId", authenticateUser, getClassById)
-router.post("/classes", postClass)
+router.post("/workspace/:workspaceId/classes", postClass)
 router.patch("/classes/:classId", authenticateUser, patchClass)
 router.delete("/classes/:classId", authenticateUser, deleteClass)
 
@@ -126,9 +126,9 @@ router.post("/invitation/use", authenticateUser, useInvitationToken)
 router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
 
 // TEAMS
-router.post("/workspace/:workspaceId/teams", authenticateUser, postTeam)
-router.get("/teams", authenticateUser, getTeams)
+router.get("/workspace/:workspaceId/teams", authenticateUser, getTeams)
 router.get("/teams/:teamId", authenticateUser, getTeamById)
+router.post("/workspace/:workspaceId/teams", authenticateUser, postTeam)
 router.patch("/teams/:teamId", authenticateUser, patchTeam)
 router.delete("/teams/:teamId", authenticateUser, deleteTeam)
 router.post("/teams/:teamId/members", authenticateUser, postTeamMember)

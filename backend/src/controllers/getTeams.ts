@@ -4,21 +4,21 @@ import { WorkspaceModel } from "../models/workspace"
 
 /**
  * @swagger
- * /teams:
+ * /workspace/{workspaceId}/teams:
  *   get:
- *     summary: Retrieve all teams
- *     description: Retrieve a list of teams with their names. Optionally filter by workspace.
+ *     summary: Retrieve all teams in a workspace
+ *     description: Retrieve a list of teams with their names for a specific workspace.
  *     tags:
  *       - Teams
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: workspaceId
- *         required: false
+ *         required: true
  *         schema:
  *           type: string
- *         description: Filter teams by workspace ID
+ *         description: The ID of the workspace to get teams from
  *     responses:
  *       200:
  *         description: A list of teams
@@ -56,37 +56,26 @@ import { WorkspaceModel } from "../models/workspace"
  */
 export const getTeams = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { workspaceId } = req.query
+    const { workspaceId } = req.params
 
-    if (workspaceId) {
-      // Get teams from specific workspace
-      const workspace = await WorkspaceModel.findById(workspaceId)
-        .populate("teams", "teamName")
-        .select("teams")
+    // Get teams from specific workspace
+    const workspace = await WorkspaceModel.findById(workspaceId)
+      .populate("teams", "teamName")
+      .select("teams")
 
-      if (!workspace) {
-        return res.status(404).json({
-          success: false,
-          response: null,
-          message: "Workspace not found",
-        })
-      }
-
-      return res.status(200).json({
-        success: true,
-        response: workspace.teams,
-        message: "Teams fetched successfully",
-      })
-    } else {
-      // Get all teams
-      const result = await TeamModel.find().select("teamName")
-
-      return res.status(200).json({
-        success: true,
-        response: result,
-        message: "Teams fetched successfully",
+    if (!workspace) {
+      return res.status(404).json({
+        success: false,
+        response: null,
+        message: "Workspace not found",
       })
     }
+
+    return res.status(200).json({
+      success: true,
+      response: workspace.teams,
+      message: "Teams fetched successfully",
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,

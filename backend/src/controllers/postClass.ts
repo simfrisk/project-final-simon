@@ -3,13 +3,20 @@ import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
- * /classes:
+ * /workspace/{workspaceId}/classes:
  *   post:
- *     summary: Create a new class
+ *     summary: Create a new class within a workspace
  *     tags:
  *       - Classes
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workspace to add the class to
  *     requestBody:
  *       required: true
  *       content:
@@ -18,14 +25,10 @@ import { ClassModel } from "../models/Class"
  *             type: object
  *             required:
  *               - classTitle
- *               - workspaceId
  *             properties:
  *               classTitle:
  *                 type: string
  *                 example: "Math 101"
- *               workspaceId:
- *                 type: string
- *                 example: "60f7b3b3b3b3b3b3b3b3b3b3"
  *     responses:
  *       201:
  *         description: Class created successfully
@@ -80,21 +83,14 @@ import { ClassModel } from "../models/Class"
  */
 export const postClass = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { classTitle, workspaceId } = req.body
+    const { classTitle } = req.body
+    const { workspaceId } = req.params
 
     if (!classTitle) {
       return res.status(400).json({
         success: false,
         response: null,
         message: "Class title is required",
-      })
-    }
-
-    if (!workspaceId) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Workspace ID is required",
       })
     }
 

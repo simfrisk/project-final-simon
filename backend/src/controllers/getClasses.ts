@@ -3,21 +3,21 @@ import { ClassModel } from "../models/Class"
 
 /**
  * @swagger
- * /classes:
+ * /workspace/{workspaceId}/classes:
  *   get:
- *     summary: Retrieve all classes
- *     description: Retrieve a list of classes with their titles. Optionally filter by workspace.
+ *     summary: Retrieve all classes in a workspace
+ *     description: Retrieve a list of classes with their titles for a specific workspace.
  *     tags:
  *       - Classes
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: workspaceId
- *         required: false
+ *         required: true
  *         schema:
  *           type: string
- *         description: Filter classes by workspace ID
+ *         description: The ID of the workspace to get classes from
  *     responses:
  *       200:
  *         description: A list of classes
@@ -55,14 +55,9 @@ import { ClassModel } from "../models/Class"
  */
 export const getClasses = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { workspaceId } = req.query
+    const { workspaceId } = req.params
 
-    let query = {}
-    if (workspaceId) {
-      query = { workspaceId }
-    }
-
-    const result = await ClassModel.find(query).select("classTitle workspaceId")
+    const result = await ClassModel.find({ workspaceId }).select("classTitle workspaceId")
 
     return res.status(200).json({
       success: true,
