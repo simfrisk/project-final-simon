@@ -4,17 +4,23 @@ import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useClassStore } from "../../../store/classStore"
 import { useEditingStore } from "../../../store/editStore"
+import { useWorkspaceStore } from "../../../store/workspaceStore"
 //#endregion
 
 //#region ----- COMPONENT LOGIC -----
 export const CreateClass = () => {
   const addClass = useClassStore((state) => state.addClass)
+  const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
   const [classTitle, setClassTitle] = useState("")
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
 
   const handleCreateProject = async () => {
     if (!classTitle.trim()) return
-    await addClass(classTitle)
+    if (!currentWorkspaceId) {
+      console.error("No workspace selected")
+      return
+    }
+    await addClass(classTitle, currentWorkspaceId)
     setClassTitle("")
     setIsEditingClass(false)
   }
