@@ -17,6 +17,7 @@ export interface WorkspaceType {
 interface WorkspaceStore {
   workspaces: WorkspaceType[]
   workspace: WorkspaceType | null
+  currentWorkspaceId: string | null
   loading: boolean
   error: string | null
   message: string | null
@@ -24,6 +25,8 @@ interface WorkspaceStore {
   fetchWorkspaces: () => Promise<void>
   fetchUserWorkspaces: () => Promise<void>
   fetchWorkspaceById: (workspaceId: string) => Promise<void>
+  setCurrentWorkspace: (workspaceId: string) => void
+  loadCurrentWorkspace: () => void
   createWorkspace: (
     workspaceName: string
   ) => Promise<{ success: boolean; message?: string; workspaceId?: string }>
@@ -33,10 +36,15 @@ interface WorkspaceStore {
 
 //#endregion
 
+//#region ----- GET CURRENT WORKSPACE FROM LOCAL STORAGE -----
+const savedCurrentWorkspaceId = localStorage.getItem("currentWorkspaceId")
+//#endregion
+
 //#region ----- ZUSTAND WORKSPACE STORE -----
 export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
   workspaces: [],
   workspace: null,
+  currentWorkspaceId: savedCurrentWorkspaceId,
   loading: false,
   error: null,
   message: null,
@@ -256,6 +264,27 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
       }
     } catch (err: unknown) {
       set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
+    }
+  },
+  //#endregion
+
+  //#region ----- SET CURRENT WORKSPACE -----
+  setCurrentWorkspace: (workspaceId: string) => {
+    localStorage.setItem("currentWorkspaceId", workspaceId)
+    set({ currentWorkspaceId: workspaceId })
+
+    // Also update the user store for backward compatibility
+    import("./userStore").then(({ useUserStore }) => {
+      useUserStore.getState().setUserWorkspace(workspaceId)
+    })
+  },
+  //#endregion
+
+  //#region ----- LOAD CURRENT WORKSPACE -----
+  loadCurrentWorkspace: () => {
+    const storedId = localStorage.getItem("currentWorkspaceId")
+    if (storedId) {
+      set({ currentWorkspaceId: storedId })
     }
   },
   //#endregion

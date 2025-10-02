@@ -7,6 +7,7 @@ import { useProjectStore } from "../../../store/projectStore"
 import { useUserStore } from "../../../store/userStore"
 import { useEditingStore } from "../../../store/editStore"
 import { useClassStore } from "../../../store/classStore"
+import { useWorkspaceStore } from "../../../store/workspaceStore"
 
 import { Project } from "./Project"
 import { CreateProject } from "./CreateProject"
@@ -46,6 +47,9 @@ export const ProjectsList = () => {
   const deleteClass = useClassStore((state) => state.deleteClass)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const classes = useClassStore((state) => state.classes)
+
+  const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
+  const loadCurrentWorkspace = useWorkspaceStore((state) => state.loadCurrentWorkspace)
   //#endregion
 
   //#region ----- STATE VARIABLES -----
@@ -55,8 +59,14 @@ export const ProjectsList = () => {
 
   //#region ----- EFFECTS -----
   useEffect(() => {
-    fetchClasses()
-  }, [fetchClasses])
+    loadCurrentWorkspace()
+  }, [loadCurrentWorkspace])
+
+  useEffect(() => {
+    if (currentWorkspaceId) {
+      fetchClasses(currentWorkspaceId)
+    }
+  }, [fetchClasses, currentWorkspaceId])
 
   useEffect(() => {
     if (classId) {

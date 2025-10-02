@@ -46,9 +46,7 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const url = workspaceId
-        ? `${baseUrl}/classes?workspaceId=${workspaceId}`
-        : `${baseUrl}/classes`
+      const url = workspaceId ? `${baseUrl}/workspace/${workspaceId}/classes` : `${baseUrl}/classes`
       const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",

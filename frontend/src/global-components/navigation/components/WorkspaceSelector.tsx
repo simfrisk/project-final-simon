@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { useWorkspaceStore } from "../../../store/workspaceStore"
-import { useUserStore } from "../../../store/userStore"
 import { spacing } from "../../../themes/spacing"
 import { MediaQueries } from "../../../themes/mediaQueries"
 
@@ -12,8 +11,8 @@ interface WorkspaceSelectorProps {
 
 export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false)
-  const { workspaces, fetchUserWorkspaces } = useWorkspaceStore()
-  const { user, setUserWorkspace } = useUserStore()
+  const { workspaces, currentWorkspaceId, fetchUserWorkspaces, setCurrentWorkspace } =
+    useWorkspaceStore()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({ onClose })
   }, [onClose])
 
   const handleWorkspaceSelect = (workspaceId: string) => {
-    setUserWorkspace(workspaceId)
+    setCurrentWorkspace(workspaceId)
     onClose()
   }
 
@@ -71,11 +70,11 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({ onClose })
                 {workspaces.map((workspace) => (
                   <WorkspaceItem
                     key={workspace._id}
-                    $isActive={workspace._id === user?.workspaceId}
+                    $isActive={workspace._id === currentWorkspaceId}
                     onClick={() => handleWorkspaceSelect(workspace._id)}
                   >
                     <WorkspaceName>{workspace.name}</WorkspaceName>
-                    {workspace._id === user?.workspaceId && <CurrentIndicator>✓</CurrentIndicator>}
+                    {workspace._id === currentWorkspaceId && <CurrentIndicator>✓</CurrentIndicator>}
                   </WorkspaceItem>
                 ))}
               </WorkspaceList>
