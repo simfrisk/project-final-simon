@@ -1,7 +1,9 @@
+import { useState } from "react"
 import styled from "styled-components"
 import { Link, useLocation } from "react-router-dom"
 import { HamburgerMenu } from "./Burger"
 import { MediaQueries } from "../../../themes/mediaQueries"
+import { WorkspaceSelector } from "./WorkspaceSelector"
 
 interface User {
   role?: string
@@ -27,18 +29,29 @@ export const MobileNavigation = ({
   handleLogout,
 }: MobileProps) => {
   const location = useLocation()
+  const [showWorkspaceSelector, setShowWorkspaceSelector] = useState(false)
 
   return (
     <>
       <MobileMenuToggle>
         {isLoggedIn && user?.role === "teacher" && (
-          <UserProfile to="/admin/users">
-            <img
-              src={user?.profileImage}
-              alt={`${user?.name || "User"} profile picture`}
-              aria-hidden="true"
-            />
-          </UserProfile>
+          <UserProfileContainer>
+            <UserProfile
+              onClick={(e) => {
+                e.preventDefault()
+                setShowWorkspaceSelector(!showWorkspaceSelector)
+              }}
+            >
+              <img
+                src={user?.profileImage}
+                alt={`${user?.name || "User"} profile picture`}
+                aria-hidden="true"
+              />
+            </UserProfile>
+            {showWorkspaceSelector && (
+              <WorkspaceSelector onClose={() => setShowWorkspaceSelector(false)} />
+            )}
+          </UserProfileContainer>
         )}
         <HamburgerMenu
           isOpen={isMenuOpen}
@@ -240,16 +253,31 @@ const LogoutButton = styled.button`
   }
 `
 
-const UserProfile = styled(Link)`
+const UserProfileContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`
+
+const UserProfile = styled.button`
   flex-shrink: 0;
   width: 30px;
   height: 30px;
   border-radius: 50%;
   overflow: hidden;
   transition: transform 0.3s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
 
   &:hover {
     transform: scale(0.92);
+  }
+
+  &:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   img {

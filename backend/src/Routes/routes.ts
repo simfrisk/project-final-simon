@@ -47,6 +47,7 @@ import { getWorkspaceById } from "../controllers/getWorkspaceById"
 import { patchWorkspace } from "../controllers/patchWorkspace"
 import { deleteWorkspace } from "../controllers/deleteWorkspace"
 import { getWorkspaceUsers } from "../controllers/getWorkspaceUsers"
+import { getUserWorkspaces } from "../controllers/getUserWorkspaces"
 import { postTeam } from "../controllers/postTeam"
 import { getTeams } from "../controllers/getTeams"
 import { getTeamById } from "../controllers/getTeamById"
@@ -71,6 +72,7 @@ router.get("/workspace/:workspaceId", authenticateUser, getWorkspaceById)
 router.patch("/workspace/:workspaceId", authenticateUser, patchWorkspace)
 router.delete("/workspace/:workspaceId", authenticateUser, deleteWorkspace)
 router.get("/workspace/:workspaceId/users", authenticateUser, getWorkspaceUsers)
+router.get("/user/workspaces", authenticateUser, getUserWorkspaces)
 
 // CLASSES
 router.get("/workspace/:workspaceId/classes", authenticateUser, getClasses)

@@ -22,6 +22,7 @@ interface WorkspaceStore {
   message: string | null
 
   fetchWorkspaces: () => Promise<void>
+  fetchUserWorkspaces: () => Promise<void>
   fetchWorkspaceById: (workspaceId: string) => Promise<void>
   createWorkspace: (
     workspaceName: string
@@ -63,6 +64,36 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
         })
       } else {
         throw new Error(json.message || "Failed to fetch workspaces")
+      }
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
+    }
+  },
+  //#endregion
+
+  //#region ----- FETCH USER WORKSPACES -----
+  fetchUserWorkspaces: async () => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
+
+      const response = await fetch(`${baseUrl}/user/workspaces`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+
+      const json = await response.json()
+      if (response.ok && json.success) {
+        set({
+          workspaces: json.response,
+          loading: false,
+          message: json.message || null,
+        })
+      } else {
+        throw new Error(json.message || "Failed to fetch user workspaces")
       }
     } catch (err: unknown) {
       set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })

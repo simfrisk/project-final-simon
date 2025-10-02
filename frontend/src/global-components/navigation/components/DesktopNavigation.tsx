@@ -1,6 +1,8 @@
+import { useState } from "react"
 import styled from "styled-components"
 import { Link, useLocation } from "react-router-dom"
 import { MediaQueries } from "../../../themes/mediaQueries"
+import { WorkspaceSelector } from "./WorkspaceSelector"
 
 interface User {
   role?: string
@@ -22,6 +24,7 @@ export const DesktopNavigation = ({
   handleLogout,
 }: DesktopProps) => {
   const location = useLocation()
+  const [showWorkspaceSelector, setShowWorkspaceSelector] = useState(false)
 
   return (
     <DesktopNav
@@ -66,13 +69,23 @@ export const DesktopNavigation = ({
               </NavLinkItem>
             </NavMenuItem>
 
-            <UserProfile to="/admin/users">
-              <img
-                src={user?.profileImage}
-                alt={`${user?.name || "User"} profile picture`}
-                aria-hidden="true"
-              />
-            </UserProfile>
+            <UserProfileContainer>
+              <UserProfile
+                onClick={(e) => {
+                  e.preventDefault()
+                  setShowWorkspaceSelector(!showWorkspaceSelector)
+                }}
+              >
+                <img
+                  src={user?.profileImage}
+                  alt={`${user?.name || "User"} profile picture`}
+                  aria-hidden="true"
+                />
+              </UserProfile>
+              {showWorkspaceSelector && (
+                <WorkspaceSelector onClose={() => setShowWorkspaceSelector(false)} />
+              )}
+            </UserProfileContainer>
 
             <NavMenuItem role="none">
               <LogoutButton
@@ -168,16 +181,31 @@ const LogoutButton = styled.button`
   }
 `
 
-const UserProfile = styled(Link)`
+const UserProfileContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`
+
+const UserProfile = styled.button`
   flex-shrink: 0;
   width: 30px;
   height: 30px;
   border-radius: 50%;
   overflow: hidden;
   transition: transform 0.3s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
 
   &:hover {
     transform: scale(0.92);
+  }
+
+  &:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   img {
