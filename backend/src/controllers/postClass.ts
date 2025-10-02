@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { ClassModel } from "../models/Class"
+import { WorkspaceModel } from "../models/workspace"
 
 /**
  * @swagger
@@ -96,6 +97,11 @@ export const postClass = async (req: Request, res: Response): Promise<Response> 
 
     const newClass = new ClassModel({ classTitle, workspaceId })
     const savedNewClass = await newClass.save()
+
+    // Update workspace.classes array
+    await WorkspaceModel.findByIdAndUpdate(workspaceId, {
+      $push: { classes: savedNewClass._id },
+    })
 
     return res.status(201).json({
       success: true,

@@ -95,10 +95,19 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
 
       const json = await response.json()
       if (response.ok && json.success) {
-        set({
-          workspaces: json.response,
-          loading: false,
-          message: json.message || null,
+        set((state) => {
+          const newState = {
+            workspaces: json.response,
+            loading: false,
+            message: json.message || null,
+          }
+
+          // Auto-select first workspace if none is currently selected
+          if (state.currentWorkspaceId === null && json.response.length > 0) {
+            return { ...newState, currentWorkspaceId: json.response[0]._id }
+          }
+
+          return newState
         })
       } else {
         throw new Error(json.message || "Failed to fetch user workspaces")

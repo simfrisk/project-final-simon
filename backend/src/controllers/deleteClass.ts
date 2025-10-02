@@ -3,6 +3,7 @@ import { CommentModel } from "../models/Comment"
 import { Reply } from "../models/Reply"
 import { Project } from "../models/Projects"
 import { ClassModel } from "../models/Class"
+import { WorkspaceModel } from "../models/workspace"
 
 /**
  * @swagger
@@ -97,7 +98,12 @@ export const deleteClass = async (req: Request, res: Response) => {
       await Project.deleteMany({ _id: { $in: foundClass.projects } })
     }
 
-    // Step 5: Delete the class
+    // Step 5: Remove class from workspace.classes array
+    await WorkspaceModel.findByIdAndUpdate(foundClass.workspaceId, {
+      $pull: { classes: classId },
+    })
+
+    // Step 6: Delete the class
     await foundClass.deleteOne()
 
     return res.status(200).json({

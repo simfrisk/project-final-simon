@@ -48,10 +48,14 @@ import { WorkspaceModel } from "../models/workspace"
  *                       type: array
  *                       items:
  *                         type: object
+ *                     classes:
+ *                       type: array
+ *                       items:
+ *                         type: object
  *                         properties:
  *                           _id:
  *                             type: string
- *                           teamName:
+ *                           classTitle:
  *                             type: string
  *                     createdAt:
  *                       type: string
@@ -94,6 +98,7 @@ export const getWorkspaceById = async (req: Request, res: Response): Promise<Res
     const result = await WorkspaceModel.findById(workspaceId)
       .populate("createdBy", "name email")
       .populate("teams", "teamName")
+      .populate("classes", "classTitle")
 
     if (!result) {
       return res.status(404).json({

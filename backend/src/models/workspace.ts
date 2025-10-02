@@ -6,6 +6,7 @@ export interface WorkspaceType extends Document {
   createdBy: Types.ObjectId
   createdAt: Date
   teams: Types.ObjectId[]
+  classes: Types.ObjectId[]
   schemaVersion: string
 }
 
@@ -17,6 +18,7 @@ const WorkspaceSchema = new Schema<WorkspaceType>({
     maxlength: 60,
     trim: true,
   },
+  classes: [{ type: Schema.Types.ObjectId, ref: "Class", default: [] }],
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",

@@ -15,6 +15,7 @@ export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
   const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
+  const fetchUserWorkspaces = useWorkspaceStore((state) => state.fetchUserWorkspaces)
   const location = useLocation()
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
@@ -29,6 +30,13 @@ export const SideMenu = () => {
 
   const { classId } = useParams()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!currentWorkspaceId) {
+      // Fetch workspaces and auto-select first one if none selected
+      fetchUserWorkspaces()
+    }
+  }, [fetchUserWorkspaces, currentWorkspaceId])
 
   useEffect(() => {
     if (currentWorkspaceId) {
