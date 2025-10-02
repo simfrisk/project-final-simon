@@ -9,8 +9,7 @@ import { setupSwagger } from "./swagger/swagger"
 import { resetDatabase } from "./setup/resetDatabase"
 import router from "./Routes/routes"
 
-const mongoUrl: string =
-  process.env.MONGO_URL || "mongodb://localhost/final-project"
+const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project"
 mongoose.connect(mongoUrl)
 
 const port: number = parseInt(process.env.PORT || "8080")

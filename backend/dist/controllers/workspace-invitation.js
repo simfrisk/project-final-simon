@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,27 +41,85 @@ const crypto_1 = __importDefault(require("crypto"));
 const WorkspaceInvitation_1 = require("../models/WorkspaceInvitation");
 const user_1 = require("../models/user");
 const workspace_permissions_1 = require("../utils/workspace-permissions");
+/**
+ * @swagger
+ * /workspace/{workspaceId}/invite:
+ *   post:
+ *     summary: Create workspace invitation link (student-only)
+ *     description: Generate an invitation link for students to join a workspace. The link expires in 7 days.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workspace to invite users to
+ *     responses:
+ *       200:
+ *         description: Invitation link created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                  message:
+ *                    type: string
+ *                    example: "Invitation created successfully"
+ *                  signupLink:
+ *                    type: string
+ *                    example: "https://class-review.netlify.app/signUp?token=abc123def456"
+ *                  expiresAt:
+ *                    type: string
+ *                    format: date-time
+ *       403:
+ *         description: Insufficient permissions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You don't have permission to create invitations"
+ *       500:
+ *         description: Server error
+ */
 const createInvitationLink = async (req, res) => {
     try {
-        const { workspaceId } = req.params;
+        const { workspaceId, teamId } = req.params;
         const createdBy = req.user?._id;
         // Check if user can create invitations (only teachers/admins)
         const canInvite = await workspace_permissions_1.WorkspacePermissionChecker.canInviteMembers(workspaceId, createdBy?.toString() || "");
         if (!canInvite) {
             return res.status(403).json({ message: "You don't have permission to create invitations" });
         }
+        // If teamId is provided, verify the team belongs to the workspace
+        if (teamId) {
+            const { TeamModel } = await Promise.resolve().then(() => __importStar(require("../models/Team")));
+            const team = await TeamModel.findById(teamId);
+            if (!team || team.workspaceId.toString() !== workspaceId) {
+                return res.status(400).json({ message: "Team does not belong to this workspace" });
+            }
+        }
         // Generate unique token
         const token = crypto_1.default.randomBytes(32).toString("hex");
-        // Create invitation
+        // Create invitation for students only
         const invitation = new WorkspaceInvitation_1.WorkspaceInvitationModel({
             workspaceId,
+            teamId: teamId || undefined,
             createdBy,
             token,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            allowedRole: "student", // Only allow student signups via invitation links
         });
         await invitation.save();
         // Generate the signup link
-        const signupLink = `${process.env.FRONTEND_URL}/signup?token=${token}`;
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        const signupLink = `${frontendUrl}/signUp?token=${token}`;
         res.json({
             message: "Invitation created successfully",
             signupLink,
@@ -40,6 +131,55 @@ const createInvitationLink = async (req, res) => {
     }
 };
 exports.createInvitationLink = createInvitationLink;
+/**
+ * @swagger
+ * /invitation/validate/{token}:
+ *   get:
+ *     summary: Validate invitation token
+ *     description: Check if an invitation token is valid and not expired
+ *     tags:
+ *       - Invitations
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The invitation token to validate
+ *     responses:
+ *       200:
+ *         description: Token is valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                   example: true
+ *                 workspace:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                 expiresAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid or expired invitation link"
+ *       500:
+ *         description: Server error
+ */
 const validateInvitationToken = async (req, res) => {
     try {
         const { token } = req.params;

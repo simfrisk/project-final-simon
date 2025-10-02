@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import { TeamModel } from "../models/Team"
 import { WorkspaceModel } from "../models/workspace"
 
 /**
@@ -38,6 +37,49 @@ import { WorkspaceModel } from "../models/workspace"
  *                         type: string
  *                       teamName:
  *                         type: string
+ *                       assignedTeachers:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             email:
+ *                               type: string
+ *                             profileImage:
+ *                               type: string
+ *                             role:
+ *                               type: string
+ *                       workspaceId:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                       accessTo:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             classTitle:
+ *                               type: string
+ *                       createdBy:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
  *                 message:
  *                   type: string
  *       500:
@@ -58,9 +100,30 @@ export const getTeams = async (req: Request, res: Response): Promise<Response> =
   try {
     const { workspaceId } = req.params
 
-    // Get teams from specific workspace
+    // Get teams from specific workspace with populated assignedTeachers
     const workspace = await WorkspaceModel.findById(workspaceId)
-      .populate("teams", "teamName")
+      .populate({
+        path: "teams",
+        select: "teamName assignedTeachers workspaceId accessTo createdBy createdAt",
+        populate: [
+          {
+            path: "assignedTeachers",
+            select: "name email profileImage role",
+          },
+          {
+            path: "workspaceId",
+            select: "name",
+          },
+          {
+            path: "accessTo",
+            select: "classTitle",
+          },
+          {
+            path: "createdBy",
+            select: "name email",
+          },
+        ],
+      })
       .select("teams")
 
     if (!workspace) {

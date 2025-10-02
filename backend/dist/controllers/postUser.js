@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postUser = void 0;
 const user_1 = require("../models/user");
+const WorkspaceInvitation_1 = require("../models/WorkspaceInvitation");
+const Team_1 = require("../models/Team");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 /**
  * @swagger
@@ -41,6 +43,10 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  *                 type: string
  *                 enum: [teacher, student]
  *                 example: "student"
+ *               invitationToken:
+ *                 type: string
+ *                 example: "abc123def456"
+ *                 description: Optional invitation token for automatic workspace/team joining
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -86,7 +92,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
  */
 const postUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, invitationToken } = req.body;
         const profileImage = req.file?.path || req.body.profileImage;
         const allowedRoles = ["teacher", "student"];
         if (!allowedRoles.includes(role)) {
@@ -103,22 +109,76 @@ const postUser = async (req, res) => {
                 message: "Email is already registered",
             });
         }
+        // Handle invitation token if provided
+        let invitationWorkspaceId = null;
+        let invitationTeamId = null;
+        if (invitationToken) {
+            const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findOne({
+                token: invitationToken,
+                isUsed: false,
+                expiresAt: { $gt: new Date() },
+            });
+            if (!invitation) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid or expired invitation link",
+                });
+            }
+            // Validate that the requested role matches the invitation's allowed role
+            if (role !== invitation.allowedRole) {
+                return res.status(400).json({
+                    success: false,
+                    message: `This invitation is only for ${invitation.allowedRole}s. Please select ${invitation.allowedRole} as your role.`,
+                });
+            }
+            invitationWorkspaceId = invitation.workspaceId;
+            invitationTeamId = invitation.teamId;
+        }
         const salt = bcrypt_1.default.genSaltSync();
         const hashedPassword = bcrypt_1.default.hashSync(password, salt);
-        const user = new user_1.UserModel({
+        // Prepare user data with workspace if invited
+        const userData = {
             name,
             email,
             password: hashedPassword,
             role,
             profileImage,
-        });
+        };
+        // Add workspace to user if signing up via invitation
+        if (invitationWorkspaceId) {
+            userData.workspaces = [invitationWorkspaceId];
+        }
+        // Add team to user if signing up via team invitation
+        if (invitationTeamId) {
+            userData.teams = [invitationTeamId];
+        }
+        const user = new user_1.UserModel(userData);
         await user.save();
+        // Mark invitation as used if invitation token was provided
+        if (invitationToken && invitationWorkspaceId) {
+            await WorkspaceInvitation_1.WorkspaceInvitationModel.findOneAndUpdate({ token: invitationToken }, {
+                isUsed: true,
+                usedBy: user._id,
+                usedAt: new Date(),
+            });
+        }
+        // Add user to team's assignedTeachers if signing up via team invitation
+        if (invitationTeamId) {
+            await Team_1.TeamModel.findByIdAndUpdate(invitationTeamId, {
+                $addToSet: { assignedTeachers: user._id },
+            });
+        }
         res.status(201).json({
             success: true,
-            message: "User created",
+            message: invitationToken
+                ? invitationTeamId
+                    ? "User created and added to team"
+                    : "User created and added to workspace"
+                : "User created",
             userId: user._id,
             profileImage: user.profileImage,
             accessToken: user.accessToken,
+            workspaceId: invitationWorkspaceId,
         });
     }
     catch (error) {

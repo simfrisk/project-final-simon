@@ -8,6 +8,11 @@ const WorkspaceInvitationSchema = new mongoose_1.Schema({
         ref: "Workspace",
         required: true,
     },
+    teamId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Team",
+        required: false,
+    },
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",

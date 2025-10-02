@@ -3,6 +3,7 @@ import { Schema, Document, Types, model } from "mongoose"
 export interface WorkspaceInvitationType extends Document {
   _id: Types.ObjectId
   workspaceId: Types.ObjectId
+  teamId?: Types.ObjectId
   createdBy: Types.ObjectId
   token: string
   expiresAt: Date
@@ -18,6 +19,11 @@ const WorkspaceInvitationSchema = new Schema<WorkspaceInvitationType>({
     type: Schema.Types.ObjectId,
     ref: "Workspace",
     required: true,
+  },
+  teamId: {
+    type: Schema.Types.ObjectId,
+    ref: "Team",
+    required: false,
   },
   createdBy: {
     type: Schema.Types.ObjectId,

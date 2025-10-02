@@ -32,6 +32,8 @@ interface WorkspaceStore {
   ) => Promise<{ success: boolean; message?: string; workspaceId?: string }>
   updateWorkspace: (workspaceId: string, updates: { newName?: string }) => Promise<void>
   deleteWorkspace: (workspaceId: string) => Promise<void>
+  createInvitationLink: (workspaceId: string, teamId?: string) => Promise<string | null>
+  validateInvitationToken: (token: string) => Promise<boolean>
 }
 
 //#endregion
@@ -294,6 +296,72 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
     const storedId = localStorage.getItem("currentWorkspaceId")
     if (storedId) {
       set({ currentWorkspaceId: storedId })
+    }
+  },
+  //#endregion
+
+  //#region ----- CREATE INVITATION LINK -----
+  createInvitationLink: async (workspaceId: string, teamId?: string) => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
+
+      const url = teamId
+        ? `${baseUrl}/workspace/${workspaceId}/teams/${teamId}/invite`
+        : `${baseUrl}/workspace/${workspaceId}/invite`
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to create invitation link")
+      }
+
+      const data = await response.json()
+      set({
+        loading: false,
+        error: null,
+        message: `Invitation link created: ${data.signupLink}`,
+      })
+      return data.signupLink
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create invitation link"
+      set({ error: errorMessage, loading: false, message: null })
+      return null
+    }
+  },
+
+  //#region ----- VALIDATE INVITATION TOKEN -----
+  validateInvitationToken: async (token: string) => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const response = await fetch(`${baseUrl}/invitation/validate/${token}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        set({ loading: false, error: "Invalid invitation token", message: null })
+        return false
+      }
+
+      const data = await response.json()
+      set({ loading: false, error: null, message: null })
+      return data.valid === true
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to validate invitation token"
+      set({ error: errorMessage, loading: false, message: null })
+      return false
     }
   },
   //#endregion

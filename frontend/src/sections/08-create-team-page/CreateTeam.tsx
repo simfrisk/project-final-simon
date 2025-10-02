@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Section } from "../../global-components/Section"
 import { Container as BaseContainer } from "../../global-components/Section"
 import styled from "styled-components"
@@ -13,24 +14,46 @@ import {
   StyledLink,
   LinkContainer,
 } from "../../global-components/StyledForm"
+import { useTeamStore } from "../../store/teamStore"
+import { useWorkspaceStore } from "../../store/workspaceStore"
 
 export const CreateTeam = () => {
+  const navigate = useNavigate()
+  const { createTeam, loading, error, message } = useTeamStore()
+  const { currentWorkspaceId } = useWorkspaceStore()
+
   const [formData, setFormData] = useState({
     teamName: "",
-    description: "",
-    email: "",
   })
-  const [error] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("Create team form submitted:", formData)
-    // Add your create team logic here
+
+    if (!currentWorkspaceId) {
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      await createTeam(currentWorkspaceId, {
+        teamName: formData.teamName,
+      })
+
+      // If successful, navigate back to teams view
+      if (message && message.includes("successfully")) {
+        navigate("/admin/users", { state: { activeTab: "teams" } })
+      }
+    } catch (error) {
+      console.error("Failed to create team:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -55,28 +78,30 @@ export const CreateTeam = () => {
               />
             </FormGroup>
 
-            <FormGroup>
-              <StyledLabel htmlFor="description">Description</StyledLabel>
-              <StyledInput
-                type="text"
-                id="description"
-                name="description"
-                placeholder="Enter Team Description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-
             {error && <ErrorMessage>{error}</ErrorMessage>}
+            {message && <ErrorMessage style={{ color: "green" }}>{message}</ErrorMessage>}
 
             <ButtonWrapper>
-              <StyledButton type="submit">Create Team</StyledButton>
+              <StyledButton
+                type="submit"
+                disabled={loading || isSubmitting || !currentWorkspaceId}
+              >
+                {loading || isSubmitting ? "Creating..." : "Create Team"}
+              </StyledButton>
             </ButtonWrapper>
+
+            {!currentWorkspaceId && (
+              <ErrorMessage>Please select a workspace to create a team</ErrorMessage>
+            )}
 
             <LinkContainer>
               <p>Already have a team?</p>
-              <StyledLink to="/teams">View Teams</StyledLink>
+              <StyledLink
+                to="/admin/users"
+                state={{ activeTab: "teams" }}
+              >
+                View Teams
+              </StyledLink>
             </LinkContainer>
           </StyledForm>
         </Container>

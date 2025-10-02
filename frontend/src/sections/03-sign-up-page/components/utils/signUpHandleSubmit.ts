@@ -7,7 +7,8 @@ export const handleSignUpSubmit = async (
   e: FormEvent<HTMLFormElement>,
   createUser: CreateUserFunction,
   setError: (msg: string | null) => void,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  invitationToken?: string | null
 ) => {
   e.preventDefault()
 
@@ -27,7 +28,12 @@ export const handleSignUpSubmit = async (
   formData.append("name", form.fullName.value)
   formData.append("email", form.email.value)
   formData.append("password", form.password.value)
-  formData.append("role", "teacher") // Automatically set role as teacher
+  // Set role based on whether it's an invitation signup
+  const role = invitationToken ? "student" : "teacher"
+  formData.append("role", role)
+  if (invitationToken) {
+    formData.append("invitationToken", invitationToken)
+  }
   if (form.profileImage.files?.[0]) {
     formData.append("image", form.profileImage.files[0])
   }
@@ -36,7 +42,13 @@ export const handleSignUpSubmit = async (
 
   if (result.success) {
     setError(null)
-    navigate("/create-workspace")
+    if (invitationToken) {
+      // User signed up with invitation, redirect to library
+      navigate("/library")
+    } else {
+      // Regular signup, redirect to create workspace
+      navigate("/create-workspace")
+    }
   } else {
     setError(result.message || "Sign up failed")
   }

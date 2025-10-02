@@ -1,256 +1,177 @@
 import styled from "styled-components"
+import { useState, useEffect } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
-
-// Hardcoded teams data
-const spring25Team = {
-  id: "1",
-  name: "Spring 2025",
-  description: "Advanced Web Development and Software Engineering",
-  members: [
-    {
-      id: "1",
-      name: "Alice Johnson",
-      role: "Student",
-      email: "alice@school.com",
-      profileImage: "/logo2.png",
-    },
-    {
-      id: "2",
-      name: "Bob Smith",
-      role: "Student",
-      email: "bob@school.com",
-      profileImage: "/logo2.png",
-    },
-    {
-      id: "3",
-      name: "Carol Davis",
-      role: "Student",
-      email: "carol@school.com",
-      profileImage: "/logo2.png",
-    },
-  ],
-}
-
-const fall26Team = {
-  id: "2",
-  name: "Fall 2026",
-  description: "Database Systems and Backend Architecture",
-  members: [
-    {
-      id: "4",
-      name: "David Wilson",
-      role: "Student",
-      email: "david@school.com",
-      profileImage: "/logo2.png",
-    },
-    {
-      id: "5",
-      name: "Emma Brown",
-      role: "Student",
-      email: "emma@school.com",
-      profileImage: "/logo2.png",
-    },
-    {
-      id: "6",
-      name: "Frank Miller",
-      role: "Student",
-      email: "frank@school.com",
-      profileImage: "/logo2.png",
-    },
-  ],
-}
-
-const summer25Team = {
-  id: "3",
-  name: "Summer 2025",
-  description: "Digital Design and User Experience",
-  members: [
-    {
-      id: "7",
-      name: "Grace Lee",
-      role: "Student",
-      email: "grace@school.com",
-      profileImage: "/logo2.png",
-    },
-    {
-      id: "8",
-      name: "Henry Taylor",
-      role: "Student",
-      email: "henry@school.com",
-      profileImage: "/logo2.png",
-    },
-  ],
-}
+import { useTeamStore, type Team } from "../../../store/teamStore"
+import { useWorkspaceStore } from "../../../store/workspaceStore"
 
 export const TeamsSection = () => {
+  const { teams, loading, fetchTeams } = useTeamStore()
+  const { currentWorkspaceId } = useWorkspaceStore()
+
+  // Fetch teams when component mounts
+  useEffect(() => {
+    if (currentWorkspaceId) {
+      fetchTeams(currentWorkspaceId)
+    }
+  }, [currentWorkspaceId, fetchTeams])
+
+  if (loading && teams.length === 0) {
+    return (
+      <SectionContainer>
+        <SectionHeader>
+          <SectionTitle>Teams</SectionTitle>
+          <LoadingText>Loading teams...</LoadingText>
+        </SectionHeader>
+      </SectionContainer>
+    )
+  }
+
+  if (!currentWorkspaceId) {
+    return (
+      <SectionContainer>
+        <SectionHeader>
+          <SectionTitle>Teams</SectionTitle>
+          <NoWorkspaceText>Please select a workspace to view teams</NoWorkspaceText>
+        </SectionHeader>
+      </SectionContainer>
+    )
+  }
+
+  if (teams.length === 0) {
+    return (
+      <SectionContainer>
+        <SectionHeader>
+          <SectionTitle>Teams</SectionTitle>
+          <NoTeamsText>No teams found in this workspace</NoTeamsText>
+        </SectionHeader>
+      </SectionContainer>
+    )
+  }
+
   return (
     <>
-      <Spring25TeamSection />
-      <Fall26TeamSection />
-      <Summer25TeamSection />
+      {teams.map((team) => (
+        <TeamSection
+          key={team._id}
+          team={team}
+          workspaceId={currentWorkspaceId}
+        />
+      ))}
     </>
   )
 }
 
-const Spring25TeamSection = () => {
+const TeamSection = ({ team, workspaceId }: { team: Team; workspaceId: string }) => {
+  const { createInvitationLink, error } = useWorkspaceStore()
+  const [inviteLink, setInviteLink] = useState<string>("")
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false)
+
+  const handleGenerateInviteLink = async () => {
+    setIsGeneratingLink(true)
+    try {
+      const link = await createInvitationLink(workspaceId, team._id)
+      if (link) {
+        setInviteLink(link)
+      }
+    } catch (error) {
+      console.error("Failed to generate invite link:", error)
+    } finally {
+      setIsGeneratingLink(false)
+    }
+  }
+
+  // Get member count from assignedTeachers
+  const memberCount = team.assignedTeachers?.length || 0
+
   return (
     <SectionContainer
       role="region"
-      aria-labelledby="spring25-team-section"
+      aria-labelledby={`team-section-${team._id}`}
     >
       <SectionHeader>
-        <SectionTitle id="spring25-team-section">{spring25Team.name}</SectionTitle>
-        <a
-          href="https://www.google.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p id="spring25-team-section">{`Invite link to: ${spring25Team.name}`}</p>
-        </a>
-        <SectionCount aria-label={`${spring25Team.members.length} students in spring 2025`}>
-          {spring25Team.members.length} students
+        <SectionTitle id={`team-section-${team._id}`}>{team.teamName}</SectionTitle>
+        {inviteLink ? (
+          <InviteLinkContainer>
+            <InviteLink
+              href={inviteLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Invite link for ${team.teamName}`}
+            >
+              Join {team.workspaceId?.name || "Workspace"}
+            </InviteLink>
+            <CopyButton onClick={() => navigator.clipboard.writeText(inviteLink)}>
+              📋 Copy Link
+            </CopyButton>
+          </InviteLinkContainer>
+        ) : (
+          <div>
+            <GenerateInviteButton
+              onClick={handleGenerateInviteLink}
+              disabled={isGeneratingLink}
+              aria-label={`Generate invite link for ${team.teamName}`}
+            >
+              {isGeneratingLink ? "Generating..." : "Generate Invite"}
+            </GenerateInviteButton>
+            {error && (
+              <InviteError style={{ fontSize: "12px", marginTop: "4px", color: "#ff6b6b" }}>
+                {error}
+              </InviteError>
+            )}
+          </div>
+        )}
+        <SectionCount aria-label={`${memberCount} members in ${team.teamName}`}>
+          {memberCount} members
         </SectionCount>
       </SectionHeader>
 
-      <TeamDescription>{spring25Team.description}</TeamDescription>
+      <TeamDescription>Workspace: {team.workspaceId?.name || "Unknown Workspace"}</TeamDescription>
 
-      <MembersGrid
-        role="list"
-        aria-label="List of spring 2025 students"
-      >
-        {spring25Team.members.map((member) => (
-          <MemberCard
-            key={member.id}
-            role="listitem"
-            aria-label={`Spring 2025 student: ${member.name}`}
-          >
-            <MemberImageContainer>
-              <MemberImage
-                src={member.profileImage}
-                alt={`Profile picture of ${member.name}`}
-                onError={(e) => {
-                  e.currentTarget.src = "/logo2.png"
-                }}
-              />
-            </MemberImageContainer>
-            <MemberInfo>
-              <MemberName>{member.name}</MemberName>
-              <MemberEmail aria-label={`Email: ${member.email}`}>{member.email}</MemberEmail>
-              <MemberRole aria-label={`Role: ${member.role}`}>{member.role}</MemberRole>
-            </MemberInfo>
-          </MemberCard>
-        ))}
-      </MembersGrid>
+      {team.assignedTeachers && team.assignedTeachers.length > 0 && (
+        <MembersGrid
+          role="list"
+          aria-label={`List of members in ${team.teamName}`}
+        >
+          {team.assignedTeachers.map((teacher) => (
+            <MemberCard
+              key={teacher._id}
+              role="listitem"
+              aria-label={`Team member: ${teacher.name}`}
+            >
+              <MemberImageContainer>
+                <MemberImage
+                  src={teacher.profileImage || "/logo2.png"}
+                  alt={`Profile picture of ${teacher.name}`}
+                  onError={(e) => {
+                    e.currentTarget.src = "/logo2.png"
+                  }}
+                />
+              </MemberImageContainer>
+              <MemberInfo>
+                <MemberName>{teacher.name}</MemberName>
+                <MemberEmail aria-label={`Email: ${teacher.email}`}>{teacher.email}</MemberEmail>
+                <MemberRole aria-label={`Role: ${teacher.role}`}>{teacher.role}</MemberRole>
+              </MemberInfo>
+            </MemberCard>
+          ))}
+        </MembersGrid>
+      )}
+
+      {team.accessTo && team.accessTo.length > 0 && (
+        <AccessToClasses>
+          <ClassesLabel>Has access to classes:</ClassesLabel>
+          <ClassesList>
+            {team.accessTo.map((classItem) => (
+              <ClassChip key={classItem._id}>{classItem.classTitle}</ClassChip>
+            ))}
+          </ClassesList>
+        </AccessToClasses>
+      )}
     </SectionContainer>
   )
 }
 
-const Fall26TeamSection = () => {
-  return (
-    <SectionContainer
-      role="region"
-      aria-labelledby="fall26-team-section"
-    >
-      <SectionHeader>
-        <SectionTitle id="fall26-team-section">{fall26Team.name}</SectionTitle>
-        <a
-          href="https://www.google.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p id="fall26-team-section">{`Invite link to: ${fall26Team.name}`}</p>
-        </a>
-        <SectionCount aria-label={`${fall26Team.members.length} students in fall 2026`}>
-          {fall26Team.members.length} students
-        </SectionCount>
-      </SectionHeader>
-
-      <TeamDescription>{fall26Team.description}</TeamDescription>
-
-      <MembersGrid
-        role="list"
-        aria-label="List of fall 2026 students"
-      >
-        {fall26Team.members.map((member) => (
-          <MemberCard
-            key={member.id}
-            role="listitem"
-            aria-label={`Fall 2026 student: ${member.name}`}
-          >
-            <MemberImageContainer>
-              <MemberImage
-                src={member.profileImage}
-                alt={`Profile picture of ${member.name}`}
-                onError={(e) => {
-                  e.currentTarget.src = "/logo2.png"
-                }}
-              />
-            </MemberImageContainer>
-            <MemberInfo>
-              <MemberName>{member.name}</MemberName>
-              <MemberEmail aria-label={`Email: ${member.email}`}>{member.email}</MemberEmail>
-              <MemberRole aria-label={`Role: ${member.role}`}>{member.role}</MemberRole>
-            </MemberInfo>
-          </MemberCard>
-        ))}
-      </MembersGrid>
-    </SectionContainer>
-  )
-}
-
-const Summer25TeamSection = () => {
-  return (
-    <SectionContainer
-      role="region"
-      aria-labelledby="summer25-team-section"
-    >
-      <SectionHeader>
-        <SectionTitle id="summer25-team-section">{summer25Team.name}</SectionTitle>
-        <a
-          href="https://www.google.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p id="summer25-team-section">{`Invite link to: ${summer25Team.name}`}</p>
-        </a>
-        <SectionCount aria-label={`${summer25Team.members.length} students in summer 2025`}>
-          {summer25Team.members.length} students
-        </SectionCount>
-      </SectionHeader>
-
-      <TeamDescription>{summer25Team.description}</TeamDescription>
-
-      <MembersGrid
-        role="list"
-        aria-label="List of summer 2025 students"
-      >
-        {summer25Team.members.map((member) => (
-          <MemberCard
-            key={member.id}
-            role="listitem"
-            aria-label={`Summer 2025 student: ${member.name}`}
-          >
-            <MemberImageContainer>
-              <MemberImage
-                src={member.profileImage}
-                alt={`Profile picture of ${member.name}`}
-                onError={(e) => {
-                  e.currentTarget.src = "/logo2.png"
-                }}
-              />
-            </MemberImageContainer>
-            <MemberInfo>
-              <MemberName>{member.name}</MemberName>
-              <MemberEmail aria-label={`Email: ${member.email}`}>{member.email}</MemberEmail>
-              <MemberRole aria-label={`Role: ${member.role}`}>{member.role}</MemberRole>
-            </MemberInfo>
-          </MemberCard>
-        ))}
-      </MembersGrid>
-    </SectionContainer>
-  )
-}
-
+// Styled Components
 const SectionContainer = styled.div`
   background: ${({ theme }) => theme.colors.background};
   backdrop-filter: blur(10px);
@@ -424,4 +345,152 @@ const MemberRole = styled.p`
   @media ${MediaQueries.biggerSizes} {
     font-size: 12px;
   }
+`
+
+// New styled components for invitation functionality
+const LoadingText = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.7;
+  margin: 0;
+`
+const NoWorkspaceText = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.7;
+  margin: 0;
+`
+const NoTeamsText = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.7;
+  margin: 0;
+`
+
+const GenerateInviteButton = styled.button`
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.primaryHover};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+`
+
+const InviteLinkContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  @media ${MediaQueries.biggerSizes} {
+    flex-direction: row;
+    gap: 12px;
+  }
+`
+
+const InviteLink = styled.a`
+  background: #2ed573;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    background: #20b362;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+`
+
+const CopyButton = styled.button`
+  background: rgba(255, 255, 255, 0.1);
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+`
+
+const AccessToClasses = styled.div`
+  margin-top: 16px;
+  text-align: center;
+`
+
+const ClassesLabel = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text};
+  margin: 0 0 8px 0;
+  font-weight: 600;
+`
+
+const ClassesList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+`
+
+const ClassChip = styled.span`
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+`
+
+const InviteError = styled.div`
+  text-align: center;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ff6b6b;
 `

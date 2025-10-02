@@ -125,6 +125,7 @@ router.get("/users", getUsers)
 
 // WORKSPACE INVITATIONS
 router.post("/workspace/:workspaceId/invite", authenticateUser, createInvitationLink)
+router.post("/workspace/:workspaceId/teams/:teamId/invite", authenticateUser, createInvitationLink)
 router.get("/invitation/validate/:token", validateInvitationToken)
 router.post("/invitation/use", authenticateUser, useInvitationToken)
 router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)

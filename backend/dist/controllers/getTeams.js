@@ -38,6 +38,49 @@ const workspace_1 = require("../models/workspace");
  *                         type: string
  *                       teamName:
  *                         type: string
+ *                       assignedTeachers:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             email:
+ *                               type: string
+ *                             profileImage:
+ *                               type: string
+ *                             role:
+ *                               type: string
+ *                       workspaceId:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                       accessTo:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             classTitle:
+ *                               type: string
+ *                       createdBy:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
  *                 message:
  *                   type: string
  *       500:
@@ -57,9 +100,30 @@ const workspace_1 = require("../models/workspace");
 const getTeams = async (req, res) => {
     try {
         const { workspaceId } = req.params;
-        // Get teams from specific workspace
+        // Get teams from specific workspace with populated assignedTeachers
         const workspace = await workspace_1.WorkspaceModel.findById(workspaceId)
-            .populate("teams", "teamName")
+            .populate({
+            path: "teams",
+            select: "teamName assignedTeachers workspaceId accessTo createdBy createdAt",
+            populate: [
+                {
+                    path: "assignedTeachers",
+                    select: "name email profileImage role",
+                },
+                {
+                    path: "workspaceId",
+                    select: "name",
+                },
+                {
+                    path: "accessTo",
+                    select: "classTitle",
+                },
+                {
+                    path: "createdBy",
+                    select: "name email",
+                },
+            ],
+        })
             .select("teams");
         if (!workspace) {
             return res.status(404).json({

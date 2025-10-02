@@ -38,6 +38,7 @@ const postReplyLike_1 = require("../controllers/postReplyLike");
 const postSession_1 = require("../controllers/postSession");
 const postUser_1 = require("../controllers/postUser");
 const getUsers_1 = require("../controllers/getUsers");
+const getUserById_1 = require("../controllers/getUserById");
 const patchUser_1 = require("../controllers/patchUser");
 const workspace_invitation_1 = require("../controllers/workspace-invitation");
 const postWorkspace_1 = require("../controllers/postWorkspace");
@@ -101,12 +102,14 @@ router.post("/comments/:commentId/likes", authenticateUser_1.authenticateUser, p
 router.post("/replies/:replyId/likes", authenticateUser_1.authenticateUser, postReplyLike_1.postReplyLike);
 // USERS & AUTHENTICATION
 router.post("/users", uploadImage_1.uploadImage.single("image"), postUser_1.postUser);
+router.get("/users/:userId", authenticateUser_1.authenticateUser, getUserById_1.getUserById);
 router.delete("/users/:userId", authenticateUser_1.authenticateUser, deleteUser_1.deleteUser);
 router.patch("/users/:userId", authenticateUser_1.authenticateUser, patchUser_1.patchUser);
 router.post("/session", postSession_1.postSession);
 router.get("/users", getUsers_1.getUsers);
 // WORKSPACE INVITATIONS
 router.post("/workspace/:workspaceId/invite", authenticateUser_1.authenticateUser, workspace_invitation_1.createInvitationLink);
+router.post("/workspace/:workspaceId/teams/:teamId/invite", authenticateUser_1.authenticateUser, workspace_invitation_1.createInvitationLink);
 router.get("/invitation/validate/:token", workspace_invitation_1.validateInvitationToken);
 router.post("/invitation/use", authenticateUser_1.authenticateUser, workspace_invitation_1.useInvitationToken);
 router.get("/workspace/:workspaceId/invitations", authenticateUser_1.authenticateUser, workspace_invitation_1.getInvitationHistory);
