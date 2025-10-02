@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postClass = void 0;
 const Class_1 = require("../models/Class");
+const workspace_1 = require("../models/workspace");
 /**
  * @swagger
  * /workspace/{workspaceId}/classes:
@@ -95,6 +96,10 @@ const postClass = async (req, res) => {
         }
         const newClass = new Class_1.ClassModel({ classTitle, workspaceId });
         const savedNewClass = await newClass.save();
+        // Update workspace.classes array
+        await workspace_1.WorkspaceModel.findByIdAndUpdate(workspaceId, {
+            $push: { classes: savedNewClass._id },
+        });
         return res.status(201).json({
             success: true,
             response: savedNewClass,

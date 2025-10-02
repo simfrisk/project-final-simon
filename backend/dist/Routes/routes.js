@@ -46,6 +46,7 @@ const getWorkspaceById_1 = require("../controllers/getWorkspaceById");
 const patchWorkspace_1 = require("../controllers/patchWorkspace");
 const deleteWorkspace_1 = require("../controllers/deleteWorkspace");
 const getWorkspaceUsers_1 = require("../controllers/getWorkspaceUsers");
+const getUserWorkspaces_1 = require("../controllers/getUserWorkspaces");
 const postTeam_1 = require("../controllers/postTeam");
 const getTeams_1 = require("../controllers/getTeams");
 const getTeamById_1 = require("../controllers/getTeamById");
@@ -67,6 +68,7 @@ router.get("/workspace/:workspaceId", authenticateUser_1.authenticateUser, getWo
 router.patch("/workspace/:workspaceId", authenticateUser_1.authenticateUser, patchWorkspace_1.patchWorkspace);
 router.delete("/workspace/:workspaceId", authenticateUser_1.authenticateUser, deleteWorkspace_1.deleteWorkspace);
 router.get("/workspace/:workspaceId/users", authenticateUser_1.authenticateUser, getWorkspaceUsers_1.getWorkspaceUsers);
+router.get("/user/workspaces", authenticateUser_1.authenticateUser, getUserWorkspaces_1.getUserWorkspaces);
 // CLASSES
 router.get("/workspace/:workspaceId/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
 router.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);

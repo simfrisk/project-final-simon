@@ -10,6 +10,7 @@ const WorkspaceSchema = new mongoose_1.Schema({
         maxlength: 60,
         trim: true,
     },
+    classes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Class", default: [] }],
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",

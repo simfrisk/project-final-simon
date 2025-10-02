@@ -63,8 +63,8 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
       } else {
         throw new Error(json.message || "Failed to fetch classes")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
 
@@ -94,8 +94,8 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
       } else {
         throw new Error(json.message || "Failed to fetch class")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
   //#endregion
@@ -126,8 +126,8 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
       } else {
         throw new Error(json.message || "Failed to add class")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
 
@@ -157,8 +157,8 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
       } else {
         throw new Error(data.message || "Failed to delete class")
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message || "Unknown error" })
+    } catch (err: unknown) {
+      set({ loading: false, error: err instanceof Error ? err.message : "Unknown error" })
     }
   },
 
@@ -206,10 +206,10 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
           message: null,
         })
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       set({
         loading: false,
-        error: err.message || "Unknown error",
+        error: err instanceof Error ? err.message : "Unknown error",
         message: null,
       })
     }

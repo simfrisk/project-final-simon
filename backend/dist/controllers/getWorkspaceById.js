@@ -49,10 +49,14 @@ const workspace_1 = require("../models/workspace");
  *                       type: array
  *                       items:
  *                         type: object
+ *                     classes:
+ *                       type: array
+ *                       items:
+ *                         type: object
  *                         properties:
  *                           _id:
  *                             type: string
- *                           teamName:
+ *                           classTitle:
  *                             type: string
  *                     createdAt:
  *                       type: string
@@ -93,7 +97,8 @@ const getWorkspaceById = async (req, res) => {
         const { workspaceId } = req.params;
         const result = await workspace_1.WorkspaceModel.findById(workspaceId)
             .populate("createdBy", "name email")
-            .populate("teams", "teamName");
+            .populate("teams", "teamName")
+            .populate("classes", "classTitle");
         if (!result) {
             return res.status(404).json({
                 success: false,

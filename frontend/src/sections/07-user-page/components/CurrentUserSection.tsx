@@ -14,7 +14,18 @@ export const CurrentUserSection = () => {
   })
 
   if (!currentUser) {
-    return null
+    return (
+      <SectionContainer
+        role="region"
+        aria-labelledby="current-user-section"
+        $isCurrentUserSection={true}
+      >
+        <SectionHeader>
+          <SectionTitle id="current-user-section">Current User</SectionTitle>
+          <CurrentUserBadge aria-label="No user found">Not logged in</CurrentUserBadge>
+        </SectionHeader>
+      </SectionContainer>
+    )
   }
 
   const editUser = () => {

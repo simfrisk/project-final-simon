@@ -19,6 +19,7 @@ interface UserStore {
   user: AuthUser | null
   isLoggedIn: boolean
   users: AuthUser[]
+  loading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
   logout: () => void
   createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
@@ -37,6 +38,7 @@ interface UserStore {
   ) => Promise<{ success: boolean; message: string }>
   sortUsersByRole: () => void
   setUserWorkspace: (workspaceId: string) => void
+  fetchCurrentUser: () => Promise<void>
 }
 //#endregion
 
@@ -68,7 +70,8 @@ const initialUser: AuthUser | null =
 export const useUserStore = create<UserStore>((set, get) => ({
   user: initialUser,
   isLoggedIn: !!initialUser,
-  users: [], // Add this
+  users: [],
+  loading: false,
 
   //#endregion
 
@@ -243,12 +246,19 @@ export const useUserStore = create<UserStore>((set, get) => ({
       if (!response.ok) throw new Error("Failed to patch user")
 
       const data = await response.json()
-
       if (data.success) {
         // Update the current user if it's the same user being updated
         const currentUser = get().user
         if (currentUser && currentUser._id === userId) {
-          set({ user: data.response })
+          const updatedUser = { ...currentUser, ...data.response }
+          set({ user: updatedUser })
+
+          // Update localStorage to persist changes on reload
+          if (updatedUser.name) localStorage.setItem("name", updatedUser.name)
+          if (updatedUser.email) localStorage.setItem("email", updatedUser.email)
+          if (updatedUser.role) localStorage.setItem("role", updatedUser.role)
+          if (updatedUser.profileImage)
+            localStorage.setItem("profileImage", updatedUser.profileImage)
         }
 
         // Update the user in the users array
@@ -273,6 +283,33 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
+  //#endregion
+
+  //#region ----- FETCH CURRENT USER -----
+  fetchCurrentUser: async () => {
+    set({ loading: true })
+    try {
+      const token = localStorage.getItem("accessToken")
+      if (!token) throw new Error("Missing access token")
+
+      const response = await fetch(`${baseUrl}/users/${localStorage.getItem("userId")}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) throw new Error("Failed to fetch current user")
+
+      const data = await response.json()
+      if (data.success) {
+        set({ user: data.response, loading: false })
+      }
+    } catch (error) {
+      console.error("Failed to fetch current user:", error)
+      set({ loading: false })
+    }
+  },
   //#endregion
 
   //#region ----- GET ALL USERS -----

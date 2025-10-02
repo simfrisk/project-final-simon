@@ -5,6 +5,7 @@ const Comment_1 = require("../models/Comment");
 const Reply_1 = require("../models/Reply");
 const Projects_1 = require("../models/Projects");
 const Class_1 = require("../models/Class");
+const workspace_1 = require("../models/workspace");
 /**
  * @swagger
  * /classes/{classId}:
@@ -92,7 +93,11 @@ const deleteClass = async (req, res) => {
         if (foundClass.projects && foundClass.projects.length > 0) {
             await Projects_1.Project.deleteMany({ _id: { $in: foundClass.projects } });
         }
-        // Step 5: Delete the class
+        // Step 5: Remove class from workspace.classes array
+        await workspace_1.WorkspaceModel.findByIdAndUpdate(foundClass.workspaceId, {
+            $pull: { classes: classId },
+        });
+        // Step 6: Delete the class
         await foundClass.deleteOne();
         return res.status(200).json({
             success: true,
