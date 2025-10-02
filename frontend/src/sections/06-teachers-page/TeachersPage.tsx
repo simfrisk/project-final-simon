@@ -8,6 +8,7 @@ import { TeacherProjectCard } from "./components/TeacherProjectCard"
 import { TeachersSideMenu } from "./components/TeachersSideMenu"
 import { useEditingStore } from "../../store/editStore"
 import { useClassStore } from "../../store/classStore"
+import { useWorkspaceStore } from "../../store/workspaceStore"
 import { MediaQueries } from "../../themes/mediaQueries"
 
 //#endregion
@@ -18,6 +19,7 @@ export const TeachersPage = () => {
   const fetchProjectsWithComments = useProjectStore((state) => state.fetchProjectsWithComments)
   const classes = useClassStore((state) => state.classes)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
+  const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
   const currentClassId = useEditingStore((state) => state.currentClassId)
   const setCurrentClassId = useEditingStore((state) => state.setCurrentClassId)
 
@@ -27,9 +29,11 @@ export const TeachersPage = () => {
 
   // Fetch classes and projects on mount
   useEffect(() => {
-    fetchClasses()
+    if (currentWorkspaceId) {
+      fetchClasses(currentWorkspaceId)
+    }
     fetchProjectsWithComments()
-  }, [])
+  }, [fetchClasses, fetchProjectsWithComments, currentWorkspaceId])
 
   // Automatically select first class with unchecked student comments
   const classesWithUncheckedComments = classes.filter((cls) => {

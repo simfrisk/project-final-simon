@@ -2,6 +2,7 @@
 import styled from "styled-components"
 import { useEffect } from "react"
 import { useClassStore } from "../../../../store/classStore"
+import { useWorkspaceStore } from "../../../../store/workspaceStore"
 import { MediaQueries } from "../../../../themes/mediaQueries"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { useEditingStore } from "../../../../store/editStore"
@@ -13,6 +14,7 @@ import { ClassOptions } from "./ClassOptions"
 export const SideMenu = () => {
   const classes = useClassStore((state) => state.classes)
   const fetchClasses = useClassStore((state) => state.fetchClasses)
+  const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
   const location = useLocation()
 
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
@@ -29,8 +31,10 @@ export const SideMenu = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetchClasses()
-  }, [fetchClasses])
+    if (currentWorkspaceId) {
+      fetchClasses(currentWorkspaceId)
+    }
+  }, [fetchClasses, currentWorkspaceId])
 
   useEffect(() => {
     if (!classId && classes.length > 0) {

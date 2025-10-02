@@ -19,9 +19,9 @@ interface ClassesStore {
   error: string | null
   message: string | null
 
-  fetchClasses: (workspaceId?: string) => Promise<void>
+  fetchClasses: (workspaceId: string) => Promise<void>
   fetchClassById: (classId: string) => Promise<void>
-  addClass: (classTitle: string, workspaceId?: string) => Promise<void>
+  addClass: (classTitle: string, workspaceId: string) => Promise<void>
   deleteClass: (classId: string) => Promise<void>
   updateClass: (
     classId: string,
@@ -40,14 +40,13 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
   error: null,
   message: null,
 
-  fetchClasses: async (workspaceId?: string) => {
+  fetchClasses: async (workspaceId: string) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const url = workspaceId ? `${baseUrl}/workspace/${workspaceId}/classes` : `${baseUrl}/classes`
-      const response = await fetch(url, {
+      const response = await fetch(`${baseUrl}/workspace/${workspaceId}/classes`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -102,20 +101,19 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
   //#endregion
 
   //#region ----- ADD CLASS -----
-  addClass: async (classTitle: string, workspaceId?: string) => {
+  addClass: async (classTitle: string, workspaceId: string) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const body = workspaceId ? { classTitle, workspaceId } : { classTitle }
-      const res = await fetch(`${baseUrl}/classes`, {
+      const res = await fetch(`${baseUrl}/workspace/${workspaceId}/classes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ classTitle }),
       })
 
       const json = await res.json()
