@@ -42,6 +42,7 @@ export const CreateClass = ({ onClose }: CreateClassProps = {}) => {
   return (
     <FormContainer
       as="form"
+      onClick={(e) => e.stopPropagation()}
       onSubmit={(e) => {
         e.preventDefault()
         handleCreateProject()
@@ -54,8 +55,14 @@ export const CreateClass = ({ onClose }: CreateClassProps = {}) => {
         required
         value={classTitle}
         onChange={(e) => setClassTitle(e.target.value)}
+        onClick={(e) => e.stopPropagation()}
       />
-      <AddProjectBtn type="submit">Add Class</AddProjectBtn>
+      <AddProjectBtn
+        type="submit"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Add Class
+      </AddProjectBtn>
     </FormContainer>
   )
 }

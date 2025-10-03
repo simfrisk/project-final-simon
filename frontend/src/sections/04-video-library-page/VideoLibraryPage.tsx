@@ -32,7 +32,9 @@ export const VideoLibraryPage = () => {
       </MainSection>
       {showModal && (
         <ModalContainer onClick={handleModalClose}>
-          <CreateClass />
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CreateClass />
+          </ModalContent>
         </ModalContainer>
       )}
     </>
@@ -78,6 +80,11 @@ const ModalContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const ModalContent = styled.div`
+  position: relative;
+  z-index: 1001;
 `
 
 const InvisibleH1 = styled.h1`
