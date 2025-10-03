@@ -34,6 +34,7 @@ interface WorkspaceStore {
   deleteWorkspace: (workspaceId: string) => Promise<void>
   createInvitationLink: (workspaceId: string, teamId?: string) => Promise<string | null>
   validateInvitationToken: (token: string) => Promise<boolean>
+  clearWorkspaceData: () => void
 }
 
 //#endregion
@@ -363,6 +364,19 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
       set({ error: errorMessage, loading: false, message: null })
       return false
     }
+  },
+
+  //#region ----- CLEAR WORKSPACE DATA -----
+  clearWorkspaceData: () => {
+    localStorage.removeItem("currentWorkspaceId")
+    set({
+      workspaces: [],
+      workspace: null,
+      currentWorkspaceId: null,
+      loading: false,
+      error: null,
+      message: null,
+    })
   },
   //#endregion
 }))

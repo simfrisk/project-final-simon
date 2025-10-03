@@ -28,6 +28,7 @@ interface ClassesStore {
     updates: { newTitle?: string; newWorkspaceId?: string }
   ) => Promise<void>
   getClassesByWorkspace: (workspaceId: string) => ClassType[]
+  clearClasses: () => void
 }
 
 //#endregion
@@ -222,6 +223,20 @@ export const useClassStore = create<ClassesStore>((set, get) => ({
   getClassesByWorkspace: (workspaceId: string) => {
     const { classes } = get()
     return classes.filter((cls) => cls.workspaceId === workspaceId)
+  },
+
+  //#endregion
+
+  //#region ----- CLEAR CLASSES -----
+
+  clearClasses: () => {
+    set({
+      classes: [],
+      class: null,
+      loading: false,
+      error: null,
+      message: null,
+    })
   },
 
   //#endregion

@@ -124,71 +124,82 @@ export const ProjectsList = () => {
   //#region ----- RENDER UI -----
   return (
     <Container>
-      <HeaderWrapper>
-        <ClassTitle>{currentClass?.classTitle ?? "Loading class title..."}</ClassTitle>
+      {classes.length > 0 && (
+        <HeaderWrapper>
+          <ClassTitle>{currentClass?.classTitle ?? "Loading class title..."}</ClassTitle>
 
-        <TopBar>
-          <ClassSelect
-            aria-label="Select class"
-            value={classId}
-            onChange={handleClassChange}
-          >
-            {classes.map((cls) => (
-              <option
-                key={cls._id}
-                value={cls._id}
-              >
-                {cls.classTitle}
-              </option>
-            ))}
-          </ClassSelect>
-
-          {userRole === "teacher" && (
-            <StyledButton
-              aria-expanded={showOptions}
-              aria-label={showOptions ? "Hide options" : "Show options"}
-              onClick={() => setShowOptions((prev) => !prev)}
+          <TopBar>
+            <ClassSelect
+              aria-label="Select class"
+              value={classId}
+              onChange={handleClassChange}
             >
-              {showOptions ? "Hide" : "Show options"}
-            </StyledButton>
+              {classes.map((cls) => (
+                <option
+                  key={cls._id}
+                  value={cls._id}
+                >
+                  {cls.classTitle}
+                </option>
+              ))}
+            </ClassSelect>
+
+            {userRole === "teacher" && (
+              <StyledButton
+                aria-expanded={showOptions}
+                aria-label={showOptions ? "Hide options" : "Show options"}
+                onClick={() => setShowOptions((prev) => !prev)}
+              >
+                {showOptions ? "Hide" : "Show options"}
+              </StyledButton>
+            )}
+          </TopBar>
+
+          {userRole === "teacher" && showOptions && (
+            <ButtonContainer>
+              <div>
+                <StyledButton
+                  $add
+                  type="button"
+                  onClick={handleEditClass}
+                >
+                  Add class
+                </StyledButton>
+                <StyledButton
+                  $add
+                  type="button"
+                  onClick={handleEditProject}
+                >
+                  Add project
+                </StyledButton>
+              </div>
+              <div>
+                <StyledButton
+                  $delete
+                  type="button"
+                  onClick={() => {
+                    setDeleteSelect("classSelect")
+                    setIsRemovingProject(true)
+                  }}
+                >
+                  Delete class
+                </StyledButton>
+              </div>
+            </ButtonContainer>
           )}
-        </TopBar>
+        </HeaderWrapper>
+      )}
 
-        {userRole === "teacher" && showOptions && (
-          <ButtonContainer>
-            <div>
-              <StyledButton
-                $add
-                type="button"
-                onClick={handleEditClass}
-              >
-                Add class
-              </StyledButton>
-              <StyledButton
-                $add
-                type="button"
-                onClick={handleEditProject}
-              >
-                Add project
-              </StyledButton>
-            </div>
-            <div>
-              <StyledButton
-                $delete
-                type="button"
-                onClick={() => {
-                  setDeleteSelect("classSelect")
-                  setIsRemovingProject(true)
-                }}
-              >
-                Delete class
-              </StyledButton>
-            </div>
-          </ButtonContainer>
-        )}
-      </HeaderWrapper>
-
-      {projects.length === 0 ? (
+      {classes.length === 0 && userRole === "teacher" ? (
+        <NoClassesContainer>
+          <NoClassesMessage>
+            You don't have any classes yet. Create your first class to get started.
+          </NoClassesMessage>
+          <CreateFirstClassButton onClick={handleEditClass}>
+            Create Your First Class
+          </CreateFirstClassButton>
+        </NoClassesContainer>
+      ) : projects.length === 0 ? (
         <NoProjectsContainer>
           <NoProjectsMessage>You have no projects in this class...</NoProjectsMessage>
         </NoProjectsContainer>
@@ -393,6 +404,39 @@ const NoProjectsContainer = styled.div`
 
 const NoProjectsMessage = styled.p`
   color: ${({ theme }) => theme.colors.text};
+`
+
+const NoClassesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+  text-align: center;
+  margin: 30px 0;
+`
+
+const NoClassesMessage = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+`
+
+const CreateFirstClassButton = styled.button`
+  padding: 12px 24px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+    transform: scale(0.98);
+  }
 `
 
 //#endregion

@@ -3,8 +3,17 @@ import { SideMenu } from "./components/side-menu/SideMenu"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
+import { CreateClass } from "./components/CreateClass"
+import { useEditingStore } from "../../store/editStore"
 
 export const VideoLibraryPage = () => {
+  const isEditingClass = useEditingStore((state) => state.isEditingClass)
+  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
+
+  const handleModalClose = () => {
+    setIsEditingClass(false)
+  }
+
   return (
     <>
       <InvisibleH1>Video Library</InvisibleH1>
@@ -17,6 +26,11 @@ export const VideoLibraryPage = () => {
           <Outlet />
         </ContentWrapper>
       </MainSection>
+      {isEditingClass && (
+        <ModalContainer onClick={handleModalClose}>
+          <CreateClass />
+        </ModalContainer>
+      )}
     </>
   )
 }
@@ -47,6 +61,19 @@ const SideNavContainer = styled.section`
     display: block;
     padding: 72px 0;
   }
+`
+
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(2, 2, 2, 0.621);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const InvisibleH1 = styled.h1`

@@ -45,6 +45,7 @@ export const SideMenu = () => {
   }, [fetchClasses, currentWorkspaceId])
 
   useEffect(() => {
+    // Only redirect if we have classes and no classId is selected
     if (!classId && classes.length > 0) {
       navigate(`/library/classes/${classes[0]._id}/projects`, { replace: true })
     }
@@ -112,13 +113,15 @@ export const SideMenu = () => {
             >
               + Class
             </StyledButton>
-            <StyledButton
-              type="button"
-              onClick={handleEditProject}
-              aria-label="Add new project"
-            >
-              + Project
-            </StyledButton>
+            {classes.length > 0 && (
+              <StyledButton
+                type="button"
+                onClick={handleEditProject}
+                aria-label="Add new project"
+              >
+                + Project
+              </StyledButton>
+            )}
           </FormContainer>
         </BottomSection>
       )}

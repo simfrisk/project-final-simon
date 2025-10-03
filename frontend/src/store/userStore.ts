@@ -136,7 +136,23 @@ export const useUserStore = create<UserStore>((set, get) => ({
     localStorage.removeItem("role")
     localStorage.removeItem("name")
     localStorage.removeItem("profileImage")
+    localStorage.removeItem("workspaceId")
+    localStorage.removeItem("currentWorkspaceId")
     set({ user: null, isLoggedIn: false })
+
+    // Clear all related stores
+    import("./workspaceStore").then(({ useWorkspaceStore }) => {
+      useWorkspaceStore.getState().clearWorkspaceData()
+    })
+    import("./classStore").then(({ useClassStore }) => {
+      useClassStore.getState().clearClasses()
+    })
+    import("./projectStore").then(({ useProjectStore }) => {
+      useProjectStore.getState().clearProjects()
+    })
+    import("./commentStore").then(({ commentStore }) => {
+      commentStore.getState().clearComments()
+    })
   },
   //#endregion
 
@@ -171,6 +187,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
         localStorage.setItem("profileImage", user.profileImage)
 
         set({ user, isLoggedIn: true })
+
+        // Automatically fetch workspace data for new users (especially those with invitations)
+        if (data.workspaceId) {
+          localStorage.setItem("currentWorkspaceId", data.workspaceId)
+          import("./workspaceStore").then(({ useWorkspaceStore }) => {
+            useWorkspaceStore.getState().setCurrentWorkspace(data.workspaceId)
+            useWorkspaceStore.getState().fetchUserWorkspaces()
+          })
+        }
 
         return { success: true, message: "User created successfully" }
       } else {

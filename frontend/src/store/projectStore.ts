@@ -41,6 +41,7 @@ interface ProjectsStore {
     projectId: string,
     updates: { newName?: string; newDescription?: string; newTeacher?: string }
   ) => Promise<void>
+  clearProjects: () => void
 }
 
 //#endregion
@@ -329,5 +330,20 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
       })
     }
   },
+
+  //#endregion
+
+  //#region ----- CLEAR PROJECTS -----
+
+  clearProjects: () => {
+    set({
+      projects: [],
+      project: null,
+      loading: false,
+      error: null,
+      message: null,
+    })
+  },
+
   //#endregion
 }))

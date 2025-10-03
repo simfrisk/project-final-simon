@@ -67,11 +67,7 @@ interface MessageStore {
   setSelectedTimeStamp: (stamp: string) => void
   setSelectedCommentId: (id: string | null) => void
   addMessage: (msg: NewMessageType) => Promise<void>
-  addReply: (reply: {
-    content: string
-    commentId: string
-    projectId?: string
-  }) => Promise<void>
+  addReply: (reply: { content: string; commentId: string; projectId?: string }) => Promise<void>
   clearMessages: () => void
   toggleCheck: (commentId: string) => Promise<void>
   toggleLike: (commentId: string) => Promise<void>
@@ -83,6 +79,7 @@ interface MessageStore {
   fetchComments: (projectId: string) => Promise<void>
   fetchAllComments: () => Promise<void>
   fetchPrivateComments: (projectId: string) => Promise<void>
+  clearComments: () => void
 }
 
 //#endregion
@@ -140,17 +137,14 @@ export const commentStore = create<MessageStore>()(
       addMessage: async (msg) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/projects/${msg.projectId}/comments`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: token } : {}),
-              },
-              body: JSON.stringify(msg),
-            }
-          )
+          const response = await fetch(`${baseUrl}/projects/${msg.projectId}/comments`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: token } : {}),
+            },
+            body: JSON.stringify(msg),
+          })
 
           if (!response.ok) throw new Error("Failed to post comment")
 
@@ -183,17 +177,14 @@ export const commentStore = create<MessageStore>()(
       addReply: async (reply) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/comments/${reply.commentId}/replies`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: token } : {}),
-              },
-              body: JSON.stringify({ content: reply.content }),
-            }
-          )
+          const response = await fetch(`${baseUrl}/comments/${reply.commentId}/replies`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: token } : {}),
+            },
+            body: JSON.stringify({ content: reply.content }),
+          })
 
           if (!response.ok) throw new Error("Failed to post reply")
 
@@ -233,8 +224,7 @@ export const commentStore = create<MessageStore>()(
       //#endregion
 
       //#region ----- CLEAR MESSAGES -----
-      clearMessages: () =>
-        set({ projectComments: [], allComments: [], privateComments: [] }),
+      clearMessages: () => set({ projectComments: [], allComments: [], privateComments: [] }),
 
       //#endregion
 
@@ -242,29 +232,23 @@ export const commentStore = create<MessageStore>()(
       toggleCheck: async (commentId) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/comments/${commentId}/toggle-check`,
-            {
-              method: "PATCH",
-              headers: {
-                ...(token ? { Authorization: token } : {}),
-                "Content-Type": "application/json",
-              },
-            }
-          )
+          const response = await fetch(`${baseUrl}/comments/${commentId}/toggle-check`, {
+            method: "PATCH",
+            headers: {
+              ...(token ? { Authorization: token } : {}),
+              "Content-Type": "application/json",
+            },
+          })
 
           if (!response.ok) throw new Error("Failed to toggle isChecked")
 
           const data = await response.json()
-          if (!data.success || !data.response)
-            throw new Error("No updated comment returned")
+          if (!data.success || !data.response) throw new Error("No updated comment returned")
 
           const updatedComment = mapComment(data.response)
 
           const updateComments = (comments: MessageType[]) =>
-            comments.map((msg) =>
-              msg._id === updatedComment._id ? updatedComment : msg
-            )
+            comments.map((msg) => (msg._id === updatedComment._id ? updatedComment : msg))
 
           set((state) => ({
             projectComments: updateComments(state.projectComments),
@@ -273,8 +257,7 @@ export const commentStore = create<MessageStore>()(
           }))
 
           //This updates the comments on the project with comments
-          const fetchProjectsWithComments =
-            useProjectStore.getState().fetchProjectsWithComments
+          const fetchProjectsWithComments = useProjectStore.getState().fetchProjectsWithComments
           await fetchProjectsWithComments()
         } catch (err: any) {
           console.error("Toggle check failed:", err.message)
@@ -287,16 +270,13 @@ export const commentStore = create<MessageStore>()(
       toggleLike: async (commentId) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/comments/${commentId}/likes`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: token } : {}),
-              },
-            }
-          )
+          const response = await fetch(`${baseUrl}/comments/${commentId}/likes`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: token } : {}),
+            },
+          })
 
           if (!response.ok) throw new Error("Failed to toggle like")
 
@@ -350,9 +330,7 @@ export const commentStore = create<MessageStore>()(
               comments.map((comment) => ({
                 ...comment,
                 replies: (comment.replies || []).map((reply) =>
-                  reply._id === replyId
-                    ? { ...reply, likesCount: data.totalLikes }
-                    : reply
+                  reply._id === replyId ? { ...reply, likesCount: data.totalLikes } : reply
                 ),
               }))
 
@@ -391,9 +369,7 @@ export const commentStore = create<MessageStore>()(
 
             const updateComments = (comments: MessageType[]) =>
               comments.map((msg) =>
-                msg._id === commentId
-                  ? { ...msg, content: updatedComment.content }
-                  : msg
+                msg._id === commentId ? { ...msg, content: updatedComment.content } : msg
               )
 
             set((state) => ({
@@ -402,16 +378,10 @@ export const commentStore = create<MessageStore>()(
               privateComments: updateComments(state.privateComments),
             }))
           } else {
-            console.error(
-              "Update failed:",
-              data.message || "No comment returned"
-            )
+            console.error("Update failed:", data.message || "No comment returned")
           }
         } catch (err: any) {
-          console.error(
-            "Error updating comment:",
-            err.message || "Unknown error"
-          )
+          console.error("Error updating comment:", err.message || "Unknown error")
         }
       },
 
@@ -482,15 +452,9 @@ export const commentStore = create<MessageStore>()(
           const data = await response.json()
           if (data.success) {
             set((state) => ({
-              projectComments: state.projectComments.filter(
-                (msg) => msg._id !== commentId
-              ),
-              allComments: state.allComments.filter(
-                (msg) => msg._id !== commentId
-              ),
-              privateComments: state.privateComments.filter(
-                (msg) => msg._id !== commentId
-              ),
+              projectComments: state.projectComments.filter((msg) => msg._id !== commentId),
+              allComments: state.allComments.filter((msg) => msg._id !== commentId),
+              privateComments: state.privateComments.filter((msg) => msg._id !== commentId),
             }))
           }
         } catch (err: any) {
@@ -520,9 +484,7 @@ export const commentStore = create<MessageStore>()(
                 msg._id === commentId
                   ? {
                       ...msg,
-                      replies: (msg.replies || []).filter(
-                        (r) => r._id !== replyId
-                      ),
+                      replies: (msg.replies || []).filter((r) => r._id !== replyId),
                     }
                   : msg
               )
@@ -544,15 +506,12 @@ export const commentStore = create<MessageStore>()(
       fetchComments: async (projectId) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/projects/${projectId}/comments`,
-            {
-              method: "GET",
-              headers: {
-                ...(token ? { Authorization: token } : {}),
-              },
-            }
-          )
+          const response = await fetch(`${baseUrl}/projects/${projectId}/comments`, {
+            method: "GET",
+            headers: {
+              ...(token ? { Authorization: token } : {}),
+            },
+          })
 
           if (!response.ok) throw new Error("Failed to fetch comments")
 
@@ -595,15 +554,12 @@ export const commentStore = create<MessageStore>()(
       fetchPrivateComments: async (projectId) => {
         try {
           const token = getToken()
-          const response = await fetch(
-            `${baseUrl}/projects/${projectId}/comments/private`,
-            {
-              method: "GET",
-              headers: {
-                ...(token ? { Authorization: token } : {}),
-              },
-            }
-          )
+          const response = await fetch(`${baseUrl}/projects/${projectId}/comments/private`, {
+            method: "GET",
+            headers: {
+              ...(token ? { Authorization: token } : {}),
+            },
+          })
 
           if (!response.ok) throw new Error("Failed to fetch private comments")
 
@@ -615,10 +571,23 @@ export const commentStore = create<MessageStore>()(
           console.error("Private fetch error:", err.message)
         }
       },
+
+      //#endregion
+
+      //#region ----- CLEAR COMMENTS -----
+
+      clearComments: () => {
+        set({
+          allComments: [],
+          projectComments: [],
+          privateComments: [],
+          selectedTimeStamp: null,
+          selectedCommentId: null,
+        })
+      },
+
+      //#endregion
     }),
-
-    //#endregion
-
     //#region ----- COMMENT STORAGE -----
     {
       name: "comment-storage",
