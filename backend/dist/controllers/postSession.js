@@ -89,6 +89,7 @@ const postSession = async (req, res) => {
                 role: user.role,
                 profileImage: user.profileImage,
                 accessToken: user.accessToken,
+                teams: user.teams.map((teamId) => teamId.toString()),
             });
         }
         else {

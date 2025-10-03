@@ -13,6 +13,7 @@ interface AuthUser {
   role: string
   profileImage: string
   workspaceId?: string
+  teams?: string[]
 }
 
 interface UserStore {
@@ -95,6 +96,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
           role: data.role || "student",
           name: data.name || "",
           profileImage: data.profileImage || "/SImon.png",
+          teams: data.teams || [],
         }
 
         // Save to localStorage
@@ -157,6 +159,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
           role: formData.get("role") as string,
           name: formData.get("name") as string,
           profileImage: data.profileImage,
+          teams: data.teams || [],
         }
 
         // Save to localStorage

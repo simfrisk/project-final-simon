@@ -45,8 +45,8 @@ const workspace_permissions_1 = require("../utils/workspace-permissions");
  * @swagger
  * /workspace/{workspaceId}/invite:
  *   post:
- *     summary: Create workspace invitation link (student-only)
- *     description: Generate an invitation link for students to join a workspace. The link expires in 7 days.
+ *     summary: Create workspace invitation link (teacher-only)
+ *     description: Generate an invitation link for students to join a workspace. Only teachers can create invitations. The link expires in 7 days.
  *     tags:
  *       - Invitations
  *     security:
@@ -75,8 +75,81 @@ const workspace_permissions_1 = require("../utils/workspace-permissions");
  *                  expiresAt:
  *                    type: string
  *                    format: date-time
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Team does not belong to this workspace"
  *       403:
- *         description: Insufficient permissions
+ *         description: Insufficient permissions - Only teachers can create invitations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You don't have permission to create invitations"
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /workspace/{workspaceId}/teams/{teamId}/invite:
+ *   post:
+ *     summary: Create team-specific invitation link (teacher-only)
+ *     description: Generate an invitation link for students to join a specific team in a workspace. Only teachers can create invitations. The link expires in 7 days.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workspace to invite users to
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the team to invite users to
+ *     responses:
+ *       200:
+ *         description: Invitation link created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                  message:
+ *                    type: string
+ *                    example: "Invitation created successfully"
+ *                  signupLink:
+ *                    type: string
+ *                    example: "https://class-review.netlify.app/signUp?token=abc123def456"
+ *                  expiresAt:
+ *                    type: string
+ *                    format: date-time
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Team does not belong to this workspace"
+ *       403:
+ *         description: Insufficient permissions - Only teachers can create invitations
  *         content:
  *           application/json:
  *             schema:
@@ -202,6 +275,72 @@ const validateInvitationToken = async (req, res) => {
     }
 };
 exports.validateInvitationToken = validateInvitationToken;
+/**
+ * @swagger
+ * /invitation/use:
+ *   post:
+ *     summary: Use invitation token to join workspace
+ *     description: Use a valid invitation token to join a workspace or team. The invitation must not be expired and must match the user's role.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: The invitation token to use
+ *                 example: "abc123def456ghi789"
+ *     responses:
+ *       200:
+ *         description: Successfully joined workspace
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully joined workspace"
+ *       400:
+ *         description: Invalid or expired invitation link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *        403:
+ *         description: Role mismatch - invitation is for a different user role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "This invitation is only for students. Your role is teacher."
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Server error
+ */
 const useInvitationToken = async (req, res) => {
     try {
         const { token } = req.body;
@@ -241,6 +380,82 @@ const useInvitationToken = async (req, res) => {
     }
 };
 exports.useInvitationToken = useInvitationToken;
+/**
+ * @swagger
+ * /workspace/{workspaceId}/invitations:
+ *   get:
+ *     summary: Get invitation history for workspace (teacher-only)
+ *     description: Retrieve the history of all invitations created for a workspace. Only teachers can view this information.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: workspaceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workspace to get invitation history for
+ *     responses:
+ *       200:
+ *         description: Invitation history retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 invitations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       workspaceId:
+ *                         type: string
+ *                       teamId:
+ *                         type: string
+ *                       createdBy:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                       usedBy:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                       token:
+ *                         type: string
+ *                       expiresAt:
+ *                         type: string
+ *                         format: date-time
+ *                       isUsed:
+ *                         type: boolean
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       usedAt:
+ *                         type: string
+ *                         format: date-time
+ *       403:
+ *         description: Insufficient permissions - Only teachers can view invitation history
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You don't have permission to view invitation history"
+ *       500:
+ *         description: Server error
+ */
 const getInvitationHistory = async (req, res) => {
     try {
         const { workspaceId } = req.params;

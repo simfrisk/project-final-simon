@@ -179,6 +179,7 @@ const postUser = async (req, res) => {
             profileImage: user.profileImage,
             accessToken: user.accessToken,
             workspaceId: invitationWorkspaceId,
+            teams: user.teams?.map((teamId) => teamId.toString()) || [],
         });
     }
     catch (error) {

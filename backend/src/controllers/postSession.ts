@@ -75,10 +75,7 @@ import { Response, Request } from "express"
  *                   type: string
  *                   example: Internal server error
  */
-export const postSession = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const postSession = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await UserModel.findOne({ email: req.body.email })
 
@@ -89,6 +86,7 @@ export const postSession = async (
         role: user.role,
         profileImage: user.profileImage,
         accessToken: user.accessToken,
+        teams: user.teams.map((teamId) => teamId.toString()),
       })
     } else {
       res.status(401).json({ notFound: true }) // better to return a 401 for auth failure

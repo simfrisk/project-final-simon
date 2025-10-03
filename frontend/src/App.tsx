@@ -89,11 +89,11 @@ export const App = () => {
                 }
               />
 
-              {/* Admin Routes - Teacher Access Only */}
+              {/* User Page - Accessible by Teachers and Students */}
               <Route
                 path="/admin/users"
                 element={
-                  <RequireRole allowedRoles={["teacher"]}>
+                  <RequireRole allowedRoles={["teacher", "student"]}>
                     <UserPage />
                   </RequireRole>
                 }

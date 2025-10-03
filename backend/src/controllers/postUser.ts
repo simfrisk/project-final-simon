@@ -193,6 +193,7 @@ export const postUser = async (req: Request, res: Response) => {
       profileImage: user.profileImage,
       accessToken: user.accessToken,
       workspaceId: invitationWorkspaceId,
+      teams: user.teams?.map((teamId) => teamId.toString()) || [],
     })
   } catch (error) {
     console.error("❌ Error creating user:", error)

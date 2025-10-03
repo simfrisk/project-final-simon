@@ -3,10 +3,12 @@ import { useState, useEffect } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useTeamStore, type Team } from "../../../store/teamStore"
 import { useWorkspaceStore } from "../../../store/workspaceStore"
+import { useUserStore } from "../../../store/userStore"
 
 export const TeamsSection = () => {
   const { teams, loading, fetchTeams } = useTeamStore()
   const { currentWorkspaceId } = useWorkspaceStore()
+  const { user: currentUser } = useUserStore()
 
   // Fetch teams when component mounts
   useEffect(() => {
@@ -14,6 +16,15 @@ export const TeamsSection = () => {
       fetchTeams(currentWorkspaceId)
     }
   }, [currentWorkspaceId, fetchTeams])
+
+  // Filter teams for students - only show their team
+  const filteredTeams =
+    currentUser?.role === "student"
+      ? teams.filter((team) => {
+          // For students, check if they are members of this team
+          return currentUser.teams?.some((teamId) => teamId === team._id)
+        })
+      : teams
 
   if (loading && teams.length === 0) {
     return (
@@ -37,12 +48,16 @@ export const TeamsSection = () => {
     )
   }
 
-  if (teams.length === 0) {
+  if (filteredTeams.length === 0) {
     return (
       <SectionContainer>
         <SectionHeader>
           <SectionTitle>Teams</SectionTitle>
-          <NoTeamsText>No teams found in this workspace</NoTeamsText>
+          <NoTeamsText>
+            {currentUser?.role === "student"
+              ? "You are not assigned to any teams yet"
+              : "No teams found in this workspace"}
+          </NoTeamsText>
         </SectionHeader>
       </SectionContainer>
     )
@@ -50,7 +65,7 @@ export const TeamsSection = () => {
 
   return (
     <>
-      {teams.map((team) => (
+      {filteredTeams.map((team) => (
         <TeamSection
           key={team._id}
           team={team}
@@ -63,6 +78,7 @@ export const TeamsSection = () => {
 
 const TeamSection = ({ team, workspaceId }: { team: Team; workspaceId: string }) => {
   const { createInvitationLink, error } = useWorkspaceStore()
+  const { user: currentUser } = useUserStore()
   const [inviteLink, setInviteLink] = useState<string>("")
   const [isGeneratingLink, setIsGeneratingLink] = useState(false)
 
@@ -105,20 +121,22 @@ const TeamSection = ({ team, workspaceId }: { team: Team; workspaceId: string })
             </CopyButton>
           </InviteLinkContainer>
         ) : (
-          <div>
-            <GenerateInviteButton
-              onClick={handleGenerateInviteLink}
-              disabled={isGeneratingLink}
-              aria-label={`Generate invite link for ${team.teamName}`}
-            >
-              {isGeneratingLink ? "Generating..." : "Generate Invite"}
-            </GenerateInviteButton>
-            {error && (
-              <InviteError style={{ fontSize: "12px", marginTop: "4px", color: "#ff6b6b" }}>
-                {error}
-              </InviteError>
-            )}
-          </div>
+          currentUser?.role !== "student" && (
+            <div>
+              <GenerateInviteButton
+                onClick={handleGenerateInviteLink}
+                disabled={isGeneratingLink}
+                aria-label={`Generate invite link for ${team.teamName}`}
+              >
+                {isGeneratingLink ? "Generating..." : "Generate Invite"}
+              </GenerateInviteButton>
+              {error && (
+                <InviteError style={{ fontSize: "12px", marginTop: "4px", color: "#ff6b6b" }}>
+                  {error}
+                </InviteError>
+              )}
+            </div>
+          )
         )}
         <SectionCount aria-label={`${memberCount} members in ${team.teamName}`}>
           {memberCount} members

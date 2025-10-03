@@ -17,7 +17,7 @@ interface ActiveTab {
 }
 
 export const UserPage = () => {
-  const { getAllUsers } = useUserStore()
+  const { getAllUsers, user: currentUser } = useUserStore()
   const [activeTab, setActiveTab] = useState<keyof ActiveTab>("users")
 
   useEffect(() => {
@@ -63,15 +63,19 @@ export const UserPage = () => {
         {activeTab === "users" && (
           <>
             <CurrentUserSection />
-            <TeachersSection />
-            <StudentsSection />
-            <CreateUserSection />
+            {currentUser?.role === "teacher" && (
+              <>
+                <TeachersSection />
+                <StudentsSection />
+                <CreateUserSection />
+              </>
+            )}
           </>
         )}
         {activeTab === "teams" && (
           <>
             <TeamsSection />
-            <CreateTeam />
+            {currentUser?.role === "teacher" && <CreateTeam />}
           </>
         )}
         {activeTab === "more" && <p>More</p>}

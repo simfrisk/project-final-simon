@@ -34,7 +34,7 @@ export const MobileNavigation = ({
   return (
     <>
       <MobileMenuToggle>
-        {isLoggedIn && user?.role === "teacher" && (
+        {isLoggedIn && (
           <UserProfileContainer>
             <UserProfile
               onClick={(e) => {
