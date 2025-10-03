@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
 import { SideMenu } from "./components/side-menu/SideMenu"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
@@ -9,10 +9,14 @@ import { useEditingStore } from "../../store/editStore"
 export const VideoLibraryPage = () => {
   const isEditingClass = useEditingStore((state) => state.isEditingClass)
   const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
+  const location = useLocation()
 
   const handleModalClose = () => {
     setIsEditingClass(false)
   }
+
+  // Don't show modal when on the main /library route (ChooseClassMessage route)
+  const showModal = isEditingClass && !location.pathname.endsWith("/library")
 
   return (
     <>
@@ -26,7 +30,7 @@ export const VideoLibraryPage = () => {
           <Outlet />
         </ContentWrapper>
       </MainSection>
-      {isEditingClass && (
+      {showModal && (
         <ModalContainer onClick={handleModalClose}>
           <CreateClass />
         </ModalContainer>

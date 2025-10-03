@@ -8,7 +8,11 @@ import { useWorkspaceStore } from "../../../store/workspaceStore"
 //#endregion
 
 //#region ----- COMPONENT LOGIC -----
-export const CreateClass = () => {
+interface CreateClassProps {
+  onClose?: () => void
+}
+
+export const CreateClass = ({ onClose }: CreateClassProps = {}) => {
   const addClass = useClassStore((state) => state.addClass)
   const currentWorkspaceId = useWorkspaceStore((state) => state.currentWorkspaceId)
   const [classTitle, setClassTitle] = useState("")
@@ -22,7 +26,14 @@ export const CreateClass = () => {
     }
     await addClass(classTitle, currentWorkspaceId)
     setClassTitle("")
-    setIsEditingClass(false)
+
+    // Handle close - either via callback or editing store
+
+    if (onClose) {
+      onClose()
+    } else {
+      setIsEditingClass(false)
+    }
   }
 
   //#endregion

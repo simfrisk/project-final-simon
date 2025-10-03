@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { useClassStore } from "../../../store/classStore"
 import { useUserStore } from "../../../store/userStore"
-import { useEditingStore } from "../../../store/editStore"
 import { useState } from "react"
 import { CreateClass } from "./CreateClass"
 
@@ -9,11 +8,9 @@ export const ChooseClassMessage = () => {
   const classes = useClassStore((state) => state.classes)
   const user = useUserStore((state) => state.user)
   const userRole = user?.role
-  const setIsEditingClass = useEditingStore((state) => state.setIsEditingClass)
   const [showCreateForm, setShowCreateForm] = useState(false)
 
   const handleCreateClass = () => {
-    setIsEditingClass(true)
     setShowCreateForm(true)
   }
 
@@ -25,7 +22,7 @@ export const ChooseClassMessage = () => {
           <p>You don't have any classes yet. Create your first class to get started.</p>
           {showCreateForm ? (
             <CreateFormWrapper>
-              <CreateClass />
+              <CreateClass onClose={() => setShowCreateForm(false)} />
             </CreateFormWrapper>
           ) : (
             <CreateButton onClick={handleCreateClass}>Create Your First Class</CreateButton>

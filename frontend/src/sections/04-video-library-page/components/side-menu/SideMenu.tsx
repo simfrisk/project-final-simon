@@ -106,13 +106,15 @@ export const SideMenu = () => {
       {userRole === "teacher" && (
         <BottomSection aria-label="Class Actions">
           <FormContainer>
-            <StyledButton
-              type="button"
-              onClick={handleEditClass}
-              aria-label="Add new class"
-            >
-              + Class
-            </StyledButton>
+            {classes.length > 0 && (
+              <StyledButton
+                type="button"
+                onClick={handleEditClass}
+                aria-label="Add new class"
+              >
+                + Class
+              </StyledButton>
+            )}
             {classes.length > 0 && (
               <StyledButton
                 type="button"
