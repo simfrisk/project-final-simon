@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useUserStore } from "../../store/userStore"
+import { useWorkspaceStore } from "../../store/workspaceStore"
 import styled from "styled-components"
 import { Navigation } from "../../global-components/navigation/Navigation"
 import { MediaQueries } from "../../themes/mediaQueries"
@@ -17,12 +18,15 @@ interface ActiveTab {
 }
 
 export const UserPage = () => {
-  const { getAllUsers, user: currentUser } = useUserStore()
+  const { getWorkspaceUsers, user: currentUser } = useUserStore()
+  const { currentWorkspaceId } = useWorkspaceStore()
   const [activeTab, setActiveTab] = useState<keyof ActiveTab>("users")
 
   useEffect(() => {
-    getAllUsers()
-  }, [getAllUsers])
+    if (currentWorkspaceId) {
+      getWorkspaceUsers(currentWorkspaceId)
+    }
+  }, [getWorkspaceUsers, currentWorkspaceId])
 
   return (
     <>

@@ -25,6 +25,7 @@ interface UserStore {
   logout: () => void
   createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
   getAllUsers: () => Promise<{ success: boolean; message: string }>
+  getWorkspaceUsers: (workspaceId: string) => Promise<{ success: boolean; message: string }>
   deleteUser: (userId: string) => Promise<{ success: boolean; message: string }>
   updateUser: (
     userId: string,
@@ -366,6 +367,38 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } catch (err: unknown) {
       console.error("Get users failed:", err)
       return { success: false, message: "Failed to fetch users" }
+    }
+  },
+  //#endregion
+
+  //#region ----- GET WORKSPACE USERS -----
+  getWorkspaceUsers: async (workspaceId: string) => {
+    try {
+      const token = localStorage.getItem("accessToken")
+      if (!token) throw new Error("Missing access token")
+
+      const res = await fetch(`${baseUrl}/workspace/${workspaceId}/users`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        set({ users: data.response })
+        return { success: true, message: "Workspace users fetched successfully" }
+      } else {
+        return {
+          success: false,
+          message: data.message || "Failed to fetch workspace users",
+        }
+      }
+    } catch (err: unknown) {
+      console.error("Get workspace users failed:", err)
+      return { success: false, message: "Failed to fetch workspace users" }
     }
   },
   //#endregion
