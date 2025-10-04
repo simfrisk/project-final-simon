@@ -19,6 +19,7 @@ import "./utils/moment-config"
 import { UserPage } from "./sections/07-user-page/UserPage"
 import { CreateTeam } from "./sections/08-create-team-page/CreateTeam"
 import { CreateWorkspacePage } from "./sections/09-create-workspace/CreateWorkspacePage"
+import { TeamDetailPage } from "./sections/10-team-detail-page/TeamDetailPage"
 
 //#endregion ----- IMPORTS -----
 
@@ -104,6 +105,15 @@ export const App = () => {
                 element={
                   <RequireRole allowedRoles={["teacher"]}>
                     <CreateTeam />
+                  </RequireRole>
+                }
+              />
+
+              <Route
+                path="/admin/teams/:teamId"
+                element={
+                  <RequireRole allowedRoles={["teacher", "student"]}>
+                    <TeamDetailPage />
                   </RequireRole>
                 }
               />

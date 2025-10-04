@@ -1,23 +1,30 @@
+//#region ----- IMPORTS -----
 import styled from "styled-components"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { MediaQueries } from "../../../themes/mediaQueries"
-import { useTeamStore, type Team } from "../../../store/teamStore"
+import { useTeamStore } from "../../../store/teamStore"
 import { useWorkspaceStore } from "../../../store/workspaceStore"
 import { useUserStore } from "../../../store/userStore"
+//#endregion
 
 export const TeamsSection = () => {
+  //#region ----- STORE HOOKS -----
   const { teams, loading, fetchTeams } = useTeamStore()
   const { currentWorkspaceId } = useWorkspaceStore()
   const { user: currentUser } = useUserStore()
+  const navigate = useNavigate()
+  //#endregion
 
-  // Fetch teams when component mounts
+  //#region ----- EFFECTS -----
   useEffect(() => {
     if (currentWorkspaceId) {
       fetchTeams(currentWorkspaceId)
     }
   }, [currentWorkspaceId, fetchTeams])
+  //#endregion
 
-  // Filter teams for students - only show their team
+  //#region ----- DERIVED DATA -----
   const filteredTeams =
     currentUser?.role === "student"
       ? teams.filter((team) => {
@@ -25,7 +32,9 @@ export const TeamsSection = () => {
           return currentUser.teams?.some((teamId) => teamId === team._id)
         })
       : teams
+  //#endregion
 
+  //#region ----- RENDER -----
   if (loading && teams.length === 0) {
     return (
       <SectionContainer>
@@ -64,132 +73,193 @@ export const TeamsSection = () => {
   }
 
   return (
-    <>
-      {filteredTeams.map((team) => (
-        <TeamSection
-          key={team._id}
-          team={team}
-          workspaceId={currentWorkspaceId}
-        />
-      ))}
-    </>
+    <TeamsGrid>
+      {filteredTeams.map((team) => {
+        const memberCount = team.assignedTeachers?.length || 0
+        const classCount = team.accessTo?.length || 0
+
+        return (
+          <TeamCard
+            key={team._id}
+            onClick={() => navigate(`/admin/teams/${team._id}`)}
+          >
+            <TeamCardHeader>
+              <TeamCardTitle>{team.teamName}</TeamCardTitle>
+              <MemberBadge>{memberCount} members</MemberBadge>
+            </TeamCardHeader>
+
+            <TeamCardContent>
+              <WorkspaceInfo>
+                <WorkspaceLabel>Workspace:</WorkspaceLabel>
+                <WorkspaceName>{team.workspaceId?.name || "Unknown"}</WorkspaceName>
+              </WorkspaceInfo>
+
+              <StatsRow>
+                <StatItem>
+                  <StatIcon>👥</StatIcon>
+                  <StatValue>{memberCount} members</StatValue>
+                </StatItem>
+                <StatItem>
+                  <StatIcon>📚</StatIcon>
+                  <StatValue>{classCount} classes</StatValue>
+                </StatItem>
+              </StatsRow>
+            </TeamCardContent>
+
+            <ViewDetailsButton>
+              View Details →
+            </ViewDetailsButton>
+          </TeamCard>
+        )
+      })}
+    </TeamsGrid>
   )
+  //#endregion
 }
 
-const TeamSection = ({ team, workspaceId }: { team: Team; workspaceId: string }) => {
-  const { createInvitationLink, error } = useWorkspaceStore()
-  const { user: currentUser } = useUserStore()
-  const [inviteLink, setInviteLink] = useState<string>("")
-  const [isGeneratingLink, setIsGeneratingLink] = useState(false)
+//#region ----- STYLED COMPONENTS -----
+const TeamsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0 0 24px 0;
 
-  const handleGenerateInviteLink = async () => {
-    setIsGeneratingLink(true)
-    try {
-      const link = await createInvitationLink(workspaceId, team._id)
-      if (link) {
-        setInviteLink(link)
-      }
-    } catch (error) {
-      console.error("Failed to generate invite link:", error)
-    } finally {
-      setIsGeneratingLink(false)
-    }
+  @media ${MediaQueries.biggerSizes} {
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+`
+
+const TeamCard = styled.div`
+  background: ${({ theme }) => theme.colors.background};
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 
-  // Get member count from assignedTeachers
-  const memberCount = team.assignedTeachers?.length || 0
+  @media ${MediaQueries.biggerSizes} {
+    padding: 24px;
+    border-radius: 20px;
+  }
+`
 
-  return (
-    <SectionContainer
-      role="region"
-      aria-labelledby={`team-section-${team._id}`}
-    >
-      <SectionHeader>
-        <SectionTitle id={`team-section-${team._id}`}>{team.teamName}</SectionTitle>
-        {inviteLink ? (
-          <InviteLinkContainer>
-            <InviteLink
-              href={inviteLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Invite link for ${team.teamName}`}
-            >
-              Join {team.workspaceId?.name || "Workspace"}
-            </InviteLink>
-            <CopyButton onClick={() => navigator.clipboard.writeText(inviteLink)}>
-              📋 Copy Link
-            </CopyButton>
-          </InviteLinkContainer>
-        ) : (
-          currentUser?.role !== "student" && (
-            <div>
-              <GenerateInviteButton
-                onClick={handleGenerateInviteLink}
-                disabled={isGeneratingLink}
-                aria-label={`Generate invite link for ${team.teamName}`}
-              >
-                {isGeneratingLink ? "Generating..." : "Generate Invite"}
-              </GenerateInviteButton>
-              {error && (
-                <InviteError style={{ fontSize: "12px", marginTop: "4px", color: "#ff6b6b" }}>
-                  {error}
-                </InviteError>
-              )}
-            </div>
-          )
-        )}
-        <SectionCount aria-label={`${memberCount} members in ${team.teamName}`}>
-          {memberCount} members
-        </SectionCount>
-      </SectionHeader>
+const TeamCardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+`
 
-      <TeamDescription>Workspace: {team.workspaceId?.name || "Unknown Workspace"}</TeamDescription>
+const TeamCardTitle = styled.h3`
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text};
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
-      {team.assignedTeachers && team.assignedTeachers.length > 0 && (
-        <MembersGrid
-          role="list"
-          aria-label={`List of members in ${team.teamName}`}
-        >
-          {team.assignedTeachers.map((teacher) => (
-            <MemberCard
-              key={teacher._id}
-              role="listitem"
-              aria-label={`Team member: ${teacher.name}`}
-            >
-              <MemberImageContainer>
-                <MemberImage
-                  src={teacher.profileImage || "/logo2.png"}
-                  alt={`Profile picture of ${teacher.name}`}
-                  onError={(e) => {
-                    e.currentTarget.src = "/logo2.png"
-                  }}
-                />
-              </MemberImageContainer>
-              <MemberInfo>
-                <MemberName>{teacher.name}</MemberName>
-                <MemberEmail aria-label={`Email: ${teacher.email}`}>{teacher.email}</MemberEmail>
-                <MemberRole aria-label={`Role: ${teacher.role}`}>{teacher.role}</MemberRole>
-              </MemberInfo>
-            </MemberCard>
-          ))}
-        </MembersGrid>
-      )}
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 24px;
+  }
+`
 
-      {team.accessTo && team.accessTo.length > 0 && (
-        <AccessToClasses>
-          <ClassesLabel>Has access to classes:</ClassesLabel>
-          <ClassesList>
-            {team.accessTo.map((classItem) => (
-              <ClassChip key={classItem._id}>{classItem.classTitle}</ClassChip>
-            ))}
-          </ClassesList>
-        </AccessToClasses>
-      )}
-    </SectionContainer>
-  )
-}
+const MemberBadge = styled.span`
+  background: #2ed573;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
 
-// Styled Components
+  @media ${MediaQueries.biggerSizes} {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+`
+
+const TeamCardContent = styled.div`
+  margin-bottom: 16px;
+`
+
+const WorkspaceInfo = styled.div`
+  margin-bottom: 16px;
+`
+
+const WorkspaceLabel = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.6;
+  font-weight: 500;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 13px;
+  }
+`
+
+const WorkspaceName = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text};
+  margin-left: 6px;
+  font-weight: 600;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 15px;
+  }
+`
+
+const StatsRow = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`
+
+const StatIcon = styled.span`
+  font-size: 16px;
+`
+
+const StatValue = styled.span`
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.8;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 14px;
+  }
+`
+
+const ViewDetailsButton = styled.div`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  margin-top: 12px;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 15px;
+  }
+`
+
+// Styled Components for loading/empty states
 const SectionContainer = styled.div`
   background: ${({ theme }) => theme.colors.background};
   backdrop-filter: blur(10px);
@@ -236,279 +306,21 @@ const SectionTitle = styled.h2`
   }
 `
 
-const SectionCount = styled.span`
-  background: #2ed573;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 25px;
-  }
-`
-
-const TeamDescription = styled.p`
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.text};
-  margin: 0 0 24px 0;
-  opacity: 0.8;
-  font-style: italic;
-  text-align: center;
-
-  @media ${MediaQueries.biggerSizes} {
-    font-size: 16px;
-    margin: 0 0 32px 0;
-  }
-`
-
-const MembersGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  align-items: start;
-
-  @media ${MediaQueries.biggerSizes} {
-    gap: 20px;
-  }
-`
-
-const MemberCard = styled.div`
-  background: ${({ theme }) => theme.colors.background};
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 20px;
-    border-radius: 16px;
-  }
-`
-
-const MemberImageContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
-`
-
-const MemberImage = styled.img`
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid ${({ theme }) => theme.colors.background};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  ${MemberCard}:hover & {
-    transform: scale(1.05);
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    width: 80px;
-    height: 80px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-`
-
-const MemberInfo = styled.div`
-  text-align: center;
-`
-
-const MemberName = styled.h4`
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: ${({ theme }) => theme.colors.text};
-
-  @media ${MediaQueries.biggerSizes} {
-    font-size: 18px;
-    margin: 0 0 6px 0;
-  }
-`
-
-const MemberEmail = styled.p`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.text};
-  margin: 0 0 4px 0;
-  word-break: break-word;
-  opacity: 0.8;
-
-  @media ${MediaQueries.biggerSizes} {
-    font-size: 13px;
-    margin: 0 0 6px 0;
-  }
-`
-
-const MemberRole = styled.p`
-  font-size: 11px;
-  color: ${({ theme }) => theme.colors.text};
-  margin: 0;
-  text-transform: capitalize;
-  font-weight: 500;
-  opacity: 0.7;
-
-  @media ${MediaQueries.biggerSizes} {
-    font-size: 12px;
-  }
-`
-
-// New styled components for invitation functionality
 const LoadingText = styled.p`
   color: ${({ theme }) => theme.colors.text};
   opacity: 0.7;
   margin: 0;
 `
+
 const NoWorkspaceText = styled.p`
   color: ${({ theme }) => theme.colors.text};
   opacity: 0.7;
   margin: 0;
 `
+
 const NoTeamsText = styled.p`
   color: ${({ theme }) => theme.colors.text};
   opacity: 0.7;
   margin: 0;
 `
-
-const GenerateInviteButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.colors.primaryHover};
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-`
-
-const InviteLinkContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-
-  @media ${MediaQueries.biggerSizes} {
-    flex-direction: row;
-    gap: 12px;
-  }
-`
-
-const InviteLink = styled.a`
-  background: #2ed573;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  &:hover {
-    background: #20b362;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-`
-
-const CopyButton = styled.button`
-  background: rgba(255, 255, 255, 0.1);
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-  }
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-`
-
-const AccessToClasses = styled.div`
-  margin-top: 16px;
-  text-align: center;
-`
-
-const ClassesLabel = styled.p`
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.text};
-  margin: 0 0 8px 0;
-  font-weight: 600;
-`
-
-const ClassesList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-`
-
-const ClassChip = styled.span`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-`
-
-const InviteError = styled.div`
-  text-align: center;
-  margin-top: 4px;
-  font-size: 12px;
-  color: #ff6b6b;
-`
+//#endregion

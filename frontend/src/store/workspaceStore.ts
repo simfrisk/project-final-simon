@@ -34,6 +34,7 @@ interface WorkspaceStore {
   deleteWorkspace: (workspaceId: string) => Promise<void>
   createInvitationLink: (workspaceId: string, teamId?: string) => Promise<string | null>
   validateInvitationToken: (token: string) => Promise<boolean>
+  fetchInvitationHistory: (workspaceId: string) => Promise<any[]>
   clearWorkspaceData: () => void
 }
 
@@ -365,6 +366,38 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
       return false
     }
   },
+  //#endregion
+
+  //#region ----- FETCH INVITATION HISTORY -----
+  fetchInvitationHistory: async (workspaceId: string) => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
+
+      const response = await fetch(`${baseUrl}/workspace/${workspaceId}/invitations`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to fetch invitation history")
+      }
+
+      const data = await response.json()
+      set({ loading: false, error: null, message: null })
+      return data.invitations || []
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch invitation history"
+      set({ error: errorMessage, loading: false, message: null })
+      return []
+    }
+  },
+  //#endregion
 
   //#region ----- CLEAR WORKSPACE DATA -----
   clearWorkspaceData: () => {
