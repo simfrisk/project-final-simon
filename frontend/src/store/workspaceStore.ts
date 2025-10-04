@@ -32,9 +32,11 @@ interface WorkspaceStore {
   ) => Promise<{ success: boolean; message?: string; workspaceId?: string }>
   updateWorkspace: (workspaceId: string, updates: { newName?: string }) => Promise<void>
   deleteWorkspace: (workspaceId: string) => Promise<void>
-  createInvitationLink: (workspaceId: string, teamId?: string) => Promise<string | null>
+  createInvitationLink: (workspaceId: string, teamId?: string, expiresAt?: Date) => Promise<string | null>
   validateInvitationToken: (token: string) => Promise<boolean>
   fetchInvitationHistory: (workspaceId: string) => Promise<any[]>
+  deleteInvitation: (invitationId: string) => Promise<boolean>
+  deactivateInvitation: (invitationId: string) => Promise<boolean>
   clearWorkspaceData: () => void
 }
 
@@ -303,7 +305,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
   //#endregion
 
   //#region ----- CREATE INVITATION LINK -----
-  createInvitationLink: async (workspaceId: string, teamId?: string) => {
+  createInvitationLink: async (workspaceId: string, teamId?: string, expiresAt?: Date) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
@@ -313,12 +315,18 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
         ? `${baseUrl}/workspace/${workspaceId}/teams/${teamId}/invite`
         : `${baseUrl}/workspace/${workspaceId}/invite`
 
+      const body: { expiresAt?: string } = {}
+      if (expiresAt) {
+        body.expiresAt = expiresAt.toISOString()
+      }
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify(body),
       })
 
       if (!response.ok) {
@@ -395,6 +403,66 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch invitation history"
       set({ error: errorMessage, loading: false, message: null })
       return []
+    }
+  },
+  //#endregion
+
+  //#region ----- DELETE INVITATION -----
+  deleteInvitation: async (invitationId: string) => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
+
+      const response = await fetch(`${baseUrl}/invitation/${invitationId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to delete invitation")
+      }
+
+      set({ loading: false, error: null, message: "Invitation deleted successfully" })
+      return true
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete invitation"
+      set({ error: errorMessage, loading: false, message: null })
+      return false
+    }
+  },
+  //#endregion
+
+  //#region ----- DEACTIVATE INVITATION -----
+  deactivateInvitation: async (invitationId: string) => {
+    set({ loading: true, error: null, message: null })
+    try {
+      const token = getToken()
+      if (!token) throw new Error("Missing access token")
+
+      const response = await fetch(`${baseUrl}/invitation/${invitationId}/deactivate`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to deactivate invitation")
+      }
+
+      set({ loading: false, error: null, message: "Invitation deactivated successfully" })
+      return true
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to deactivate invitation"
+      set({ error: errorMessage, loading: false, message: null })
+      return false
     }
   },
   //#endregion

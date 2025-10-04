@@ -7,9 +7,6 @@ export interface WorkspaceInvitationType extends Document {
   createdBy: Types.ObjectId
   token: string
   expiresAt: Date
-  isUsed: boolean
-  usedBy?: Types.ObjectId
-  usedAt?: Date
   allowedRole: string
   schemaVersion: string
 }
@@ -39,17 +36,6 @@ const WorkspaceInvitationSchema = new Schema<WorkspaceInvitationType>({
     type: Date,
     required: true,
     default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-  },
-  isUsed: {
-    type: Boolean,
-    default: false,
-  },
-  usedBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  usedAt: {
-    type: Date,
   },
   allowedRole: {
     type: String,

@@ -28,17 +28,6 @@ const WorkspaceInvitationSchema = new mongoose_1.Schema({
         required: true,
         default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     },
-    isUsed: {
-        type: Boolean,
-        default: false,
-    },
-    usedBy: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "User",
-    },
-    usedAt: {
-        type: Date,
-    },
     allowedRole: {
         type: String,
         enum: ["student", "teacher"],

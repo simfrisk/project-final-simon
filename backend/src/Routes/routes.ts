@@ -41,6 +41,8 @@ import {
   validateInvitationToken,
   useInvitationToken,
   getInvitationHistory,
+  deleteInvitation,
+  deactivateInvitation,
 } from "../controllers/workspace-invitation"
 import { postWorkspace } from "../controllers/postWorkspace"
 import { getWorkspaces } from "../controllers/getWorkspaces"
@@ -129,6 +131,8 @@ router.post("/workspace/:workspaceId/teams/:teamId/invite", authenticateUser, cr
 router.get("/invitation/validate/:token", validateInvitationToken)
 router.post("/invitation/use", authenticateUser, useInvitationToken)
 router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
+router.delete("/invitation/:invitationId", authenticateUser, deleteInvitation)
+router.patch("/invitation/:invitationId/deactivate", authenticateUser, deactivateInvitation)
 
 // TEAMS
 router.get("/workspace/:workspaceId/teams", authenticateUser, getTeams)

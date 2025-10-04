@@ -37,7 +37,6 @@ export const UserPage = () => {
       >
         <PageHeader>
           <PageTitle>Users</PageTitle>
-          <h2 style={{ color: "orange", fontSize: "28px" }}>"WORK IN PROGRESS"</h2>
           <PageSubtitle>See all teachers and students</PageSubtitle>
           <ActionBar
             role="toolbar"
@@ -71,7 +70,6 @@ export const UserPage = () => {
               <>
                 <TeachersSection />
                 <StudentsSection />
-                <CreateUserSection />
               </>
             )}
           </>

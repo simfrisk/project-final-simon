@@ -5,6 +5,8 @@ import {
   validateInvitationToken,
   useInvitationToken,
   getInvitationHistory,
+  deleteInvitation,
+  deactivateInvitation,
 } from "../controllers/workspace-invitation"
 
 const router = Router()
@@ -20,5 +22,11 @@ router.post("/invitation/use", authenticateUser, useInvitationToken)
 
 // Get invitation history (teachers only)
 router.get("/workspace/:workspaceId/invitations", authenticateUser, getInvitationHistory)
+
+// Delete invitation (teachers only)
+router.delete("/invitation/:invitationId", authenticateUser, deleteInvitation)
+
+// Deactivate invitation (teachers only)
+router.patch("/invitation/:invitationId/deactivate", authenticateUser, deactivateInvitation)
 
 export default router

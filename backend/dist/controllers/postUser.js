@@ -115,7 +115,6 @@ const postUser = async (req, res) => {
         if (invitationToken) {
             const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findOne({
                 token: invitationToken,
-                isUsed: false,
                 expiresAt: { $gt: new Date() },
             });
             if (!invitation) {
@@ -154,14 +153,6 @@ const postUser = async (req, res) => {
         }
         const user = new user_1.UserModel(userData);
         await user.save();
-        // Mark invitation as used if invitation token was provided
-        if (invitationToken && invitationWorkspaceId) {
-            await WorkspaceInvitation_1.WorkspaceInvitationModel.findOneAndUpdate({ token: invitationToken }, {
-                isUsed: true,
-                usedBy: user._id,
-                usedAt: new Date(),
-            });
-        }
         // Add user to team's assignedTeachers if signing up via team invitation
         if (invitationTeamId) {
             await Team_1.TeamModel.findByIdAndUpdate(invitationTeamId, {

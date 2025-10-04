@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInvitationHistory = exports.useInvitationToken = exports.validateInvitationToken = exports.createInvitationLink = void 0;
+exports.deactivateInvitation = exports.deleteInvitation = exports.getInvitationHistory = exports.useInvitationToken = exports.validateInvitationToken = exports.createInvitationLink = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const WorkspaceInvitation_1 = require("../models/WorkspaceInvitation");
 const user_1 = require("../models/user");
@@ -164,6 +164,7 @@ const workspace_permissions_1 = require("../utils/workspace-permissions");
 const createInvitationLink = async (req, res) => {
     try {
         const { workspaceId, teamId } = req.params;
+        const { expiresAt } = req.body;
         const createdBy = req.user?._id;
         // Check if user can create invitations (only teachers/admins)
         const canInvite = await workspace_permissions_1.WorkspacePermissionChecker.canInviteMembers(workspaceId, createdBy?.toString() || "");
@@ -180,13 +181,25 @@ const createInvitationLink = async (req, res) => {
         }
         // Generate unique token
         const token = crypto_1.default.randomBytes(32).toString("hex");
+        // Determine expiration date: use provided date or default to 7 days
+        let expirationDate;
+        if (expiresAt) {
+            expirationDate = new Date(expiresAt);
+            // Validate that the date is in the future
+            if (expirationDate <= new Date()) {
+                return res.status(400).json({ message: "Expiration date must be in the future" });
+            }
+        }
+        else {
+            expirationDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days default
+        }
         // Create invitation for students only
         const invitation = new WorkspaceInvitation_1.WorkspaceInvitationModel({
             workspaceId,
             teamId: teamId || undefined,
             createdBy,
             token,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            expiresAt: expirationDate,
             allowedRole: "student", // Only allow student signups via invitation links
         });
         await invitation.save();
@@ -258,7 +271,6 @@ const validateInvitationToken = async (req, res) => {
         const { token } = req.params;
         const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findOne({
             token,
-            isUsed: false,
             expiresAt: { $gt: new Date() },
         }).populate("workspaceId");
         if (!invitation) {
@@ -347,7 +359,6 @@ const useInvitationToken = async (req, res) => {
         const userId = req.user?._id;
         const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findOne({
             token,
-            isUsed: false,
             expiresAt: { $gt: new Date() },
         });
         if (!invitation) {
@@ -363,15 +374,9 @@ const useInvitationToken = async (req, res) => {
                 message: `This invitation is only for ${invitation.allowedRole}s. Your role is ${user.role}.`,
             });
         }
-        // Add user to workspace
+        // Add user to workspace (using $addToSet ensures no duplicates even with multiple uses)
         await user_1.UserModel.findByIdAndUpdate(userId, {
             $addToSet: { workspaces: invitation.workspaceId },
-        });
-        // Mark invitation as used
-        await WorkspaceInvitation_1.WorkspaceInvitationModel.findByIdAndUpdate(invitation._id, {
-            isUsed: true,
-            usedBy: userId,
-            usedAt: new Date(),
         });
         res.json({ message: "Successfully joined workspace" });
     }
@@ -423,24 +428,12 @@ exports.useInvitationToken = useInvitationToken;
  *                             type: string
  *                           email:
  *                             type: string
- *                       usedBy:
- *                         type: object
- *                         properties:
- *                           name:
- *                             type: string
- *                           email:
- *                             type: string
  *                       token:
  *                         type: string
  *                       expiresAt:
  *                         type: string
  *                         format: date-time
- *                       isUsed:
- *                         type: boolean
  *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                       usedAt:
  *                         type: string
  *                         format: date-time
  *       403:
@@ -469,7 +462,6 @@ const getInvitationHistory = async (req, res) => {
         }
         const invitations = await WorkspaceInvitation_1.WorkspaceInvitationModel.find({ workspaceId })
             .populate("createdBy", "name email")
-            .populate("usedBy", "name email")
             .sort({ createdAt: -1 });
         res.json({ invitations });
     }
@@ -478,3 +470,104 @@ const getInvitationHistory = async (req, res) => {
     }
 };
 exports.getInvitationHistory = getInvitationHistory;
+/**
+ * @swagger
+ * /invitation/{invitationId}:
+ *   delete:
+ *     summary: Delete an invitation link (teacher-only)
+ *     description: Permanently delete an invitation link. Only teachers can delete invitations.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: invitationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the invitation to delete
+ *     responses:
+ *       200:
+ *         description: Invitation deleted successfully
+ *       403:
+ *         description: Insufficient permissions
+ *       404:
+ *         description: Invitation not found
+ *       500:
+ *         description: Server error
+ */
+const deleteInvitation = async (req, res) => {
+    try {
+        const { invitationId } = req.params;
+        const userId = req.user?._id;
+        const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findById(invitationId);
+        if (!invitation) {
+            return res.status(404).json({ message: "Invitation not found" });
+        }
+        // Check if user can delete invitations
+        const canDelete = await workspace_permissions_1.WorkspacePermissionChecker.canInviteMembers(invitation.workspaceId.toString(), userId?.toString() || "");
+        if (!canDelete) {
+            return res.status(403).json({ message: "You don't have permission to delete invitations" });
+        }
+        await WorkspaceInvitation_1.WorkspaceInvitationModel.findByIdAndDelete(invitationId);
+        res.json({ message: "Invitation deleted successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" });
+    }
+};
+exports.deleteInvitation = deleteInvitation;
+/**
+ * @swagger
+ * /invitation/{invitationId}/deactivate:
+ *   patch:
+ *     summary: Deactivate an invitation link (teacher-only)
+ *     description: Deactivate an invitation link by setting its expiration date to now. Only teachers can deactivate invitations.
+ *     tags:
+ *       - Invitations
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: invitationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the invitation to deactivate
+ *     responses:
+ *       200:
+ *         description: Invitation deactivated successfully
+ *       403:
+ *         description: Insufficient permissions
+ *       404:
+ *         description: Invitation not found
+ *       500:
+ *         description: Server error
+ */
+const deactivateInvitation = async (req, res) => {
+    try {
+        const { invitationId } = req.params;
+        const userId = req.user?._id;
+        const invitation = await WorkspaceInvitation_1.WorkspaceInvitationModel.findById(invitationId);
+        if (!invitation) {
+            return res.status(404).json({ message: "Invitation not found" });
+        }
+        // Check if user can deactivate invitations
+        const canDeactivate = await workspace_permissions_1.WorkspacePermissionChecker.canInviteMembers(invitation.workspaceId.toString(), userId?.toString() || "");
+        if (!canDeactivate) {
+            return res
+                .status(403)
+                .json({ message: "You don't have permission to deactivate invitations" });
+        }
+        // Set expiration to now to effectively deactivate the invitation
+        await WorkspaceInvitation_1.WorkspaceInvitationModel.findByIdAndUpdate(invitationId, {
+            expiresAt: new Date(),
+        });
+        res.json({ message: "Invitation deactivated successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" });
+    }
+};
+exports.deactivateInvitation = deactivateInvitation;

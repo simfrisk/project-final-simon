@@ -16,7 +16,6 @@ const deleteUser_1 = require("../controllers/deleteUser");
 const getAllComments_1 = require("../controllers/getAllComments");
 const getClassById_1 = require("../controllers/getClassById");
 const getClasses_1 = require("../controllers/getClasses");
-const getClassesByTeamAccess_1 = require("../controllers/getClassesByTeamAccess");
 const getCommentById_1 = require("../controllers/getCommentById");
 const getComments_1 = require("../controllers/getComments");
 const getHome_1 = require("../controllers/getHome");
@@ -73,7 +72,6 @@ router.get("/workspace/:workspaceId/users", authenticateUser_1.authenticateUser,
 router.get("/user/workspaces", authenticateUser_1.authenticateUser, getUserWorkspaces_1.getUserWorkspaces);
 // CLASSES
 router.get("/workspace/:workspaceId/classes", authenticateUser_1.authenticateUser, getClasses_1.getClasses);
-router.get("/workspace/:workspaceId/classes/team-access", authenticateUser_1.authenticateUser, getClassesByTeamAccess_1.getClassesByTeamAccess);
 router.get("/classes/:classId", authenticateUser_1.authenticateUser, getClassById_1.getClassById);
 router.post("/workspace/:workspaceId/classes", postClass_1.postClass);
 router.patch("/classes/:classId", authenticateUser_1.authenticateUser, patchClass_1.patchClass);
@@ -115,6 +113,8 @@ router.post("/workspace/:workspaceId/teams/:teamId/invite", authenticateUser_1.a
 router.get("/invitation/validate/:token", workspace_invitation_1.validateInvitationToken);
 router.post("/invitation/use", authenticateUser_1.authenticateUser, workspace_invitation_1.useInvitationToken);
 router.get("/workspace/:workspaceId/invitations", authenticateUser_1.authenticateUser, workspace_invitation_1.getInvitationHistory);
+router.delete("/invitation/:invitationId", authenticateUser_1.authenticateUser, workspace_invitation_1.deleteInvitation);
+router.patch("/invitation/:invitationId/deactivate", authenticateUser_1.authenticateUser, workspace_invitation_1.deactivateInvitation);
 // TEAMS
 router.get("/workspace/:workspaceId/teams", authenticateUser_1.authenticateUser, getTeams_1.getTeams);
 router.get("/teams/:teamId", authenticateUser_1.authenticateUser, getTeamById_1.getTeamById);

@@ -17,18 +17,11 @@ interface Invitation {
   token: string
   teamId?: string
   expiresAt: string
-  isUsed: boolean
   createdBy: {
     _id: string
     name: string
     email: string
   }
-  usedBy?: {
-    _id: string
-    name: string
-    email: string
-  }
-  usedAt?: string
   createdAt: string
 }
 //#endregion
@@ -41,7 +34,7 @@ export const TeamDetailPage = () => {
 
   //#region ----- STORE HOOKS -----
   const { team, loading, fetchTeamById, addTeamClass, removeTeamClass } = useTeamStore()
-  const { currentWorkspaceId, fetchInvitationHistory, createInvitationLink } = useWorkspaceStore()
+  const { currentWorkspaceId, fetchInvitationHistory, createInvitationLink, deleteInvitation, deactivateInvitation } = useWorkspaceStore()
   const { user: currentUser } = useUserStore()
   const { fetchClasses, classes } = useClassStore()
   //#endregion
@@ -51,6 +44,8 @@ export const TeamDetailPage = () => {
   const [loadingInvitations, setLoadingInvitations] = useState(false)
   const [showAssignClassesModal, setShowAssignClassesModal] = useState(false)
   const [isGeneratingLink, setIsGeneratingLink] = useState(false)
+  const [showExpirationModal, setShowExpirationModal] = useState(false)
+  const [expirationDate, setExpirationDate] = useState<string>("")
   //#endregion
 
   //#region ----- EFFECTS -----
@@ -90,11 +85,20 @@ export const TeamDetailPage = () => {
     }
   }
 
+  const handleOpenExpirationModal = () => {
+    // Set default to 7 days from now
+    const defaultDate = new Date()
+    defaultDate.setDate(defaultDate.getDate() + 7)
+    setExpirationDate(defaultDate.toISOString().slice(0, 16))
+    setShowExpirationModal(true)
+  }
+
   const handleGenerateNewLink = async () => {
     if (!currentWorkspaceId || !teamId) return
     setIsGeneratingLink(true)
     try {
-      const link = await createInvitationLink(currentWorkspaceId, teamId)
+      const expiresAt = expirationDate ? new Date(expirationDate) : undefined
+      const link = await createInvitationLink(currentWorkspaceId, teamId, expiresAt)
       if (link) {
         // Reload invitations to show the new one
         const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
@@ -102,11 +106,39 @@ export const TeamDetailPage = () => {
           (inv: Invitation) => inv.teamId === teamId
         )
         setInvitations(teamInvitations)
+        setShowExpirationModal(false)
+        setExpirationDate("")
       }
     } catch (error) {
       console.error("Failed to generate invite link:", error)
     } finally {
       setIsGeneratingLink(false)
+    }
+  }
+
+  const handleDeleteInvitation = async (invitationId: string) => {
+    if (!currentWorkspaceId || !teamId) return
+    const success = await deleteInvitation(invitationId)
+    if (success) {
+      // Reload invitations to remove the deleted one
+      const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
+      const teamInvitations = allInvitations.filter(
+        (inv: Invitation) => inv.teamId === teamId
+      )
+      setInvitations(teamInvitations)
+    }
+  }
+
+  const handleDeactivateInvitation = async (invitationId: string) => {
+    if (!currentWorkspaceId || !teamId) return
+    const success = await deactivateInvitation(invitationId)
+    if (success) {
+      // Reload invitations to update the status
+      const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
+      const teamInvitations = allInvitations.filter(
+        (inv: Invitation) => inv.teamId === teamId
+      )
+      setInvitations(teamInvitations)
     }
   }
   //#endregion
@@ -148,7 +180,7 @@ export const TeamDetailPage = () => {
               👥 Assign Classes
             </ActionButton>
             <ActionButton
-              onClick={handleGenerateNewLink}
+              onClick={handleOpenExpirationModal}
               disabled={isGeneratingLink}
             >
               {isGeneratingLink ? "Generating..." : "🔗 Generate Invite Link"}
@@ -216,18 +248,12 @@ export const TeamDetailPage = () => {
                     <InvitationCard
                       key={invitation._id}
                       $isExpired={isExpired}
-                      $isUsed={invitation.isUsed}
                     >
                       <InvitationHeader>
                         <StatusBadge
                           $isExpired={isExpired}
-                          $isUsed={invitation.isUsed}
                         >
-                          {invitation.isUsed
-                            ? "Used"
-                            : isExpired
-                              ? "Expired"
-                              : "Active"}
+                          {isExpired ? "Expired" : "Active"}
                         </StatusBadge>
                         <InvitationDate>
                           Created {moment(invitation.createdAt).fromNow()}
@@ -243,40 +269,38 @@ export const TeamDetailPage = () => {
                           <DetailLabel>Expires:</DetailLabel>
                           <DetailValue>{moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}</DetailValue>
                         </DetailRow>
-                        {invitation.isUsed && invitation.usedBy && (
-                          <>
-                            <DetailRow>
-                              <DetailLabel>Used by:</DetailLabel>
-                              <DetailValue>{invitation.usedBy.name}</DetailValue>
-                            </DetailRow>
-                            <DetailRow>
-                              <DetailLabel>Used at:</DetailLabel>
-                              <DetailValue>
-                                {moment(invitation.usedAt).format("MMM D, YYYY h:mm A")}
-                              </DetailValue>
-                            </DetailRow>
-                          </>
-                        )}
                       </InvitationDetails>
 
-                      {!invitation.isUsed && !isExpired && (
-                        <LinkActions>
-                          <InviteLink
-                            href={inviteLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Open Link
-                          </InviteLink>
-                          <CopyButton
-                            onClick={() => {
-                              navigator.clipboard.writeText(inviteLink)
-                            }}
-                          >
-                            📋 Copy
-                          </CopyButton>
-                        </LinkActions>
-                      )}
+                      <LinkActions>
+                        {!isExpired && (
+                          <>
+                            <InviteLink
+                              href={inviteLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Open Link
+                            </InviteLink>
+                            <CopyButton
+                              onClick={() => {
+                                navigator.clipboard.writeText(inviteLink)
+                              }}
+                            >
+                              📋 Copy
+                            </CopyButton>
+                            <DeactivateButton
+                              onClick={() => handleDeactivateInvitation(invitation._id)}
+                            >
+                              🚫 Deactivate
+                            </DeactivateButton>
+                          </>
+                        )}
+                        <DeleteButton
+                          onClick={() => handleDeleteInvitation(invitation._id)}
+                        >
+                          🗑️ Delete
+                        </DeleteButton>
+                      </LinkActions>
                     </InvitationCard>
                   )
                 })}
@@ -313,6 +337,44 @@ export const TeamDetailPage = () => {
               setShowAssignClassesModal(false)
             }}
           />
+        )}
+
+        {/* Expiration Date Modal */}
+        {showExpirationModal && (
+          <ModalOverlay onClick={() => setShowExpirationModal(false)}>
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <ModalHeader>
+                <ModalTitle>Set Invitation Expiration</ModalTitle>
+                <CloseButton onClick={() => setShowExpirationModal(false)}>×</CloseButton>
+              </ModalHeader>
+
+              <DatePickerContainer>
+                <DateLabel>Expiration Date & Time:</DateLabel>
+                <DateInput
+                  type="datetime-local"
+                  value={expirationDate}
+                  onChange={(e) => setExpirationDate(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
+                />
+                <DateHint>Default is 7 days from now if not specified</DateHint>
+              </DatePickerContainer>
+
+              <ModalActions>
+                <CancelButton
+                  onClick={() => setShowExpirationModal(false)}
+                  disabled={isGeneratingLink}
+                >
+                  Cancel
+                </CancelButton>
+                <SaveButton
+                  onClick={handleGenerateNewLink}
+                  disabled={isGeneratingLink}
+                >
+                  {isGeneratingLink ? "Generating..." : "Generate Link"}
+                </SaveButton>
+              </ModalActions>
+            </ModalContent>
+          </ModalOverlay>
         )}
       </PageContainer>
     </>
@@ -671,15 +733,15 @@ const InvitationsGrid = styled.div`
   }
 `
 
-const InvitationCard = styled.div<{ $isExpired: boolean; $isUsed: boolean }>`
+const InvitationCard = styled.div<{ $isExpired: boolean }>`
   background: ${({ theme }) => theme.colors.offBackground};
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 2px solid
-    ${({ $isExpired, $isUsed, theme }) =>
-      $isUsed ? "#6c757d" : $isExpired ? "#ff6b6b" : theme.colors.primary};
-  opacity: ${({ $isExpired, $isUsed }) => ($isExpired || $isUsed ? 0.7 : 1)};
+    ${({ $isExpired, theme }) =>
+      $isExpired ? "#ff6b6b" : theme.colors.primary};
+  opacity: ${({ $isExpired }) => ($isExpired ? 0.7 : 1)};
 
   @media ${MediaQueries.biggerSizes} {
     padding: 20px;
@@ -693,9 +755,9 @@ const InvitationHeader = styled.div`
   margin-bottom: 12px;
 `
 
-const StatusBadge = styled.span<{ $isExpired: boolean; $isUsed: boolean }>`
-  background: ${({ $isExpired, $isUsed }) =>
-    $isUsed ? "#6c757d" : $isExpired ? "#ff6b6b" : "#2ed573"};
+const StatusBadge = styled.span<{ $isExpired: boolean }>`
+  background: ${({ $isExpired }) =>
+    $isExpired ? "#ff6b6b" : "#2ed573"};
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -741,6 +803,7 @@ const LinkActions = styled.div`
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  flex-wrap: wrap;
 `
 
 const InviteLink = styled.a`
@@ -773,6 +836,38 @@ const CopyButton = styled.button`
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
+  }
+`
+
+const DeactivateButton = styled.button`
+  background: #ff9f43;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ee8c2b;
+    transform: translateY(-2px);
+  }
+`
+
+const DeleteButton = styled.button`
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ee5a52;
+    transform: translateY(-2px);
   }
 `
 
@@ -919,5 +1014,47 @@ const SaveButton = styled.button`
     opacity: 0.6;
     cursor: not-allowed;
   }
+`
+
+const DatePickerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+`
+
+const DateLabel = styled.label`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+  font-weight: 600;
+`
+
+const DateInput = styled.input`
+  background: ${({ theme }) => theme.colors.offBackground};
+  border: 1px solid ${({ theme }) => theme.colors.textAlternative};
+  border-radius: 8px;
+  padding: 12px;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary}33;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    filter: ${({ theme }) => (theme.mode === "dark" ? "invert(1)" : "invert(0)")};
+    cursor: pointer;
+  }
+`
+
+const DateHint = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.7;
+  font-size: 13px;
+  margin: 0;
+  font-style: italic;
 `
 //#endregion
