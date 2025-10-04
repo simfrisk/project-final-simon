@@ -78,8 +78,8 @@ export const UserPage = () => {
         )}
         {activeTab === "teams" && (
           <>
-            <TeamsSection />
             {currentUser?.role === "teacher" && <CreateTeam />}
+            <TeamsSection />
           </>
         )}
         {activeTab === "more" && <p>More</p>}

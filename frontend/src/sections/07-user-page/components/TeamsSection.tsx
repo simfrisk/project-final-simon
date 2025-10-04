@@ -106,9 +106,7 @@ export const TeamsSection = () => {
               </StatsRow>
             </TeamCardContent>
 
-            <ViewDetailsButton>
-              View Details →
-            </ViewDetailsButton>
+            <ViewDetailsButton>View Details →</ViewDetailsButton>
           </TeamCard>
         )
       })}
@@ -120,13 +118,14 @@ export const TeamsSection = () => {
 //#region ----- STYLED COMPONENTS -----
 const TeamsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   padding: 0 0 24px 0;
 
   @media ${MediaQueries.biggerSizes} {
     gap: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    max-width: 100%;
   }
 `
 
