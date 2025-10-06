@@ -52,6 +52,7 @@ export const TeamDetailPage = () => {
   const [isGeneratingLink, setIsGeneratingLink] = useState(false)
   const [showExpirationModal, setShowExpirationModal] = useState(false)
   const [expirationDate, setExpirationDate] = useState<string>("")
+  const [copiedId, setCopiedId] = useState<string | null>(null)
   //#endregion
 
   //#region ----- EFFECTS -----
@@ -248,56 +249,37 @@ export const TeamDetailPage = () => {
                       key={invitation._id}
                       $isExpired={isExpired}
                     >
-                      <InvitationHeader>
-                        <StatusBadge $isExpired={isExpired}>
-                          {isExpired ? "Expired" : "Active"}
-                        </StatusBadge>
-                        <InvitationDate>
-                          Created {moment(invitation.createdAt).fromNow()}
-                        </InvitationDate>
-                      </InvitationHeader>
-
-                      <InvitationDetails>
-                        <DetailRow>
-                          <DetailLabel>Created by:</DetailLabel>
-                          <DetailValue>{invitation.createdBy.name}</DetailValue>
-                        </DetailRow>
-                        <DetailRow>
-                          <DetailLabel>Expires:</DetailLabel>
-                          <DetailValue>
-                            {moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}
-                          </DetailValue>
-                        </DetailRow>
-                      </InvitationDetails>
-
-                      <LinkActions>
-                        {!isExpired && (
-                          <>
-                            <InviteLink
-                              href={inviteLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Open Link
-                            </InviteLink>
+                      <InvitationRow>
+                        <InvitationInfo>
+                          <StatusBadge $isExpired={isExpired}>
+                            {isExpired ? "Expired" : "Active"}
+                          </StatusBadge>
+                          <InvitationText>
+                            <InvitationMeta>
+                              Created by {invitation.createdBy.name} • {moment(invitation.createdAt).fromNow()}
+                            </InvitationMeta>
+                            <InvitationExpiry>
+                              Expires: {moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}
+                            </InvitationExpiry>
+                          </InvitationText>
+                        </InvitationInfo>
+                        <InvitationActions>
+                          {!isExpired && (
                             <CopyButton
                               onClick={() => {
                                 navigator.clipboard.writeText(inviteLink)
+                                setCopiedId(invitation._id)
+                                setTimeout(() => setCopiedId(null), 2000)
                               }}
                             >
-                              📋 Copy
+                              {copiedId === invitation._id ? "✓ Copied!" : "📋 Copy"}
                             </CopyButton>
-                            <DeactivateButton
-                              onClick={() => handleDeactivateInvitation(invitation._id)}
-                            >
-                              🚫 Deactivate
-                            </DeactivateButton>
-                          </>
-                        )}
-                        <DeleteButton onClick={() => handleDeleteInvitation(invitation._id)}>
-                          🗑️ Delete
-                        </DeleteButton>
-                      </LinkActions>
+                          )}
+                          <DeleteButton onClick={() => handleDeleteInvitation(invitation._id)}>
+                            🗑️
+                          </DeleteButton>
+                        </InvitationActions>
+                      </InvitationRow>
                     </InvitationCard>
                   )
                 })}
@@ -723,8 +705,8 @@ const LoadingText = styled.p`
 `
 
 const InvitationsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 
   @media ${MediaQueries.biggerSizes} {
@@ -736,134 +718,154 @@ const InvitationCard = styled.div<{ $isExpired: boolean }>`
   background: ${({ theme }) => theme.colors.offBackground};
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 2px solid ${({ $isExpired, theme }) => ($isExpired ? "#ff6b6b" : theme.colors.primary)};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid ${({ $isExpired, theme }) => ($isExpired ? "#ff6b6b" : theme.colors.primary)};
   opacity: ${({ $isExpired }) => ($isExpired ? 0.7 : 1)};
+  transition: all 0.2s ease;
+  min-width: 600px;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateX(2px);
+  }
 
   @media ${MediaQueries.biggerSizes} {
-    padding: 20px;
+    padding: 18px;
+  }
+
+  @media (max-width: 768px) {
+    min-width: unset;
   }
 `
 
-const InvitationHeader = styled.div`
+const InvitationRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+`
+
+const InvitationInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+`
+
+const InvitationText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+`
+
+const InvitationMeta = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text};
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+`
+
+const InvitationExpiry = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.6;
+
+  @media (max-width: 768px) {
+    font-size: 11px;
+  }
 `
 
 const StatusBadge = styled.span<{ $isExpired: boolean }>`
   background: ${({ $isExpired }) => ($isExpired ? "#ff6b6b" : "#2ed573")};
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 `
 
-const InvitationDate = styled.span`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.text};
-  opacity: 0.7;
-`
-
-const InvitationDetails = styled.div`
+const InvitationActions = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  margin-bottom: 12px;
-`
-
-const DetailRow = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 8px;
-`
 
-const DetailLabel = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.colors.text};
-  opacity: 0.7;
-  font-weight: 500;
-`
-
-const DetailValue = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: 600;
-  text-align: right;
-`
-
-const LinkActions = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-`
-
-const InviteLink = styled.a`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  flex: 1;
-  text-align: center;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-    transform: translateY(-2px);
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `
 
 const CopyButton = styled.button`
-  background: rgba(255, 255, 255, 0.1);
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-`
-
-const DeactivateButton = styled.button`
-  background: #ff9f43;
+  background: ${({ theme }) => theme.colors.primary};
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
-    background: #ee8c2b;
-    transform: translateY(-2px);
+    background: ${({ theme }) => theme.colors.primaryHover};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    flex: 1;
+    padding: 10px 16px;
   }
 `
 
 const DeleteButton = styled.button`
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 8px 12px;
+  background: transparent;
+  color: #ff6b6b;
+  border: 2px solid #ff6b6b;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
-    background: #ee5a52;
-    transform: translateY(-2px);
+    background: #ff6b6b;
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 `
 
