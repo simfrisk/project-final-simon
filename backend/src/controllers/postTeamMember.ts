@@ -101,9 +101,13 @@ export const postTeamMember = async (req: Request, res: Response): Promise<Respo
       })
     }
 
-    // Add user to team
+    // Add user to team and add team to user's teams
     await UserModel.findByIdAndUpdate(userId, {
       $addToSet: { teams: teamId },
+    })
+
+    await TeamModel.findByIdAndUpdate(teamId, {
+      $addToSet: { assignedStudents: userId },
     })
 
     return res.status(200).json({

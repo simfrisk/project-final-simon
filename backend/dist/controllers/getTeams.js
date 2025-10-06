@@ -100,14 +100,18 @@ const workspace_1 = require("../models/workspace");
 const getTeams = async (req, res) => {
     try {
         const { workspaceId } = req.params;
-        // Get teams from specific workspace with populated assignedTeachers
+        // Get teams from specific workspace with populated assignedTeachers and assignedStudents
         const workspace = await workspace_1.WorkspaceModel.findById(workspaceId)
             .populate({
             path: "teams",
-            select: "teamName assignedTeachers workspaceId accessTo createdBy createdAt",
+            select: "teamName assignedTeachers assignedStudents workspaceId accessTo createdBy createdAt",
             populate: [
                 {
                     path: "assignedTeachers",
+                    select: "name email profileImage role",
+                },
+                {
+                    path: "assignedStudents",
                     select: "name email profileImage role",
                 },
                 {

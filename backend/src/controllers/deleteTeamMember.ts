@@ -87,9 +87,13 @@ export const deleteTeamMember = async (req: Request, res: Response): Promise<Res
       })
     }
 
-    // Remove user from team
+    // Remove user from team and remove team from user's teams
     await UserModel.findByIdAndUpdate(userId, {
       $pull: { teams: teamId },
+    })
+
+    await TeamModel.findByIdAndUpdate(teamId, {
+      $pull: { assignedStudents: userId },
     })
 
     return res.status(200).json({

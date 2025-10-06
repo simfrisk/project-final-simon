@@ -19,6 +19,7 @@ export interface Team {
   createdBy: TeamMember
   createdAt: string
   assignedTeachers: TeamMember[]
+  assignedStudents: TeamMember[]
   workspaceId: {
     _id: string
     name: string

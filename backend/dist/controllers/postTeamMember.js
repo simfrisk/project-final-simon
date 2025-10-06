@@ -99,9 +99,12 @@ const postTeamMember = async (req, res) => {
                 message: "Team or User not found",
             });
         }
-        // Add user to team
+        // Add user to team and add team to user's teams
         await user_1.UserModel.findByIdAndUpdate(userId, {
             $addToSet: { teams: teamId },
+        });
+        await Team_1.TeamModel.findByIdAndUpdate(teamId, {
+            $addToSet: { assignedStudents: userId },
         });
         return res.status(200).json({
             success: true,

@@ -20,6 +20,7 @@ const TeamSchema = new mongoose_1.Schema({
         default: Date.now,
     },
     assignedTeachers: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
+    assignedStudents: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "User", default: [] }],
     workspaceId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Workspace", required: true },
     accessTo: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Class", default: [] }],
     schemaVersion: { type: String, default: "v2" },

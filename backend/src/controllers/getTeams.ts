@@ -52,6 +52,21 @@ import { WorkspaceModel } from "../models/workspace"
  *                               type: string
  *                             role:
  *                               type: string
+ *                       assignedStudents:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             email:
+ *                               type: string
+ *                             profileImage:
+ *                               type: string
+ *                             role:
+ *                               type: string
  *                       workspaceId:
  *                         type: object
  *                         properties:
@@ -100,14 +115,18 @@ export const getTeams = async (req: Request, res: Response): Promise<Response> =
   try {
     const { workspaceId } = req.params
 
-    // Get teams from specific workspace with populated assignedTeachers
+    // Get teams from specific workspace with populated assignedTeachers and assignedStudents
     const workspace = await WorkspaceModel.findById(workspaceId)
       .populate({
         path: "teams",
-        select: "teamName assignedTeachers workspaceId accessTo createdBy createdAt",
+        select: "teamName assignedTeachers assignedStudents workspaceId accessTo createdBy createdAt",
         populate: [
           {
             path: "assignedTeachers",
+            select: "name email profileImage role",
+          },
+          {
+            path: "assignedStudents",
             select: "name email profileImage role",
           },
           {

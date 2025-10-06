@@ -29,7 +29,7 @@ export const TeamsSection = () => {
     currentUser?.role === "student"
       ? teams.filter((team) => {
           // For students, check if they are members of this team
-          return currentUser.teams?.some((teamId) => teamId === team._id)
+          return team.assignedStudents?.some((student) => student._id === currentUser._id)
         })
       : teams
   //#endregion
@@ -75,7 +75,9 @@ export const TeamsSection = () => {
   return (
     <TeamsGrid>
       {filteredTeams.map((team) => {
-        const memberCount = team.assignedTeachers?.length || 0
+        const teacherCount = team.assignedTeachers?.length || 0
+        const studentCount = team.assignedStudents?.length || 0
+        const memberCount = teacherCount + studentCount
         const classCount = team.accessTo?.length || 0
 
         return (

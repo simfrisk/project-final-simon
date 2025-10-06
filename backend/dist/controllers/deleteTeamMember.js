@@ -85,9 +85,12 @@ const deleteTeamMember = async (req, res) => {
                 message: "Team or User not found",
             });
         }
-        // Remove user from team
+        // Remove user from team and remove team from user's teams
         await user_1.UserModel.findByIdAndUpdate(userId, {
             $pull: { teams: teamId },
+        });
+        await Team_1.TeamModel.findByIdAndUpdate(teamId, {
+            $pull: { assignedStudents: userId },
         });
         return res.status(200).json({
             success: true,

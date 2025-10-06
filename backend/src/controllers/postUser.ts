@@ -162,10 +162,11 @@ export const postUser = async (req: Request, res: Response) => {
 
     await user.save()
 
-    // Add user to team's assignedTeachers if signing up via team invitation
+    // Add user to team based on role if signing up via team invitation
     if (invitationTeamId) {
+      const updateField = user.role === "teacher" ? "assignedTeachers" : "assignedStudents"
       await TeamModel.findByIdAndUpdate(invitationTeamId, {
-        $addToSet: { assignedTeachers: user._id },
+        $addToSet: { [updateField]: user._id },
       })
     }
 

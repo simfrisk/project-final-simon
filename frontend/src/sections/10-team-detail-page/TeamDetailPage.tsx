@@ -34,7 +34,13 @@ export const TeamDetailPage = () => {
 
   //#region ----- STORE HOOKS -----
   const { team, loading, fetchTeamById, addTeamClass, removeTeamClass } = useTeamStore()
-  const { currentWorkspaceId, fetchInvitationHistory, createInvitationLink, deleteInvitation, deactivateInvitation } = useWorkspaceStore()
+  const {
+    currentWorkspaceId,
+    fetchInvitationHistory,
+    createInvitationLink,
+    deleteInvitation,
+    deactivateInvitation,
+  } = useWorkspaceStore()
   const { user: currentUser } = useUserStore()
   const { fetchClasses, classes } = useClassStore()
   //#endregion
@@ -62,9 +68,7 @@ export const TeamDetailPage = () => {
         try {
           const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
           // Filter invitations for this specific team
-          const teamInvitations = allInvitations.filter(
-            (inv: Invitation) => inv.teamId === teamId
-          )
+          const teamInvitations = allInvitations.filter((inv: Invitation) => inv.teamId === teamId)
           setInvitations(teamInvitations)
         } catch (error) {
           console.error("Failed to fetch invitations:", error)
@@ -102,9 +106,7 @@ export const TeamDetailPage = () => {
       if (link) {
         // Reload invitations to show the new one
         const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
-        const teamInvitations = allInvitations.filter(
-          (inv: Invitation) => inv.teamId === teamId
-        )
+        const teamInvitations = allInvitations.filter((inv: Invitation) => inv.teamId === teamId)
         setInvitations(teamInvitations)
         setShowExpirationModal(false)
         setExpirationDate("")
@@ -122,9 +124,7 @@ export const TeamDetailPage = () => {
     if (success) {
       // Reload invitations to remove the deleted one
       const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
-      const teamInvitations = allInvitations.filter(
-        (inv: Invitation) => inv.teamId === teamId
-      )
+      const teamInvitations = allInvitations.filter((inv: Invitation) => inv.teamId === teamId)
       setInvitations(teamInvitations)
     }
   }
@@ -135,16 +135,17 @@ export const TeamDetailPage = () => {
     if (success) {
       // Reload invitations to update the status
       const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
-      const teamInvitations = allInvitations.filter(
-        (inv: Invitation) => inv.teamId === teamId
-      )
+      const teamInvitations = allInvitations.filter((inv: Invitation) => inv.teamId === teamId)
       setInvitations(teamInvitations)
     }
   }
   //#endregion
 
   //#region ----- DERIVED DATA -----
-  const memberCount = team?.assignedTeachers?.length || 0
+  const teacherCount = team?.assignedTeachers?.length || 0
+  const studentCount = team?.assignedStudents?.length || 0
+  const memberCount = teacherCount + studentCount
+  const allMembers = [...(team?.assignedTeachers || []), ...(team?.assignedStudents || [])]
   //#endregion
 
   //#region ----- RENDER -----
@@ -163,22 +164,20 @@ export const TeamDetailPage = () => {
     <>
       <Navigation />
       <PageContainer>
-        <BackButton onClick={() => navigate("/admin/users?tab=teams")}>
-          ← Back to Teams
-        </BackButton>
+        <BackButton onClick={() => navigate("/admin/users?tab=teams")}>← Back to Teams</BackButton>
 
         <TeamHeader>
           <TeamTitle>{team.teamName}</TeamTitle>
           <TeamBadge>{memberCount} members</TeamBadge>
         </TeamHeader>
 
-        <TeamDescription>Workspace: {team.workspaceId?.name || "Unknown Workspace"}</TeamDescription>
+        <TeamDescription>
+          Workspace: {team.workspaceId?.name || "Unknown Workspace"}
+        </TeamDescription>
 
         {currentUser?.role !== "student" && (
           <ActionsBar>
-            <ActionButton onClick={handleAssignClassesClick}>
-              👥 Assign Classes
-            </ActionButton>
+            <ActionButton onClick={handleAssignClassesClick}>👥 Assign Classes</ActionButton>
             <ActionButton
               onClick={handleOpenExpirationModal}
               disabled={isGeneratingLink}
@@ -191,23 +190,23 @@ export const TeamDetailPage = () => {
         {/* Team Members Section */}
         <Section>
           <SectionTitle>Team Members</SectionTitle>
-          {team.assignedTeachers && team.assignedTeachers.length > 0 ? (
+          {allMembers && allMembers.length > 0 ? (
             <MembersGrid>
-              {team.assignedTeachers.map((teacher) => (
-                <MemberCard key={teacher._id}>
+              {allMembers.map((member) => (
+                <MemberCard key={member._id}>
                   <MemberImageContainer>
                     <MemberImage
-                      src={teacher.profileImage || "/logo2.png"}
-                      alt={`Profile picture of ${teacher.name}`}
+                      src={member.profileImage || "/logo2.png"}
+                      alt={`Profile picture of ${member.name}`}
                       onError={(e) => {
                         e.currentTarget.src = "/logo2.png"
                       }}
                     />
                   </MemberImageContainer>
                   <MemberInfo>
-                    <MemberName>{teacher.name}</MemberName>
-                    <MemberEmail>{teacher.email}</MemberEmail>
-                    <MemberRole>{teacher.role}</MemberRole>
+                    <MemberName>{member.name}</MemberName>
+                    <MemberEmail>{member.email}</MemberEmail>
+                    <MemberRole>{member.role}</MemberRole>
                   </MemberInfo>
                 </MemberCard>
               ))}
@@ -250,9 +249,7 @@ export const TeamDetailPage = () => {
                       $isExpired={isExpired}
                     >
                       <InvitationHeader>
-                        <StatusBadge
-                          $isExpired={isExpired}
-                        >
+                        <StatusBadge $isExpired={isExpired}>
                           {isExpired ? "Expired" : "Active"}
                         </StatusBadge>
                         <InvitationDate>
@@ -267,7 +264,9 @@ export const TeamDetailPage = () => {
                         </DetailRow>
                         <DetailRow>
                           <DetailLabel>Expires:</DetailLabel>
-                          <DetailValue>{moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}</DetailValue>
+                          <DetailValue>
+                            {moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}
+                          </DetailValue>
                         </DetailRow>
                       </InvitationDetails>
 
@@ -295,9 +294,7 @@ export const TeamDetailPage = () => {
                             </DeactivateButton>
                           </>
                         )}
-                        <DeleteButton
-                          onClick={() => handleDeleteInvitation(invitation._id)}
-                        >
+                        <DeleteButton onClick={() => handleDeleteInvitation(invitation._id)}>
                           🗑️ Delete
                         </DeleteButton>
                       </LinkActions>
@@ -306,7 +303,9 @@ export const TeamDetailPage = () => {
                 })}
               </InvitationsGrid>
             ) : (
-              <EmptyState>No invitation links generated yet. Click "Generate Invite Link" to create one.</EmptyState>
+              <EmptyState>
+                No invitation links generated yet. Click "Generate Invite Link" to create one.
+              </EmptyState>
             )}
           </Section>
         )}
@@ -738,9 +737,7 @@ const InvitationCard = styled.div<{ $isExpired: boolean }>`
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 2px solid
-    ${({ $isExpired, theme }) =>
-      $isExpired ? "#ff6b6b" : theme.colors.primary};
+  border: 2px solid ${({ $isExpired, theme }) => ($isExpired ? "#ff6b6b" : theme.colors.primary)};
   opacity: ${({ $isExpired }) => ($isExpired ? 0.7 : 1)};
 
   @media ${MediaQueries.biggerSizes} {
@@ -756,8 +753,7 @@ const InvitationHeader = styled.div`
 `
 
 const StatusBadge = styled.span<{ $isExpired: boolean }>`
-  background: ${({ $isExpired }) =>
-    $isExpired ? "#ff6b6b" : "#2ed573"};
+  background: ${({ $isExpired }) => ($isExpired ? "#ff6b6b" : "#2ed573")};
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
