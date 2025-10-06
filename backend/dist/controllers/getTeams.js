@@ -53,6 +53,21 @@ const workspace_1 = require("../models/workspace");
  *                               type: string
  *                             role:
  *                               type: string
+ *                       assignedStudents:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             email:
+ *                               type: string
+ *                             profileImage:
+ *                               type: string
+ *                             role:
+ *                               type: string
  *                       workspaceId:
  *                         type: object
  *                         properties:

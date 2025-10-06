@@ -56,6 +56,25 @@ const Team_1 = require("../models/Team");
  *                             type: string
  *                           email:
  *                             type: string
+ *                           role:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
+ *                     assignedStudents:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           role:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
  *                     workspaceId:
  *                       type: object
  *                       properties:
@@ -111,7 +130,8 @@ const getTeamById = async (req, res) => {
         const { teamId } = req.params;
         const result = await Team_1.TeamModel.findById(teamId)
             .populate("createdBy", "name email")
-            .populate("assignedTeachers", "name email")
+            .populate("assignedTeachers", "name email role profileImage")
+            .populate("assignedStudents", "name email role profileImage")
             .populate("workspaceId", "name")
             .populate("accessTo", "classTitle");
         if (!result) {

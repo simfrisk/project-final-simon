@@ -55,6 +55,25 @@ import { TeamModel } from "../models/Team"
  *                             type: string
  *                           email:
  *                             type: string
+ *                           role:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
+ *                     assignedStudents:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           role:
+ *                             type: string
+ *                           profileImage:
+ *                             type: string
  *                     workspaceId:
  *                       type: object
  *                       properties:
@@ -111,7 +130,8 @@ export const getTeamById = async (req: Request, res: Response): Promise<Response
 
     const result = await TeamModel.findById(teamId)
       .populate("createdBy", "name email")
-      .populate("assignedTeachers", "name email")
+      .populate("assignedTeachers", "name email role profileImage")
+      .populate("assignedStudents", "name email role profileImage")
       .populate("workspaceId", "name")
       .populate("accessTo", "classTitle")
 

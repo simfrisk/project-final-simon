@@ -153,10 +153,11 @@ const postUser = async (req, res) => {
         }
         const user = new user_1.UserModel(userData);
         await user.save();
-        // Add user to team's assignedTeachers if signing up via team invitation
+        // Add user to team based on role if signing up via team invitation
         if (invitationTeamId) {
+            const updateField = user.role === "teacher" ? "assignedTeachers" : "assignedStudents";
             await Team_1.TeamModel.findByIdAndUpdate(invitationTeamId, {
-                $addToSet: { assignedTeachers: user._id },
+                $addToSet: { [updateField]: user._id },
             });
         }
         res.status(201).json({
