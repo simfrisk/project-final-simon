@@ -8,7 +8,8 @@ export const handleSignUpSubmit = async (
   createUser: CreateUserFunction,
   setError: (msg: string | null) => void,
   navigate: NavigateFunction,
-  invitationToken?: string | null
+  invitationToken?: string | null,
+  invitationRole?: string | null
 ) => {
   e.preventDefault()
 
@@ -28,8 +29,8 @@ export const handleSignUpSubmit = async (
   formData.append("name", form.fullName.value)
   formData.append("email", form.email.value)
   formData.append("password", form.password.value)
-  // Set role based on whether it's an invitation signup
-  const role = invitationToken ? "student" : "teacher"
+  // Set role based on invitation role, or default to teacher if no invitation
+  const role = invitationToken && invitationRole ? invitationRole : "teacher"
   formData.append("role", role)
   if (invitationToken) {
     formData.append("invitationToken", invitationToken)

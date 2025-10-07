@@ -32,8 +32,8 @@ interface WorkspaceStore {
   ) => Promise<{ success: boolean; message?: string; workspaceId?: string }>
   updateWorkspace: (workspaceId: string, updates: { newName?: string }) => Promise<void>
   deleteWorkspace: (workspaceId: string) => Promise<void>
-  createInvitationLink: (workspaceId: string, teamId?: string, expiresAt?: Date) => Promise<string | null>
-  validateInvitationToken: (token: string) => Promise<boolean>
+  createInvitationLink: (workspaceId: string, teamId?: string, expiresAt?: Date, allowedRole?: string) => Promise<string | null>
+  validateInvitationToken: (token: string) => Promise<{ valid: boolean; allowedRole?: string }>
   fetchInvitationHistory: (workspaceId: string) => Promise<any[]>
   deleteInvitation: (invitationId: string) => Promise<boolean>
   deactivateInvitation: (invitationId: string) => Promise<boolean>
@@ -305,7 +305,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
   //#endregion
 
   //#region ----- CREATE INVITATION LINK -----
-  createInvitationLink: async (workspaceId: string, teamId?: string, expiresAt?: Date) => {
+  createInvitationLink: async (workspaceId: string, teamId?: string, expiresAt?: Date, allowedRole?: string) => {
     set({ loading: true, error: null, message: null })
     try {
       const token = getToken()
@@ -315,9 +315,12 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
         ? `${baseUrl}/workspace/${workspaceId}/teams/${teamId}/invite`
         : `${baseUrl}/workspace/${workspaceId}/invite`
 
-      const body: { expiresAt?: string } = {}
+      const body: { expiresAt?: string; allowedRole?: string } = {}
       if (expiresAt) {
         body.expiresAt = expiresAt.toISOString()
+      }
+      if (allowedRole) {
+        body.allowedRole = allowedRole
       }
 
       const response = await fetch(url, {
@@ -361,17 +364,17 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
 
       if (!response.ok) {
         set({ loading: false, error: "Invalid invitation token", message: null })
-        return false
+        return { valid: false }
       }
 
       const data = await response.json()
       set({ loading: false, error: null, message: null })
-      return data.valid === true
+      return { valid: data.valid === true, allowedRole: data.allowedRole }
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to validate invitation token"
       set({ error: errorMessage, loading: false, message: null })
-      return false
+      return { valid: false }
     }
   },
   //#endregion

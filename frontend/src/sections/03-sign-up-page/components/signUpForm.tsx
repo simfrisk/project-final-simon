@@ -17,6 +17,7 @@ export const SignUpForm: React.FC = () => {
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [invitationToken, setInvitationToken] = useState<string | null>(null)
+  const [invitationRole, setInvitationRole] = useState<string | null>(null)
   const [isValidatingInvitation, setIsValidatingInvitation] = useState(false)
 
   // Check for invitation token in URL
@@ -30,10 +31,12 @@ export const SignUpForm: React.FC = () => {
 
       // Validate invitation token
       validateInvitationToken(token)
-        .then((isValid) => {
+        .then((result) => {
           setIsValidatingInvitation(false)
-          if (!isValid) {
+          if (!result.valid) {
             setError("Invalid or expired invitation link")
+          } else {
+            setInvitationRole(result.allowedRole || "student")
           }
         })
         .catch((err) => {
@@ -50,17 +53,21 @@ export const SignUpForm: React.FC = () => {
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
-    handleSignUpSubmit(e, createUser, setError, navigate, invitationToken)
+    handleSignUpSubmit(e, createUser, setError, navigate, invitationToken, invitationRole)
 
   //#endregion
 
   //#region ----- RENDERED UI -----
   return (
     <>
-      {invitationToken && (
+      {invitationToken && invitationRole && (
         <InvitationNotice>
-          <h3>🎓 You've been invited as a Student!</h3>
-          <p>Create your student account to join the workspace automatically.</p>
+          <h3>
+            {invitationRole === "teacher" ? "👨‍🏫 You've been invited as a Teacher!" : "🎓 You've been invited as a Student!"}
+          </h3>
+          <p>
+            Create your {invitationRole} account to join the workspace automatically.
+          </p>
         </InvitationNotice>
       )}
 

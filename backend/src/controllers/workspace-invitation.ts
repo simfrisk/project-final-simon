@@ -128,7 +128,7 @@ import { WorkspacePermissionChecker } from "../utils/workspace-permissions"
 export const createInvitationLink = async (req: Request, res: Response) => {
   try {
     const { workspaceId, teamId } = req.params
-    const { expiresAt } = req.body
+    const { expiresAt, allowedRole } = req.body
     const createdBy = req.user?._id
 
     // Check if user can create invitations (only teachers/admins)
@@ -149,6 +149,13 @@ export const createInvitationLink = async (req: Request, res: Response) => {
       }
     }
 
+    // Validate allowedRole
+    const validRoles = ["student", "teacher"]
+    const invitationRole = allowedRole || "student"
+    if (!validRoles.includes(invitationRole)) {
+      return res.status(400).json({ message: "Invalid role. Allowed roles: student, teacher" })
+    }
+
     // Generate unique token
     const token = crypto.randomBytes(32).toString("hex")
 
@@ -164,14 +171,14 @@ export const createInvitationLink = async (req: Request, res: Response) => {
       expirationDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days default
     }
 
-    // Create invitation for students only
+    // Create invitation for specified role
     const invitation = new WorkspaceInvitationModel({
       workspaceId,
       teamId: teamId || undefined,
       createdBy,
       token,
       expiresAt: expirationDate,
-      allowedRole: "student", // Only allow student signups via invitation links
+      allowedRole: invitationRole,
     })
 
     await invitation.save()
@@ -256,6 +263,7 @@ export const validateInvitationToken = async (req: Request, res: Response) => {
       valid: true,
       workspace: invitation.workspaceId,
       expiresAt: invitation.expiresAt,
+      allowedRole: invitation.allowedRole,
     })
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : "Unknown error" })

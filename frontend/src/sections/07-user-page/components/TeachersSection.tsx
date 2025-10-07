@@ -2,13 +2,19 @@ import { useState } from "react"
 import styled from "styled-components"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useUserStore } from "../../../store/userStore"
+import { useWorkspaceStore } from "../../../store/workspaceStore"
 import { ConfirmBox } from "../../../global-components/ComfirmBox"
 
 export const TeachersSection = () => {
   const { users, user: currentUser, deleteUser } = useUserStore()
+  const { currentWorkspaceId, createInvitationLink } = useWorkspaceStore()
   const [isEditingTeachers, setIsEditingTeachers] = useState<boolean>(false)
   const [showConfirmBox, setShowConfirmBox] = useState<boolean>(false)
   const [userToDelete, setUserToDelete] = useState<{ id: string; name: string } | null>(null)
+  const [showInvitationModal, setShowInvitationModal] = useState<boolean>(false)
+  const [invitationLink, setInvitationLink] = useState<string>("")
+  const [isGeneratingLink, setIsGeneratingLink] = useState<boolean>(false)
+  const [isCopied, setIsCopied] = useState<boolean>(false)
 
   const teachers = users.filter((user) => user.role === "teacher")
 
@@ -40,6 +46,38 @@ export const TeachersSection = () => {
     }
   }
 
+  const handleAddTeacher = async () => {
+    if (!currentWorkspaceId) {
+      console.error("No workspace selected")
+      return
+    }
+
+    setIsGeneratingLink(true)
+    try {
+      const link = await createInvitationLink(currentWorkspaceId, undefined, undefined, "teacher")
+      if (link) {
+        setInvitationLink(link)
+        setShowInvitationModal(true)
+      }
+    } catch (error) {
+      console.error("Failed to generate invitation link:", error)
+    } finally {
+      setIsGeneratingLink(false)
+    }
+  }
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(invitationLink)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 2000)
+  }
+
+  const handleCloseInvitationModal = () => {
+    setShowInvitationModal(false)
+    setInvitationLink("")
+    setIsCopied(false)
+  }
+
   return (
     <>
       <SectionContainer
@@ -49,7 +87,15 @@ export const TeachersSection = () => {
         <SectionHeader>
           <SectionTitle id="teachers-section">Teachers</SectionTitle>
           {currentUser?.role === "teacher" && (
-            <EditButton onClick={handleEditTeachers}>Edit</EditButton>
+            <>
+              <EditButton onClick={handleEditTeachers}>Edit</EditButton>
+              <AddTeacherButton
+                onClick={handleAddTeacher}
+                disabled={isGeneratingLink}
+              >
+                {isGeneratingLink ? "Generating..." : "Add Teacher"}
+              </AddTeacherButton>
+            </>
           )}
           <SectionCountTeacher aria-label={`${teachers.length} teachers in total`}>
             {teachers.length} teachers
@@ -103,6 +149,42 @@ export const TeachersSection = () => {
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
           />
+        </>
+      )}
+
+      {/* Invitation Link Modal */}
+      {showInvitationModal && (
+        <>
+          <Backdrop onClick={handleCloseInvitationModal} />
+          <InvitationModal>
+            <ModalHeader>
+              <ModalTitle>Teacher Invitation Link</ModalTitle>
+              <CloseButton onClick={handleCloseInvitationModal}>×</CloseButton>
+            </ModalHeader>
+            <ModalContent>
+              <InfoText>
+                Share this link with the teacher you want to invite. They'll be able to create
+                their account and set their own password.
+              </InfoText>
+              <LinkContainer>
+                <LinkInput
+                  type="text"
+                  value={invitationLink}
+                  readOnly
+                />
+                <CopyButton onClick={handleCopyLink}>
+                  {isCopied ? "✓ Copied!" : "Copy Link"}
+                </CopyButton>
+              </LinkContainer>
+              <WarningText>
+                ⚠️ This link will expire in 7 days. Keep it secure and only share with authorized
+                teachers.
+              </WarningText>
+            </ModalContent>
+            <ModalFooter>
+              <DoneButton onClick={handleCloseInvitationModal}>Done</DoneButton>
+            </ModalFooter>
+          </InvitationModal>
         </>
       )}
     </>
@@ -169,6 +251,32 @@ const EditButton = styled.button`
 
   &:hover {
     transform: scale(1.05);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 14px;
+  }
+`
+
+const AddTeacherButton = styled.button`
+  background-color: #7e94c5;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media ${MediaQueries.biggerSizes} {
@@ -335,4 +443,174 @@ const Backdrop = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 199;
   backdrop-filter: blur(2px);
+`
+
+const InvitationModal = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  z-index: 200;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 32px;
+  }
+`
+
+const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`
+
+const ModalTitle = styled.h3`
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text};
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 24px;
+  }
+`
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.text};
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
+
+const InfoText = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text};
+  margin: 0;
+  line-height: 1.5;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 16px;
+  }
+`
+
+const LinkContainer = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+`
+
+const LinkInput = styled.input`
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.offBackground};
+  font-family: monospace;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 15px;
+  }
+`
+
+const CopyButton = styled.button`
+  background: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryHover};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 16px;
+  }
+`
+
+const WarningText = styled.p`
+  font-size: 13px;
+  color: #ff9800;
+  margin: 0;
+  padding: 12px;
+  background: rgba(255, 152, 0, 0.1);
+  border-radius: 8px;
+  line-height: 1.5;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 14px;
+  }
+`
+
+const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+`
+
+const DoneButton = styled.button`
+  background: #2ed573;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #26b364;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 `
