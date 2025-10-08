@@ -313,7 +313,7 @@ export const validateInvitationToken = async (req: Request, res: Response) => {
  *               properties:
  *                 message:
  *                   type: string
- *        403:
+ *       403:
  *         description: Role mismatch - invitation is for a different user role
  *         content:
  *           application/json:
