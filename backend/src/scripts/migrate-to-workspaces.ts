@@ -195,7 +195,6 @@ async function migrateToWorkspaces() {
 
       // Commit the transaction
       await session.commitTransaction()
-      session.endSession()
 
       console.log("\n🎉 Migration completed successfully!")
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -213,9 +212,10 @@ async function migrateToWorkspaces() {
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
     } catch (error) {
       await session.abortTransaction()
-      session.endSession()
       console.error("❌ Migration failed:", error)
       throw error
+    } finally {
+      session.endSession()
     }
 
     await mongoose.disconnect()
