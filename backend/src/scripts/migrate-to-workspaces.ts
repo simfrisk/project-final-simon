@@ -43,7 +43,7 @@ async function migrateToWorkspaces() {
       let placeholderUser = await UserModel.findById(PLACEHOLDER_USER_ID).session(session)
       if (!placeholderUser) {
         console.log("📝 Creating placeholder 'Deleted User' account...")
-        placeholderUser = await UserModel.create(
+        const created = await UserModel.create(
           [
             {
               _id: PLACEHOLDER_USER_ID,
@@ -61,6 +61,7 @@ async function migrateToWorkspaces() {
           ],
           { session }
         )
+        placeholderUser = created[0]
         console.log("✅ Placeholder user created")
       }
 
