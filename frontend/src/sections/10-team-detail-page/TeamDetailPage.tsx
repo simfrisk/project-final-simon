@@ -39,7 +39,6 @@ export const TeamDetailPage = () => {
     fetchInvitationHistory,
     createInvitationLink,
     deleteInvitation,
-    deactivateInvitation,
   } = useWorkspaceStore()
   const { user: currentUser } = useUserStore()
   const { fetchClasses, classes } = useClassStore()
@@ -130,16 +129,6 @@ export const TeamDetailPage = () => {
     }
   }
 
-  const handleDeactivateInvitation = async (invitationId: string) => {
-    if (!currentWorkspaceId || !teamId) return
-    const success = await deactivateInvitation(invitationId)
-    if (success) {
-      // Reload invitations to update the status
-      const allInvitations = await fetchInvitationHistory(currentWorkspaceId)
-      const teamInvitations = allInvitations.filter((inv: Invitation) => inv.teamId === teamId)
-      setInvitations(teamInvitations)
-    }
-  }
   //#endregion
 
   //#region ----- DERIVED DATA -----
@@ -1043,7 +1032,7 @@ const DateInput = styled.input`
   }
 
   &::-webkit-calendar-picker-indicator {
-    filter: ${({ theme }) => (theme.mode === "dark" ? "invert(1)" : "invert(0)")};
+    filter: ${({ theme }) => theme.filter.inverted};
     cursor: pointer;
   }
 `

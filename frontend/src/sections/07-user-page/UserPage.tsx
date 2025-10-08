@@ -7,7 +7,6 @@ import { MediaQueries } from "../../themes/mediaQueries"
 import { CurrentUserSection } from "./components/CurrentUserSection"
 import { TeachersSection } from "./components/TeachersSection"
 import { StudentsSection } from "./components/StudentsSection"
-import { CreateUserSection } from "./components/CreateUserSection"
 import { TeamsSection } from "./components/TeamsSection"
 import { CreateTeam } from "../08-create-team-page/CreateTeam"
 
