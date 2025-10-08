@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { DesktopNavigation } from "./components/DesktopNavigation"
 import { MobileNavigation } from "./components/MobileNavigation"
 import { useUserStore } from "../../store/userStore"
 import { useThemeStore } from "../../store/themeStore"
+import { useWorkspaceStore } from "../../store/workspaceStore"
 import { MediaQueries } from "../../themes/mediaQueries"
 
 export const Navigation = () => {
@@ -14,6 +15,14 @@ export const Navigation = () => {
   const navigate = useNavigate()
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { fetchUserWorkspaces } = useWorkspaceStore()
+
+  // Initialize workspace on mount for logged-in users
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUserWorkspaces()
+    }
+  }, [isLoggedIn, fetchUserWorkspaces])
 
   const handleLogout = () => {
     logout()

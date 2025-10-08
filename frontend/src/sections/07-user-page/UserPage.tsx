@@ -17,7 +17,7 @@ interface ActiveTab {
 }
 
 export const UserPage = () => {
-  const { getWorkspaceUsers, user: currentUser } = useUserStore()
+  const { getWorkspaceUsers, user: currentUser, loading } = useUserStore()
   const { currentWorkspaceId } = useWorkspaceStore()
   const [activeTab, setActiveTab] = useState<keyof ActiveTab>("users")
 
@@ -25,7 +25,7 @@ export const UserPage = () => {
     if (currentWorkspaceId) {
       getWorkspaceUsers(currentWorkspaceId)
     }
-  }, [getWorkspaceUsers, currentWorkspaceId])
+  }, [currentWorkspaceId, getWorkspaceUsers])
 
   return (
     <>
@@ -67,8 +67,17 @@ export const UserPage = () => {
             <CurrentUserSection />
             {currentUser?.role === "teacher" && (
               <>
-                <TeachersSection />
-                <StudentsSection />
+                {loading ? (
+                  <LoadingContainer>
+                    <Spinner />
+                    <LoadingText>Loading users...</LoadingText>
+                  </LoadingContainer>
+                ) : (
+                  <>
+                    <TeachersSection />
+                    <StudentsSection />
+                  </>
+                )}
               </>
             )}
           </>
@@ -161,5 +170,59 @@ const WorkingButton = styled.button`
 
   @media ${MediaQueries.biggerSizes} {
     max-width: none;
+  }
+`
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background: ${({ theme }) => theme.colors.background};
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px;
+
+  @media ${MediaQueries.biggerSizes} {
+    padding: 64px 32px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+  }
+`
+
+const Spinner = styled.div`
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: ${({ theme }) => theme.colors.primary};
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media ${MediaQueries.biggerSizes} {
+    width: 56px;
+    height: 56px;
+    border-width: 5px;
+  }
+`
+
+const LoadingText = styled.p`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.8;
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 18px;
   }
 `

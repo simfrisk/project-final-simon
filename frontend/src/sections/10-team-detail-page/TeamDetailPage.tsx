@@ -34,12 +34,8 @@ export const TeamDetailPage = () => {
 
   //#region ----- STORE HOOKS -----
   const { team, loading, fetchTeamById, addTeamClass, removeTeamClass } = useTeamStore()
-  const {
-    currentWorkspaceId,
-    fetchInvitationHistory,
-    createInvitationLink,
-    deleteInvitation,
-  } = useWorkspaceStore()
+  const { currentWorkspaceId, fetchInvitationHistory, createInvitationLink, deleteInvitation } =
+    useWorkspaceStore()
   const { user: currentUser } = useUserStore()
   const { fetchClasses, classes } = useClassStore()
   //#endregion
@@ -131,13 +127,6 @@ export const TeamDetailPage = () => {
 
   //#endregion
 
-  //#region ----- DERIVED DATA -----
-  const teacherCount = team?.assignedTeachers?.length || 0
-  const studentCount = team?.assignedStudents?.length || 0
-  const memberCount = teacherCount + studentCount
-  const allMembers = [...(team?.assignedTeachers || []), ...(team?.assignedStudents || [])]
-  //#endregion
-
   //#region ----- RENDER -----
   if (loading || !team) {
     return (
@@ -158,7 +147,6 @@ export const TeamDetailPage = () => {
 
         <TeamHeader>
           <TeamTitle>{team.teamName}</TeamTitle>
-          <TeamBadge>{memberCount} members</TeamBadge>
         </TeamHeader>
 
         <TeamDescription>
@@ -180,30 +168,68 @@ export const TeamDetailPage = () => {
         {/* Team Members Section */}
         <Section>
           <SectionTitle>Team Members</SectionTitle>
-          {allMembers && allMembers.length > 0 ? (
-            <MembersGrid>
-              {allMembers.map((member) => (
-                <MemberCard key={member._id}>
-                  <MemberImageContainer>
-                    <MemberImage
-                      src={member.profileImage || "/logo2.png"}
-                      alt={`Profile picture of ${member.name}`}
-                      onError={(e) => {
-                        e.currentTarget.src = "/logo2.png"
-                      }}
-                    />
-                  </MemberImageContainer>
-                  <MemberInfo>
-                    <MemberName>{member.name}</MemberName>
-                    <MemberEmail>{member.email}</MemberEmail>
-                    <MemberRole>{member.role}</MemberRole>
-                  </MemberInfo>
-                </MemberCard>
-              ))}
-            </MembersGrid>
-          ) : (
-            <EmptyState>No members assigned to this team yet.</EmptyState>
-          )}
+
+          {/* Teachers Section */}
+          <MemberGroupSection>
+            <MemberGroupHeader>
+              <MemberGroupTitle>Teachers</MemberGroupTitle>
+            </MemberGroupHeader>
+            {team.assignedTeachers && team.assignedTeachers.length > 0 ? (
+              <MembersGrid>
+                {team.assignedTeachers.map((teacher) => (
+                  <MemberCard key={teacher._id}>
+                    <MemberImageContainer>
+                      <MemberImage
+                        src={teacher.profileImage || "/logo2.png"}
+                        alt={`Profile picture of ${teacher.name}`}
+                        onError={(e) => {
+                          e.currentTarget.src = "/logo2.png"
+                        }}
+                      />
+                    </MemberImageContainer>
+                    <MemberInfo>
+                      <MemberName>{teacher.name}</MemberName>
+                      <MemberEmail>{teacher.email}</MemberEmail>
+                      <MemberRole>{teacher.role}</MemberRole>
+                    </MemberInfo>
+                  </MemberCard>
+                ))}
+              </MembersGrid>
+            ) : (
+              <EmptyState>No teachers assigned to this team yet.</EmptyState>
+            )}
+          </MemberGroupSection>
+
+          {/* Students Section */}
+          <MemberGroupSection>
+            <MemberGroupHeader>
+              <MemberGroupTitle>Students</MemberGroupTitle>
+            </MemberGroupHeader>
+            {team.assignedStudents && team.assignedStudents.length > 0 ? (
+              <MembersGrid>
+                {team.assignedStudents.map((student) => (
+                  <MemberCard key={student._id}>
+                    <MemberImageContainer>
+                      <MemberImage
+                        src={student.profileImage || "/logo2.png"}
+                        alt={`Profile picture of ${student.name}`}
+                        onError={(e) => {
+                          e.currentTarget.src = "/logo2.png"
+                        }}
+                      />
+                    </MemberImageContainer>
+                    <MemberInfo>
+                      <MemberName>{student.name}</MemberName>
+                      <MemberEmail>{student.email}</MemberEmail>
+                      <MemberRole>{student.role}</MemberRole>
+                    </MemberInfo>
+                  </MemberCard>
+                ))}
+              </MembersGrid>
+            ) : (
+              <EmptyState>No students assigned to this team yet.</EmptyState>
+            )}
+          </MemberGroupSection>
         </Section>
 
         {/* Assigned Classes Section */}
@@ -245,7 +271,8 @@ export const TeamDetailPage = () => {
                           </StatusBadge>
                           <InvitationText>
                             <InvitationMeta>
-                              Created by {invitation.createdBy.name} • {moment(invitation.createdAt).fromNow()}
+                              Created by {invitation.createdBy.name} •{" "}
+                              {moment(invitation.createdAt).fromNow()}
                             </InvitationMeta>
                             <InvitationExpiry>
                               Expires: {moment(invitation.expiresAt).format("MMM D, YYYY h:mm A")}
@@ -480,22 +507,6 @@ const TeamTitle = styled.h1`
   }
 `
 
-const TeamBadge = styled.span`
-  background: #2ed573;
-  color: white;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-block;
-  box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
-
-  @media ${MediaQueries.biggerSizes} {
-    padding: 8px 20px;
-    font-size: 16px;
-  }
-`
-
 const TeamDescription = styled.p`
   font-size: 14px;
   color: white;
@@ -708,7 +719,8 @@ const InvitationCard = styled.div<{ $isExpired: boolean }>`
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid ${({ $isExpired, theme }) => ($isExpired ? "#ff6b6b" : theme.colors.primary)};
+  border-left: 4px solid
+    ${({ $isExpired, theme }) => ($isExpired ? "#ff6b6b" : theme.colors.primary)};
   opacity: ${({ $isExpired }) => ($isExpired ? 0.7 : 1)};
   transition: all 0.2s ease;
   min-width: 600px;
@@ -1043,5 +1055,33 @@ const DateHint = styled.p`
   font-size: 13px;
   margin: 0;
   font-style: italic;
+`
+
+const MemberGroupSection = styled.div`
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const MemberGroupHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.textAlternative};
+`
+
+const MemberGroupTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text};
+
+  @media ${MediaQueries.biggerSizes} {
+    font-size: 20px;
+  }
 `
 //#endregion

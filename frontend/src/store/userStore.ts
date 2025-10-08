@@ -373,6 +373,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   //#region ----- GET WORKSPACE USERS -----
   getWorkspaceUsers: async (workspaceId: string) => {
+    set({ loading: true })
     try {
       const token = localStorage.getItem("accessToken")
       if (!token) throw new Error("Missing access token")
@@ -388,9 +389,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
       const data = await res.json()
 
       if (res.ok && data.success) {
-        set({ users: data.response })
+        set({ users: data.response, loading: false })
         return { success: true, message: "Workspace users fetched successfully" }
       } else {
+        set({ loading: false })
         return {
           success: false,
           message: data.message || "Failed to fetch workspace users",
@@ -398,6 +400,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
       }
     } catch (err: unknown) {
       console.error("Get workspace users failed:", err)
+      set({ loading: false })
       return { success: false, message: "Failed to fetch workspace users" }
     }
   },
