@@ -32,7 +32,7 @@ I built this platform that lets you:
 - **React Router** for client-side routing and navigation
 - **Vite** for fast development and building
 
-### Backend Stuff
+### Backend
 
 - **Node.js** with Express.js framework
 - **MongoDB** with Mongoose ODM for data persistence
