@@ -76,7 +76,7 @@ I built this platform that lets you:
 - Smooth animations and transitions
 - Intuitive navigation that doesn't confuse users
 
-## 🏃‍♂️ How to get it running locally
+## 🏃‍♂️ How to get the project running locally
 
 ### What you need:
 
