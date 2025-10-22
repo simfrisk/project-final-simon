@@ -186,7 +186,7 @@ project-final-simon/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## 🌟 Cool features I'm proud of
+## 🌟 features I'm proud of
 
 ### Video Player with Time-Coded Comments
 
