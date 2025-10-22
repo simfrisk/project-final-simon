@@ -56,7 +56,7 @@ I built this platform that lets you:
 - Video player with progress tracking and volume controls
 - Generate thumbnails automatically
 
-### 💬 Interactive Feedback System
+### Interactive Feedback System
 
 - Comment threads that can have replies (and replies to replies!)
 - Like/unlike comments and replies
