@@ -69,7 +69,7 @@ I built this platform that lets you:
 - User profiles and activity tracking
 - Session management that actually works
 
-### 🎨 Modern UI/UX
+### 🎨 UI/UX
 
 - Dark/light theme switching
 - Responsive design that works on phones, tablets, and desktops
