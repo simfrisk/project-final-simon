@@ -1,4 +1,7 @@
 export const unFormatTime = (formattedTime: string): number => {
-  const [m, s] = formattedTime.split(":").map(Number)
-  return m * 60 + s
+  // Handle both old format (MM:SS) and new format (MM:SS,mmm)
+  const [timePart, msPart] = formattedTime.split(",")
+  const [m, s] = timePart.split(":").map(Number)
+  const ms = msPart ? Number(msPart) / 1000 : 0
+  return m * 60 + s + ms
 }

@@ -164,7 +164,7 @@ const workspace_permissions_1 = require("../utils/workspace-permissions");
 const createInvitationLink = async (req, res) => {
     try {
         const { workspaceId, teamId } = req.params;
-        const { expiresAt } = req.body;
+        const { expiresAt, allowedRole } = req.body;
         const createdBy = req.user?._id;
         // Check if user can create invitations (only teachers/admins)
         const canInvite = await workspace_permissions_1.WorkspacePermissionChecker.canInviteMembers(workspaceId, createdBy?.toString() || "");
@@ -178,6 +178,12 @@ const createInvitationLink = async (req, res) => {
             if (!team || team.workspaceId.toString() !== workspaceId) {
                 return res.status(400).json({ message: "Team does not belong to this workspace" });
             }
+        }
+        // Validate allowedRole
+        const validRoles = ["student", "teacher"];
+        const invitationRole = allowedRole || "student";
+        if (!validRoles.includes(invitationRole)) {
+            return res.status(400).json({ message: "Invalid role. Allowed roles: student, teacher" });
         }
         // Generate unique token
         const token = crypto_1.default.randomBytes(32).toString("hex");
@@ -193,14 +199,14 @@ const createInvitationLink = async (req, res) => {
         else {
             expirationDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days default
         }
-        // Create invitation for students only
+        // Create invitation for specified role
         const invitation = new WorkspaceInvitation_1.WorkspaceInvitationModel({
             workspaceId,
             teamId: teamId || undefined,
             createdBy,
             token,
             expiresAt: expirationDate,
-            allowedRole: "student", // Only allow student signups via invitation links
+            allowedRole: invitationRole,
         });
         await invitation.save();
         // Generate the signup link
@@ -280,6 +286,7 @@ const validateInvitationToken = async (req, res) => {
             valid: true,
             workspace: invitation.workspaceId,
             expiresAt: invitation.expiresAt,
+            allowedRole: invitation.allowedRole,
         });
     }
     catch (error) {
@@ -330,7 +337,7 @@ exports.validateInvitationToken = validateInvitationToken;
  *               properties:
  *                 message:
  *                   type: string
- *        403:
+ *       403:
  *         description: Role mismatch - invitation is for a different user role
  *         content:
  *           application/json:

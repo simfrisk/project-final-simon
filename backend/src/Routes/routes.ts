@@ -62,6 +62,7 @@ import { postTeamTeacher } from "../controllers/postTeamTeacher"
 import { deleteTeamTeacher } from "../controllers/deleteTeamTeacher"
 import { postTeamClass } from "../controllers/postTeamClass"
 import { deleteTeamClass } from "../controllers/deleteTeamClass"
+import { exportCommentsToSrt } from "../controllers/exportCommentsToSrt"
 
 const router = express.Router()
 
@@ -102,6 +103,7 @@ router.get("/projects/:projectId/comments", getComments)
 router.get("/comments/all", authenticateUser, getAllComments)
 router.get("/comments/:commentId", getCommentById)
 router.get("/projects/:projectId/comments/private", authenticateUser, getPrivateComments)
+router.get("/projects/:projectId/export/srt", authenticateUser, exportCommentsToSrt)
 router.post("/projects/:projectId/comments", authenticateUser, postCommentById)
 router.patch("/comments/:commentId", authenticateUser, patchComment)
 router.patch("/comments/:commentId/toggle-check", authenticateUser, patchIsChecked)

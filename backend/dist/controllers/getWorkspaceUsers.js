@@ -80,7 +80,7 @@ const user_1 = require("../models/user");
 const getWorkspaceUsers = async (req, res) => {
     try {
         const { workspaceId } = req.params;
-        const result = await user_1.UserModel.find({ workspaces: workspaceId }).select("name email role");
+        const result = await user_1.UserModel.find({ workspaces: workspaceId }).select("name email role profileImage");
         return res.status(200).json({
             success: true,
             response: result,

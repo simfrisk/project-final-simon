@@ -98,6 +98,29 @@ export const VideoSection = () => {
     return () => video.removeEventListener("timeupdate", handleTimeUpdate)
   }, [setTimeCode, setTimecode])
 
+  // Keyboard shortcuts for video control
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const video = videoRef.current
+      if (!video) return
+
+      // Only handle if not typing in an input/textarea
+      const target = e.target as HTMLElement
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        video.currentTime = Math.min(video.currentTime + 3, video.duration)
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault()
+        video.currentTime = Math.max(video.currentTime - 3, 0)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
+
   // ✅ Seek video when markerTriggerCount changes
   useEffect(() => {
     const video = videoRef.current
@@ -174,6 +197,37 @@ export const VideoSection = () => {
           onClick={togglePlay}
           aria-label={isPlaying ? "Pause video" : "Play video"}
         />
+        <SkipButton
+          onClick={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = Math.max(videoRef.current.currentTime - 3, 0)
+            }
+          }}
+          aria-label="Skip backward 3 seconds"
+          title="Skip backward 3 seconds"
+        >
+          <SkipIcon direction="left">
+            <div className="arrow" />
+            <div className="arrow" />
+          </SkipIcon>
+        </SkipButton>
+        <SkipButton
+          onClick={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = Math.min(
+                videoRef.current.currentTime + 3,
+                videoRef.current.duration
+              )
+            }
+          }}
+          aria-label="Skip forward 3 seconds"
+          title="Skip forward 3 seconds"
+        >
+          <SkipIcon direction="right">
+            <div className="arrow" />
+            <div className="arrow" />
+          </SkipIcon>
+        </SkipButton>
         <TimeDisplay aria-live="polite">
           {formattedTime} / {duration}
         </TimeDisplay>
@@ -211,15 +265,7 @@ export const VideoSection = () => {
         aria-valuemax={videoEl?.duration || 0}
         aria-valuenow={videoEl?.currentTime || 0}
         aria-label="Video progress bar"
-        tabIndex={0}
         $isFullScreen={isFullscreen}
-        onKeyDown={(e) => {
-          if (!videoEl) return
-          const step = videoEl.duration ? videoEl.duration / 50 : 1
-          if (e.key === "ArrowRight")
-            videoEl.currentTime = Math.min(videoEl.currentTime + step, videoEl.duration)
-          if (e.key === "ArrowLeft") videoEl.currentTime = Math.max(videoEl.currentTime - step, 0)
-        }}
       >
         <Progress style={{ width: `${progress}%` }} />
         {videoLoaded &&
@@ -311,6 +357,45 @@ const Controls = styled.div<{ $isFullScreen: boolean }>`
     left: 40px;
     right: 40px;
   `}
+`
+
+const SkipButton = styled.button`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
+const SkipIcon = styled.div<{ direction: "left" | "right" }>`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  ${({ direction }) => (direction === "left" ? "transform: scaleX(-1);" : "")}
+
+  .arrow {
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 10px solid white;
+  }
 `
 
 const VolumeControl = styled.div`

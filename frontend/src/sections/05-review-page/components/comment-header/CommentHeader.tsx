@@ -1,9 +1,11 @@
 //#region ----- IMPORTS -----
+import { useState } from "react"
 import styled from "styled-components"
 
 import { useProjectStore } from "../../../../store/projectStore"
 import { MediaQueries } from "../../../../themes/mediaQueries"
 import { useTabStore } from "../../../../store/tabStore"
+import { exportCommentsToSrt } from "../../../../utils/exportSrt"
 //#endregion
 
 //#region ----- Component Logic -----
@@ -11,8 +13,24 @@ export const CommentHeader = () => {
   const project = useProjectStore((state) => state.project)
   const activeTab = useTabStore((state) => state.activeTab)
   const setActiveTab = useTabStore((state) => state.setActiveTab)
+  const [isExporting, setIsExporting] = useState(false)
 
   if (!project) return null
+
+  const handleExportSrt = async () => {
+    if (!project._id) return
+
+    setIsExporting(true)
+    try {
+      await exportCommentsToSrt(project._id, project.projectName)
+      alert("SRT file exported successfully!")
+    } catch (error) {
+      console.error("Export failed:", error)
+      alert("Failed to export SRT file. Please try again.")
+    } finally {
+      setIsExporting(false)
+    }
+  }
   //#endregion
 
   //#region ----- RENDER -----
@@ -50,6 +68,14 @@ export const CommentHeader = () => {
         >
           Comments
         </TabButton>
+        <ExportButton
+          onClick={handleExportSrt}
+          disabled={isExporting}
+          aria-label="Export comments as SRT file"
+          title="Export comments as SRT subtitle file"
+        >
+          {isExporting ? "Exporting..." : "Export SRT"}
+        </ExportButton>
       </ButtonGroup>
     </Container>
   )
@@ -115,6 +141,38 @@ const TabButton = styled.button<{ $active?: boolean }>`
   &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgb(0 123 255 / 0.5);
+  }
+
+  @media ${MediaQueries.smallPhone} {
+    padding: 4px 10px;
+  }
+`
+
+const ExportButton = styled.button`
+  background-color: #28a745;
+  color: white;
+  border: 2px solid #28a745;
+  padding: 8px 15px;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+
+  &:hover:not(:disabled) {
+    background-color: #218838;
+    border-color: #218838;
+    transform: scale(0.96);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(40 167 69 / 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media ${MediaQueries.smallPhone} {

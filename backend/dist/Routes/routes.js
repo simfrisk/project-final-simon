@@ -59,6 +59,7 @@ const postTeamTeacher_1 = require("../controllers/postTeamTeacher");
 const deleteTeamTeacher_1 = require("../controllers/deleteTeamTeacher");
 const postTeamClass_1 = require("../controllers/postTeamClass");
 const deleteTeamClass_1 = require("../controllers/deleteTeamClass");
+const exportCommentsToSrt_1 = require("../controllers/exportCommentsToSrt");
 const router = express_1.default.Router();
 // ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome_1.getHome);
@@ -88,6 +89,7 @@ router.get("/projects/:projectId/comments", getComments_1.getComments);
 router.get("/comments/all", authenticateUser_1.authenticateUser, getAllComments_1.getAllComments);
 router.get("/comments/:commentId", getCommentById_1.getCommentById);
 router.get("/projects/:projectId/comments/private", authenticateUser_1.authenticateUser, getPrivateComments_1.getPrivateComments);
+router.get("/projects/:projectId/export/srt", authenticateUser_1.authenticateUser, exportCommentsToSrt_1.exportCommentsToSrt);
 router.post("/projects/:projectId/comments", authenticateUser_1.authenticateUser, postCommentById_1.postCommentById);
 router.patch("/comments/:commentId", authenticateUser_1.authenticateUser, patchComment_1.patchComment);
 router.patch("/comments/:commentId/toggle-check", authenticateUser_1.authenticateUser, patchIsChecked_1.patchIsChecked);
