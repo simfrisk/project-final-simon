@@ -24,6 +24,7 @@ export const VideoSection = () => {
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isTimelineZoomed, setIsTimelineZoomed] = useState(false)
   //#endregion
 
   //#region ---- STORES -----
@@ -191,7 +192,7 @@ export const VideoSection = () => {
         Your browser does not support the video tag.
       </StyledVideo>
 
-      <Controls $isFullScreen={isFullscreen}>
+      <Controls $isFullScreen={isFullscreen} $isZoomed={isTimelineZoomed}>
         <PlayPauseButton
           isPlaying={isPlaying}
           onClick={togglePlay}
@@ -249,6 +250,14 @@ export const VideoSection = () => {
           />
         </VolumeControl>
 
+        <ZoomButton
+          onClick={() => setIsTimelineZoomed(!isTimelineZoomed)}
+          aria-label={isTimelineZoomed ? "Exit timeline zoom" : "Zoom timeline"}
+          title={isTimelineZoomed ? "Exit timeline zoom" : "Zoom timeline"}
+        >
+          {isTimelineZoomed ? "🔍−" : "🔍+"}
+        </ZoomButton>
+
         <FullscreenButton
           onClick={toggleFullscreen}
           aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
@@ -257,16 +266,18 @@ export const VideoSection = () => {
         </FullscreenButton>
       </Controls>
 
-      <PlayBar
-        ref={timelineRef}
-        onClick={handleTimelineClick}
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={videoEl?.duration || 0}
-        aria-valuenow={videoEl?.currentTime || 0}
-        aria-label="Video progress bar"
-        $isFullScreen={isFullscreen}
-      >
+      <TimelineContainer $isZoomed={isTimelineZoomed} $isFullScreen={isFullscreen}>
+        <PlayBar
+          ref={timelineRef}
+          onClick={handleTimelineClick}
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={videoEl?.duration || 0}
+          aria-valuenow={videoEl?.currentTime || 0}
+          aria-label="Video progress bar"
+          $isFullScreen={isFullscreen}
+          $isZoomed={isTimelineZoomed}
+        >
         <Progress style={{ width: `${progress}%` }} />
         {videoLoaded &&
           messages.map(({ _id, timeStamp, content }) => {
@@ -303,7 +314,8 @@ export const VideoSection = () => {
               </MarkerWrapper>
             )
           })}
-      </PlayBar>
+        </PlayBar>
+      </TimelineContainer>
     </Container>
   )
   //#endregion
@@ -340,20 +352,21 @@ const StyledVideo = styled.video<{ $isFullScreen: boolean }>`
   color: white;
 `
 
-const Controls = styled.div<{ $isFullScreen: boolean }>`
+const Controls = styled.div<{ $isFullScreen: boolean; $isZoomed: boolean }>`
   position: absolute;
-  bottom: 20px;
+  bottom: ${({ $isZoomed, $isFullScreen }) =>
+    $isZoomed ? ($isFullScreen ? "130px" : "110px") : $isFullScreen ? "40px" : "20px"};
   left: 20px;
   right: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
-  z-index: 1;
+  z-index: 2;
+  transition: bottom 0.3s ease;
 
   ${({ $isFullScreen }) =>
     $isFullScreen &&
     `
-    bottom: 40px;
     left: 40px;
     right: 40px;
   `}
@@ -410,6 +423,27 @@ const VolumeControl = styled.div`
   }
 `
 
+const ZoomButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`
+
 const FullscreenButton = styled.button`
   background: none;
   border: none;
@@ -429,16 +463,19 @@ const TimeDisplay = styled.div`
   margin-left: auto;
 `
 
-const PlayBar = styled.div<{ $isFullScreen: boolean }>`
+const TimelineContainer = styled.div<{ $isZoomed: boolean; $isFullScreen: boolean }>`
   position: absolute;
   bottom: 10px;
   left: 20px;
   right: 20px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  cursor: pointer;
+  overflow-x: ${({ $isZoomed }) => ($isZoomed ? "auto" : "visible")};
+  overflow-y: visible;
   z-index: 1;
+  padding-top: ${({ $isZoomed }) => ($isZoomed ? "60px" : "0")};
+  padding-bottom: ${({ $isZoomed }) => ($isZoomed ? "10px" : "0")};
+  min-height: ${({ $isZoomed, $isFullScreen }) =>
+    $isZoomed ? ($isFullScreen ? "90px" : "78px") : "auto"};
+  transition: padding 0.3s ease, min-height 0.3s ease;
 
   ${({ $isFullScreen }) =>
     $isFullScreen &&
@@ -446,8 +483,39 @@ const PlayBar = styled.div<{ $isFullScreen: boolean }>`
     bottom: 20px;
     left: 40px;
     right: 40px;
-    height: 12px;
   `}
+
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    height: 6px;
+    margin-top: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+`
+
+const PlayBar = styled.div<{ $isFullScreen: boolean; $isZoomed: boolean }>`
+  position: ${({ $isZoomed }) => ($isZoomed ? "absolute" : "relative")};
+  bottom: ${({ $isZoomed }) => ($isZoomed ? "0" : "auto")};
+  width: ${({ $isZoomed }) => ($isZoomed ? "300%" : "100%")};
+  height: ${({ $isZoomed, $isFullScreen }) =>
+    $isZoomed ? "16px" : $isFullScreen ? "12px" : "8px"};
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: width 0.3s ease, height 0.3s ease;
 `
 
 const Progress = styled.div`
@@ -463,6 +531,11 @@ const MarkerWrapper = styled.div`
   transform: translate(-50%, -50%);
   z-index: 2;
   overflow: visible;
+  pointer-events: auto;
+
+  &:hover {
+    z-index: 10;
+  }
 
   &:hover p {
     display: block;
@@ -521,6 +594,7 @@ const MarkerMessage = styled.p`
   white-space: normal;
   word-wrap: break-word;
   text-align: center;
+  pointer-events: none;
 
   ${MarkerWrapper}:hover & {
     display: block;
