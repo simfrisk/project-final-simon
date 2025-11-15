@@ -25,6 +25,7 @@ export const VideoSection = () => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isTimelineZoomed, setIsTimelineZoomed] = useState(false)
+  const [showSubtitles, setShowSubtitles] = useState(false)
   //#endregion
 
   //#region ---- STORES -----
@@ -163,6 +164,37 @@ export const VideoSection = () => {
     videoRef.current && videoRef.current.duration
       ? (videoRef.current.currentTime / videoRef.current.duration) * 100
       : 0
+
+  // Get current subtitle to display based on video time
+  const getCurrentSubtitle = () => {
+    if (!showSubtitles || !videoEl || !messages.length) return null
+
+    const currentVideoTime = currentTime
+    const threshold = 6 // Show subtitle for 6 seconds
+
+    // Find the most recent comment that should be displayed
+    // Sort comments by timestamp and find the latest one that has started
+    let activeComment = null
+    let latestCommentTime = -1
+
+    for (const message of messages) {
+      const commentTime = unFormatTime(message.timeStamp)
+
+      // Check if this comment should be showing now
+      if (
+        currentVideoTime >= commentTime &&
+        currentVideoTime < commentTime + threshold &&
+        commentTime > latestCommentTime
+      ) {
+        activeComment = message
+        latestCommentTime = commentTime
+      }
+    }
+
+    return activeComment
+  }
+
+  const currentSubtitle = getCurrentSubtitle()
   //#endregion
 
   //#region ---- RENDER -----
@@ -191,6 +223,13 @@ export const VideoSection = () => {
         )}
         Your browser does not support the video tag.
       </StyledVideo>
+
+      {/* Subtitle display */}
+      {currentSubtitle && (
+        <SubtitleContainer $isFullScreen={isFullscreen}>
+          <SubtitleText>{currentSubtitle.content}</SubtitleText>
+        </SubtitleContainer>
+      )}
 
       <Controls $isFullScreen={isFullscreen} $isZoomed={isTimelineZoomed}>
         <PlayPauseButton
@@ -257,6 +296,15 @@ export const VideoSection = () => {
         >
           {isTimelineZoomed ? "🔍−" : "🔍+"}
         </ZoomButton>
+
+        <SubtitleButton
+          onClick={() => setShowSubtitles(!showSubtitles)}
+          aria-label={showSubtitles ? "Hide subtitles" : "Show subtitles"}
+          title={showSubtitles ? "Hide comment subtitles" : "Show comment subtitles"}
+          $active={showSubtitles}
+        >
+          CC
+        </SubtitleButton>
 
         <FullscreenButton
           onClick={toggleFullscreen}
@@ -441,6 +489,36 @@ const ZoomButton = styled.button`
 
   &:active {
     transform: scale(0.95);
+  }
+`
+
+const SubtitleButton = styled.button<{ $active: boolean }>`
+  background: ${({ $active }) => ($active ? "rgba(255, 255, 255, 0.3)" : "none")};
+  border: 2px solid white;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
   }
 `
 
@@ -662,6 +740,41 @@ const SpinningCircle = styled.div`
     }
     100% {
       transform: rotate(360deg);
+    }
+  }
+`
+
+const SubtitleContainer = styled.div<{ $isFullScreen: boolean }>`
+  position: absolute;
+  bottom: ${({ $isFullScreen }) => ($isFullScreen ? "120px" : "100px")};
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: 80%;
+  pointer-events: none;
+  transition: bottom 0.3s ease;
+`
+
+const SubtitleText = styled.div`
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 `
