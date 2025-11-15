@@ -63,11 +63,11 @@ export const SignUpForm: React.FC = () => {
       {invitationToken && invitationRole && (
         <InvitationNotice>
           <h3>
-            {invitationRole === "teacher" ? "👨‍🏫 You've been invited as a Teacher!" : "🎓 You've been invited as a Student!"}
+            {invitationRole === "teacher"
+              ? "👨‍🏫 You've been invited as a Teacher!"
+              : "Hej översättare!"}
           </h3>
-          <p>
-            Create your {invitationRole} account to join the workspace automatically.
-          </p>
+          <p>Skapa ditt konto här för att komma igång</p>
         </InvitationNotice>
       )}
 
