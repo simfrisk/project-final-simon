@@ -310,7 +310,7 @@ export const VideoSection = () => {
                     }
                   }}
                 />
-                <MarkerMessage>{content}</MarkerMessage>
+                <MarkerMessage $position={percent}>{content}</MarkerMessage>
               </MarkerWrapper>
             )
           })}
@@ -575,7 +575,7 @@ const Marker = styled.div`
   }
 `
 
-const MarkerMessage = styled.p`
+const MarkerMessage = styled.p<{ $position: number }>`
   display: none;
   position: absolute;
   bottom: 15px;
@@ -589,7 +589,20 @@ const MarkerMessage = styled.p`
   font-size: 14px;
   z-index: 3;
   width: max-content;
-  max-width: 300px;
+  ${({ $position }) => {
+    // Calculate max-width based on position to prevent clipping
+    // Near edges: smaller max-width causes text to wrap to multiple rows
+    // In middle: full max-width for single-line display when possible
+    const distanceFromEdge = Math.min($position, 100 - $position)
+
+    if (distanceFromEdge < 10) {
+      return 'max-width: 120px;'
+    } else if (distanceFromEdge < 20) {
+      return 'max-width: 200px;'
+    } else {
+      return 'max-width: 300px;'
+    }
+  }}
   min-width: 100px;
   white-space: normal;
   word-wrap: break-word;
