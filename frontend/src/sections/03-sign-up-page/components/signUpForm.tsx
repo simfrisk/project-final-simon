@@ -65,9 +65,9 @@ export const SignUpForm: React.FC = () => {
           <h3>
             {invitationRole === "teacher"
               ? "👨‍🏫 You've been invited as a Teacher!"
-              : "Hej översättare!"}
+              : "👨‍🎓 You've been invited as a Student!"}
           </h3>
-          <p>Skapa ditt konto här för att komma igång</p>
+          <p>Create your account here to get started</p>
         </InvitationNotice>
       )}
 
