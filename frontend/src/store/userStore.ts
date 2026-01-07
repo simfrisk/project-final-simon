@@ -1,6 +1,8 @@
 //#region ----- IMPORTS -----
 import { create } from "zustand"
 import { baseUrl } from "../config/api"
+import { isColdStartError, getColdStartErrorMessage } from "../utils/apiErrorHandler"
+import { useBackendStatusStore } from "./backendStatusStore"
 //#endregion
 
 //#region ----- INTERFACES -----
@@ -80,12 +82,17 @@ export const useUserStore = create<UserStore>((set, get) => ({
   //#region ----- LOGIN -----
   login: async (email, password) => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 65000) // 65 second timeout
+
       const res = await fetch(`${baseUrl}/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       })
 
+      clearTimeout(timeoutId)
       const data = await res.json()
 
       if (res.ok && data.accessToken) {
@@ -124,6 +131,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
       }
     } catch (err: unknown) {
       console.error("Login failed:", err)
+
+      // Check if this is a cold start error and trigger backend health check
+      if (isColdStartError(err)) {
+        const { checkBackendHealth, status } = useBackendStatusStore.getState()
+        if (status === 'idle' || status === 'error') {
+          checkBackendHealth()
+        }
+        return { success: false, message: getColdStartErrorMessage() }
+      }
+
       return { success: false, message: err instanceof Error ? err.message : "Login failed" }
     }
   },
@@ -160,11 +177,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
   //#region ----- CREATE USER -----
   createUser: async (formData: FormData) => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 65000) // 65 second timeout
+
       const res = await fetch(`${baseUrl}/users`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       })
 
+      clearTimeout(timeoutId)
       const data = await res.json()
 
       if (res.ok && data.accessToken) {
@@ -207,6 +229,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
       }
     } catch (err: unknown) {
       console.error("Create user failed:", err)
+
+      // Check if this is a cold start error and trigger backend health check
+      if (isColdStartError(err)) {
+        const { checkBackendHealth, status } = useBackendStatusStore.getState()
+        if (status === 'idle' || status === 'error') {
+          checkBackendHealth()
+        }
+        return { success: false, message: getColdStartErrorMessage() }
+      }
+
       return {
         success: false,
         message: err instanceof Error ? err.message : "Could not create user",

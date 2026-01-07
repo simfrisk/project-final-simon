@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { useNavigate, Link } from "react-router-dom"
 import { useUserStore } from "../../../store/userStore"
 import { handleLoginSubmit } from "./utils/loginHandleSubmit"
+import { BackendStatusIndicator } from "../../../components/BackendStatusIndicator"
 
 //#endregion
 
@@ -39,6 +40,7 @@ export const LoginForm: React.FC = () => {
   //#region ----- RENDERED UI -----
   return (
     <>
+      <BackendStatusIndicator autoCheck={true} />
       <form
         onSubmit={handleSubmit}
         noValidate

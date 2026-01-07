@@ -7,10 +7,12 @@ import { Footer } from "../components/Footer"
 import { FeatureSection } from "../components/features/featureSection"
 import { Collaborate } from "../components/Collaborate"
 import { Target } from "../components/target/Target"
+import { BackendStatusIndicator } from "../../../components/BackendStatusIndicator"
 
 export const LandingPage = () => {
   return (
     <Container>
+      <BackendStatusIndicator autoCheck={true} />
       <Navigation />
       <Hero />
       <Collaborate />

@@ -63,8 +63,12 @@ import { deleteTeamTeacher } from "../controllers/deleteTeamTeacher"
 import { postTeamClass } from "../controllers/postTeamClass"
 import { deleteTeamClass } from "../controllers/deleteTeamClass"
 import { exportCommentsToSrt } from "../controllers/exportCommentsToSrt"
+import { getHealth } from "../controllers/getHealth"
 
 const router = express.Router()
+
+// HEALTH CHECK (for waking up Render free tier)
+router.get("/health", getHealth)
 
 // ALTERNATIVE DOCUMENTATION
 router.get("/alt/doc", getHome)

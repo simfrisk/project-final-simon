@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useUserStore } from "../../../store/userStore"
 import { useWorkspaceStore } from "../../../store/workspaceStore"
 import { handleSignUpSubmit } from "./utils/signUpHandleSubmit"
+import { BackendStatusIndicator } from "../../../components/BackendStatusIndicator"
 //#endregion
 
 //#region ----- COMPONENT LOGIC -----
@@ -60,6 +61,7 @@ export const SignUpForm: React.FC = () => {
   //#region ----- RENDERED UI -----
   return (
     <>
+      <BackendStatusIndicator autoCheck={true} />
       {invitationToken && invitationRole && (
         <InvitationNotice>
           <h3>

@@ -8,6 +8,10 @@ const endpointDocs: Record<
   { description: string; authRequired: boolean }
 > = {
   "/": { description: "API Home", authRequired: false },
+  "/health": {
+    description: "Health check endpoint for monitoring and waking up the server (useful for Render free tier)",
+    authRequired: false
+  },
   "/classes": {
     description: "These are like school cources",
     authRequired: true,
