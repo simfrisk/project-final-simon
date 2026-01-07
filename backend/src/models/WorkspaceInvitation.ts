@@ -46,7 +46,6 @@ const WorkspaceInvitationSchema = new Schema<WorkspaceInvitationType>({
 })
 
 // Index for performance
-WorkspaceInvitationSchema.index({ token: 1 })
 WorkspaceInvitationSchema.index({ expiresAt: 1 })
 
 export const WorkspaceInvitationModel = model<WorkspaceInvitationType>(
