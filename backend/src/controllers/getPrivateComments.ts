@@ -110,6 +110,7 @@ export const getPrivateComments = async (
       commentType: "private",
       commentCreatedBy: userId,
     })
+      .sort({ _id: 1 })
       .populate("replies")
       .populate("commentCreatedBy", "name profileImage role")
 

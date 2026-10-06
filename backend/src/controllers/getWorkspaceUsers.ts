@@ -80,7 +80,7 @@ export const getWorkspaceUsers = async (req: Request, res: Response): Promise<Re
   try {
     const { workspaceId } = req.params
 
-    const result = await UserModel.find({ workspaces: workspaceId }).select("name email role profileImage")
+    const result = await UserModel.find({ workspaces: workspaceId }).sort({ _id: 1 }).select("name email role profileImage")
 
     return res.status(200).json({
       success: true,

@@ -77,14 +77,18 @@ export const getClasses = async (req: Request, res: Response): Promise<Response>
 
     // Teachers see all classes in the workspace
     if (user.role === "teacher") {
-      result = await ClassModel.find({ workspaceId }).select("classTitle workspaceId")
+      result = await ClassModel.find({ workspaceId })
+        .sort({ _id: 1 })
+        .select("classTitle workspaceId")
     } else {
       // Students only see classes their teams have access to
       // Get all teams the student belongs to in this workspace
       const userTeams = await TeamModel.find({
         _id: { $in: user.teams },
         workspaceId: workspaceId,
-      }).select("accessTo")
+      })
+        .sort({ _id: 1 })
+        .select("accessTo")
 
       // Collect all class IDs from all teams
       const accessibleClassIds = userTeams.flatMap((team) => team.accessTo)
@@ -96,7 +100,9 @@ export const getClasses = async (req: Request, res: Response): Promise<Response>
       result = await ClassModel.find({
         _id: { $in: uniqueClassIds },
         workspaceId: workspaceId,
-      }).select("classTitle workspaceId")
+      })
+        .sort({ _id: 1 })
+        .select("classTitle workspaceId")
     }
 
     return res.status(200).json({

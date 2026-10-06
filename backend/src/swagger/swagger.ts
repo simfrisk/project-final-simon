@@ -1,6 +1,7 @@
 import swaggerUi from "swagger-ui-express"
 import swaggerJsdoc from "swagger-jsdoc"
 import { Application } from "express"
+import { config } from "../config"
 
 const options = {
   definition: {
@@ -12,7 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: process.env.API_URL || "http://localhost:8080",
+        url: config.publicApiUrl,
       },
     ],
     components: {

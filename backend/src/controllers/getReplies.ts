@@ -68,7 +68,7 @@ export const getReplies = async (
   const { commentId } = req.params
 
   try {
-    const replies = await Reply.find({ commentId }) // Find replies linked to this comment
+    const replies = await Reply.find({ commentId }).sort({ _id: 1 }) // Find replies linked to this comment
 
     return res.status(200).json({
       success: true,
