@@ -97,6 +97,8 @@ export const getCommentById = async (
   const { commentId } = req.params
 
   try {
+    // Known issue: findById receives an object instead of an id, so this route fails with a 500 for every id.
+    // Left as is on purpose in the OSC migration, see the pull request notes.
     const comment = await CommentModel.findById({
       commentId,
       commentType: "question",

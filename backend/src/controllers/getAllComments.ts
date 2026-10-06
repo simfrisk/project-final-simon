@@ -74,7 +74,7 @@ export const getAllComments = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const comments = await CommentModel.find()
+    const comments = await CommentModel.find().sort({ _id: 1 })
 
     return res.status(200).json({
       success: true,

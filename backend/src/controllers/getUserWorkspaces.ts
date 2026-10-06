@@ -90,7 +90,9 @@ export const getUserWorkspaces = async (req: Request, res: Response): Promise<Re
     // Populate workspace details
     const workspaces = await WorkspaceModel.find({
       _id: { $in: user.workspaces },
-    }).select("name createdAt")
+    })
+      .sort({ _id: 1 })
+      .select("name createdAt")
 
     return res.status(200).json({
       success: true,
