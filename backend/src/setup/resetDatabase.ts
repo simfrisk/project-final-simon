@@ -3,9 +3,16 @@ import { Project } from "../models/Projects"
 import { CommentModel } from "../models/Comment"
 import { Reply } from "../models/Reply"
 import data from "../data.json"
+import { config } from "../config"
 
 export const resetDatabase = async () => {
   if (!process.env.RESET_DB) return
+
+  // RESET_DB wipes comments, replies and projects. It must never run against the OSC database.
+  if (config.isOsc) {
+    console.log("[reset] RESET_DB ignored on OSC")
+    return
+  }
 
   console.log("🌱 Resetting and seeding database...")
 
