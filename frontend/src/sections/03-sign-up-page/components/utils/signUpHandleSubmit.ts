@@ -1,7 +1,11 @@
 import type { NavigateFunction } from "react-router"
 import type { FormEvent } from "react"
+import type { CreateUserData, CreateUserResult } from "../../../../store/userStore"
 
-type CreateUserFunction = (formData: FormData) => Promise<{ success: boolean; message?: string }>
+type CreateUserFunction = (data: CreateUserData, imageFile?: File) => Promise<CreateUserResult>
+
+// How long a follow up warning stays visible before moving on to the next page.
+const WARNING_DELAY_MS = 4000
 
 export const handleSignUpSubmit = async (
   e: FormEvent<HTMLFormElement>,
@@ -9,7 +13,8 @@ export const handleSignUpSubmit = async (
   setError: (msg: string | null) => void,
   navigate: NavigateFunction,
   invitationToken?: string | null,
-  invitationRole?: string | null
+  invitationRole?: string | null,
+  setNotice?: (msg: string | null) => void
 ) => {
   e.preventDefault()
 
@@ -25,31 +30,32 @@ export const handleSignUpSubmit = async (
     return
   }
 
-  const formData = new FormData()
-  formData.append("name", form.fullName.value)
-  formData.append("email", form.email.value)
-  formData.append("password", form.password.value)
   // Set role based on invitation role, or default to teacher if no invitation
   const role = invitationToken && invitationRole ? invitationRole : "teacher"
-  formData.append("role", role)
-  if (invitationToken) {
-    formData.append("invitationToken", invitationToken)
+  const data: CreateUserData = {
+    name: form.fullName.value,
+    email: form.email.value,
+    password: form.password.value,
+    role,
+    ...(invitationToken ? { invitationToken } : {}),
   }
-  if (form.profileImage.files?.[0]) {
-    formData.append("image", form.profileImage.files[0])
-  }
+  const imageFile = form.profileImage.files?.[0]
 
-  const result = await createUser(formData)
+  const result = await createUser(data, imageFile)
 
   if (result.success) {
     setError(null)
-    if (invitationToken) {
-      // User signed up with invitation, redirect to library
-      navigate("/library")
-    } else {
-      // Regular signup, redirect to create workspace
-      navigate("/create-workspace")
+    const destination = invitationToken ? "/library" : "/create-workspace"
+
+    if (result.warning && setNotice) {
+      // The account exists. Show what went wrong with the picture, then continue.
+      setNotice(result.warning)
+      setTimeout(() => navigate(destination), WARNING_DELAY_MS)
+      return
     }
+
+    // With an invitation the user goes to the library, otherwise to workspace setup
+    navigate(destination)
   } else {
     setError(result.message || "Sign up failed")
   }
