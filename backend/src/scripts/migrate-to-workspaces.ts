@@ -1,3 +1,5 @@
+// One-off v1 to v2 script, already applied. Uses transactions, which FerretDB does not support.
+// Do not run against FerretDB.
 import dotenv from "dotenv"
 dotenv.config()
 

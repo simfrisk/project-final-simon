@@ -72,6 +72,7 @@ export const getProjects = async (
     const { classId } = req.params
 
     const result = await Project.find({ classId })
+      .sort({ _id: 1 })
       .select(
         "projectName projectDescription teacher video thumbnail classId projectCreatedBy"
       )

@@ -35,7 +35,7 @@ import mongoose from "mongoose"
  *                   type: string
  *                   example: "User deleted and comments/replies reassigned"
  *       400:
- *         description: Invalid input or deletion error
+ *         description: Invalid user ID, the placeholder account, or a deletion error
  *         content:
  *           application/json:
  *             schema:
@@ -51,6 +51,11 @@ import mongoose from "mongoose"
  *                   type: object
  *                   nullable: true
  */
+// The "Deleted User" account that takes over comments and replies of removed users.
+const PLACEHOLDER_USER_ID = "68a45fbaca5d5d29fe782190"
+
+// No transaction on purpose: the production database (FerretDB) does not support them.
+// Every step is idempotent, so a retry after a failure half way through is safe.
 export const deleteUser = async (req: Request, res: Response) => {
   const { userId } = req.params
 
@@ -61,17 +66,18 @@ export const deleteUser = async (req: Request, res: Response) => {
     })
   }
 
-  // <-- Use the actual placeholder user ID from your DB
-  const PLACEHOLDER_USER_ID = new mongoose.Types.ObjectId("68a45fbaca5d5d29fe782190")
+  if (userId === PLACEHOLDER_USER_ID) {
+    return res.status(400).json({
+      success: false,
+      message: "This account cannot be deleted",
+    })
+  }
 
-  const session = await mongoose.startSession()
-  session.startTransaction()
+  const placeholderId = new mongoose.Types.ObjectId(PLACEHOLDER_USER_ID)
 
   try {
-    const user = await UserModel.findById(userId).session(session)
+    const user = await UserModel.findById(userId)
     if (!user) {
-      await session.abortTransaction()
-      session.endSession()
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -81,28 +87,23 @@ export const deleteUser = async (req: Request, res: Response) => {
     // Reassign comments
     await CommentModel.updateMany(
       { commentCreatedBy: user._id },
-      { $set: { commentCreatedBy: PLACEHOLDER_USER_ID } }
-    ).session(session)
+      { $set: { commentCreatedBy: placeholderId } }
+    )
 
     // Reassign replies
     await Reply.updateMany(
       { replyCreatedBy: user._id },
-      { $set: { replyCreatedBy: PLACEHOLDER_USER_ID } }
-    ).session(session)
+      { $set: { replyCreatedBy: placeholderId } }
+    )
 
-    // Delete the user
-    await UserModel.findByIdAndDelete(user._id).session(session)
-
-    await session.commitTransaction()
-    session.endSession()
+    // Delete the user last, so a failure above leaves the account in place and the call can be retried
+    await UserModel.findByIdAndDelete(user._id)
 
     res.status(200).json({
       success: true,
       message: "User deleted and comments/replies reassigned",
     })
   } catch (error) {
-    await session.abortTransaction()
-    session.endSession()
     console.error("❌ Error deleting user:", error)
     res.status(400).json({
       success: false,

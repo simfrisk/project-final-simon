@@ -86,6 +86,7 @@ export const getProjectsWithComments = async (
 ): Promise<Response> => {
   try {
     const result = await Project.find()
+      .sort({ _id: 1 })
       .populate({
         path: "comments",
         match: { commentType: "question" },
