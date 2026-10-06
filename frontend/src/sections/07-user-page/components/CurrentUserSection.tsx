@@ -2,15 +2,18 @@ import styled from "styled-components"
 import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useUserStore } from "../../../store/userStore"
+import { getUploadLimits } from "../../../utils/upload/uploadMedia"
 
 export const CurrentUserSection = () => {
-  const { user: currentUser, updateUser } = useUserStore()
+  const { user: currentUser, updateUser, uploadProfileImage } = useUserStore()
   const [isEditing, setIsEditing] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imageError, setImageError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
     name: currentUser?.name || "",
     email: currentUser?.email || "",
     role: currentUser?.role || "student",
-    profileImage: currentUser?.profileImage || "",
   })
 
   if (!currentUser) {
@@ -30,40 +33,83 @@ export const CurrentUserSection = () => {
 
   const editUser = () => {
     setIsEditing(true)
+    setImageFile(null)
+    setImageError(null)
     setFormData({
       name: currentUser.name,
       email: currentUser.email,
       role: currentUser.role,
-      profileImage: currentUser.profileImage,
     })
   }
 
   const cancelEdit = () => {
     setIsEditing(false)
+    setImageFile(null)
+    setImageError(null)
     setFormData({
       name: currentUser.name,
       email: currentUser.email,
       role: currentUser.role,
-      profileImage: currentUser.profileImage,
     })
   }
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target
+    const file = input.files?.[0]
+    setImageFile(null)
+    setImageError(null)
+    if (!file) return
+
+    try {
+      const limits = await getUploadLimits()
+      if (file.size > limits.imageMaxBytes) {
+        setImageError(
+          `Image is larger than ${Math.round(limits.imageMaxBytes / (1024 * 1024))}MB. Please select a smaller file.`
+        )
+        input.value = ""
+        return
+      }
+    } catch {
+      setImageError("Could not check the upload limits. Please try again in a moment.")
+      input.value = ""
+      return
+    }
+
+    setImageFile(file)
+  }
+
   const saveUser = async () => {
+    if (isSaving) return
+    setIsSaving(true)
+    setImageError(null)
     try {
       const result = await updateUser(currentUser._id!, {
         newName: formData.name,
         newEmail: formData.email,
         newRole: formData.role,
-        newProfileImage: formData.profileImage,
       })
 
-      if (result.success) {
-        setIsEditing(false)
-      } else {
+      if (!result.success) {
         console.error("Failed to update user:", result.message)
+        return
       }
+
+      if (imageFile) {
+        const imageResult = await uploadProfileImage(imageFile)
+        if (!imageResult.success) {
+          // The other changes are saved, so stay in edit mode and say what failed.
+          setImageFile(null)
+          setImageError(imageResult.message)
+          return
+        }
+      }
+
+      setImageFile(null)
+      setIsEditing(false)
     } catch (error) {
       console.error("Error updating user:", error)
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -108,6 +154,7 @@ export const CurrentUserSection = () => {
           <ActionButtons>
             <SaveButton
               onClick={saveUser}
+              disabled={isSaving}
               aria-label="Save changes"
             >
               ✓
@@ -153,9 +200,11 @@ export const CurrentUserSection = () => {
               <input
                 type="file"
                 id="profileImage"
-                onChange={(e) => handleInputChange("profileImage", e.target.value)}
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageChange}
                 aria-label="Edit profile picture"
               />
+              {imageError && <p role="alert">{imageError}</p>}
             </>
           )}
         </UserInfo>

@@ -1,21 +1,25 @@
 //#region ----- IMPORTS -----
 import { useParams } from "react-router-dom"
 import styled from "styled-components"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useProjectStore } from "../../../store/projectStore"
+import { getUploadLimits } from "../../../utils/upload/uploadMedia"
+import type { UploadLimits } from "../../../utils/upload/types"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useEditingStore } from "../../../store/editStore"
 import { spacing } from "../../../themes/spacing"
 //#endregion
 
-//#region ----- CONSTANTS -----
-const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
+//#region ----- HELPERS -----
+const toMegabytes = (bytes: number) => Math.round(bytes / (1024 * 1024))
 //#endregion
 
 //#region ----- COMPONENT LOGIC -----
 export const CreateProject = () => {
   const { classId } = useParams<{ classId: string }>()
   const addProject = useProjectStore((state) => state.addProject)
+  const cancelUpload = useProjectStore((state) => state.cancelUpload)
+  const uploadProgress = useProjectStore((state) => state.uploadProgress)
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject)
 
   const [projectName, setProjectName] = useState("")
@@ -23,19 +27,67 @@ export const CreateProject = () => {
   const [teacher, setTeacher] = useState("")
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [errorMesage, setErrorMessage] = useState("")
+  const [limits, setLimits] = useState<UploadLimits | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const projectNameRef = useRef<HTMLInputElement>(null)
 
+  const isUploading = uploadProgress !== null
+  //#endregion
+
+  //#region ----- EFFECTS -----
+  useEffect(() => {
+    let active = true
+    getUploadLimits()
+      .then((loaded) => {
+        if (active) setLimits(loaded)
+      })
+      .catch(() => {
+        // Retried when a file is picked, the message is shown then.
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  // Closing the form or leaving the page must not leave an upload running unseen.
+  useEffect(() => {
+    return () => cancelUpload()
+  }, [cancelUpload])
   //#endregion
 
   //#region ----- HANDLERS -----
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target
+    const file = input.files?.[0]
     if (!file) return
 
-    if (file.size > MAX_FILE_SIZE) {
-      setErrorMessage("Video file size exceeds 100MB. Please select a smaller file.")
-      e.target.value = ""
+    const reject = (message: string) => {
+      setErrorMessage(message)
+      input.value = ""
       setVideoFile(null)
+    }
+
+    let activeLimits = limits
+    if (!activeLimits) {
+      try {
+        activeLimits = await getUploadLimits()
+        setLimits(activeLimits)
+      } catch {
+        reject("Could not check the upload limits. Please try again in a moment.")
+        return
+      }
+    }
+
+    if (file.size > activeLimits.videoMaxBytes) {
+      reject(
+        `Video file size exceeds ${toMegabytes(activeLimits.videoMaxBytes)}MB. Please select a smaller file.`
+      )
+      return
+    }
+
+    const extension = file.name.split(".").pop()?.toLowerCase() || ""
+    if (!activeLimits.videoFormats.includes(extension)) {
+      reject(`Unsupported video format. Allowed: ${activeLimits.videoFormats.join(", ")}.`)
       return
     }
 
@@ -44,6 +96,8 @@ export const CreateProject = () => {
   }
 
   const handleCreateProject = async () => {
+    if (isSubmitting) return
+
     if (!projectName.trim()) {
       setErrorMessage("Please fill in a project name")
       projectNameRef.current?.focus()
@@ -51,29 +105,31 @@ export const CreateProject = () => {
     }
 
     if (!classId) {
-      alert("No class ID found in the route.")
+      setErrorMessage("No class ID found in the route.")
       return
     }
 
-    if (videoFile && videoFile.size > MAX_FILE_SIZE) {
-      alert("Video file size exceeds 100MB.")
-      return
-    }
-
-    await addProject(classId, {
+    setErrorMessage("")
+    setIsSubmitting(true)
+    const result = await addProject(classId, {
       projectName,
       projectDescription,
       teacher,
       classId,
       video: videoFile,
     })
+    setIsSubmitting(false)
 
-    // Clear inputs after creation
-    setProjectName("")
-    setProjectDescription("")
-    setTeacher("")
-    setVideoFile(null)
-    setIsEditingProject(false)
+    if (result.success) {
+      // Clear inputs after creation
+      setProjectName("")
+      setProjectDescription("")
+      setTeacher("")
+      setVideoFile(null)
+      setIsEditingProject(false)
+    } else if (!result.cancelled) {
+      setErrorMessage(result.message)
+    }
   }
   //#endregion
 
@@ -109,25 +165,62 @@ export const CreateProject = () => {
         <HiddenFileInput
           id="video-upload"
           type="file"
-          accept="video/*"
+          accept={limits ? limits.videoFormats.map((f) => `.${f}`).join(",") : "video/*"}
+          disabled={isSubmitting}
           onChange={handleFileChange}
         />
       </VideoUploadLabel>
       {videoFile && (
         <FileInfo>
           <FileName>{videoFile.name}</FileName>
-          <RemoveFileBtn onClick={() => setVideoFile(null)}>✕</RemoveFileBtn>
+          {!isSubmitting && (
+            <RemoveFileBtn
+              type="button"
+              aria-label="Remove selected video"
+              onClick={() => setVideoFile(null)}
+            >
+              ✕
+            </RemoveFileBtn>
+          )}
         </FileInfo>
       )}
 
-      <ErrorMessage>{errorMesage}</ErrorMessage>
+      {isUploading && (
+        <ProgressWrapper>
+          <ProgressText aria-live="polite">
+            {uploadProgress >= 1
+              ? "Finishing up..."
+              : `Uploading video... ${Math.floor(uploadProgress * 100)}%`}
+          </ProgressText>
+          <ProgressTrack
+            role="progressbar"
+            aria-label="Video upload progress"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.floor(uploadProgress * 100)}
+          >
+            <ProgressFill style={{ width: `${Math.floor(uploadProgress * 100)}%` }} />
+          </ProgressTrack>
+        </ProgressWrapper>
+      )}
+
+      <ErrorMessage role="alert">{errorMesage}</ErrorMessage>
 
       <AddProjectBtn
         type="submit"
-        onClick={handleCreateProject}
+        disabled={isSubmitting}
       >
-        Add Project
+        {isUploading ? "Uploading..." : isSubmitting ? "Saving..." : "Add Project"}
       </AddProjectBtn>
+      {isUploading && (
+        <CancelUploadBtn
+          type="button"
+          disabled={uploadProgress >= 1}
+          onClick={cancelUpload}
+        >
+          Cancel upload
+        </CancelUploadBtn>
+      )}
     </FormContainer>
   )
 }
@@ -205,6 +298,58 @@ const AddProjectBtn = styled.button`
     transform: scale(0.96);
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`
+
+const CancelUploadBtn = styled.button`
+  height: 40px;
+  background-color: transparent;
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.colors.textAlternative};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  transition: ease 0.3s;
+
+  &:hover:not(:disabled) {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`
+
+const ProgressWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.sm};
+`
+
+const ProgressText = styled.span`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 0.9em;
+`
+
+const ProgressTrack = styled.div`
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.colors.lightBlue};
+`
+
+const ProgressFill = styled.div`
+  height: 100%;
+  border-radius: 5px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  transition: width 0.2s ease;
 `
 
 const ErrorMessage = styled.p`
