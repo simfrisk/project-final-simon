@@ -70,6 +70,8 @@ export const config = {
     enabled: env.OPS_ENABLED === "true",
     token: env.OPS_TOKEN || "",
   },
+  // How long the first database connection may keep failing before the process exits so the platform restarts it.
+  dbConnectMaxMs: toInt(env.DB_CONNECT_MAX_SECONDS, 60) * 1000,
 }
 
 const KNOWN_KEYS = [
@@ -96,6 +98,7 @@ const KNOWN_KEYS = [
   "PORT",
   "API_URL",
   "RESET_DB",
+  "DB_CONNECT_MAX_SECONDS",
 ]
 
 // OSC returns the literal "***" for secrets it masks. A value like that must never be used.

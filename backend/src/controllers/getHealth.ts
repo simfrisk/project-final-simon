@@ -4,7 +4,7 @@ import { backupStatus } from "../ops/backupScheduler"
 import { BackupStatus } from "../ops/types"
 
 export interface HealthResponse {
-  status: "ok"
+  status: "ok" | "degraded"
   timestamp: string
   db: "up" | "down"
   backup: BackupStatus
@@ -15,9 +15,11 @@ export interface HealthResponse {
  * /health:
  *   get:
  *     summary: Health check endpoint
- *     description: Returns the health status of the API. Always answers 200. The db field shows whether the database connection is up, and backup shows the last nightly backup.
+ *     description: Returns the health status of the API. Answers 200 when the database connection is up and 503 (status degraded, db down) when it is not. backup shows the last nightly backup.
  *     tags: [Health]
  *     responses:
+ *       503:
+ *         description: The database connection is down
  *       200:
  *         description: Server is healthy and running
  *         content:
@@ -48,16 +50,17 @@ export interface HealthResponse {
  *                       enum: [ok, failed, never]
  */
 export const getHealth = (_req: Request, res: Response): void => {
+  const dbUp = mongoose.connection.readyState === 1
   const body: HealthResponse = {
-    status: "ok",
+    status: dbUp ? "ok" : "degraded",
     timestamp: new Date().toISOString(),
-    db: mongoose.connection.readyState === 1 ? "up" : "down",
+    db: dbUp ? "up" : "down",
     backup: {
       enabled: backupStatus.enabled,
       lastSuccessAt: backupStatus.lastSuccessAt,
       lastStatus: backupStatus.lastStatus,
     },
   }
-  // Always 200 so existing wake-up pings keep working. The db field carries the real state.
-  res.status(200).json(body)
+  // 503 while the database is down, so neither a person nor a monitor reads this as healthy.
+  res.status(dbUp ? 200 : 503).json(body)
 }

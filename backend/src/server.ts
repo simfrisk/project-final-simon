@@ -20,15 +20,36 @@ const mongoHost = (url: string): string => {
   }
 }
 
-mongoose
-  .connect(config.mongoUrl)
-  .then(() => {
-    console.log(`[db] connected host=${mongoHost(config.mongoUrl)}`)
-    startBackupScheduler()
-  })
-  .catch((error) => {
-    console.error(`[db] connection failed: ${scrubSecrets(error instanceof Error ? error.message : String(error))}`)
-  })
+// The first connection is retried with backoff. If the database is still not reachable once
+// DB_CONNECT_MAX_SECONDS has passed, the process exits non-zero so the platform restarts it.
+// While it is down, /health answers 503. After a successful first connect, Mongoose reconnects by itself.
+const DB_ATTEMPT_TIMEOUT_MS = 5000
+const DB_MAX_BACKOFF_MS = 10000
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const connectWithRetry = async (): Promise<void> => {
+  const startedAt = Date.now()
+  let delay = 1000
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await mongoose.connect(config.mongoUrl, { serverSelectionTimeoutMS: DB_ATTEMPT_TIMEOUT_MS })
+      console.log(`[db] connected host=${mongoHost(config.mongoUrl)}`)
+      startBackupScheduler()
+      return
+    } catch (error) {
+      const message = scrubSecrets(error instanceof Error ? error.message : String(error))
+      const elapsed = Date.now() - startedAt
+      if (elapsed + delay >= config.dbConnectMaxMs) {
+        console.error(`[db] giving up after ${attempt} attempts in ${Math.round(elapsed / 1000)}s: ${message}`)
+        process.exit(1)
+      }
+      console.error(`[db] attempt ${attempt} failed, retrying in ${delay / 1000}s: ${message}`)
+      await sleep(delay)
+      delay = Math.min(delay * 2, DB_MAX_BACKOFF_MS)
+    }
+  }
+}
+connectWithRetry()
 
 const app: Application = express()
 
@@ -72,7 +93,6 @@ if (config.ops.enabled) {
 app.use("/", router)
 
 //This is a documentation helper
-// /api-docs/ for a endpoint
 setupSwagger(app)
 
 // Start the server
