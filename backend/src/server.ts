@@ -1,5 +1,5 @@
-import dotenv from "dotenv"
-dotenv.config()
+import { config, reportConfig, scrubSecrets } from "./config"
+reportConfig()
 
 import express, { Application } from "express"
 import cors from "cors"
@@ -8,45 +8,66 @@ import { setupSwagger } from "./swagger/swagger"
 
 import { resetDatabase } from "./setup/resetDatabase"
 import router from "./Routes/routes"
+import { createOpsRouter } from "./controllers/postOps"
+import { startBackupScheduler } from "./ops/backupScheduler"
 
-const mongoUrl: string = process.env.MONGO_URL || "mongodb://localhost/final-project"
-mongoose.connect(mongoUrl)
+const mongoHost = (url: string): string => {
+  try {
+    // Credentials are dropped on purpose, only the host is ever logged.
+    return new URL(url).host
+  } catch {
+    return "unparseable"
+  }
+}
 
-const port: number = parseInt(process.env.PORT || "8080")
+mongoose
+  .connect(config.mongoUrl)
+  .then(() => {
+    console.log(`[db] connected host=${mongoHost(config.mongoUrl)}`)
+    startBackupScheduler()
+  })
+  .catch((error) => {
+    console.error(`[db] connection failed: ${scrubSecrets(error instanceof Error ? error.message : String(error))}`)
+  })
+
 const app: Application = express()
 
 app.use(express.static("public"))
-
-const allowedOrigins = [
-  "http://localhost:5173", // your local dev
-  "https://class-review.netlify.app", // your deployed frontend
-]
 
 // First, parse incoming request bodies
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Then, configure CORS
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true) // allow curl/postman with no origin
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true)
-      } else {
-        callback(null, false) // silently fail without throwing error
-        // or you can do callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-)
+// Then, configure CORS from FRONTEND_URL
+const corsOptions: cors.CorsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true) // allow curl/postman with no origin
+    if (config.frontendOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(null, false) // silently fail without throwing error
+    }
+  },
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}
+app.use(cors(corsOptions))
 
-// Handle OPTIONS preflight requests
-app.options("*", cors())
+// Handle OPTIONS preflight requests with the same origin rules
+app.options("*", cors(corsOptions))
 
 resetDatabase()
+
+// Ops routes exist only during an ops window. Otherwise every /ops path answers 404, which has to be
+// explicit here because the Swagger UI mounted below answers 200 for any path nothing else handled.
+if (config.ops.enabled) {
+  app.use("/ops", createOpsRouter())
+  console.log("[ops] ops routes are ENABLED")
+} else {
+  app.use("/ops", (_req, res) => {
+    res.status(404).json({ success: false, response: null, message: "Not found" })
+  })
+}
 
 app.use("/", router)
 
@@ -55,6 +76,6 @@ app.use("/", router)
 setupSwagger(app)
 
 // Start the server
-app.listen(port, (): void => {
-  console.log(`Server running on http://localhost:${port}`)
+app.listen(config.port, (): void => {
+  console.log(`Server running on port ${config.port}`)
 })
