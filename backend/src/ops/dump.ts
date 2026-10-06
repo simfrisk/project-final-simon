@@ -18,7 +18,7 @@ export interface CollectedDump {
 /**
  * Reads every dumpable collection of the database in the connection string into memory,
  * in the layout of `mongodump --gzip --out`. Read only: nothing is written to the source.
- * The data set is small (about a tenth of a megabyte), so buffering is fine here.
+ * The data set is small, so buffering in memory is fine here.
  */
 export const collectDump = async (
   mongoUrl: string,

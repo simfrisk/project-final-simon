@@ -25,7 +25,7 @@ export interface CloudinaryUploadTicket {
   key: string // Cloudinary public_id chosen by the server
   uploadId: string // sent as X-Unique-Upload-Id on every chunk
   uploadUrl: string // https://api.cloudinary.com/v1_1/<cloud>/<video|image>/upload
-  chunkSizeBytes: number // 20 MiB
+  chunkSizeBytes: number
   fields: {
     api_key: string
     timestamp: string
@@ -33,14 +33,14 @@ export interface CloudinaryUploadTicket {
     public_id: string
     allowed_formats: string
   }
-  expiresAt: string // ISO, timestamp + 55 minutes
+  expiresAt: string // ISO, the end of the signature's validity window
 }
 
 export interface S3UploadTicket {
   provider: "s3"
   key: string // object key in the media bucket
   uploadId: string // S3 multipart UploadId
-  partSizeBytes: number // 32 MiB, under the 64 MiB ingress cap
+  partSizeBytes: number // below the ingress request body cap
   partCount: number
   expiresAt: string
 }
