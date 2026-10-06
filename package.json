@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "npm install --prefix backend --include=dev",
-    "build": "npm run build --prefix backend",
+    "build": "npm run build --prefix backend && npm install --prefix frontend --include=dev && npm run build --prefix frontend",
     "start": "npm start --prefix backend"
   },
   "devDependencies": {

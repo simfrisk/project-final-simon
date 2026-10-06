@@ -70,6 +70,8 @@ export const config = {
     enabled: env.OPS_ENABLED === "true",
     token: env.OPS_TOKEN || "",
   },
+  // When true, this app also serves the built frontend (frontend/dist) from the same origin.
+  serveFrontend: env.SERVE_FRONTEND === "true",
   // How long the first database connection may keep failing before the process exits so the platform restarts it.
   dbConnectMaxMs: toInt(env.DB_CONNECT_MAX_SECONDS, 60) * 1000,
 }
@@ -98,6 +100,7 @@ const KNOWN_KEYS = [
   "PORT",
   "API_URL",
   "RESET_DB",
+  "SERVE_FRONTEND",
   "DB_CONNECT_MAX_SECONDS",
 ]
 

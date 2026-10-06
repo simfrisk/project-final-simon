@@ -1,6 +1,8 @@
 import { config, reportConfig, scrubSecrets } from "./config"
 reportConfig()
 
+import fs from "fs"
+import path from "path"
 import express, { Application } from "express"
 import cors from "cors"
 import mongoose from "mongoose"
@@ -90,10 +92,44 @@ if (config.ops.enabled) {
   })
 }
 
+// Same origin frontend (SERVE_FRONTEND=true). Design:
+// - Built files are served first. They never collide with an API path.
+// - The API router comes next, so every real API route wins over the frontend.
+// - Swagger moves from "/" to /api-docs, because "/" is the frontend landing page.
+// - Last, any GET that a browser sent as a page request (Accept lists text/html) and that nothing
+//   above handled gets index.html, so deep links and reloads work. Requests from fetch or curl do not
+//   list text/html, so an unknown API path still answers 404 and never receives HTML.
+const frontendDist = path.resolve(__dirname, "../../frontend/dist")
+const frontendIndex = path.join(frontendDist, "index.html")
+const serveFrontend = config.serveFrontend && fs.existsSync(frontendIndex)
+if (config.serveFrontend && !serveFrontend) {
+  console.error(`[frontend] SERVE_FRONTEND is true but ${frontendIndex} does not exist, serving the API only`)
+}
+
+if (serveFrontend) {
+  app.use(
+    express.static(frontendDist, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith("index.html")) res.setHeader("Cache-Control", "no-cache")
+        else if (filePath.includes(`${path.sep}assets${path.sep}`)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable")
+      },
+    })
+  )
+}
+
 app.use("/", router)
 
 //This is a documentation helper
-setupSwagger(app)
+setupSwagger(app, serveFrontend ? "/api-docs" : "/")
+
+if (serveFrontend) {
+  app.get("*", (req, res, next) => {
+    if (!(req.get("accept") || "").includes("text/html")) return next()
+    res.setHeader("Cache-Control", "no-cache")
+    res.sendFile(frontendIndex)
+  })
+  console.log("[frontend] serving frontend/dist, API docs at /api-docs")
+}
 
 // Start the server
 app.listen(config.port, (): void => {
