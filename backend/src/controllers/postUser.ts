@@ -9,6 +9,7 @@ import bcrypt from "bcrypt"
  * /users:
  *   post:
  *     summary: Create a new user
+ *     description: JSON only. A profile image is set afterwards with POST /users/{userId}/profile-image, using the accessToken returned here.
  *     tags:
  *       - Users
  *     security:
@@ -16,7 +17,7 @@ import bcrypt from "bcrypt"
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -43,10 +44,6 @@ import bcrypt from "bcrypt"
  *                 type: string
  *                 example: "abc123def456"
  *                 description: Optional invitation token for automatic workspace/team joining
- *               profileImage:
- *                 type: string
- *                 format: binary
- *                 description: Optional profile image upload
  *     responses:
  *       201:
  *         description: User created successfully
@@ -89,7 +86,6 @@ import bcrypt from "bcrypt"
 export const postUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role, invitationToken } = req.body
-    const profileImage = (req.file as any)?.path || req.body.profileImage
 
     const allowedRoles = ["teacher", "student"]
     if (!allowedRoles.includes(role)) {
@@ -145,7 +141,6 @@ export const postUser = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
       role,
-      profileImage,
     }
 
     // Add workspace to user if signing up via invitation

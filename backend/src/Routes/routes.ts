@@ -1,7 +1,5 @@
 import express from "express"
 import { authenticateUser } from "../middleware/authenticateUser"
-import { uploadVideo } from "../middleware/uploadVideo"
-import { uploadImage } from "../middleware/uploadImage"
 
 // Import controllers
 import { deleteClass } from "../controllers/deleteClass"
@@ -64,6 +62,10 @@ import { postTeamClass } from "../controllers/postTeamClass"
 import { deleteTeamClass } from "../controllers/deleteTeamClass"
 import { exportCommentsToSrt } from "../controllers/exportCommentsToSrt"
 import { getHealth } from "../controllers/getHealth"
+import { getUploadLimits } from "../controllers/getUploadLimits"
+import { postUpload } from "../controllers/postUpload"
+import { deleteUpload } from "../controllers/deleteUpload"
+import { postUserProfileImage } from "../controllers/postUserProfileImage"
 
 const router = express.Router()
 
@@ -71,7 +73,12 @@ const router = express.Router()
 router.get("/health", getHealth)
 
 // ALTERNATIVE DOCUMENTATION
-router.get("/alt/doc", getHome)
+router.get("/alt/doc", (req, res) => getHome(req.app)(req, res))
+
+// UPLOADS (direct to the storage provider, this API only signs and verifies)
+router.get("/uploads/limits", getUploadLimits)
+router.post("/uploads", authenticateUser, postUpload)
+router.delete("/uploads", authenticateUser, deleteUpload)
 
 // WORKSPACES
 router.post("/workspace", authenticateUser, postWorkspace)
@@ -93,12 +100,7 @@ router.delete("/classes/:classId", authenticateUser, deleteClass)
 router.get("/classes/:classId/projects", authenticateUser, getProjects)
 router.get("/classes/projects/with-comments", authenticateUser, getProjectsWithComments)
 router.get("/projects/:projectId", authenticateUser, getProjectById)
-router.post(
-  "/classes/:classId/projects",
-  uploadVideo.single("video"),
-  authenticateUser,
-  postProject
-)
+router.post("/classes/:classId/projects", authenticateUser, postProject)
 router.patch("/projects/:projectId", authenticateUser, patchProject)
 router.delete("/projects/:projectId", authenticateUser, deleteProject)
 
@@ -124,7 +126,8 @@ router.post("/comments/:commentId/likes", authenticateUser, postLike)
 router.post("/replies/:replyId/likes", authenticateUser, postReplyLike)
 
 // USERS & AUTHENTICATION
-router.post("/users", uploadImage.single("image"), postUser)
+router.post("/users", postUser)
+router.post("/users/:userId/profile-image", authenticateUser, postUserProfileImage)
 router.get("/users/:userId", authenticateUser, getUserById)
 router.delete("/users/:userId", authenticateUser, deleteUser)
 router.patch("/users/:userId", authenticateUser, patchUser)
