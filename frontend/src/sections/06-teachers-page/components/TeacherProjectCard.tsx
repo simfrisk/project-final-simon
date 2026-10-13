@@ -11,6 +11,7 @@ import { unFormatTime } from "../../05-review-page/components/video-section/util
 import { commentStore } from "../../../store/commentStore"
 
 import type { MessageType } from "../../../store/commentStore"
+import { FALLBACK_THUMBNAIL, showFallbackThumbnail } from "../../../utils/fallbackImage"
 //#endregion
 
 //#region ----- INTERFACES -----
@@ -65,8 +66,9 @@ export const TeacherProjectCard = ({
       >
         <CardThumbnail>
           <img
-            src={thumbnail || "/fallback-thumbnail.jpg"}
+            src={thumbnail || FALLBACK_THUMBNAIL}
             alt={`Thumbnail for project: ${projectName}`}
+            onError={showFallbackThumbnail}
           />
         </CardThumbnail>
         <CardContentWrapper>
