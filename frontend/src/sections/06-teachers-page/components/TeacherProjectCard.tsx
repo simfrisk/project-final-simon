@@ -65,7 +65,7 @@ export const TeacherProjectCard = ({
       >
         <CardThumbnail>
           <img
-            src={thumbnail || "/default-thumb.jpg"}
+            src={thumbnail || "/fallback-thumbnail.jpg"}
             alt={`Thumbnail for project: ${projectName}`}
           />
         </CardThumbnail>
@@ -107,7 +107,7 @@ export const TeacherProjectCard = ({
                       >
                         <CommentThumbnail>
                           <img
-                            src={comment.commentCreatedBy?.profileImage || "/default-profile.jpg"}
+                            src={comment.commentCreatedBy?.profileImage || "/default-profile.png"}
                             alt={`Profile image of ${comment.commentCreatedBy?.name || "unknown user"}`}
                           />
                         </CommentThumbnail>
