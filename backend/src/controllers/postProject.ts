@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { Project } from "../models/Projects"
 import { getMediaStorage } from "../media"
 import { asUploadedMediaRef, sendUploadError } from "../media/respond"
-import { StoredMedia, UploadError } from "../media/types"
+import { StoredMedia, UploadedMediaRef, UploadError } from "../media/types"
 
 /**
  * @swagger
@@ -41,6 +41,17 @@ import { StoredMedia, UploadError } from "../media/types"
  *               video:
  *                 type: object
  *                 description: Reference to a finished direct upload, see POST /uploads
+ *                 required:
+ *                   - key
+ *                   - uploadId
+ *                 properties:
+ *                   key:
+ *                     type: string
+ *                   uploadId:
+ *                     type: string
+ *               thumbnail:
+ *                 type: object
+ *                 description: Optional reference to a finished thumbnail upload (purpose thumbnail, s3 provider only). A thumbnail that cannot be used never fails the project, it is saved without one.
  *                 required:
  *                   - key
  *                   - uploadId
@@ -132,12 +143,15 @@ export const postProject = async (
   res: Response
 ): Promise<Response> => {
   let stored: StoredMedia | null = null
-  let uploadId = ""
+  let storedThumbnail: StoredMedia | null = null
+  let videoRef: UploadedMediaRef | null = null
+  let thumbnailRef: UploadedMediaRef | null = null
+  let projectSaved = false
   const userId = req.user?._id?.toString()
 
   try {
     const { classId } = req.params
-    const { projectName, projectDescription, teacher, video } = req.body ?? {}
+    const { projectName, projectDescription, teacher, video, thumbnail } = req.body ?? {}
 
     if (!projectName) {
       return res.status(400).json({
@@ -152,7 +166,27 @@ export const postProject = async (
       const ref = asUploadedMediaRef(video)
       if (!ref || !userId) throw new UploadError(400, "Invalid upload key")
       stored = await getMediaStorage().completeUpload({ userId, purpose: "video", ref })
-      uploadId = ref.uploadId
+      videoRef = ref
+
+      // The thumbnail is a nice to have. Whatever goes wrong with it, the project is still created.
+      if (thumbnail !== undefined && thumbnail !== null) {
+        const thumbRef = asUploadedMediaRef(thumbnail)
+        try {
+          if (!thumbRef) throw new UploadError(400, "Invalid upload key")
+          storedThumbnail = await getMediaStorage().completeUpload({ userId, purpose: "thumbnail", ref: thumbRef })
+          thumbnailRef = thumbRef
+        } catch (thumbError) {
+          console.error(
+            `[media] thumbnail skipped: ${thumbError instanceof Error ? thumbError.message : "unknown error"}`
+          )
+          // Purpose is passed so a reference to some other upload of the user is never deleted by mistake.
+          if (thumbRef) {
+            getMediaStorage()
+              .abortUpload({ userId, ref: thumbRef, purpose: "thumbnail" })
+              .catch(() => undefined)
+          }
+        }
+      }
     }
 
     const newProject = new Project({
@@ -161,11 +195,12 @@ export const postProject = async (
       projectDescription,
       teacher,
       video: stored?.url || "",
-      thumbnail: stored?.thumbnailUrl || "",
+      thumbnail: stored?.thumbnailUrl ?? storedThumbnail?.url ?? "",
       projectCreatedBy: req.user?._id,
     })
 
     const savedNewProject = await newProject.save()
+    projectSaved = true
 
     // Populate the 'projectCreatedBy' field
     await savedNewProject.populate(
@@ -180,10 +215,17 @@ export const postProject = async (
     })
   } catch (error) {
     // A verified upload that never became a project would stay behind in storage.
-    if (stored && userId) {
-      getMediaStorage()
-        .abortUpload({ userId, ref: { key: stored.key, uploadId } })
-        .catch(() => undefined)
+    if (userId && !projectSaved) {
+      if (videoRef) {
+        getMediaStorage()
+          .abortUpload({ userId, ref: videoRef, purpose: "video" })
+          .catch(() => undefined)
+      }
+      if (thumbnailRef) {
+        getMediaStorage()
+          .abortUpload({ userId, ref: thumbnailRef, purpose: "thumbnail" })
+          .catch(() => undefined)
+      }
     }
 
     if (error instanceof UploadError) return sendUploadError(res, error)

@@ -31,6 +31,9 @@ import { sendUploadError } from "../media/respond"
  *                       type: number
  *                     imageMaxBytes:
  *                       type: number
+ *                     thumbnailMaxBytes:
+ *                       type: number
+ *                       description: 0 when the provider does not take thumbnails
  *                     videoFormats:
  *                       type: array
  *                       items:

@@ -1,5 +1,6 @@
 import { Schema, Document, Types, model } from "mongoose"
 import crypto from "crypto"
+import { config } from "../config"
 
 export interface UserType extends Document {
   _id: Types.ObjectId
@@ -46,8 +47,8 @@ const UserSchema = new Schema<UserType>({
   },
   profileImage: {
     type: String,
-    default:
-      "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png",
+    // A function, so the value follows MEDIA_PUBLIC_BASE_URL and is never frozen at import time.
+    default: () => config.defaultProfileImageUrl,
   },
   accessToken: {
     type: String,

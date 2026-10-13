@@ -17,7 +17,10 @@ import {
 const VIDEO_FORMATS = ["mp4", "mov", "avi"]
 const IMAGE_FORMATS = ["jpg", "jpeg", "png", "webp"]
 
-const CONTENT_TYPES: Record<MediaPurpose, string[]> = {
+// Cloudinary has no thumbnail purpose: it renders thumbnails itself from the video URL.
+type CloudinaryPurpose = Exclude<MediaPurpose, "thumbnail">
+
+const CONTENT_TYPES: Record<CloudinaryPurpose, string[]> = {
   video: ["video/mp4", "video/quicktime", "video/x-msvideo"],
   image: ["image/jpeg", "image/png", "image/webp"],
 }
@@ -45,6 +48,9 @@ const httpCodeOf = (error: unknown): number | undefined => {
 
 const resourceTypeOf = (purpose: MediaPurpose): "video" | "image" => (purpose === "video" ? "video" : "image")
 
+const isCloudinaryPurpose = (purpose: unknown): purpose is CloudinaryPurpose =>
+  purpose === "video" || purpose === "image"
+
 export class CloudinaryMediaStorage implements MediaStorage {
   readonly provider = "cloudinary" as const
   private configured = false
@@ -60,11 +66,11 @@ export class CloudinaryMediaStorage implements MediaStorage {
     }
   }
 
-  private maxBytes(purpose: MediaPurpose): number {
+  private maxBytes(purpose: CloudinaryPurpose): number {
     return purpose === "video" ? config.maxVideoBytes : config.maxImageBytes
   }
 
-  private formats(purpose: MediaPurpose): string[] {
+  private formats(purpose: CloudinaryPurpose): string[] {
     return purpose === "video" ? VIDEO_FORMATS : IMAGE_FORMATS
   }
 
@@ -73,6 +79,7 @@ export class CloudinaryMediaStorage implements MediaStorage {
       provider: "cloudinary",
       videoMaxBytes: config.maxVideoBytes,
       imageMaxBytes: config.maxImageBytes,
+      thumbnailMaxBytes: 0,
       videoFormats: VIDEO_FORMATS,
       imageFormats: IMAGE_FORMATS,
     }
@@ -81,7 +88,7 @@ export class CloudinaryMediaStorage implements MediaStorage {
   async createUpload(input: CreateUploadRequest & { userId: string }): Promise<CloudinaryUploadTicket> {
     const { userId, purpose, contentType, sizeBytes, resumeKey } = input
 
-    if (purpose !== "video" && purpose !== "image") throw new UploadError(400, "Invalid purpose")
+    if (!isCloudinaryPurpose(purpose)) throw new UploadError(400, "Invalid purpose")
     if (typeof contentType !== "string" || !CONTENT_TYPES[purpose].includes(contentType.toLowerCase())) {
       throw new UploadError(400, "Unsupported file type")
     }
@@ -138,6 +145,7 @@ export class CloudinaryMediaStorage implements MediaStorage {
     ref: UploadedMediaRef
   }): Promise<StoredMedia> {
     const { userId, purpose, ref } = input
+    if (!isCloudinaryPurpose(purpose)) throw new UploadError(400, "Invalid purpose")
     const { uuid } = parseOwnedKey(userId, ref?.key, purpose)
     if (ref.uploadId !== uuid) throw new UploadError(400, "Invalid upload key")
 
@@ -177,8 +185,10 @@ export class CloudinaryMediaStorage implements MediaStorage {
     return stored
   }
 
-  async abortUpload(input: { userId: string; ref: UploadedMediaRef }): Promise<void> {
-    const { purpose } = parseOwnedKey(input.userId, input.ref?.key)
+  async abortUpload(input: { userId: string; ref: UploadedMediaRef; purpose?: MediaPurpose }): Promise<void> {
+    const { purpose } = parseOwnedKey(input.userId, input.ref?.key, input.purpose)
+    // A thumbnail key can only come from the S3 provider, so there is nothing to remove on Cloudinary.
+    if (!isCloudinaryPurpose(purpose)) throw new UploadError(400, "Invalid upload key")
     this.ensureConfigured()
     await this.destroy(input.ref.key, resourceTypeOf(purpose))
   }

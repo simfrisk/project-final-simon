@@ -1,5 +1,6 @@
 import { config } from "../config"
 import { CloudinaryMediaStorage } from "./cloudinaryStorage"
+import { S3MediaStorage } from "./s3Storage"
 import { MediaStorage, UploadError } from "./types"
 
 let instance: MediaStorage | null = null
@@ -13,6 +14,11 @@ export const getMediaStorage = (): MediaStorage => {
 
   if (config.mediaStorage === "cloudinary") {
     instance = new CloudinaryMediaStorage()
+    return instance
+  }
+
+  if (config.mediaStorage === "s3") {
+    instance = new S3MediaStorage()
     return instance
   }
 

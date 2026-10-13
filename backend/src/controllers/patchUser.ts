@@ -9,7 +9,7 @@ import bcrypt from "bcrypt"
  *     summary: Update an existing user's information
  *     tags:
  *       - Users
- *     description: Allows an authenticated user to update a user's name, role, and/or profile image by their ID.
+ *     description: Allows an authenticated user to update a user's name, role, email and/or password by their ID. The profile image is not changed here, use POST /users/{userId}/profile-image.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -32,9 +32,6 @@ import bcrypt from "bcrypt"
  *               newRole:
  *                 type: string
  *                 example: "admin"
- *               newProfileImage:
- *                 type: string
- *                 example: "https://example.com/profile.jpg"
  *               newPassword:
  *                 type: string
  *                 example: "newPassword123"
@@ -108,7 +105,9 @@ import bcrypt from "bcrypt"
  */
 export const patchUser = async (req: Request, res: Response) => {
   const { userId } = req.params
-  const { newName, newRole, newProfileImage, newPassword, newEmail } = req.body
+  // newProfileImage is deliberately not read: a profile image changes only through POST /users/:userId/profile-image,
+  // so no URL of the caller's choosing can end up in the database.
+  const { newName, newRole, newPassword, newEmail } = req.body
 
   try {
     const user = await UserModel.findById(userId)
@@ -137,7 +136,6 @@ export const patchUser = async (req: Request, res: Response) => {
     if (newName) user.name = newName
     if (newRole) user.role = newRole
     if (newEmail) user.email = newEmail.toLowerCase().trim()
-    if (newProfileImage) user.profileImage = newProfileImage
 
     // Hash password if provided
     if (newPassword) {
