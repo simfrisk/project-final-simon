@@ -266,7 +266,7 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
       })
       assert.equal(inventory.sourceBackup, "prod/2026-10-20T08-00-00Z")
       assert.equal(inventory.listing.videos + inventory.listing.images, registry.size, "all pages were read")
-      // 4 videos, 4 thumbnails, 3 own profile images, the default avatar for users and for the code.
+      // Every video and thumbnail, the own profile images, and the default avatar once for users and once for the code.
       assert.equal(inventory.items.length, 13)
       const byField = (field: string) => inventory.items.filter((item) => item.field === field)
       assert.equal(byField("projects.video").length, 4)
