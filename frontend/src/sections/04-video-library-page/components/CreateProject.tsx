@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { useState, useRef, useEffect } from "react"
 import { useProjectStore } from "../../../store/projectStore"
 import { getUploadLimits } from "../../../utils/upload/uploadMedia"
+import { checkVideoFile } from "../../../utils/upload/inspectVideo"
 import type { UploadLimits } from "../../../utils/upload/types"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useEditingStore } from "../../../store/editStore"
@@ -20,6 +21,7 @@ export const CreateProject = () => {
   const addProject = useProjectStore((state) => state.addProject)
   const cancelUpload = useProjectStore((state) => state.cancelUpload)
   const uploadProgress = useProjectStore((state) => state.uploadProgress)
+  const isPreparingUpload = useProjectStore((state) => state.isPreparingUpload)
   const setIsEditingProject = useEditingStore((state) => state.setIsEditingProject)
 
   const [projectName, setProjectName] = useState("")
@@ -32,6 +34,7 @@ export const CreateProject = () => {
   const projectNameRef = useRef<HTMLInputElement>(null)
 
   const isUploading = uploadProgress !== null
+  const isBusy = isUploading || isPreparingUpload
   //#endregion
 
   //#region ----- EFFECTS -----
@@ -89,6 +92,19 @@ export const CreateProject = () => {
     if (!activeLimits.videoFormats.includes(extension)) {
       reject(`Unsupported video format. Allowed: ${activeLimits.videoFormats.join(", ")}.`)
       return
+    }
+
+    // Refuse a format some browsers cannot play right away, before the form is filled in.
+    if (activeLimits.provider === "s3") {
+      try {
+        const problem = await checkVideoFile(file)
+        if (problem) {
+          reject(problem)
+          return
+        }
+      } catch {
+        // The check is repeated when the project is added.
+      }
     }
 
     setErrorMessage("")
@@ -185,6 +201,12 @@ export const CreateProject = () => {
         </FileInfo>
       )}
 
+      {isPreparingUpload && (
+        <ProgressWrapper>
+          <ProgressText aria-live="polite">Checking video...</ProgressText>
+        </ProgressWrapper>
+      )}
+
       {isUploading && (
         <ProgressWrapper>
           <ProgressText aria-live="polite">
@@ -210,12 +232,18 @@ export const CreateProject = () => {
         type="submit"
         disabled={isSubmitting}
       >
-        {isUploading ? "Uploading..." : isSubmitting ? "Saving..." : "Add Project"}
+        {isPreparingUpload
+          ? "Checking..."
+          : isUploading
+            ? "Uploading..."
+            : isSubmitting
+              ? "Saving..."
+              : "Add Project"}
       </AddProjectBtn>
-      {isUploading && (
+      {isBusy && (
         <CancelUploadBtn
           type="button"
-          disabled={uploadProgress >= 1}
+          disabled={uploadProgress !== null && uploadProgress >= 1}
           onClick={cancelUpload}
         >
           Cancel upload
