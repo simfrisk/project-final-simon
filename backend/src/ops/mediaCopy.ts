@@ -28,7 +28,7 @@ const CACHE_CONTROL = "public, max-age=31536000, immutable"
 
 const CONTENT_TYPES: Record<string, string> = {
   mp4: "video/mp4",
-  mov: "video/quicktime",
+  mov: "video/mp4", // never stored as a .mov: videos are copied as MP4 and labelled video/mp4
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
   png: "image/png",

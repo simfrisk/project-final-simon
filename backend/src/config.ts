@@ -67,6 +67,13 @@ export const config = {
   maxVideoBytes: toInt(env.MAX_VIDEO_MB, mediaStorage === "s3" ? 400 : 100) * 1024 * 1024,
   maxImageBytes: toInt(env.MAX_IMAGE_MB, 10) * 1024 * 1024,
   thumbnailMaxBytes: 2 * 1024 * 1024,
+  // Per user limits on the S3 provider, so one account cannot fill the media drive.
+  maxActiveUploads: toInt(env.MAX_ACTIVE_UPLOADS, 3),
+  // Unfinished uploads older than this are treated as abandoned and aborted when their owner starts a new one.
+  staleUploadMs: toInt(env.UPLOAD_STALE_SECONDS, 3 * 60 * 60) * 1000,
+  maxDailyUploadBytes: toInt(env.MAX_DAILY_UPLOAD_MB, 2048) * 1024 * 1024,
+  // The mirror stops copying when the backup bucket would grow past this many bytes. 0 means no limit.
+  mirrorMaxBytes: toInt(env.MIRROR_MAX_BYTES, 0),
   // The media bucket. Writes use a scoped user, never the MinIO root.
   mediaS3: {
     endpoint: trimSlash(env.MEDIA_S3_ENDPOINT || ""),
@@ -115,6 +122,10 @@ const KNOWN_KEYS = [
   "MEDIA_S3_SECRET_KEY",
   "MEDIA_PUBLIC_BASE_URL",
   "MEDIA_MIRROR_ENABLED",
+  "MAX_ACTIVE_UPLOADS",
+  "MAX_DAILY_UPLOAD_MB",
+  "UPLOAD_STALE_SECONDS",
+  "MIRROR_MAX_BYTES",
   "FRONTEND_URL",
   "BACKUP_ENABLED",
   "BACKUP_PREFIX",

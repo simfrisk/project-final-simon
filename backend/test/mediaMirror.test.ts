@@ -11,13 +11,14 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3"
 import { Upload } from "@aws-sdk/lib-storage"
-import { dropDatabase, haveBackupEnv, haveS3Env, MIB, startServer } from "./helpers"
+import { dropDatabase, haveBackupEnv, haveS3Env, MIB, RUN_ID, startServer, testPrefix } from "./helpers"
 
-const PREFIX = "mirrortest/"
+const PREFIX = testPrefix("mirrortest")
+const BACKUP_PREFIX = `mirrortest-${RUN_ID}`
 const ENABLED = haveS3Env() && haveBackupEnv()
 
 // config reads the environment once, when it is first imported, so these are set before the dynamic require below.
-process.env.BACKUP_PREFIX = "mirrortest-backups"
+process.env.BACKUP_PREFIX = BACKUP_PREFIX
 process.env.MEDIA_MIRROR_ENABLED = "true"
 process.env.BACKUP_RETENTION_DAYS = "30"
 
@@ -69,16 +70,18 @@ describe("media mirror", { skip: !ENABLED && "S3 settings are not set" }, () => 
   })
 
   after(async () => {
-    for (const key of [`${PREFIX}small.jpg`, `${PREFIX}large.mp4`, `${PREFIX}later.png`]) {
+    for (const key of [`${PREFIX}small.jpg`, `${PREFIX}large.mp4`, `${PREFIX}later.png`, `${PREFIX}back.png`]) {
       await media.send(new DeleteObjectCommand({ Bucket: mediaBucket, Key: key })).catch(() => undefined)
       await backups.send(new DeleteObjectCommand({ Bucket: backupBucket, Key: `media-mirror/${key}` })).catch(() => undefined)
     }
-    await backups.send(new DeleteObjectCommand({ Bucket: backupBucket, Key: "mirrortest-backups/media-mirror-status.json" })).catch(() => undefined)
+    for (const name of ["media-mirror-status.json", "media-mirror-missing.json"]) {
+      await backups.send(new DeleteObjectCommand({ Bucket: backupBucket, Key: `${BACKUP_PREFIX}/${name}` })).catch(() => undefined)
+    }
   })
 
   it("copies every object, byte for byte, with its content type", async () => {
     const { runMediaMirror, mediaMirrorStatus } = mirrorModule()
-    const report = await runMediaMirror()
+    const report = await runMediaMirror({ scope: PREFIX })
     assert.equal(report.failed, 0)
     assert.ok(report.copied >= 2)
     assert.equal(sha((await readMirror(`${PREFIX}small.jpg`)) as Buffer), sha(small))
@@ -96,36 +99,68 @@ describe("media mirror", { skip: !ENABLED && "S3 settings are not set" }, () => 
 
   it("a second run copies nothing and a new object is picked up", async () => {
     const { runMediaMirror } = mirrorModule()
-    const again = await runMediaMirror()
+    const again = await runMediaMirror({ scope: PREFIX })
     assert.equal(again.copied, 0)
     assert.equal(again.alreadyMirrored, again.mediaObjects)
 
     await media.send(new PutObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}later.png`, Body: Buffer.from("png"), ContentType: "image/png" }))
-    const third = await runMediaMirror()
+    const third = await runMediaMirror({ scope: PREFIX })
     assert.equal(third.copied, 1)
     assert.equal((await readMirror(`${PREFIX}later.png`))?.toString(), "png")
   })
 
-  it("an object deleted from media stays in the mirror until the retention window has passed", async () => {
+  it("an object deleted from media is kept for the full retention window counted from the run that saw it missing", async () => {
     const { runMediaMirror } = mirrorModule()
+    const day = 24 * 3600 * 1000
+    const t0 = Date.now()
+    // Mirrored long ago (the first run), and only deleted from media much later.
+    await media.send(new PutObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}later.png`, Body: Buffer.from("png"), ContentType: "image/png" }))
+    await runMediaMirror({ scope: PREFIX, now: t0 })
+    assert.ok(await readMirror(`${PREFIX}later.png`))
+
     await media.send(new DeleteObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}later.png` }))
 
-    const now = await runMediaMirror()
-    assert.equal(now.pruned, 0)
-    assert.ok(await readMirror(`${PREFIX}later.png`), "still mirrored")
+    // 40 days after it was mirrored it is first seen missing. Its age as a mirror copy must not matter.
+    const first = await runMediaMirror({ scope: PREFIX, now: t0 + 40 * day })
+    assert.equal(first.pruned, 0)
+    assert.ok(await readMirror(`${PREFIX}later.png`), "still mirrored right after the delete")
 
-    // 40 days later it is past the 30 day window. Objects that are still in media are never pruned.
-    const later = await runMediaMirror(Date.now() + 40 * 24 * 3600 * 1000)
-    assert.equal(later.pruned, 1)
+    assert.equal((await runMediaMirror({ scope: PREFIX, now: t0 + 69 * day })).pruned, 0, "29 days after it went missing")
+    assert.ok(await readMirror(`${PREFIX}later.png`))
+
+    // The clock is stored, so a fresh process would see the same date.
+    const stored = await backups.send(new GetObjectCommand({ Bucket: backupBucket, Key: `${BACKUP_PREFIX}/media-mirror-missing.json` }))
+    assert.ok(JSON.parse((await stored.Body?.transformToString()) ?? "{}").since[`${PREFIX}later.png`])
+
+    const last = await runMediaMirror({ scope: PREFIX, now: t0 + 71 * day })
+    assert.equal(last.pruned, 1, "past the window")
     assert.equal(await readMirror(`${PREFIX}later.png`), null)
     assert.ok(await readMirror(`${PREFIX}small.jpg`), "present in media, so kept")
+  })
+
+  it("an object that comes back into media stops its clock", async () => {
+    const { runMediaMirror } = mirrorModule()
+    const day = 24 * 3600 * 1000
+    const t0 = Date.now()
+    await media.send(new PutObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}back.png`, Body: Buffer.from("b"), ContentType: "image/png" }))
+    await runMediaMirror({ scope: PREFIX, now: t0 })
+    await media.send(new DeleteObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}back.png` }))
+    await runMediaMirror({ scope: PREFIX, now: t0 + 10 * day })
+    await media.send(new PutObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}back.png`, Body: Buffer.from("b"), ContentType: "image/png" }))
+    await runMediaMirror({ scope: PREFIX, now: t0 + 20 * day })
+    await media.send(new DeleteObjectCommand({ Bucket: mediaBucket, Key: `${PREFIX}back.png` }))
+    await runMediaMirror({ scope: PREFIX, now: t0 + 21 * day })
+    // 31 days after the first miss but only 10 after the second, so it must still be there.
+    assert.equal((await runMediaMirror({ scope: PREFIX, now: t0 + 31 * day })).pruned, 0)
+    assert.ok(await readMirror(`${PREFIX}back.png`))
+    assert.equal((await runMediaMirror({ scope: PREFIX, now: t0 + 52 * day })).pruned, 1)
   })
 
   it("health shows the mirror state loaded from the status file at boot", async () => {
     const server = await startServer({
       MEDIA_STORAGE: "cloudinary",
       MEDIA_MIRROR_ENABLED: "true",
-      BACKUP_PREFIX: "mirrortest-backups",
+      BACKUP_PREFIX,
     })
     try {
       let body: any
@@ -137,6 +172,7 @@ describe("media mirror", { skip: !ENABLED && "S3 settings are not set" }, () => 
       assert.equal(body.media.provider, "cloudinary")
       assert.equal(body.media.mirror.enabled, true)
       assert.equal(body.media.mirror.lastStatus, "ok")
+      assert.equal(body.media.mirror.note, null)
       assert.ok(body.media.mirror.objects >= 2)
     } finally {
       await server.stop()

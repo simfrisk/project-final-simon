@@ -7,12 +7,12 @@ import { spawnSync } from "child_process"
 import path from "path"
 import { DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { MongoClient, ObjectId } from "mongodb"
-import { BACKEND_DIR, dropDatabase, freshMongoUrl, haveBackupEnv, startServer } from "./helpers"
+import { BACKEND_DIR, dropDatabase, freshMongoUrl, haveBackupEnv, RUN_ID, startServer } from "./helpers"
 
 const ENABLED = haveBackupEnv()
 const BASE = "https://media.example.test/classync-media"
 const MONGO_URL = freshMongoUrl()
-const PREFIX = "rewritetest"
+const PREFIX = `rewritetest-${RUN_ID}`
 
 // config reads the environment once, when it is first imported.
 process.env.MONGO_URL = MONGO_URL
@@ -64,7 +64,7 @@ describe("rewrite media urls", { skip: !ENABLED && "BACKUP_S3_* is not set" }, (
       })
     : (null as unknown as S3Client)
   const bucket = process.env.BACKUP_S3_BUCKET as string
-  const mappingPath = `phase2/rewrite-test-${crypto.randomBytes(3).toString("hex")}/mapping.json`
+  const mappingPath = `phase2/rewrite-test-${RUN_ID}/mapping.json`
   let mongo: MongoClient
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const ops = () => require("../dist/ops/rewriteMedia") as typeof import("../src/ops/rewriteMedia")
@@ -111,7 +111,7 @@ describe("rewrite media urls", { skip: !ENABLED && "BACKUP_S3_* is not set" }, (
   after(async () => {
     await mongo?.close()
     await dropDatabase(MONGO_URL)
-    const listed = await s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: "phase2/rewrite-test-" }))
+    const listed = await s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: `phase2/rewrite-test-${RUN_ID}` }))
     for (const item of listed.Contents ?? []) await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: item.Key as string }))
     for (const prefix of [`${PREFIX}/`]) {
       const reports = await s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: prefix }))
@@ -211,7 +211,7 @@ describe("rewrite media urls", { skip: !ENABLED && "BACKUP_S3_* is not set" }, (
   })
 
   it("refuses a bad mapping", async () => {
-    const bad = async (value: unknown, expected: RegExp, key = `phase2/rewrite-test-bad-${crypto.randomBytes(3).toString("hex")}/mapping.json`) => {
+    const bad = async (value: unknown, expected: RegExp, key = `phase2/rewrite-test-${RUN_ID}-bad-${crypto.randomBytes(3).toString("hex")}/mapping.json`) => {
       await putMapping(value, key)
       await assert.rejects(ops().rewriteMediaUrls({ mapping: key, direction: "forward", dryRun: true }), expected)
     }
@@ -292,7 +292,7 @@ describe("rewrite media urls", { skip: !ENABLED && "BACKUP_S3_* is not set" }, (
     })
 
     it("a missing mapping is a 500 with ok false", async () => {
-      const { status, body } = await post({ mapping: "phase2/nothing-here/mapping.json", direction: "forward", dryRun: true, targetUrlEnv: "MONGO_URL" })
+      const { status, body } = await post({ mapping: `phase2/rewrite-test-${RUN_ID}-nothing/mapping.json`, direction: "forward", dryRun: true, targetUrlEnv: "MONGO_URL" })
       assert.equal(status, 500)
       assert.equal(body.response.ok, false)
     })
