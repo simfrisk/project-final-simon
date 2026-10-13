@@ -36,6 +36,7 @@ export interface MirrorStatus {
   lastStatus: "ok" | "failed" | "never"
   objects: number // objects of the media bucket that are present in the mirror
   bytes: number
+  note: string | null // why the last run did not finish, for example that the backup storage limit was reached
 }
 
 // Media migration (Phase 2). The mapping is written by media-copy and read by /ops/rewrite-media-urls.

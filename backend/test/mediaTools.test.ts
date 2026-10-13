@@ -10,10 +10,10 @@ import { after, before, describe, it } from "node:test"
 import { execFile, spawnSync } from "child_process"
 import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { BSON, ObjectId } from "mongodb"
-import { BACKEND_DIR, haveBackupEnv, haveS3Env, makeRealJpeg, makeRealMp4, makeRealPng, makeScratchDir } from "./helpers"
+import { BACKEND_DIR, haveBackupEnv, haveS3Env, makeRealJpeg, makeRealMp4, makeRealPng, makeScratchDir, RUN_ID, testPrefix } from "./helpers"
 
 const ENABLED = haveS3Env() && haveBackupEnv()
-const PREFIX = "copytest/"
+const PREFIX = testPrefix("copytest")
 const CLOUD = "dgr7l5nsx"
 const API_KEY = "fake-key"
 const API_SECRET = "fake-secret"
@@ -23,7 +23,7 @@ process.env.CLOUDINARY_CLOUD_NAME = CLOUD
 process.env.CLOUDINARY_API_KEY = API_KEY
 process.env.CLOUDINARY_API_SECRET = API_SECRET
 process.env.MEDIA_FOLDER_PREFIX = PREFIX
-process.env.BACKUP_PREFIX = "copytest-backups"
+process.env.BACKUP_PREFIX = `copytest-${RUN_ID}`
 
 interface Asset {
   publicId: string
@@ -48,6 +48,7 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
   const outDir = path.join(dir, "out")
   const registry = new Map<string, Asset>()
   const requests: { method: string; url: string }[] = []
+  const backupFolders: string[] = []
   let server: http.Server
   let base = ""
   let s3: S3Client
@@ -68,6 +69,13 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
   const copyModule = () => require("../dist/ops/mediaCopy") as typeof import("../src/ops/mediaCopy")
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const cloudinaryModule = () => require("../dist/ops/cloudinary") as typeof import("../src/ops/cloudinary")
+
+  // Real copies write a report folder under phase2/ in the backup bucket. Remember each one so cleanup can remove exactly those.
+  const copyReal = async () => {
+    const result = await copyModule().runCopy({ outDir, dryRun: false })
+    if (result.backupFolder) backupFolders.push(result.backupFolder)
+    return result
+  }
 
   const add = (asset: Asset): void => void registry.set(`${asset.type}/${asset.publicId}`, asset)
 
@@ -226,8 +234,9 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
     server?.close()
     if (ENABLED) {
       await deleteAll(s3, bucket, PREFIX)
-      await deleteAll(backups, backupBucket, "phase2/")
-      await deleteAll(backups, backupBucket, "copytest-backups/")
+      // Only what this run wrote: the report folders it was told about, and its own backup prefix.
+      for (const folder of backupFolders) await deleteAll(backups, backupBucket, `${folder}/`)
+      await deleteAll(backups, backupBucket, `copytest-${RUN_ID}/`)
       fs.rmSync(dir, { recursive: true, force: true })
     }
   })
@@ -339,7 +348,7 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
     })
 
     it("copies, proves each copy through its public url and writes the mapping", async () => {
-      const result = await copyModule().runCopy({ outDir, dryRun: false })
+      const result = await copyReal()
       assert.equal(result.report.failures, 0, JSON.stringify(result.report.items.filter((item) => item.error)))
       assert.ok(result.mapping && result.mappingFile && result.backupFolder)
       assert.ok(result.report.items.every((item) => item.status === "uploaded"))
@@ -357,6 +366,7 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
       assert.equal(video?.bytes, files.a.length)
       assert.equal(video?.contentType, "video/mp4")
       assert.equal(video?.docIds.length, 1)
+      assert.equal(entry("projects.video", videoUrl("videos/cccc", "mov"))?.contentType, "video/mp4", "a .mov is copied as an MP4 with the MP4 type")
       assert.equal(entry("projects.video", videoUrl("videos/cccc", "mov"))?.key, `${PREFIX}migrated/videos/cccc.mp4`)
       assert.ok(entry("projects.video", videoUrl("videos/cccc", "mov"))?.sourceUrl.includes("f_mp4,vc_h264,ac_aac"))
       assert.equal(entry("projects.thumbnail", thumbUrl("videos/aaaa"))?.key, `${PREFIX}migrated/thumbnails/videos/aaaa.jpg`)
@@ -380,7 +390,7 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
     })
 
     it("is rerunnable: a second run finds everything already there", async () => {
-      const second = await copyModule().runCopy({ outDir, dryRun: false })
+      const second = await copyReal()
       assert.equal(second.report.failures, 0)
       assert.ok(second.report.items.every((item) => item.status === "already-there"))
       assert.equal(second.mapping?.entries.length, 13)
@@ -390,12 +400,12 @@ describe("media tooling", { skip: !ENABLED && "S3 settings are not set" }, () =>
       const key = `${PREFIX}migrated/profile_pictures/pic2.jpg`
       await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))
       await s3.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: Buffer.from("something else"), ContentType: "image/jpeg" }))
-      const result = await copyModule().runCopy({ outDir, dryRun: false })
+      const result = await copyReal()
       assert.equal(result.report.failures, 1)
       assert.equal(result.mapping, null, "no mapping when anything failed")
       assert.match(result.report.items.find((item) => item.status === "failed")?.error ?? "", /already holds different content/)
       await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))
-      const healed = await copyModule().runCopy({ outDir, dryRun: false })
+      const healed = await copyReal()
       assert.equal(healed.report.failures, 0)
     })
 

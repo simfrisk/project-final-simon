@@ -12,7 +12,8 @@ import {
 } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { config } from "../config"
-import { buildKey, parseOwnedKey } from "./keys"
+import { buildKey, FOLDER, parseOwnedKey } from "./keys"
+import { checkDailyQuota, recordUpload, trackedUploads, trackUpload, untrackUpload } from "./quota"
 import { getMediaS3, mediaBucket, publicUrlFor } from "./s3Client"
 import { matchesMagicBytes } from "./sniff"
 import {
@@ -33,6 +34,8 @@ const PART_URL_LIFETIME_SECONDS = 15 * 60
 // MinIO drops unfinished uploads after 24 hours, so a ticket is not offered for longer than 23.
 const TICKET_LIFETIME_MS = 23 * 60 * 60 * 1000
 const CACHE_CONTROL = "public, max-age=31536000, immutable"
+// An upload that has sat unfinished for config.staleUploadMs was abandoned (closed tab, lost connection). It is
+// aborted when its owner starts a new one, so a few abandoned uploads never lock someone out for a day.
 
 const VIDEO_FORMATS = ["mp4", "mov"]
 const IMAGE_FORMATS = ["jpg", "jpeg", "png", "webp"]
@@ -44,9 +47,11 @@ const EXTENSIONS: Record<MediaPurpose, Record<string, string>> = {
   thumbnail: { "image/jpeg": "jpg" },
 }
 
+// A .mov is stored as video/mp4. The browser check only lets H.264 + AAC through, which every browser plays as MP4,
+// and some (Firefox) refuse to play the same bytes when they are labelled video/quicktime.
 const CONTENT_TYPE_OF_EXTENSION: Record<string, string> = {
   mp4: "video/mp4",
-  mov: "video/quicktime",
+  mov: "video/mp4",
   jpg: "image/jpeg",
   png: "image/png",
   webp: "image/webp",
@@ -107,6 +112,12 @@ export class S3MediaStorage implements MediaStorage {
       throw new UploadError(400, "Not used by this provider")
     }
 
+    // Thumbnails are tiny and optional, so only videos and profile images count against the limits.
+    if (purpose !== "thumbnail") {
+      checkDailyQuota(userId, sizeBytes)
+      await this.checkActiveUploads(userId)
+    }
+
     const key = buildKey(userId, purpose, crypto.randomUUID(), extension)
 
     let uploadId: string | undefined
@@ -125,6 +136,10 @@ export class S3MediaStorage implements MediaStorage {
       throw new UploadError(500, "Could not start the upload")
     }
     if (!uploadId) throw new UploadError(500, "Could not start the upload")
+    if (purpose !== "thumbnail") {
+      recordUpload(userId, sizeBytes)
+      trackUpload(userId, { key, uploadId, startedAt: Date.now() })
+    }
 
     return {
       provider: "s3",
@@ -241,6 +256,12 @@ export class S3MediaStorage implements MediaStorage {
           totalBytes = await this.finishedObjectSize(key, purpose)
         } else {
           logFailure("CompleteMultipartUpload", error)
+          // Do not leave the uploaded parts sitting in the bucket until MinIO drops them a day later.
+          await this.abortQuietly(key, ref.uploadId)
+          // S3 refuses parts that are too small (all but the last under 5 MiB) or do not match what was listed.
+          if (errorName(error) === "EntityTooSmall" || errorName(error) === "InvalidPart") {
+            throw new UploadError(400, "Upload is incomplete")
+          }
           throw new UploadError(500, "Could not finish the upload")
         }
       }
@@ -253,12 +274,14 @@ export class S3MediaStorage implements MediaStorage {
       throw new UploadError(400, "Unsupported file type")
     }
 
+    untrackUpload(userId, key)
     return { key, url: publicUrlFor(key), bytes: totalBytes, format: extension }
   }
 
   async abortUpload(input: { userId: string; ref: UploadedMediaRef; purpose?: MediaPurpose }): Promise<void> {
     const { userId, ref, purpose } = input
     parseOwnedKey(userId, ref?.key, purpose)
+    untrackUpload(userId, ref.key)
 
     // MinIO answers 204 when it aborts an upload that does not exist, so the abort alone cannot tell a
     // finished upload from a running one. ListParts can: it says NoSuchUpload once the upload is gone.
@@ -276,6 +299,38 @@ export class S3MediaStorage implements MediaStorage {
       return
     }
     await this.abortQuietly(ref.key, ref.uploadId)
+  }
+
+  /**
+   * Refuses (429) when the user already has the allowed number of unfinished uploads. Uploads that have been
+   * unfinished for hours are aborted first, since nobody is still sending them.
+   */
+  private async checkActiveUploads(userId: string): Promise<void> {
+    let active = 0
+    for (const upload of trackedUploads(userId)) {
+      if (Date.now() - upload.startedAt > config.staleUploadMs) {
+        await this.abortQuietly(upload.key, upload.uploadId)
+        untrackUpload(userId, upload.key)
+        continue
+      }
+      try {
+        await getMediaS3().send(new ListPartsCommand({ Bucket: mediaBucket(), Key: upload.key, UploadId: upload.uploadId, MaxParts: 1 }))
+        active++
+      } catch (error) {
+        if (!isNoSuchUpload(error)) {
+          logFailure("ListParts", error)
+          throw new UploadError(500, "Could not start the upload")
+        }
+        // Finished or cancelled some other way: it no longer counts.
+        untrackUpload(userId, upload.key)
+      }
+    }
+    if (active >= config.maxActiveUploads) {
+      throw new UploadError(429, "Too many uploads in progress. Finish or cancel one and try again.", {
+        reason: "active_uploads",
+        maxActive: config.maxActiveUploads,
+      })
+    }
   }
 
   /** All parts of an upload in part order, or null when the upload does not exist. */

@@ -15,6 +15,7 @@ import {
 } from "@aws-sdk/client-s3"
 import { MongoClient, ObjectId } from "mongodb"
 import {
+  abortOpened,
   call,
   createTicket,
   dropDatabase,
@@ -29,11 +30,12 @@ import {
   RunningServer,
   signUp,
   startServer,
+  testPrefix,
   TestUser,
   uploadFile,
 } from "./helpers"
 
-const PREFIX = "osctest/"
+const PREFIX = testPrefix("osctest")
 
 describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, () => {
   let server: RunningServer
@@ -63,7 +65,8 @@ describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, 
     call(server, "POST", `/classes/${classId}/projects`, { token: user.token, body: { projectName: "P", ...body } })
 
   before(async () => {
-    server = await startServer({ MEDIA_STORAGE: "s3", MEDIA_FOLDER_PREFIX: PREFIX })
+    // The per user limits have their own test file, so they are far out of the way here.
+    server = await startServer({ MEDIA_STORAGE: "s3", MEDIA_FOLDER_PREFIX: PREFIX, MAX_ACTIVE_UPLOADS: "500", MAX_DAILY_UPLOAD_MB: "1000000" })
     alice = await signUp(server, "alice")
     bob = await signUp(server, "bob")
     classId = await makeClass(server)
@@ -81,6 +84,7 @@ describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, 
   after(async () => {
     await server?.stop()
     // Everything this run wrote lives under the test prefix.
+    await abortOpened(s3, bucket)
     const listed = await s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: PREFIX }))
     for (const item of listed.Contents ?? []) {
       await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: item.Key as string })).catch(() => undefined)
@@ -271,14 +275,15 @@ describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, 
       assert.equal(await head(ticket.key), 1 * MIB)
     })
 
-    it("stores an mov with its own content type", async () => {
+    it("stores a .mov upload with the video/mp4 content type", async () => {
       const file = makeFakeMp4(dir, 1 * MIB, "clip.mov")
       const ticket = await createTicket(server, alice, "video", "video/quicktime", 1 * MIB)
       await uploadFile(server, alice, ticket, file)
       const { status, body } = await createProject(alice, { video: { key: ticket.key, uploadId: ticket.uploadId } })
       assert.equal(status, 201)
       const response = await fetch(body.response.video, { headers: { Range: "bytes=0-9" } })
-      assert.equal(response.headers.get("content-type"), "video/quicktime")
+      assert.equal(response.headers.get("content-type"), "video/mp4")
+      assert.ok(body.response.video.endsWith(".mov"), "the key keeps the .mov extension")
     })
 
     it("is refused and aborted when the parts exceed the limit", async () => {
@@ -531,6 +536,28 @@ describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, 
       assert.equal(removal.status, 200)
       assert.equal(await head(video.key), null)
       assert.equal(await head(thumb.key), null)
+    })
+
+    it("only the uploader's own delete removes the objects: someone else deleting the project keeps the files", async () => {
+      const videoFile = makeRealMp4(dir, "owner.mp4")
+      const video = await createTicket(server, alice, "video", "video/mp4", fs.statSync(videoFile).size)
+      await uploadFile(server, alice, video, videoFile)
+      const jpg = makeRealJpeg(dir, "owner.jpg")
+      const thumb = await createTicket(server, alice, "thumbnail", "image/jpeg", fs.statSync(jpg).size)
+      await uploadFile(server, alice, thumb, jpg)
+      const created = await createProject(alice, {
+        video: { key: video.key, uploadId: video.uploadId },
+        thumbnail: { key: thumb.key, uploadId: thumb.uploadId },
+      })
+      assert.equal(created.status, 201)
+
+      // Bob is signed in and the route lets him delete the project row (existing behaviour, out of scope here),
+      // but he must never remove Alice's files.
+      const byBob = await call(server, "DELETE", `/projects/${created.body.response._id}`, { token: bob.token })
+      assert.equal(byBob.status, 200)
+      assert.ok((await head(video.key)) !== null, "video survives")
+      assert.ok((await head(thumb.key)) !== null, "thumbnail survives")
+      assert.equal((await fetch(`${base}/${video.key}`, { headers: { Range: "bytes=0-9" } })).status, 206)
     })
 
     it("leaves migrated objects, and objects another project still uses, alone", async () => {

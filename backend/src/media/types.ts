@@ -103,7 +103,7 @@ export interface MediaStorage {
 
 export class UploadError extends Error {
   constructor(
-    public status: 400 | 403 | 404 | 413 | 500,
+    public status: 400 | 403 | 404 | 413 | 429 | 500,
     message: string,
     public details?: Record<string, unknown>
   ) {

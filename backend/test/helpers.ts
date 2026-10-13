@@ -11,22 +11,42 @@ import fs from "fs"
 import net from "net"
 import os from "os"
 import path from "path"
+import { AbortMultipartUploadCommand, S3Client } from "@aws-sdk/client-s3"
 import { MongoClient } from "mongodb"
 
 export const BACKEND_DIR = path.resolve(__dirname, "..")
 export const MIB = 1024 * 1024
 
+// The tests write and delete objects and drop databases, so they only ever run against a server on this machine.
+// A remote endpoint (a real MinIO, a real database) makes the suites skip instead of touching it.
+const isLocal = (value: string | undefined): boolean => {
+  try {
+    return ["127.0.0.1", "localhost", "[::1]"].includes(new URL(value as string).hostname)
+  } catch {
+    return false
+  }
+}
+
 export const haveS3Env = (): boolean =>
   ["MEDIA_S3_ENDPOINT", "MEDIA_S3_BUCKET", "MEDIA_S3_ACCESS_KEY", "MEDIA_S3_SECRET_KEY", "MEDIA_PUBLIC_BASE_URL"].every(
     (name) => Boolean(process.env[name])
-  )
+  ) && isLocal(process.env.MEDIA_S3_ENDPOINT)
 
 export const haveBackupEnv = (): boolean =>
   ["BACKUP_S3_ENDPOINT", "BACKUP_S3_BUCKET", "BACKUP_S3_ACCESS_KEY", "BACKUP_S3_SECRET_KEY"].every((name) =>
     Boolean(process.env[name])
-  )
+  ) && isLocal(process.env.BACKUP_S3_ENDPOINT)
 
-export const mongoBase = (): string => process.env.TEST_MONGO_BASE || "mongodb://127.0.0.1:27017"
+// Every test file runs in its own process, so this is unique per file and per run. All keys and prefixes a test
+// writes carry it, and cleanup removes only those, which keeps parallel files and shared buckets apart.
+export const RUN_ID = crypto.randomBytes(4).toString("hex")
+export const testPrefix = (name: string): string => `${name}-${RUN_ID}/`
+
+export const mongoBase = (): string => {
+  const base = process.env.TEST_MONGO_BASE || "mongodb://127.0.0.1:27017"
+  if (!isLocal(base)) throw new Error("TEST_MONGO_BASE must point at this machine")
+  return base
+}
 
 export const freshMongoUrl = (): string => `${mongoBase()}/classync-test-${crypto.randomBytes(4).toString("hex")}`
 
@@ -217,6 +237,16 @@ export interface UploadTicket {
   expiresAt: string
 }
 
+// Every ticket this process created, so cleanup can abort exactly those uploads. MinIO only lists unfinished
+// uploads by their full key, so there is no way to find them again by prefix.
+export const openedUploads: { key: string; uploadId: string }[] = []
+
+export const abortOpened = async (client: S3Client, bucket: string): Promise<void> => {
+  for (const upload of openedUploads) {
+    await client.send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: upload.key, UploadId: upload.uploadId })).catch(() => undefined)
+  }
+}
+
 export const createTicket = async (
   server: RunningServer,
   user: TestUser,
@@ -229,6 +259,7 @@ export const createTicket = async (
     body: { purpose, fileName: "x", contentType, sizeBytes },
   })
   if (status !== 200) throw new Error(`ticket failed: ${status} ${JSON.stringify(body)}`)
+  openedUploads.push({ key: body.response.key, uploadId: body.response.uploadId })
   return body.response
 }
 
