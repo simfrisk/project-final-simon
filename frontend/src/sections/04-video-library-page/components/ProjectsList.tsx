@@ -29,6 +29,8 @@ export const ProjectsList = () => {
   const loading = useProjectStore((state) => state.loading)
   const error = useProjectStore((state) => state.error)
   const deleteProject = useProjectStore((state) => state.deleteProject)
+  const uploadProgress = useProjectStore((state) => state.uploadProgress)
+  const isPreparingUpload = useProjectStore((state) => state.isPreparingUpload)
 
   const user = useUserStore((state) => state.user)
   const userRole = user?.role
@@ -83,6 +85,8 @@ export const ProjectsList = () => {
   }
 
   const handleTransparentBackground = () => {
+    // A stray click outside the form must not drop a running upload.
+    if (uploadProgress !== null || isPreparingUpload) return
     setIsEditingClass(false)
     setIsEditingProject(false)
     setIsRemovingProject(false)

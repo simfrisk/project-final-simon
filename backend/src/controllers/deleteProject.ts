@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { CommentModel } from "../models/Comment"
 import { Reply } from "../models/Reply"
 import { Project } from "../models/Projects"
+import { deleteProjectMedia } from "../media/cleanup"
 
 /**
  * @swagger
@@ -93,6 +94,11 @@ export const deleteProject = async (req: Request, res: Response) => {
 
     // Step 4: Delete the project itself
     await project.deleteOne()
+
+    // After the database delete has succeeded, remove the project's own MinIO objects, but only when the caller
+    // is the user who uploaded them. Best effort: it never changes the answer. Migrated and Cloudinary files
+    // are left alone so they stay as a rollback copy.
+    await deleteProjectMedia([project.video, project.thumbnail], req.user?._id?.toString())
 
     return res.status(200).json({
       success: true,

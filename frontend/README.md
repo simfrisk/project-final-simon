@@ -52,3 +52,35 @@ export default tseslint.config({
   },
 })
 ```
+
+## Build for OSC
+
+The frontend is a static Vite build. The API address is read at build time, so set it in the shell that runs the build. Do not commit `.env` files.
+
+| Variable | Required | Example | Used by |
+|---|---|---|---|
+| `VITE_API_BASE_URL` | Yes | `https://<id>.apps.osaas.io` (the backend My App address), or an empty string when the backend serves this frontend itself | `src/config/api.ts` |
+| `VITE_FRONTEND_URL` | No | leave unset, the code falls back to `window.location.origin` | `TeamDetailPage.tsx` |
+
+Build, then publish the whole `dist` folder:
+
+```bash
+cd frontend
+npm install
+VITE_API_BASE_URL=https://<id>.apps.osaas.io npm run build
+```
+
+### Served by the backend (same origin)
+
+On OSC the backend app also serves this build (`SERVE_FRONTEND=true`). The root `npm run build` builds the backend, then this frontend. OSC injects the parameter store values before the build, so `VITE_API_BASE_URL` and `VITE_FRONTEND_URL` are set there, both to the app's stable address. Browser page requests for any unknown path get `index.html`, so deep links and reloads work. The API docs move to `/api-docs`.
+
+### Uploads
+
+Videos and profile pictures do not go through the backend. The browser asks the backend for an upload ticket (`POST /uploads`), sends the file straight to the storage provider named in the ticket, and then sends only a small reference to the backend when it creates the project or saves the profile picture. The size limits and allowed formats come from `GET /uploads/limits`, so changing them needs no frontend build. The upload code lives in `src/utils/upload/`. Adding another storage provider means adding a driver there and one case in `uploadMedia.ts`.
+
+Two drivers exist. `cloudinaryDriver.ts` sends signed chunks to Cloudinary. `s3Driver.ts` does an S3 multipart upload to OSC MinIO: parts of 8 MiB, three at a time, with part URLs signed by the backend in small batches (`POST /uploads/parts`). A part request carries no request headers at all, because the OSC ingress only allows `Content-Type`, `Authorization` and `x-jwt` in CORS preflights. Do not add a header to a part request, and do not read response headers.
+
+With S3 storage the browser also prepares the video before the upload:
+
+- `inspectVideo.ts` reads the MP4 or MOV boxes and refuses files that are not H.264 video with AAC audio (HEVC and PCM audio are the usual cases), with a message asking for an MP4 export. Nothing is uploaded when a file is refused.
+- `makeThumbnail.ts` draws a 600x400 JPEG from the video in a hidden video element. The thumbnail is uploaded as its own upload with purpose `thumbnail`. If it cannot be made or uploaded, the project is still created and the placeholder image is shown.

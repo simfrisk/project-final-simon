@@ -1,5 +1,8 @@
 import { Request, Response } from "express"
 import { Project } from "../models/Projects"
+import { getMediaStorage } from "../media"
+import { asUploadedMediaRef, sendUploadError } from "../media/respond"
+import { StoredMedia, UploadedMediaRef, UploadError } from "../media/types"
 
 /**
  * @swagger
@@ -20,7 +23,7 @@ import { Project } from "../models/Projects"
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -36,9 +39,27 @@ import { Project } from "../models/Projects"
  *                 type: string
  *                 example: "Mr. Smith"
  *               video:
- *                 type: string
- *                 format: binary
- *                 description: Video file upload
+ *                 type: object
+ *                 description: Reference to a finished direct upload, see POST /uploads
+ *                 required:
+ *                   - key
+ *                   - uploadId
+ *                 properties:
+ *                   key:
+ *                     type: string
+ *                   uploadId:
+ *                     type: string
+ *               thumbnail:
+ *                 type: object
+ *                 description: Optional reference to a finished thumbnail upload (purpose thumbnail, s3 provider only). A thumbnail that cannot be used never fails the project, it is saved without one.
+ *                 required:
+ *                   - key
+ *                   - uploadId
+ *                 properties:
+ *                   key:
+ *                     type: string
+ *                   uploadId:
+ *                     type: string
  *     responses:
  *       201:
  *         description: Project created successfully
@@ -83,7 +104,7 @@ import { Project } from "../models/Projects"
  *                   type: string
  *                   example: "Project created"
  *       400:
- *         description: Bad request, missing projectName
+ *         description: Bad request, missing projectName, invalid upload key or unsupported file type
  *         content:
  *           application/json:
  *             schema:
@@ -97,6 +118,10 @@ import { Project } from "../models/Projects"
  *                 message:
  *                   type: string
  *                   example: "Project name is required"
+ *       404:
+ *         description: Uploaded video not found
+ *       413:
+ *         description: File too large, the response holds maxBytes
  *       500:
  *         description: Server error
  *         content:
@@ -113,23 +138,20 @@ import { Project } from "../models/Projects"
  *                   type: string
  *                   example: "Unknown server error"
  */
-const generateThumbnailUrl = (videoUrl: string): string => {
-  if (!videoUrl) return ""
-  return videoUrl
-    .replace("/video/upload/", "/video/upload/so_3,w_600,h_400,c_fill/")
-    .replace(/\.(mp4|mov|avi)$/i, ".jpg")
-}
-
 export const postProject = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  try {
-    console.log("Received body:", req.body)
-    console.log("Received file:", req.file)
+  let stored: StoredMedia | null = null
+  let storedThumbnail: StoredMedia | null = null
+  let videoRef: UploadedMediaRef | null = null
+  let thumbnailRef: UploadedMediaRef | null = null
+  let projectSaved = false
+  const userId = req.user?._id?.toString()
 
+  try {
     const { classId } = req.params
-    const { projectName, projectDescription, teacher } = req.body
+    const { projectName, projectDescription, teacher, video, thumbnail } = req.body ?? {}
 
     if (!projectName) {
       return res.status(400).json({
@@ -139,20 +161,46 @@ export const postProject = async (
       })
     }
 
-    const videoUrl = (req.file as any)?.path || ""
-    const thumbnailUrl = generateThumbnailUrl(videoUrl)
+    // The file itself was uploaded straight to the storage provider. Here it is only verified and recorded.
+    if (video !== undefined && video !== null) {
+      const ref = asUploadedMediaRef(video)
+      if (!ref || !userId) throw new UploadError(400, "Invalid upload key")
+      stored = await getMediaStorage().completeUpload({ userId, purpose: "video", ref })
+      videoRef = ref
+
+      // The thumbnail is a nice to have. Whatever goes wrong with it, the project is still created.
+      if (thumbnail !== undefined && thumbnail !== null) {
+        const thumbRef = asUploadedMediaRef(thumbnail)
+        try {
+          if (!thumbRef) throw new UploadError(400, "Invalid upload key")
+          storedThumbnail = await getMediaStorage().completeUpload({ userId, purpose: "thumbnail", ref: thumbRef })
+          thumbnailRef = thumbRef
+        } catch (thumbError) {
+          console.error(
+            `[media] thumbnail skipped: ${thumbError instanceof Error ? thumbError.message : "unknown error"}`
+          )
+          // Purpose is passed so a reference to some other upload of the user is never deleted by mistake.
+          if (thumbRef) {
+            getMediaStorage()
+              .abortUpload({ userId, ref: thumbRef, purpose: "thumbnail" })
+              .catch(() => undefined)
+          }
+        }
+      }
+    }
 
     const newProject = new Project({
       classId,
       projectName,
       projectDescription,
       teacher,
-      video: videoUrl,
-      thumbnail: thumbnailUrl,
+      video: stored?.url || "",
+      thumbnail: stored?.thumbnailUrl ?? storedThumbnail?.url ?? "",
       projectCreatedBy: req.user?._id,
     })
 
     const savedNewProject = await newProject.save()
+    projectSaved = true
 
     // Populate the 'projectCreatedBy' field
     await savedNewProject.populate(
@@ -166,6 +214,22 @@ export const postProject = async (
       message: "Project created",
     })
   } catch (error) {
+    // A verified upload that never became a project would stay behind in storage.
+    if (userId && !projectSaved) {
+      if (videoRef) {
+        getMediaStorage()
+          .abortUpload({ userId, ref: videoRef, purpose: "video" })
+          .catch(() => undefined)
+      }
+      if (thumbnailRef) {
+        getMediaStorage()
+          .abortUpload({ userId, ref: thumbnailRef, purpose: "thumbnail" })
+          .catch(() => undefined)
+      }
+    }
+
+    if (error instanceof UploadError) return sendUploadError(res, error)
+
     console.error("Error in postProject:", error)
 
     if (error instanceof Error) {

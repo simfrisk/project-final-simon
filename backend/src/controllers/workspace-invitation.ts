@@ -1,4 +1,5 @@
 import crypto from "crypto"
+import { config } from "../config"
 import { Request, Response } from "express"
 import { WorkspaceInvitationModel } from "../models/WorkspaceInvitation"
 import { UserModel } from "../models/user"
@@ -184,7 +185,7 @@ export const createInvitationLink = async (req: Request, res: Response) => {
     await invitation.save()
 
     // Generate the signup link
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"
+    const frontendUrl = config.primaryFrontendUrl
     const signupLink = `${frontendUrl}/signUp?token=${token}`
 
     res.json({

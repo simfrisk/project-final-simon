@@ -2,6 +2,10 @@
 import { create } from "zustand"
 import { getToken } from "../utils/token"
 import { baseUrl } from "../config/api"
+import { uploadMedia, abortUpload, getUploadLimits } from "../utils/upload/uploadMedia"
+import { checkVideoFile } from "../utils/upload/inspectVideo"
+import { generateThumbnail } from "../utils/upload/makeThumbnail"
+import type { UploadedMediaRef } from "../utils/upload/types"
 
 //#endregion
 
@@ -25,17 +29,28 @@ export interface ProjectType {
   comments?: any[]
 }
 
+export interface AddProjectResult {
+  success: boolean
+  cancelled: boolean
+  message: string
+}
+
 interface ProjectsStore {
   projects: ProjectType[]
   project: ProjectType | null
   loading: boolean
   error: string | null
   message: string | null
+  // Fraction 0..1 while a video is uploading, null otherwise.
+  uploadProgress: number | null
+  // True while the video is checked and its thumbnail is made, before the upload.
+  isPreparingUpload: boolean
 
   fetchProjects: (classId: string) => Promise<void>
   fetchProjectsWithComments: () => Promise<void>
   fetchProjectById: (projectId: string) => Promise<void>
-  addProject: (classId: string, newProject: ProjectType) => Promise<void>
+  addProject: (classId: string, newProject: ProjectType) => Promise<AddProjectResult>
+  cancelUpload: () => void
   deleteProject: (projectId: string) => Promise<void>
   updateProject: (
     projectId: string,
@@ -46,6 +61,17 @@ interface ProjectsStore {
 
 //#endregion
 
+//#region ----- UPLOAD HELPERS -----
+const UNREADABLE_VIDEO_MESSAGE =
+  "This browser could not read the video. Export it as MP4 (H.264 with AAC audio) and try again."
+
+//#endregion
+
+//#region ----- UPLOAD CANCELLATION -----
+// Held outside the store state because an AbortController is not render data.
+let uploadController: AbortController | null = null
+//#endregion
+
 //#region ----- ZUSTAND PROJECT STORE -----
 export const useProjectStore = create<ProjectsStore>((set) => ({
   projects: [],
@@ -53,6 +79,8 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   loading: false,
   error: null,
   message: null,
+  uploadProgress: null,
+  isPreparingUpload: false,
 
   //#endregion
 
@@ -186,50 +214,116 @@ export const useProjectStore = create<ProjectsStore>((set) => ({
   //#endregion
 
   //#region ----- ADD PROJECT -----
+  // The video goes straight to storage through uploadMedia, then the project is
+  // created from a small JSON body that only references the uploaded file.
+  // With S3 storage the browser first checks the video format (nothing is sent if
+  // it is refused) and makes a thumbnail, which is uploaded next to the video.
+  // This does not use the shared `loading` flag: the library page swaps its whole
+  // content for a spinner while that flag is set, which would remove the upload
+  // form (and its progress bar and cancel button) mid-upload. Failures are returned
+  // to the form instead of the shared `error` for the same reason.
   addProject: async (classId: string, newProject: ProjectType) => {
-    set({ loading: true, error: null, message: null })
+    set({ error: null, message: null, uploadProgress: null, isPreparingUpload: false })
+
+    let uploadedRef: UploadedMediaRef | null = null
+    let thumbnailRef: UploadedMediaRef | null = null
+    let token: string | null = null
 
     try {
-      const token = getToken()
+      token = getToken()
       if (!token) throw new Error("Missing access token")
 
-      const formData = new FormData()
-      formData.append("projectName", newProject.projectName)
-      formData.append("projectDescription", newProject.projectDescription || "")
-      formData.append("teacher", newProject.teacher || "")
-      if (newProject.video) {
-        formData.append("video", newProject.video)
+      if (newProject.video instanceof File) {
+        const videoFile = newProject.video
+        uploadController = new AbortController()
+        const { signal } = uploadController
+
+        let thumbnailBlob: Blob | null = null
+        const limits = await getUploadLimits()
+        if (limits.provider === "s3") {
+          set({ isPreparingUpload: true })
+          const problem = await checkVideoFile(videoFile, signal)
+          if (problem) throw new Error(problem)
+
+          const thumbnail = await generateThumbnail(videoFile, signal)
+          if (!thumbnail.playable) throw new Error(UNREADABLE_VIDEO_MESSAGE)
+          thumbnailBlob = thumbnail.blob
+          set({ isPreparingUpload: false })
+        }
+
+        set({ uploadProgress: 0 })
+        uploadedRef = await uploadMedia(videoFile, "video", {
+          token,
+          signal,
+          onProgress: (fraction) => set({ uploadProgress: fraction }),
+        })
+
+        if (thumbnailBlob) {
+          // A missing thumbnail only shows the fallback image, so a failure here
+          // never stops the project. A cancel still does.
+          try {
+            thumbnailRef = await uploadMedia(
+              new File([thumbnailBlob], "thumb.jpg", { type: "image/jpeg" }),
+              "thumbnail",
+              { token, signal }
+            )
+          } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") throw err
+            console.warn("Thumbnail upload skipped:", err)
+          }
+        }
       }
 
       const res = await fetch(`${baseUrl}/classes/${classId}/projects`, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: token,
         },
-        body: formData,
+        body: JSON.stringify({
+          projectName: newProject.projectName,
+          projectDescription: newProject.projectDescription || "",
+          teacher: newProject.teacher || "",
+          ...(uploadedRef ? { video: uploadedRef } : {}),
+          ...(thumbnailRef ? { thumbnail: thumbnailRef } : {}),
+        }),
       })
 
-      if (!res.ok) throw new Error("Failed to add project")
+      const json = await res.json().catch(() => null)
 
-      const json = await res.json()
-
-      if (json.success) {
+      if (res.ok && json?.success) {
         set((state) => ({
           projects: [...state.projects, json.response],
-          loading: false,
           error: null,
           message: json.message,
         }))
-      } else {
-        set({
-          loading: false,
-          error: json.message || "Failed to add project",
-          message: null,
-        })
+        return { success: true, cancelled: false, message: json.message || "Project created" }
       }
-    } catch (err: any) {
-      set({ loading: false, error: err.message, message: null })
+
+      throw new Error(json?.message || json?.error || "Failed to add project")
+    } catch (err: unknown) {
+      // The files are in storage but no project points at them, so release them.
+      if (token) {
+        if (uploadedRef) await abortUpload(uploadedRef, token)
+        if (thumbnailRef) await abortUpload(thumbnailRef, token)
+      }
+
+      if (err instanceof DOMException && err.name === "AbortError") {
+        set({ message: null })
+        return { success: false, cancelled: true, message: "Upload cancelled" }
+      }
+
+      const message = err instanceof Error ? err.message : "Failed to add project"
+      set({ message: null })
+      return { success: false, cancelled: false, message }
+    } finally {
+      uploadController = null
+      set({ uploadProgress: null, isPreparingUpload: false })
     }
+  },
+
+  cancelUpload: () => {
+    uploadController?.abort()
   },
 
   //#endregion

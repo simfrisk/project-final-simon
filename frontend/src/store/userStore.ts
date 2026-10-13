@@ -3,6 +3,7 @@ import { create } from "zustand"
 import { baseUrl } from "../config/api"
 import { isColdStartError, getColdStartErrorMessage } from "../utils/apiErrorHandler"
 import { useBackendStatusStore } from "./backendStatusStore"
+import { uploadMedia, abortUpload } from "../utils/upload/uploadMedia"
 //#endregion
 
 //#region ----- INTERFACES -----
@@ -18,6 +19,21 @@ interface AuthUser {
   teams?: string[]
 }
 
+export interface CreateUserData {
+  name: string
+  email: string
+  password: string
+  role: string
+  invitationToken?: string
+}
+
+export interface CreateUserResult {
+  success: boolean
+  message: string
+  // Set when the account exists but a follow up step (the profile picture) failed.
+  warning?: string
+}
+
 interface UserStore {
   user: AuthUser | null
   isLoggedIn: boolean
@@ -25,7 +41,8 @@ interface UserStore {
   loading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
   logout: () => void
-  createUser: (formData: FormData) => Promise<{ success: boolean; message: string }>
+  createUser: (data: CreateUserData, imageFile?: File) => Promise<CreateUserResult>
+  uploadProfileImage: (file: File) => Promise<{ success: boolean; message: string }>
   getAllUsers: () => Promise<{ success: boolean; message: string }>
   getWorkspaceUsers: (workspaceId: string) => Promise<{ success: boolean; message: string }>
   deleteUser: (userId: string) => Promise<{ success: boolean; message: string }>
@@ -36,7 +53,6 @@ interface UserStore {
       newEmail?: string
       newRole?: string
       newPassword?: string
-      newProfileImage?: string
       newWorkspaceId?: string
     }
   ) => Promise<{ success: boolean; message: string }>
@@ -175,14 +191,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
   //#endregion
 
   //#region ----- CREATE USER -----
-  createUser: async (formData: FormData) => {
+  createUser: async (userData: CreateUserData, imageFile?: File) => {
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 65000) // 65 second timeout
 
       const res = await fetch(`${baseUrl}/users`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
         signal: controller.signal,
       })
 
@@ -192,11 +209,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
       if (res.ok && data.accessToken) {
         const user = {
           _id: data.userId, // Include _id when available
-          email: formData.get("email") as string,
+          email: userData.email,
           userId: data.userId,
           accessToken: data.accessToken,
-          role: formData.get("role") as string,
-          name: formData.get("name") as string,
+          role: userData.role,
+          name: userData.name,
           profileImage: data.profileImage,
           teams: data.teams || [],
         }
@@ -218,6 +235,19 @@ export const useUserStore = create<UserStore>((set, get) => ({
             useWorkspaceStore.getState().setCurrentWorkspace(data.workspaceId)
             useWorkspaceStore.getState().fetchUserWorkspaces()
           })
+        }
+
+        // The account exists at this point. A failed picture must not undo that.
+        if (imageFile) {
+          const imageResult = await get().uploadProfileImage(imageFile)
+          if (!imageResult.success) {
+            return {
+              success: true,
+              message: "User created successfully",
+              warning:
+                "Account created, but the profile picture could not be uploaded. You can add it later.",
+            }
+          }
         }
 
         return { success: true, message: "User created successfully" }
@@ -242,6 +272,49 @@ export const useUserStore = create<UserStore>((set, get) => ({
       return {
         success: false,
         message: err instanceof Error ? err.message : "Could not create user",
+      }
+    }
+  },
+  //#endregion
+
+  //#region ----- UPLOAD PROFILE IMAGE -----
+  // Two steps: the file goes straight to storage, then the backend is told which
+  // upload to attach to the signed in user.
+  uploadProfileImage: async (file: File) => {
+    const currentUser = get().user
+    const token = currentUser?.accessToken
+    const userId = currentUser?.userId
+    if (!token || !userId) return { success: false, message: "Not logged in" }
+
+    let ref
+    try {
+      ref = await uploadMedia(file, "image", { token })
+
+      const res = await fetch(`${baseUrl}/users/${userId}/profile-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: token },
+        body: JSON.stringify(ref),
+      })
+      const json = await res.json().catch(() => null)
+
+      if (!res.ok || !json?.success || !json.response?.profileImage) {
+        throw new Error(json?.message || json?.error || "Could not save the profile picture")
+      }
+
+      const profileImage: string = json.response.profileImage
+      localStorage.setItem("profileImage", profileImage)
+      set((state) => ({
+        user: state.user ? { ...state.user, profileImage } : state.user,
+        users: state.users.map((u) => (u._id === userId ? { ...u, profileImage } : u)),
+      }))
+      return { success: true, message: "Profile picture updated" }
+    } catch (err: unknown) {
+      console.error("Profile picture upload failed:", err)
+      // Release the stored file if nothing points at it.
+      if (ref) await abortUpload(ref, token)
+      return {
+        success: false,
+        message: err instanceof Error ? err.message : "Could not upload the profile picture",
       }
     }
   },
@@ -290,7 +363,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
       newEmail?: string
       newRole?: string
       newPassword?: string
-      newProfileImage?: string
     }
   ) => {
     try {

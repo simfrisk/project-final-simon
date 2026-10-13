@@ -88,7 +88,9 @@ export const exportCommentsToSrt = async (
     // Fetch all comments for the project (all types: question, public, private)
     const comments = await CommentModel.find({
       projectId,
-    }).populate("commentCreatedBy", "name");
+    })
+      .sort({ _id: 1 })
+      .populate("commentCreatedBy", "name");
 
     // Generate SRT content
     const srtContent = generateSrtContent(comments as any);

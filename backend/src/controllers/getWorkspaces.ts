@@ -48,7 +48,7 @@ import { WorkspaceModel } from "../models/workspace"
  */
 export const getWorkspaces = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const result = await WorkspaceModel.find().select("name")
+    const result = await WorkspaceModel.find().sort({ _id: 1 }).select("name")
 
     return res.status(200).json({
       success: true,

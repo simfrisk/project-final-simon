@@ -1,6 +1,7 @@
 import swaggerUi from "swagger-ui-express"
 import swaggerJsdoc from "swagger-jsdoc"
 import { Application } from "express"
+import { config } from "../config"
 
 const options = {
   definition: {
@@ -12,7 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: process.env.API_URL || "http://localhost:8080",
+        url: config.publicApiUrl,
       },
     ],
     components: {
@@ -156,7 +157,7 @@ const options = {
             profileImage: {
               type: "string",
               example:
-                "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png",
+                "https://liivo-classyncmedia.minio-minio.auto.prod-se.osaas.io/classync-media/defaults/avatar-100.png",
             },
             accessToken: { type: "string" },
             likedComments: {
@@ -189,6 +190,8 @@ const options = {
 
 const swaggerSpec = swaggerJsdoc(options)
 
-export function setupSwagger(app: Application) {
-  app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+// The docs live at "/" by default. When the app also serves the frontend, "/" belongs to the
+// frontend, so the docs move to /api-docs.
+export function setupSwagger(app: Application, mountPath = "/") {
+  app.use(mountPath, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 }

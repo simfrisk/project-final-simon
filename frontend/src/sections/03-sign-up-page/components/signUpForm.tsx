@@ -17,6 +17,8 @@ export const SignUpForm: React.FC = () => {
 
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [invitationToken, setInvitationToken] = useState<string | null>(null)
   const [invitationRole, setInvitationRole] = useState<string | null>(null)
   const [isValidatingInvitation, setIsValidatingInvitation] = useState(false)
@@ -53,8 +55,26 @@ export const SignUpForm: React.FC = () => {
     if (file) setPreview(URL.createObjectURL(file))
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
-    handleSignUpSubmit(e, createUser, setError, navigate, invitationToken, invitationRole)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (isSubmitting) {
+      e.preventDefault()
+      return
+    }
+    setIsSubmitting(true)
+    try {
+      await handleSignUpSubmit(
+        e,
+        createUser,
+        setError,
+        navigate,
+        invitationToken,
+        invitationRole,
+        setNotice
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   //#endregion
 
@@ -163,6 +183,7 @@ export const SignUpForm: React.FC = () => {
         </FormGroup> */}
 
         {error && <ErrorMessage id="form-error">{error}</ErrorMessage>}
+        {notice && <NoticeMessage role="status">{notice}</NoticeMessage>}
         {preview && (
           <PreviewImage
             src={preview}
@@ -172,7 +193,12 @@ export const SignUpForm: React.FC = () => {
         )}
 
         <ButtonWrapper>
-          <StyledButton type="submit">Sign up</StyledButton>
+          <StyledButton
+            type="submit"
+            disabled={isSubmitting || !!notice}
+          >
+            {isSubmitting ? "Creating account..." : "Sign up"}
+          </StyledButton>
         </ButtonWrapper>
 
         <LinkContainer>
@@ -248,6 +274,12 @@ const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primaryHover};
     transform: scale(0.98);
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 `
 
 const StyledLink = styled(Link)`
@@ -275,6 +307,13 @@ const LinkContainer = styled.div`
 
 const ErrorMessage = styled.div`
   color: red;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
+`
+
+const NoticeMessage = styled.div`
+  color: ${({ theme }) => theme.colors.text};
   margin-bottom: 10px;
   text-align: center;
   font-weight: 500;

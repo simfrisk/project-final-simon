@@ -108,7 +108,7 @@ export const getComments = async (
       projectId,
       commentType: "question",
     })
-
+      .sort({ _id: 1 })
       .populate({
         path: "replies",
         populate: {

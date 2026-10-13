@@ -1,7 +1,6 @@
 import { Application, Request, Response } from "express"
 import listEndpoints from "express-list-endpoints"
-
-const BASE_URL = "https://project-final-simon.onrender.com"
+import { config } from "../config"
 
 const endpointDocs: Record<
   string,
@@ -49,8 +48,8 @@ const endpointDocs: Record<
     description: "Get replies for a comment",
     authRequired: false,
   },
-  "/user": {
-    description: "Create a new user with image upload",
+  "/users": {
+    description: "Create a new user (JSON). Profile image goes through /uploads and /users/:userId/profile-image",
     authRequired: false,
   },
   "/comments/:commentId/likes": {
@@ -85,7 +84,7 @@ export const getHome =
         const doc = endpointDocs[ep.path]
         const description = doc ? doc.description : ""
         const authRequired = doc && doc.authRequired ? "🔒" : ""
-        const link = `<a href="${BASE_URL}${ep.path}" target="_blank" rel="noopener noreferrer">${ep.path}</a>`
+        const link = `<a href="${config.publicApiUrl}${ep.path}" target="_blank" rel="noopener noreferrer">${ep.path}</a>`
 
         return `
         <tr>
