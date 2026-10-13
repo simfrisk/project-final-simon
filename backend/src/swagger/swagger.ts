@@ -157,7 +157,7 @@ const options = {
             profileImage: {
               type: "string",
               example:
-                "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png",
+                "https://liivo-classyncmedia.minio-minio.auto.prod-se.osaas.io/classync-media/defaults/avatar-100.png",
             },
             accessToken: { type: "string" },
             likedComments: {

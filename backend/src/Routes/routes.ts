@@ -64,6 +64,7 @@ import { exportCommentsToSrt } from "../controllers/exportCommentsToSrt"
 import { getHealth } from "../controllers/getHealth"
 import { getUploadLimits } from "../controllers/getUploadLimits"
 import { postUpload } from "../controllers/postUpload"
+import { postUploadParts } from "../controllers/postUploadParts"
 import { deleteUpload } from "../controllers/deleteUpload"
 import { postUserProfileImage } from "../controllers/postUserProfileImage"
 
@@ -78,6 +79,7 @@ router.get("/alt/doc", (req, res) => getHome(req.app)(req, res))
 // UPLOADS (direct to the storage provider, this API only signs and verifies)
 router.get("/uploads/limits", getUploadLimits)
 router.post("/uploads", authenticateUser, postUpload)
+router.post("/uploads/parts", authenticateUser, postUploadParts)
 router.delete("/uploads", authenticateUser, deleteUpload)
 
 // WORKSPACES

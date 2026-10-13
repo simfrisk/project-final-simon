@@ -1,13 +1,20 @@
 import { Request, Response } from "express"
 import mongoose from "mongoose"
 import { backupStatus } from "../ops/backupScheduler"
-import { BackupStatus } from "../ops/types"
+import { mediaMirrorStatus } from "../ops/mediaMirror"
+import { BackupStatus, MirrorStatus } from "../ops/types"
+import { config } from "../config"
+import { StorageProvider } from "../media/types"
 
 export interface HealthResponse {
   status: "ok" | "degraded"
   timestamp: string
   db: "up" | "down"
   backup: BackupStatus
+  media: {
+    provider: StorageProvider
+    mirror: MirrorStatus
+  }
 }
 
 /**
@@ -48,6 +55,28 @@ export interface HealthResponse {
  *                     lastStatus:
  *                       type: string
  *                       enum: [ok, failed, never]
+ *                 media:
+ *                   type: object
+ *                   properties:
+ *                     provider:
+ *                       type: string
+ *                       enum: [cloudinary, s3]
+ *                     mirror:
+ *                       type: object
+ *                       description: The nightly copy of the media bucket into the backup bucket
+ *                       properties:
+ *                         enabled:
+ *                           type: boolean
+ *                         lastSuccessAt:
+ *                           type: string
+ *                           nullable: true
+ *                         lastStatus:
+ *                           type: string
+ *                           enum: [ok, failed, never]
+ *                         objects:
+ *                           type: number
+ *                         bytes:
+ *                           type: number
  */
 export const getHealth = (_req: Request, res: Response): void => {
   const dbUp = mongoose.connection.readyState === 1
@@ -59,6 +88,10 @@ export const getHealth = (_req: Request, res: Response): void => {
       enabled: backupStatus.enabled,
       lastSuccessAt: backupStatus.lastSuccessAt,
       lastStatus: backupStatus.lastStatus,
+    },
+    media: {
+      provider: config.mediaStorage,
+      mirror: { ...mediaMirrorStatus },
     },
   }
   // 503 while the database is down, so neither a person nor a monitor reads this as healthy.

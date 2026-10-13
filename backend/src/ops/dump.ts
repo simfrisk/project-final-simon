@@ -66,16 +66,23 @@ export interface DumpUpload {
   objects: number
 }
 
+export interface DumpOptions {
+  // Write here instead of <BACKUP_PREFIX>/<timestamp>. latest.json is then left alone, because it must
+  // only ever point at a regular nightly backup.
+  folder?: string
+}
+
 /** Writes a collected dump to <BACKUP_PREFIX>/<timestamp>/ and updates <BACKUP_PREFIX>/latest.json last. */
 export const dumpDatabase = async (
   mongoUrl: string,
-  source: DumpManifest["source"] = "classync-app"
+  source: DumpManifest["source"] = "classync-app",
+  options: DumpOptions = {}
 ): Promise<DumpUpload> => {
   const prefix = config.backup.prefix
-  if (!prefix) throw new Error("BACKUP_PREFIX is not set")
+  if (!prefix && !options.folder) throw new Error("BACKUP_PREFIX is not set")
 
   const dump = await collectDump(mongoUrl, source)
-  const folder = `${prefix}/${timestampFolder(new Date(dump.manifest.createdAt))}`
+  const folder = options.folder ?? `${prefix}/${timestampFolder(new Date(dump.manifest.createdAt))}`
 
   // Data files first, then the manifest, then latest.json. A folder without a manifest is incomplete,
   // and latest.json never points at one.
@@ -84,11 +91,13 @@ export const dumpDatabase = async (
     await putObject(`${folder}/${name}`, body, "application/gzip")
   }
   await putObject(`${folder}/manifest.json`, dump.files.get("manifest.json") as Buffer, "application/json")
-  await putObject(
-    `${prefix}/latest.json`,
-    JSON.stringify({ folder, createdAt: dump.manifest.createdAt }),
-    "application/json"
-  )
+  if (!options.folder) {
+    await putObject(
+      `${prefix}/latest.json`,
+      JSON.stringify({ folder, createdAt: dump.manifest.createdAt }),
+      "application/json"
+    )
+  }
 
   return { folder, manifest: dump.manifest, objects: dump.files.size }
 }

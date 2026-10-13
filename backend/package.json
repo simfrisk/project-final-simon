@@ -6,12 +6,15 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "rm -rf dist && tsc",
     "start": "node dist/server.js",
+    "test": "npm run build && node --require ts-node/register/transpile-only --test \"test/*.test.ts\"",
+    "typecheck:tests": "tsc -p test/tsconfig.json",
     "migrate": "ts-node src/scripts/migrate-to-workspaces.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.729.0",
+    "@aws-sdk/lib-storage": "^3.1146.0",
     "@aws-sdk/s3-request-presigner": "^3.729.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",

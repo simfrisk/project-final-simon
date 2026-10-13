@@ -27,7 +27,8 @@ import { UploadError } from "../media/types"
  *             properties:
  *               purpose:
  *                 type: string
- *                 enum: [video, image]
+ *                 enum: [video, image, thumbnail]
+ *                 description: thumbnail takes image/jpeg only, up to 2 MiB, and is accepted by the s3 provider only
  *               fileName:
  *                 type: string
  *                 example: "lecture.mp4"
@@ -39,10 +40,10 @@ import { UploadError } from "../media/types"
  *                 example: 5242880
  *               resumeKey:
  *                 type: string
- *                 description: Key of an upload in progress, to get a freshly signed ticket for it
+ *                 description: Cloudinary provider only, key of an upload in progress to get a freshly signed ticket for it. The s3 provider answers 400 Not used by this provider
  *     responses:
  *       200:
- *         description: Upload ticket created
+ *         description: Upload ticket, a CloudinaryUploadTicket or an S3UploadTicket depending on the provider
  *       400:
  *         description: Invalid purpose, unsupported file type, invalid upload key or invalid sizeBytes
  *       413:
@@ -57,7 +58,9 @@ export const postUpload = async (req: Request, res: Response): Promise<Response>
 
     const { purpose, fileName, contentType, sizeBytes, resumeKey } = req.body ?? {}
 
-    if (purpose !== "video" && purpose !== "image") throw new UploadError(400, "Invalid purpose")
+    if (purpose !== "video" && purpose !== "image" && purpose !== "thumbnail") {
+      throw new UploadError(400, "Invalid purpose")
+    }
     if (typeof fileName !== "string" || fileName.trim() === "" || fileName.length > 255) {
       throw new UploadError(400, "Unsupported file type")
     }

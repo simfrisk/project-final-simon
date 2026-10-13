@@ -30,7 +30,8 @@ export const getS3 = (): S3Client => {
   return client
 }
 
-const bucket = (): string => config.backup.bucket
+export const backupBucket = (): string => config.backup.bucket
+const bucket = backupBucket
 
 export const putObject = async (key: string, body: Buffer | string, contentType?: string): Promise<void> => {
   await getS3().send(new PutObjectCommand({ Bucket: bucket(), Key: key, Body: body, ContentType: contentType }))

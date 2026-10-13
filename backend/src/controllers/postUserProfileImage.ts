@@ -94,7 +94,7 @@ export const postUserProfileImage = async (req: Request, res: Response): Promise
     // The image was accepted by the storage but the user could not be updated: do not leave it orphaned.
     if (storedRef) {
       getMediaStorage()
-        .abortUpload({ userId: callerId, ref: storedRef })
+        .abortUpload({ userId: callerId, ref: storedRef, purpose: "image" })
         .catch(() => undefined)
     }
     return sendUploadError(res, error)

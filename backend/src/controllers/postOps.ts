@@ -4,6 +4,7 @@ import { config, scrubSecrets } from "../config"
 import { runBackup } from "../ops/backupScheduler"
 import { putObject } from "../ops/s3"
 import { restoreDump, TargetUrlEnv, verifyAgainstManifest } from "../ops/restore"
+import { rewriteMediaUrls } from "../ops/rewriteMedia"
 import { timestampFolder } from "../ops/bsonTools"
 import { OpsReport } from "../ops/types"
 
@@ -128,6 +129,34 @@ const verify = (req: Request, res: Response): Promise<Response> => {
   })
 }
 
+const rewriteMedia = (req: Request, res: Response): Promise<Response> => {
+  const { mapping, direction, dryRun, targetUrlEnv, confirm } = req.body ?? {}
+  if (
+    !isString(mapping) ||
+    (direction !== "forward" && direction !== "reverse") ||
+    typeof dryRun !== "boolean" ||
+    targetUrlEnv !== "MONGO_URL"
+  ) {
+    return Promise.resolve(
+      res.status(400).json({
+        success: false,
+        response: null,
+        message: 'mapping, direction ("forward" or "reverse"), dryRun (true or false) and targetUrlEnv (MONGO_URL) are required',
+      })
+    )
+  }
+  // A real run changes data, so the caller has to say so explicitly.
+  if (!dryRun && confirm !== "rewrite-media-urls") {
+    return Promise.resolve(
+      res.status(400).json({ success: false, response: null, message: 'confirm must equal "rewrite-media-urls" for a real run' })
+    )
+  }
+  return respondWithReport(res, "rewrite-media-urls", async () => {
+    const report = await rewriteMediaUrls({ mapping, direction, dryRun })
+    return { ok: true, details: { ...report } }
+  })
+}
+
 /** Mounted at /ops by server.ts only when OPS_ENABLED is "true". */
 export const createOpsRouter = (): express.Router => {
   const router = express.Router()
@@ -135,6 +164,7 @@ export const createOpsRouter = (): express.Router => {
   router.post("/backup-now", backupNow)
   router.post("/restore", restore)
   router.post("/verify", verify)
+  router.post("/rewrite-media-urls", rewriteMedia)
   router.use((_req, res) => {
     res.status(404).json({ success: false, response: null, message: "Not found" })
   })

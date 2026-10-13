@@ -8,6 +8,7 @@ import { MediaPurpose, UploadError } from "./types"
 export const FOLDER: Record<MediaPurpose, string> = {
   video: "videos",
   image: "profile_pictures",
+  thumbnail: "thumbnails",
 }
 
 const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
@@ -18,6 +19,7 @@ export const buildKey = (userId: string, purpose: MediaPurpose, uuid: string, ex
 export interface ParsedKey {
   purpose: MediaPurpose
   uuid: string
+  extension: string // without the dot, empty when the key has none (Cloudinary public ids)
 }
 
 /** Throws UploadError(400, "Invalid upload key") unless the key is exactly one of the caller's own keys. */
@@ -27,13 +29,14 @@ export const parseOwnedKey = (userId: string, key: unknown, expectedPurpose?: Me
   if (!/^[0-9a-fA-F]{24}$/.test(userId)) throw invalid
 
   const pattern = new RegExp(
-    `^${escapeRegex(config.mediaFolderPrefix)}(videos|profile_pictures)/${userId}/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(\\.[a-z0-9]{1,8})?$`
+    `^${escapeRegex(config.mediaFolderPrefix)}(videos|profile_pictures|thumbnails)/${userId}/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(\\.[a-z0-9]{1,8})?$`
   )
   const match = pattern.exec(key)
   if (!match) throw invalid
 
-  const purpose: MediaPurpose = match[1] === FOLDER.video ? "video" : "image"
+  const purpose: MediaPurpose =
+    match[1] === FOLDER.video ? "video" : match[1] === FOLDER.thumbnail ? "thumbnail" : "image"
   if (expectedPurpose && purpose !== expectedPurpose) throw invalid
 
-  return { purpose, uuid: match[2] }
+  return { purpose, uuid: match[2], extension: (match[3] ?? "").replace(/^\./, "") }
 }

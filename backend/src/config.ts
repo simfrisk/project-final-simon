@@ -39,6 +39,14 @@ const normalizePrefix = (raw: string | undefined): string => {
   return cleaned.endsWith("/") ? cleaned : `${cleaned}/`
 }
 
+const mediaPublicBaseUrl = trimSlash(env.MEDIA_PUBLIC_BASE_URL || "")
+const mediaStorage = (env.MEDIA_STORAGE || "cloudinary") as "cloudinary" | "s3"
+
+// The default avatar as it is stored today. Used until MEDIA_PUBLIC_BASE_URL points at a bucket that holds defaults/avatar-100.png.
+export const LEGACY_DEFAULT_PROFILE_IMAGE_URL =
+  "https://res.cloudinary.com/dgr7l5nsx/image/upload/w_100,h_100,c_fill/v1754899421/profile_pictures/wtvbkvjnxrbdzfvjcmbi.png"
+export const DEFAULT_PROFILE_IMAGE_KEY = "defaults/avatar-100.png"
+
 export const config = {
   isOsc,
   port,
@@ -53,10 +61,25 @@ export const config = {
     apiKey: env.CLOUDINARY_API_KEY || "",
     apiSecret: env.CLOUDINARY_API_SECRET || "",
   },
-  mediaStorage: (env.MEDIA_STORAGE || "cloudinary") as "cloudinary" | "s3",
+  mediaStorage,
   mediaFolderPrefix: normalizePrefix(env.MEDIA_FOLDER_PREFIX),
-  maxVideoBytes: toInt(env.MAX_VIDEO_MB, 100) * 1024 * 1024,
+  // 400 MB on the S3 provider unless MAX_VIDEO_MB says otherwise, 100 MB on Cloudinary (its plan limit).
+  maxVideoBytes: toInt(env.MAX_VIDEO_MB, mediaStorage === "s3" ? 400 : 100) * 1024 * 1024,
   maxImageBytes: toInt(env.MAX_IMAGE_MB, 10) * 1024 * 1024,
+  thumbnailMaxBytes: 2 * 1024 * 1024,
+  // The media bucket. Writes use a scoped user, never the MinIO root.
+  mediaS3: {
+    endpoint: trimSlash(env.MEDIA_S3_ENDPOINT || ""),
+    bucket: env.MEDIA_S3_BUCKET || "",
+    accessKey: env.MEDIA_S3_ACCESS_KEY || "",
+    secretKey: env.MEDIA_S3_SECRET_KEY || "",
+  },
+  // Public URL of the bucket, without a trailing slash. Stored media URLs are this plus "/" plus the object key.
+  mediaPublicBaseUrl,
+  defaultProfileImageUrl: mediaPublicBaseUrl
+    ? `${mediaPublicBaseUrl}/${normalizePrefix(env.MEDIA_FOLDER_PREFIX)}${DEFAULT_PROFILE_IMAGE_KEY}`
+    : LEGACY_DEFAULT_PROFILE_IMAGE_URL,
+  mediaMirrorEnabled: env.MEDIA_MIRROR_ENABLED === "true",
   backup: {
     enabled: env.BACKUP_ENABLED === "true",
     prefix: (env.BACKUP_PREFIX || "").replace(/^\/+|\/+$/g, ""),
@@ -86,6 +109,12 @@ const KNOWN_KEYS = [
   "MEDIA_FOLDER_PREFIX",
   "MAX_VIDEO_MB",
   "MAX_IMAGE_MB",
+  "MEDIA_S3_ENDPOINT",
+  "MEDIA_S3_BUCKET",
+  "MEDIA_S3_ACCESS_KEY",
+  "MEDIA_S3_SECRET_KEY",
+  "MEDIA_PUBLIC_BASE_URL",
+  "MEDIA_MIRROR_ENABLED",
   "FRONTEND_URL",
   "BACKUP_ENABLED",
   "BACKUP_PREFIX",
@@ -107,16 +136,23 @@ const KNOWN_KEYS = [
 // OSC returns the literal "***" for secrets it masks. A value like that must never be used.
 const isMasked = (value: string | undefined): boolean => Boolean(value) && /^\*+$/.test(value as string)
 
+const MEDIA_S3_KEYS = [
+  "MEDIA_S3_ENDPOINT",
+  "MEDIA_S3_BUCKET",
+  "MEDIA_S3_ACCESS_KEY",
+  "MEDIA_S3_SECRET_KEY",
+  "MEDIA_PUBLIC_BASE_URL",
+]
+
 const requiredOnOsc = (): string[] => {
-  const keys = [
-    "MONGO_URL",
-    "CLOUDINARY_CLOUD_NAME",
-    "CLOUDINARY_API_KEY",
-    "CLOUDINARY_API_SECRET",
-    "FRONTEND_URL",
-    "MEDIA_STORAGE",
-  ]
-  if (env.BACKUP_ENABLED === "true") {
+  const keys = ["MONGO_URL", "FRONTEND_URL", "MEDIA_STORAGE"]
+  // The Cloudinary keys are only needed while uploads still go to Cloudinary.
+  if (mediaStorage === "cloudinary") {
+    keys.push("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")
+  }
+  const mirror = env.MEDIA_MIRROR_ENABLED === "true"
+  if (mediaStorage === "s3" || mirror) keys.push(...MEDIA_S3_KEYS)
+  if (env.BACKUP_ENABLED === "true" || mirror) {
     keys.push(
       "BACKUP_PREFIX",
       "BACKUP_S3_ENDPOINT",
@@ -142,6 +178,9 @@ export const reportConfig = (): void => {
     const value = env[key]
     if (!value) problems.push(`${key} is missing`)
     else if (isMasked(value)) problems.push(`${key} arrived masked, the value is not usable`)
+  }
+  if (mediaStorage !== "cloudinary" && mediaStorage !== "s3") {
+    problems.push('MEDIA_STORAGE must be "cloudinary" or "s3"')
   }
   if (env.OPS_ENABLED === "true" && (env.OPS_TOKEN || "").length < 48) {
     problems.push("OPS_TOKEN must be at least 48 characters when OPS_ENABLED is true")
