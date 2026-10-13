@@ -1,6 +1,7 @@
 import { config, scrubSecrets } from "../config"
 import { parseTimestampFolder } from "./bsonTools"
 import { dumpDatabase, DumpUpload } from "./dump"
+import { startMediaMirrorScheduler } from "./mediaMirror"
 import { deleteKeys, getObjectIfExists, listFolders, listKeys } from "./s3"
 import { BackupStatus } from "./types"
 
@@ -100,6 +101,9 @@ export const runBackupIfDue = async (): Promise<void> => {
 
 /** First check 2 minutes after boot, then hourly. A backup runs when the newest one is older than 24 hours. */
 export const startBackupScheduler = (): void => {
+  // The media mirror has its own schedule and does not depend on the database backup being enabled.
+  startMediaMirrorScheduler()
+
   backupStatus.enabled = config.backup.enabled
   if (!config.backup.enabled) {
     console.log("[backup] disabled (BACKUP_ENABLED is not true)")
