@@ -7,6 +7,7 @@ import { useProjectStore } from "../../../store/projectStore"
 import { useState } from "react"
 import { MediaQueries } from "../../../themes/mediaQueries"
 import { useUserStore } from "../../../store/userStore"
+import { FALLBACK_THUMBNAIL, showFallbackThumbnail } from "../../../utils/fallbackImage"
 
 //#endregion
 
@@ -83,8 +84,9 @@ export const Project = ({
         }}
       >
         <Thumbnail
-          src={thumbnail || "/fallback-thumbnail.jpg"}
+          src={thumbnail || FALLBACK_THUMBNAIL}
           alt={`Thumbnail for project ${projectName}`}
+          onError={showFallbackThumbnail}
         />
 
         <TextContainer>

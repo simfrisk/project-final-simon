@@ -19,7 +19,7 @@ export const Demos = () => {
           <ExplainerCard
             title="Find comments in timeline"
             text="Make sure your comments stay perfectly synced on the timeline when clicked. No interruptions or distractions, just seamless interaction."
-            video="https://res.cloudinary.com/dgr7l5nsx/video/upload/f_mp4/v1754990343/videos/yhzdf7phuo0a0udgm40d.mov"
+            video="/demo-timeline.mp4"
             index={1}
           />
           <ExplainerCard

@@ -76,4 +76,11 @@ On OSC the backend app also serves this build (`SERVE_FRONTEND=true`). The root 
 
 ### Uploads
 
-Videos and profile pictures do not go through the backend. The browser asks the backend for a signed upload ticket (`POST /uploads`), sends the file in chunks straight to the storage provider named in the ticket, and then sends only a small reference to the backend when it creates the project or saves the profile picture. The size limits come from `GET /uploads/limits`, so changing them needs no frontend build. The upload code lives in `src/utils/upload/`. Adding another storage provider means adding a driver there and one case in `uploadMedia.ts`.
+Videos and profile pictures do not go through the backend. The browser asks the backend for an upload ticket (`POST /uploads`), sends the file straight to the storage provider named in the ticket, and then sends only a small reference to the backend when it creates the project or saves the profile picture. The size limits and allowed formats come from `GET /uploads/limits`, so changing them needs no frontend build. The upload code lives in `src/utils/upload/`. Adding another storage provider means adding a driver there and one case in `uploadMedia.ts`.
+
+Two drivers exist. `cloudinaryDriver.ts` sends signed chunks to Cloudinary. `s3Driver.ts` does an S3 multipart upload to OSC MinIO: parts of 8 MiB, three at a time, with part URLs signed by the backend in small batches (`POST /uploads/parts`). A part request carries no request headers at all, because the OSC ingress only allows `Content-Type`, `Authorization` and `x-jwt` in CORS preflights. Do not add a header to a part request, and do not read response headers.
+
+With S3 storage the browser also prepares the video before the upload:
+
+- `inspectVideo.ts` reads the MP4 or MOV boxes and refuses files that are not H.264 video with AAC audio (HEVC and PCM audio are the usual cases), with a message asking for an MP4 export. Nothing is uploaded when a file is refused.
+- `makeThumbnail.ts` draws a 600x400 JPEG from the video in a hidden video element. The thumbnail is uploaded as its own upload with purpose `thumbnail`. If it cannot be made or uploaded, the project is still created and the placeholder image is shown.
