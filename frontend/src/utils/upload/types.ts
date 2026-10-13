@@ -2,14 +2,15 @@
 // backend/src/media/types.ts (the backend copy also holds MediaStorage,
 // UploadError and StoredMedia, which the browser never needs).
 
-export type MediaPurpose = "video" | "image"
+export type MediaPurpose = "video" | "image" | "thumbnail"
 export type StorageProvider = "cloudinary" | "s3"
 
 export interface UploadLimits {
   provider: StorageProvider
   videoMaxBytes: number
   imageMaxBytes: number
-  videoFormats: string[] // ["mp4", "mov", "avi"]
+  thumbnailMaxBytes: number // 2 MiB; 0 when the provider does not take thumbnails (cloudinary)
+  videoFormats: string[] // s3: ["mp4", "mov"]; cloudinary keeps ["mp4", "mov", "avi"]
   imageFormats: string[] // ["jpg", "jpeg", "png", "webp"]
 }
 
@@ -39,11 +40,11 @@ export interface CloudinaryUploadTicket {
 
 export interface S3UploadTicket {
   provider: "s3"
-  key: string // object key in the media bucket
-  uploadId: string // S3 multipart UploadId
-  partSizeBytes: number // 32 MiB, under the 64 MiB ingress cap
-  partCount: number
-  expiresAt: string
+  key: string // object key in the media bucket, chosen by the server
+  uploadId: string // S3 multipart UploadId (NOT the uuid in the key)
+  partSizeBytes: number // 8 MiB (8388608); last part may be smaller
+  partCount: number // ceil(sizeBytes / partSizeBytes)
+  expiresAt: string // ISO, now + 23 h (MinIO drops unfinished uploads after 24 h)
 }
 
 export type UploadTicket = CloudinaryUploadTicket | S3UploadTicket
@@ -57,4 +58,14 @@ export interface PartUrl {
 export interface UploadedMediaRef {
   key: string
   uploadId: string
+}
+
+export interface SignPartsRequest {
+  key: string
+  uploadId: string
+  partNumbers: number[] // 1 to 50 numbers per call
+}
+
+export interface SignPartsResponse {
+  parts: PartUrl[] // presigned UploadPart URLs, valid 15 minutes, no signed headers but host
 }
