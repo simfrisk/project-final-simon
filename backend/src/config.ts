@@ -77,7 +77,7 @@ export const config = {
   // Public URL of the bucket, without a trailing slash. Stored media URLs are this plus "/" plus the object key.
   mediaPublicBaseUrl,
   defaultProfileImageUrl: mediaPublicBaseUrl
-    ? `${mediaPublicBaseUrl}/${DEFAULT_PROFILE_IMAGE_KEY}`
+    ? `${mediaPublicBaseUrl}/${normalizePrefix(env.MEDIA_FOLDER_PREFIX)}${DEFAULT_PROFILE_IMAGE_KEY}`
     : LEGACY_DEFAULT_PROFILE_IMAGE_URL,
   mediaMirrorEnabled: env.MEDIA_MIRROR_ENABLED === "true",
   backup: {

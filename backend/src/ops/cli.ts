@@ -3,6 +3,11 @@
 // Environment comes from the shell (BACKUP_S3_ENDPOINT, BACKUP_S3_BUCKET, BACKUP_S3_ACCESS_KEY,
 // BACKUP_S3_SECRET_KEY, and MONGO_URL or MONGO_URL_PROD for the commands that read a database).
 // Nothing here prints a secret, and nothing here writes to a database.
+//
+// Media move (Phase 2) commands also read CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+// (read only Admin API), MEDIA_S3_ENDPOINT, MEDIA_S3_BUCKET, MEDIA_S3_ACCESS_KEY, MEDIA_S3_SECRET_KEY and
+// MEDIA_PUBLIC_BASE_URL from the shell, and ffprobe must be installed. Load them from the keychain inside the
+// command that runs this file, never into a file.
 
 import fs from "fs"
 import path from "path"
@@ -12,6 +17,11 @@ import { buildManifest, DumpedCollection, isDumpableCollection, splitBson } from
 import { dumpDatabase } from "./dump"
 import { ensureBucket, getObject, listKeys, putObject } from "./s3"
 import { config, scrubSecrets } from "../config"
+import { runInventory } from "./mediaInventory"
+import { runCopy, runDefaultAvatar, verifyMapping } from "./mediaCopy"
+import { runMediaMirror } from "./mediaMirror"
+import { loadMapping } from "./rewriteMedia"
+import { MediaMapping } from "./types"
 
 const USAGE = `Commands:
   ensure-bucket
@@ -20,7 +30,19 @@ const USAGE = `Commands:
   list --prefix <prefix>
   download --from <path> --dir <dir>
   backup-now                                 dump MONGO_URL into BACKUP_PREFIX
-  verify --from <path> --db <name> --url-env <MONGO_URL|MONGO_URL_PROD>`
+  verify --from <path> --db <name> --url-env <MONGO_URL|MONGO_URL_PROD>
+
+Media move, positional arguments:
+  media-inventory <dumpDir> <outDir> [sourceBackup] [orphanListPath]
+                                             reads projects and users from a downloaded backup, lists the Cloudinary
+                                             account (read only), writes inventory.json, orphans.json and the orphan list
+  media-copy <outDir> [dry-run]              copies the inventory into the media bucket, proves each copy through its
+                                             public URL, writes mapping.json and copy-report.json (dry-run writes nothing
+                                             to the bucket and names the mapping mapping.dry-run.json)
+  media-default-avatar <outDir> [dry-run]    only the default avatar, no inventory needed
+  media-verify <mappingPath>                 checks every mapped object through its public URL; mappingPath is a local
+                                             file or a phase2/... path in the backup bucket
+  media-mirror                               one run of the nightly mirror: media bucket to <backup bucket>/media-mirror/`
 
 const parseArgs = (argv: string[]): Record<string, string> => {
   const out: Record<string, string> = {}
@@ -94,8 +116,66 @@ const downloadCommand = async (from: string, dir: string): Promise<void> => {
   console.log(`downloaded ${keys.length} files to ${dir}`)
 }
 
+const MEDIA_COMMANDS = ["media-inventory", "media-copy", "media-default-avatar", "media-verify", "media-mirror"]
+
+const mediaCommand = async (command: string, positional: string[]): Promise<void> => {
+  const [first, second, third, fourth] = positional
+  const need2 = (): void => {
+    if (!first) throw new Error(`Missing argument\n${USAGE}`)
+  }
+
+  switch (command) {
+    case "media-inventory": {
+      if (!first || !second) throw new Error(`media-inventory needs <dumpDir> <outDir>\n${USAGE}`)
+      const { inventory, orphans, files } = await runInventory({ dumpDir: first, outDir: second, sourceBackup: third, orphanListPath: fourth })
+      console.log(`referenced items: ${inventory.items.length}, orphans: ${orphans.length}`)
+      console.log(`listing: ${inventory.listing.images} images, ${inventory.listing.videos} videos`)
+      if (inventory.notCloudinary.length > 0) console.log(`values that are not Cloudinary URLs: ${inventory.notCloudinary.length}`)
+      for (const file of files) console.log(`wrote ${file}`)
+      return
+    }
+    case "media-copy": {
+      need2()
+      if (second !== undefined && second !== "dry-run") throw new Error(`Unknown option "${second}", the only one is dry-run`)
+      const result = await runCopy({ outDir: first, dryRun: second === "dry-run" })
+      console.log(
+        `${result.report.dryRun ? "dry run" : "copy"}: ${result.report.objects} objects, ${result.report.bytes} bytes, ` +
+          `${result.report.renditions} renditions, ${result.report.failures} failures`
+      )
+      if (result.backupFolder) console.log(`reports and mapping uploaded to ${result.backupFolder}/ (use ${result.backupFolder}/mapping.json for the rewrite)`)
+      if (result.report.failures > 0) process.exitCode = 1
+      return
+    }
+    case "media-default-avatar": {
+      need2()
+      if (second !== undefined && second !== "dry-run") throw new Error(`Unknown option "${second}", the only one is dry-run`)
+      const report = await runDefaultAvatar({ outDir: first, dryRun: second === "dry-run" })
+      if (report.failures > 0) process.exitCode = 1
+      return
+    }
+    case "media-verify": {
+      need2()
+      let mapping: MediaMapping
+      if (fs.existsSync(first)) mapping = JSON.parse(fs.readFileSync(first, "utf8")) as MediaMapping
+      else mapping = await loadMapping(first)
+      const report = await verifyMapping(mapping)
+      for (const failure of report.failed) console.error(`FAILED ${failure.key}: ${failure.error}`)
+      console.log(`verified ${report.checked - report.failed.length} of ${report.checked} objects`)
+      if (report.failed.length > 0) process.exitCode = 1
+      return
+    }
+    case "media-mirror": {
+      const report = await runMediaMirror()
+      console.log(JSON.stringify(report))
+      if (report.failed > 0) process.exitCode = 1
+      return
+    }
+  }
+}
+
 const main = async (): Promise<void> => {
   const [command, ...rest] = process.argv.slice(2)
+  if (MEDIA_COMMANDS.includes(command)) return mediaCommand(command, rest)
   const args = parseArgs(rest)
 
   switch (command) {

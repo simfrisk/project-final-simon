@@ -35,7 +35,8 @@ export interface MirrorReport {
   bytes: number
 }
 
-const statusKey = (): string => `${config.backup.prefix}/media-mirror-status.json`
+const statusKey = (): string =>
+  config.backup.prefix ? `${config.backup.prefix}/media-mirror-status.json` : "media-mirror-status.json"
 
 // One run at a time, whether it came from the schedule or the command line.
 let running: Promise<MirrorReport> | null = null

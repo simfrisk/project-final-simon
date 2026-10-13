@@ -109,7 +109,7 @@ describe("S3 media storage", { skip: !haveS3Env() && "MEDIA_S3_* is not set" }, 
     })
 
     it("gives a new user the default avatar in the media bucket", () => {
-      assert.equal(alice.profileImage, `${base}/defaults/avatar-100.png`)
+      assert.equal(alice.profileImage, `${base}/${PREFIX}defaults/avatar-100.png`)
     })
   })
 
